@@ -583,6 +583,14 @@ def _next_step_for(series: SeriesLayout, book: str) -> object:
         score = _last_eval_score(book_root, last_n)
         state.last_chapter_number = last_n
         state.last_chapter_score = score
+    elif phase == "foundation":
+        # Same shape of bug for the foundation phase (hit 2026-10-13):
+        # without the latest `--phase foundation` score, next_step's
+        # foundation branch can never recommend `draft 1` and the
+        # footer says "below threshold; re-evaluate" after a 7.8.
+        found = _last_foundation_score(book_root)
+        if found is not None:
+            state.foundation_score = found
 
     if entry is not None and _phase_rank(entry.status) > _phase_rank(state.phase):
         state.phase = entry.status
@@ -607,6 +615,31 @@ def _last_eval_score(book_root: Path, chapter: int) -> float | None:
     from ..mechanical.chapter_summary import _index_latest_per_chapter_eval
     index = _index_latest_per_chapter_eval(book_root / "eval_logs")
     return index.get(chapter)
+
+
+def _last_foundation_score(book_root: Path) -> float | None:
+    """Return the `overall_score` of the newest
+    `books/<book>/eval_logs/<ts>_foundation.json` written by
+    `/autonovel:evaluate --phase foundation`, or None when no
+    foundation eval has run (or none parses). Newest = highest
+    `YYYYMMDD_HHMMSS` prefix, with mtime as the tie-break."""
+    import json
+    logs_dir = book_root / "eval_logs"
+    if not logs_dir.is_dir():
+        return None
+    candidates = sorted(
+        logs_dir.glob("*_foundation.json"),
+        key=lambda p: (p.name, p.stat().st_mtime),
+    )
+    for path in reversed(candidates):
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            continue
+        score = data.get("overall_score") if isinstance(data, dict) else None
+        if isinstance(score, (int, float)):
+            return float(score)
+    return None
 
 
 @dataclass

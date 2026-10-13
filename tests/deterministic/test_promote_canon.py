@@ -174,6 +174,83 @@ def test_classify_finds_contradiction_in_world_md_not_just_canon() -> None:
     assert result["existing_file"] == "shared/world.md"
 
 
+def _research_entry(text: str) -> pc.PendingEntry:
+    return pc.PendingEntry(
+        raw_line=f"- {text} [src] [research:note]",
+        fact_text=text,
+        research_slug="note", shortnames=["src"], provenance=None,
+    )
+
+
+def test_classify_different_keys_sharing_series_nouns_is_survivor() -> None:
+    """Regression (2026-10-13): two keyed facts about DIFFERENT events
+    that share the series' own proper nouns and disagree on the year
+    are not a contradiction. The old heuristic retired
+    `[Fugger Venice loss, 1477]` because `[Battle of Calliano] ...
+    1487` also said "Venetian force"."""
+    e = _research_entry(
+        "[Battle of Calliano] On 10 August 1487 Archduke Sigismund's Tyrolean "
+        "force defeated the Venetian army at Calliano; the Venetian commander "
+        "drowned in the Adige"
+    )
+    book_canon = (
+        "- [Fugger Venice loss, 1477] In October 1477 Jakob and Tucher's position "
+        "collapses when the Ottoman raid breaks a Venetian force at the Isonzo; "
+        "the Fugger account loses 300 ducats.\n"
+        "- [Konrad Mair] Konrad Mair is an invented Fugger rider, born 1468.\n"
+    )
+    result = pc._classify(
+        e, canon_text="", world_text="", characters_text="", book_canon_text=book_canon
+    )
+    assert result["kind"] == "survivor"
+
+
+def test_classify_same_key_different_year_is_contradiction() -> None:
+    e = _research_entry(
+        "[Aachen coronation] Charles was crowned King of the Romans at Aachen "
+        "on 23 October 1520"
+    )
+    canon = "- [Aachen coronation] Charles was crowned at Aachen on 26 October 1520\n"
+    result = pc._classify(e, canon_text=canon, world_text="", characters_text="")
+    assert result["kind"] == "contradiction"
+    assert "1520" in result["rationale"] or "date" in result["rationale"]
+
+
+def test_classify_wrapped_prose_is_compared_as_a_paragraph() -> None:
+    """characters.md is hard-wrapped. A 70-character fragment must not
+    be matched on its own: `Head of the Höchstetter house (born 1463),`
+    shares "house" with half the corpus."""
+    e = _research_entry(
+        "[1498 copper syndicate] In 1498 the Augsburg houses of Fugger, "
+        "Gossembrot and Herwart combined in the first German copper syndicate; "
+        "Sigmund Gossembrot died in 1500"
+    )
+    characters = (
+        "## Ambrosius Höchstetter\n\n"
+        "Head of the Höchstetter house (born 1463), the third of Augsburg's\n"
+        "great merchant-banking families. A speculator where Jakob is a\n"
+        "lender; runs his own courier relay to the Tyrol and joins the\n"
+        "Fuggers in a copper cartel in 1517.\n"
+    )
+    result = pc._classify(e, canon_text="", world_text="", characters_text=characters)
+    assert result["kind"] == "survivor"
+    # The paragraph is one unit, the heading is not a unit.
+    assert pc._units(characters) == [
+        "Head of the Höchstetter house (born 1463), the third of Augsburg's "
+        "great merchant-banking families. A speculator where Jakob is a "
+        "lender; runs his own courier relay to the Tyrol and joins the "
+        "Fuggers in a copper cartel in 1517."
+    ]
+
+
+def test_common_tokens_learned_from_corpus_not_hardcoded() -> None:
+    lines = "\n".join(f"- Fugger fact number {i} about the Fugger house in Augsburg." for i in range(10))
+    common = pc._common_tokens([lines])
+    assert {"fugger", "house", "augsburg", "fact", "number", "about"} <= common
+    # A small corpus declares nothing common (floor of 5 lines).
+    assert pc._common_tokens(["- Fugger one.\n- Fugger two.\n- Fugger three.\n"]) == frozenset()
+
+
 # ---------------------------------------------------- end-to-end
 
 

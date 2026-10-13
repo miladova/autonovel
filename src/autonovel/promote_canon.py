@@ -458,11 +458,18 @@ def _classify(
         ("shared/characters.md", characters_text),
     )
 
+    # Tokens that recur across the corpus (a series about the Fuggers
+    # has "fugger" / "venice" / "augsburg" on most lines) carry no
+    # evidence that two lines describe the SAME fact. Learn them from
+    # the corpus itself rather than from a hardcoded stop-list.
+    common = _common_tokens(body for _name, body in candidates)
+
     for file_name, body in candidates:
-        for line in body.splitlines():
-            stripped = line.strip()
-            if not stripped or stripped.startswith("#"):
-                continue
+        # Compare against whole facts, not physical lines: world.md and
+        # characters.md are hard-wrapped prose, and a 70-character
+        # fragment ("Head of the Höchstetter house (born 1463), the")
+        # shares a couple of words with almost anything.
+        for stripped in _units(body):
             line_norm = _normalise(stripped)
             if not line_norm:
                 continue
@@ -476,7 +483,7 @@ def _classify(
             # negation flip ("is" vs "is not"). Conservative —
             # we'd rather miss a contradiction (and let the LLM judge
             # catch it later) than falsely flag a survivor.
-            if _looks_contradictory(entry.fact_text, stripped):
+            if _looks_contradictory(entry.fact_text, stripped, common=common):
                 return {
                     "kind": "contradiction",
                     "existing_line": stripped,
@@ -521,34 +528,119 @@ _TOKEN_RE = re.compile(r"\b[a-zA-Z]{4,}\b")
 _YEAR_RE = re.compile(r"\b[1-9][0-9]{2,3}\b")
 
 
-def _looks_contradictory(a: str, b: str) -> bool:
-    """Heuristic: shared content + a numeric/year/negation mismatch.
+_HEADLINE_RE = re.compile(r"^\s*[-*]?\s*\[([^\]]+)\]")
 
-    Year-mismatch is treated as a strong contradiction signal — it
-    drops the shared-token threshold from 3 to 2, because two
-    statements that agree on a named entity and a year are usually
-    related, and disagreeing on the year is a real contradiction.
-    "Venice founded in 421 CE" vs "Venice founded in 697 CE" share
-    only `venice` + `founded` but the year disagreement makes it
-    obviously a contradiction.
+# A token is "common" when it appears on at least this many lines of the
+# corpus AND on at least this share of them. Both guards matter: the
+# share keeps a 10-line fixture from declaring everything common, the
+# floor keeps a 3-line fixture from declaring anything common.
+_COMMON_MIN_LINES = 5
+_COMMON_MIN_SHARE = 0.15
 
-    Negation-flip without numeric mismatch keeps the higher (3)
-    threshold — pure negation is too easy to false-positive on.
+
+def _headline(s: str) -> str:
+    """The `[Key]` a canon line opens with, normalised; '' when absent."""
+    m = _HEADLINE_RE.match(s)
+    return re.sub(r"\s+", " ", m.group(1)).strip().lower() if m else ""
+
+
+_BULLET_START_RE = re.compile(r"^[-*]\s")
+
+
+def _units(body: str) -> list[str]:
+    """Split a markdown body into comparable facts: one unit per bullet
+    (with its wrapped continuation lines joined) and one unit per prose
+    paragraph. Headings and blank lines are separators, never units."""
+    units: list[str] = []
+    current: list[str] = []
+
+    def flush() -> None:
+        if current:
+            units.append(" ".join(current))
+            current.clear()
+
+    for line in body.splitlines():
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#"):
+            flush()
+            continue
+        if _BULLET_START_RE.match(stripped):
+            flush()
+        current.append(stripped)
+    flush()
+    return units
+
+
+def _common_tokens(bodies) -> frozenset[str]:
+    """Tokens that recur across the corpus and therefore say nothing
+    about whether two particular lines describe the same fact."""
+    counts: dict[str, int] = {}
+    n_lines = 0
+    for body in bodies:
+        for unit in _units(body):
+            n_lines += 1
+            for tok in {t.lower() for t in _TOKEN_RE.findall(unit)}:
+                counts[tok] = counts.get(tok, 0) + 1
+    if n_lines == 0:
+        return frozenset()
+    floor = max(_COMMON_MIN_LINES, int(n_lines * _COMMON_MIN_SHARE))
+    return frozenset(t for t, c in counts.items() if c >= floor)
+
+
+def _looks_contradictory(a: str, b: str, *, common: frozenset[str] = frozenset()) -> bool:
+    """Heuristic: the two lines describe the SAME fact and disagree on
+    a year or a negation.
+
+    "Same fact" is judged three ways, strongest first:
+
+    1. Both lines open with a `[Key]` headline and the keys match.
+       Any year or negation mismatch is then a real contradiction.
+    2. Both have headlines and they differ. The lines are about
+       different facts unless the overlap is overwhelming (≥4 shared
+       informative tokens and a Jaccard overlap of at least 0.5).
+       Without this guard, "[Battle of Calliano] ... 1487 ... Venetian
+       force" retired "[Fugger Venice loss, 1477] ... Venetian force"
+       (2026-10-13), and an earlier run retired `[Jakob Fugger birth]`
+       on the strength of the word "Fugger".
+    3. At least one line is unkeyed (world.md / characters.md prose,
+       legacy canon). Year mismatch needs ≥2 shared informative tokens
+       and Jaccard ≥ 0.3; a negation flip needs ≥3 shared tokens.
+       "Venice founded in 421 CE" vs "Venice was founded in 697 CE
+       during the early Byzantine period" still contradicts (two
+       shared tokens out of six).
+
+    Overlap is Jaccard (shared / union) rather than coverage of the
+    shorter line, so a four-word fact cannot be "fully covered" by a
+    long paragraph that happens to mention the same fair and the same
+    prince. "Informative" excludes `common` — tokens the corpus uses
+    on most lines (the series' own proper nouns). Conservative by
+    design: if uncertain, return False and let the LLM judge catch it
+    later.
     """
-    a_tokens = {t.lower() for t in _TOKEN_RE.findall(a)}
-    b_tokens = {t.lower() for t in _TOKEN_RE.findall(b)}
+    a_tokens = {t.lower() for t in _TOKEN_RE.findall(a)} - common
+    b_tokens = {t.lower() for t in _TOKEN_RE.findall(b)} - common
     shared = a_tokens & b_tokens
+    union = a_tokens | b_tokens
+    jaccard = len(shared) / len(union) if union else 0.0
     a_years = set(_YEAR_RE.findall(a))
     b_years = set(_YEAR_RE.findall(b))
     year_mismatch = bool(a_years and b_years and a_years.isdisjoint(b_years))
-    if year_mismatch and len(shared) >= 2:
+    negation_flip = _negations(a) != _negations(b)
+
+    ka, kb = _headline(a), _headline(b)
+    if ka and kb:
+        if ka == kb:
+            # Same headline = same fact by declaration. Any numeric
+            # difference counts (23 vs 26 October is a two-digit
+            # disagreement the year regex cannot see).
+            return year_mismatch or negation_flip or _numbers(a) != _numbers(b)
+        if len(shared) < 4 or jaccard < 0.5:
+            return False
+        return year_mismatch or negation_flip
+
+    if year_mismatch and len(shared) >= 2 and jaccard >= 0.3:
         return True
-    if len(shared) < 3:
-        return False
-    # Negation flip with strong shared-token overlap.
-    a_negations = _negations(a)
-    b_negations = _negations(b)
-    if a_negations != b_negations:
+    if negation_flip and len(shared) >= 3 and jaccard >= 0.3:
         return True
     return False
 
@@ -562,6 +654,15 @@ def _negations(s: str) -> bool:
     )
 
 
+_NUMBER_RE = re.compile(r"\b\d[\d,]*\b")
+
+
+def _numbers(s: str) -> set[str]:
+    """Every integer in the fact text (commas stripped), for same-key
+    comparisons where a day-of-month or a sum is the disagreement."""
+    return {n.replace(",", "") for n in _NUMBER_RE.findall(_normalise(s))}
+
+
 def _contradiction_rationale(a: str, b: str) -> str:
     a_years = set(_YEAR_RE.findall(a))
     b_years = set(_YEAR_RE.findall(b))
@@ -569,6 +670,9 @@ def _contradiction_rationale(a: str, b: str) -> str:
         return f"date mismatch: {sorted(a_years)} vs {sorted(b_years)}"
     if _negations(a) != _negations(b):
         return "negation mismatch (one asserts, the other negates)"
+    if _headline(a) and _headline(a) == _headline(b) and _numbers(a) != _numbers(b):
+        return (f"same key [{_headline(a)}], number mismatch: "
+                f"{sorted(_numbers(a))} vs {sorted(_numbers(b))}")
     return "shared subject; exact disagreement uncertain"
 
 

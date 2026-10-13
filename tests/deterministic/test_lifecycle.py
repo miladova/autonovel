@@ -604,3 +604,46 @@ def test_begin_recreates_missing_session_notes_dir(demo_series: SeriesLayout) ->
     lifecycle.begin("autonovel:draft", "5 --book one", series=demo_series)
     assert demo_series.session_notes.is_dir()
     lifecycle.end("autonovel:draft", "5 --book one", status="ok", wrote=[], series=demo_series)
+
+
+def test_foundation_eval_score_unlocks_draft_one(demo_series: SeriesLayout) -> None:
+    """Regression (2026-10-13): with the whole foundation populated and a
+    passing `<ts>_foundation.json` eval log, /autonovel:next must
+    recommend `draft 1`, not loop on "evaluate --phase foundation".
+    `compute_next` loaded chapter scores but never the foundation score,
+    so the footer said "below threshold" after a 7.82."""
+    book_root = demo_series.books / "one"
+    long = "Real content. " * 30
+    (demo_series.shared / "world.md").write_text(f"# World\n\n{long}\n", encoding="utf-8")
+    (demo_series.shared / "characters.md").write_text(f"# Characters\n\n{long}\n", encoding="utf-8")
+    (demo_series.shared / "canon.md").write_text(f"# Canon\n\n{long}\n", encoding="utf-8")
+    (book_root / "voice.md").write_text(f"# Voice\n\n{long}\n", encoding="utf-8")
+    (book_root / "outline.md").write_text(f"# Outline\n\n{long}\n", encoding="utf-8")
+    (book_root / "canon.md").write_text(f"# Book canon\n\n{long}\n", encoding="utf-8")
+    logs = book_root / "eval_logs"
+    logs.mkdir(parents=True, exist_ok=True)
+
+    # No foundation eval yet → evaluate is the recommendation.
+    lifecycle.begin("autonovel:draft", "1 --book one", series=demo_series)
+    r = lifecycle.end("autonovel:draft", "1 --book one", status="ok", wrote=[], series=demo_series)
+    assert "evaluate --phase foundation" in r.last_action.next_standard_step
+
+    # A failing score (older timestamp) keeps evaluate.
+    (logs / "20261013_100000_foundation.json").write_text(
+        '{"mode": "foundation", "overall_score": 7.1}', encoding="utf-8")
+    lifecycle.begin("autonovel:evaluate", "--phase foundation --book one", series=demo_series)
+    r = lifecycle.end("autonovel:evaluate", "--phase foundation --book one", status="ok",
+                      wrote=[], series=demo_series)
+    assert "evaluate --phase foundation" in r.last_action.next_standard_step
+
+    # A newer passing score unlocks draft 1.
+    (logs / "20261013_110000_foundation.json").write_text(
+        '{"mode": "foundation", "overall_score": 7.82}', encoding="utf-8")
+    lifecycle.begin("autonovel:evaluate", "--phase foundation --book one", series=demo_series)
+    r = lifecycle.end("autonovel:evaluate", "--phase foundation --book one", status="ok",
+                      wrote=[], series=demo_series)
+    assert "draft 1" in r.last_action.next_standard_step
+    assert "evaluate --phase foundation" not in r.last_action.next_standard_step
+
+    # The newest log wins by timestamp prefix even if an older file is touched later.
+    assert lifecycle._last_foundation_score(book_root) == 7.82

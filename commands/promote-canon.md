@@ -120,7 +120,15 @@ files, so `autonovel rollback` undoes the whole promotion.
    - **Contradiction**: an entry that contradicts either canon file,
      `shared/world.md`, or `shared/characters.md`. Default-discard
      and record under the per-book conflict list — but with one
-     exception below. **Capture which of the three files holds the
+     exception below. "Contradicts" means the two lines describe the
+     *same fact* and disagree on a year, a number or a negation. The
+     helper judges "same fact" by the `[Key]` headline first (same
+     key = same fact; different keys = different facts unless the
+     wording overlaps almost completely) and, for unkeyed prose,
+     by word overlap with the series' ubiquitous proper nouns
+     discounted. Wrapped paragraphs are compared whole. Two facts
+     that merely share "Fugger" and "Venice" and happen to carry
+     different years are *not* a contradiction (2026-10-13). **Capture which of the three files holds the
      contradicting line** along with the line itself; both fields
      are required by step 8's conflict-block output so the user knows
      which file to edit when resolving.

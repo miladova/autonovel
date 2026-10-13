@@ -1899,8 +1899,47 @@
   log intact by wrapping each foundation write in `_begin`/`_end`; two
   book-1 inventions (`Matthäus Schwarz age`, the 6–1 `Frankfurt election`
   tally) were moved out of shared canon with `canon-partition --move-key`.
+- 2026-10-13 (promote-canon "same fact" test): the first live promotion of
+  29 research-cited facts for `kingmaker` dry-ran as **28 supersedures**:
+  `_looks_contradictory` called any two lines sharing two 4+-letter
+  tokens with disjoint years a contradiction, and research-tagged entries
+  win contradictions, so `[Battle of Calliano] … 1487 … Venetian force`
+  would have retired `[Fugger Venice loss, 1477]`, and `[1498 copper
+  syndicate]` would have retired the *Höchstetter* paragraph in
+  characters.md on the strength of the word "house". The same misfire had
+  already written a bogus `## Superseded 2026-04-29` block into the live
+  series' shared canon (marking `[Jakob Fugger birth]` superseded by 1519
+  election facts); that block is now replaced by an audit note in the
+  series. Decision: "same fact" is judged (1) by matching `[Key]` headline
+  (then ANY number/year/negation difference is a contradiction), (2) for
+  differing keys only on overwhelming overlap (≥4 shared informative
+  tokens, Jaccard ≥ 0.5), (3) for unkeyed prose on Jaccard ≥ 0.3 with
+  series-ubiquitous tokens discounted — learned from the corpus
+  (`_common_tokens`: on ≥5 lines and ≥15% of them), not a hardcoded
+  stop-list. Wrapped prose is compared as whole paragraphs (`_units`), not
+  70-character physical lines. Dry-run after the fix: 29 promoted, 0
+  supersedures, 0 conflicts. Four regression tests added; promote-canon.md
+  step 4 describes the rule. **Tier 1+2 1912 passed, 1 skipped.**
+- 2026-10-13 (foundation score never read): after the kingmaker
+  foundation eval logged 7.82 (threshold 7.5) the `_end` footer still
+  said "foundation below threshold; re-evaluate". `lifecycle.compute_next`
+  loaded `last_chapter_score` from eval logs for drafted books but never
+  loaded `foundation_score`, so `next_step`'s foundation branch could not
+  recommend `draft 1` — the same bug class fixed for chapters on
+  2026-04-28. Decision: `_last_foundation_score` reads the newest
+  `<ts>_foundation.json` (`overall_score`) when the book has no chapters
+  and the phase is foundation. New lifecycle test
+  `test_foundation_eval_score_unlocks_draft_one`. **Tier 1+2 1913
+  passed, 1 skipped.**
 
 ## Tests last known green
+- Tier 1 + Tier 2 (deterministic + contracts): 2026-10-13 — **1913
+  passing, 1 skipped** (`pytest tests/deterministic tests/contracts`).
+  +5 over the 1908 mark: four promote-canon "same fact" regression tests
+  (different keys sharing series nouns → survivor; same key different
+  day → contradiction; wrapped prose compared as a paragraph; common
+  tokens learned from the corpus) and one lifecycle test (a passing
+  `<ts>_foundation.json` unlocks `draft 1`).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-13 — **1908
   passing, 1 skipped** (`pytest tests/deterministic tests/contracts`).
   Unchanged count from 2026-10-12 (two existing lifecycle / integration
