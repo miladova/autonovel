@@ -32,8 +32,10 @@ def _teaser() -> Teaser:
 
 
 def test_narration_script_joins_lines_in_order_skipping_empty() -> None:
+    # Joined with a space, not a newline — so neural TTS reads the spine as one
+    # flowing monologue, not line-by-line clipped statements (Phase 13).
     s = vo.narration_script(_teaser())
-    assert s == "Seventh son of a wool merchant.\nI learned the account books."
+    assert s == "Seventh son of a wool merchant. I learned the account books."
 
 
 def test_estimate_duration_scales_with_words() -> None:

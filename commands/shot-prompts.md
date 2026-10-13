@@ -175,6 +175,16 @@ of best-effort inputs.
      before my rivals knew"* instead. Test each line: would someone who knows
      nothing of this history understand exactly what happened and why it
      mattered? If it only sounds good, rewrite it.
+   - **Connected, NOT a list (the #2 VO failure, right behind cryptic).** The
+     lines play back as ONE continuous monologue, so each must hand off to the
+     next — by cause (*so / because / that's why*), by time (*then / until /
+     by the time*), or a returning noun — and the rhythm must **vary** (a long
+     winding line, then a short hard one), never N flat declaratives of the
+     same shape (*"Seventh son of a wool merchant. I learned the books. I lent
+     to kings."* is a list, not a spine). Read the VO lines aloud in order, in
+     one breath: one voice building to a point, not a stack of captions. Litmus
+     test: if two adjacent lines could swap order unnoticed, they aren't
+     connected yet — give one a connective that depends on the other.
    - The VO is NOT narration-of-history (documentary) — it is the
      protagonist living his own story in his own voice (genre-appropriate for
      historical fiction).

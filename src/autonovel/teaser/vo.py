@@ -90,9 +90,18 @@ def estimate_duration_s(text: str, *, words_per_second: float = _WORDS_PER_SECON
 def narration_script(teaser: Any) -> str:
     """Join a teaser's ordered shot ``voiceover`` lines into one narration
     script (the VO spine, in cut order). Skips empty lines (e.g. the title
-    beat that holds)."""
+    beat that holds).
+
+    Lines are joined with a **space**, not a newline: a newline makes neural
+    TTS (edge/elevenlabs) reset prosody and read each line as a clipped,
+    terminal statement — the "bunch of short statements, not connected" sound.
+    Joined as continuous prose, the voice carries intonation *across* the
+    sentence boundaries and the spine plays as one monologue (which is the
+    whole point of the VO — teaser-craft §12). The lines themselves still have
+    to connect ("Connected, not a list"); this only stops the renderer from
+    re-fragmenting authored prose that already flows."""
     lines = [s.voiceover.strip() for s in teaser.shots if s.voiceover.strip()]
-    return "\n".join(lines)
+    return " ".join(lines)
 
 
 def _write_silent_wav(path: Path, seconds: float, *, rate: int = 44100) -> None:

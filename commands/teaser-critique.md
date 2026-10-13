@@ -179,8 +179,15 @@ gaps and proceed without retrying.
    **In short mode, also read the `voiceover` lines end-to-end with the
    pictures ignored** — they must, alone, tell ONE coherent micro-story (setup
    → escalation → turn → payoff/cost), and each must be self-explaining to a
-   stranger; if the VO spine is missing, thin, cryptic, or doesn't cohere,
-   that is the cohesion failure (score `coherence` low and say so). Then write the
+   stranger. Read them **aloud, in one breath**, and judge two distinct things:
+   (a) is any single line cryptic? and (b) do the lines **connect into one
+   monologue, or do they play as a list** — flat declaratives of the same shape
+   that could be reordered without anyone noticing? A spine where every line is
+   clear but nothing hands off to the next ("a bunch of short statements, not
+   connected") is a real cohesion defect even though no single line is wrong.
+   If the VO spine is missing, thin, cryptic, **disconnected/listy**, or doesn't
+   cohere, that is the cohesion failure (score `coherence` low, name it
+   `disconnected-vo` when it's the list problem, and say so). Then write the
    **`viewer_takeaway`** ("a stranger comes away believing: ___") and
    **`would_watch`** (would that stranger want the film?). Be ruthless: if
    the teaser is a tour of objects with no identified people, most scenes are

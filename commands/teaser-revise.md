@@ -147,6 +147,15 @@ so the gate reflects the improvement.
      (*"I bought speed"* → *"I paid for couriers faster than any king's; I
      heard the news first and traded before my rivals knew"*). Concrete beats
      evocative.
+   - **`disconnected-vo` (the spine reads as a list — every line clear but
+     nothing hands off, "a bunch of short statements not connected")** → keep
+     the lines concrete but **thread them into one monologue**: give each line a
+     connective that depends on the one before (cause — *so / because / that's
+     why*; time — *then / until / by the time*; or a returning noun), and
+     **vary the rhythm** (a long winding line, then a short hard one) so they
+     stop sounding like N declaratives in lockstep. Read the spine aloud in one
+     breath; if two adjacent lines could swap order unnoticed, they're still a
+     list — rewrite until each depends on its neighbour.
    - `too-many-shots` → a short is ≤12 longer shots, not a montage; merge or
      cut the weakest beats until ≤12 and lengthen the keepers (Phase 13).
    - `no-reference` → leave as-is here (references are developed in

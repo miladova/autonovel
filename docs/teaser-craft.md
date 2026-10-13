@@ -607,6 +607,22 @@ is a different artifact, and it's now the **default `mode: short`**:
   line: *would a viewer who knows nothing of this history understand exactly
   what happened and why it mattered?* If it only sounds good, rewrite it.
   Concrete beats evocative every time.
+- **Connected, not a list — the spine is ONE monologue, not captions.** The
+  second-most-common VO failure, right behind cryptic: every line is concrete
+  and self-contained, but strung together they play as a bulleted list of
+  facts — *"Seventh son of a wool merchant. I learned the account books. I
+  lent to kings."* — three flat declaratives of the same shape, no thread.
+  A short delivers the lines as **continuous narration**, so they must
+  *connect*: each picks up the one before — by cause (*so*, *because*,
+  *that's why*), by time (*then*, *until*, *by the time*), or by a returning
+  noun — and the **rhythm must vary** (a long winding line, then a short hard
+  one), never N declaratives in lockstep. Read the whole spine aloud in **one
+  breath**: it should sound like one voice working toward a point, not a stack
+  of headlines. Litmus test — *if two adjacent lines could swap order and no
+  one would notice, they aren't connected yet.* (Render-side: the narration
+  track joins the lines as one paragraph so the TTS voice carries intonation
+  across them — but that only protects prose that already flows; it can't
+  connect a list.)
 - **One protagonist; minimize everyone else.** Drift compounds with each
   added face — keep ≤3, and let the VO carry relationships.
 - **Judge the assembled CUT, cold** — not the script. The script can read
