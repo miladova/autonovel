@@ -48,7 +48,38 @@ def _build_parser() -> argparse.ArgumentParser:
         default=None,
         help="Inclusive year range, e.g. `1519-1523`",
     )
+    new_book.add_argument(
+        "--isolated", action="store_true",
+        help="Set `context: isolated` — never load sibling-book chapters as "
+             "drafting context. Use for a rewrite / second version of a story "
+             "another book in this series already tells.",
+    )
     new_book.set_defaults(func=_cmd_new_book)
+
+    cp = sub.add_parser(
+        "canon-partition",
+        help="Move book-scoped bullets out of shared/canon.md into books/<book>/canon.md.",
+        description=(
+            "Bullets whose `(from <book> …)` provenance names a book move to that "
+            "book's canon.md automatically. `--move-section` / `--move-key` move "
+            "untagged bullets to `--to-book`. Research-cited bullets and "
+            "`## Superseded` audit blocks always stay in shared/canon.md. "
+            "Idempotent. The slash command /autonovel:canon-partition wraps this "
+            "with an LLM pass that classifies the untagged leftovers."
+        ),
+    )
+    cp.add_argument("--series", default=None, help="Series name or path; default: walk up from cwd")
+    cp.add_argument("--to-book", default=None,
+                    help="Target book for --move-section / --move-key.")
+    cp.add_argument("--move-section", action="append", default=[], metavar="HEADING",
+                    help="Move every bullet under this `## heading` to --to-book (repeatable).")
+    cp.add_argument("--move-key", action="append", default=[], metavar="SHORTNAME",
+                    help="Move the bullet whose leading `[shortname]` matches to --to-book (repeatable).")
+    cp.add_argument("--dry-run", action="store_true", help="Report only; write nothing.")
+    cp.add_argument("--no-lock", action="store_true",
+                    help="Skip the in-progress.lock check (inside a slash command whose preamble holds it).")
+    cp.add_argument("--format", choices=("markdown", "json"), default="markdown")
+    cp.set_defaults(func=_cmd_canon_partition)
 
     imp = sub.add_parser(
         "import-book",
@@ -370,6 +401,10 @@ def _build_parser() -> argparse.ArgumentParser:
                      help="Print what would be promoted without writing.")
     _pc.add_argument("--format", choices=("json", "human"), default="human",
                      help="Output format (default: human).")
+    _pc.add_argument("--scope", choices=("auto", "book", "series"), default="auto",
+                     help="Where survivors land. auto (default): research-cited entries → "
+                          "shared/canon.md, chapter-derived entries → books/<book>/canon.md; "
+                          "book / series force one target.")
     _pc.set_defaults(func=_cmd_promote_canon)
 
     return p
@@ -405,13 +440,17 @@ def _cmd_new_book(args: argparse.Namespace) -> int:
             return 2
     try:
         result = scaffold.new_book(
-            series, book_name=args.name, pov=args.pov, story_time_range=story_time_range
+            series, book_name=args.name, pov=args.pov, story_time_range=story_time_range,
+            context="isolated" if args.isolated else "series",
         )
     except scaffold.ScaffoldError as e:
         print(f"error: {e}", file=sys.stderr)
         return 2
     print(f"Created {result.book_root.relative_to(series.root.parent)}/")
     print(f"Edit {result.book_root.name}/seed.txt, then open the series in your runtime.")
+    if args.isolated:
+        print("context: isolated — this book will never read sibling-book chapters "
+              "as drafting context (shared/ lore is still read).")
     from .paths import nesting_note
     note = nesting_note(series.root, args.name)
     if note:
@@ -1183,9 +1222,50 @@ def _cmd_sweep_clear(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_canon_partition(args: argparse.Namespace) -> int:
+    """Move book-scoped bullets out of shared/canon.md. See
+    housekeeping/canon_partition.py."""
+    import json as _json
+    from . import lock as lock_mod
+    from .housekeeping import canon_partition as cpart
+    try:
+        series = _resolve_series(args.series)
+    except SeriesNotFound as e:
+        print(f"error: {e}", file=sys.stderr)
+        return 2
+    if not args.no_lock and not args.dry_run:
+        info = lock_mod.read(series.lock_file)
+        if info is not None and not lock_mod.is_stale(series.lock_file):
+            print(
+                f"error: another autonovel command is in progress "
+                f"(PID {info.pid}, command {info.command!r}). "
+                f"Pass --no-lock if invoking from inside that command.",
+                file=sys.stderr,
+            )
+            return 3
+    try:
+        report = cpart.partition(
+            series,
+            to_book=args.to_book,
+            move_sections=args.move_section,
+            move_keys=args.move_key,
+            dry_run=args.dry_run,
+        )
+    except (cpart.PartitionError, ValueError) as e:
+        print(f"error: {e}", file=sys.stderr)
+        return 4
+    if args.format == "json":
+        _json.dump(report.to_dict(), sys.stdout, indent=2)
+        sys.stdout.write("\n")
+    else:
+        sys.stdout.write(cpart.render_markdown(report))
+    return 0
+
+
 def _cmd_promote_canon(args: argparse.Namespace) -> int:
     """Hidden subcommand: promote pending canon entries into
-    shared/canon.md atomically. Slash-command body and sweep
+    books/<book>/canon.md (chapter-derived) / shared/canon.md
+    (research-cited) atomically. Slash-command body and sweep
     sub-agents both call this; --no-lock lets sweep sub-agents
     bypass the in-progress lock that the parent already holds."""
     import json as _json
@@ -1215,6 +1295,7 @@ def _cmd_promote_canon(args: argparse.Namespace) -> int:
             book=args.book,
             dry_run=args.dry_run,
             no_lock=args.no_lock,
+            scope=args.scope,
         )
     except ValueError as e:
         print(f"error: {e}", file=sys.stderr)
@@ -1225,7 +1306,8 @@ def _cmd_promote_canon(args: argparse.Namespace) -> int:
     else:
         for br in report.books:
             print(f"book: {br.book}")
-            print(f"  promoted:    {br.promoted}")
+            print(f"  promoted:    {br.promoted}  (books/{br.book}/canon.md: "
+                  f"{br.promoted_to_book}, shared/canon.md: {br.promoted_to_shared})")
             print(f"  duplicates:  {br.duplicates}")
             print(f"  conflicts:   {br.conflicts}")
             print(f"  supersedures: {br.supersedures}")

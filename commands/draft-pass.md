@@ -13,6 +13,7 @@ reads:
   - shared/world.md
   - shared/characters.md
   - shared/canon.md
+  - books/{book}/canon.md
   - shared/events.md
   - shared/period_bans.txt
   - shared/research/notes/*.md
@@ -23,6 +24,7 @@ reads:
   - books/{book}/eval_logs/ch{chapter:02d}_eval.json
   - books/{book}/edit_logs/ch{chapter:02d}_anachronism.md
 writes:
+  - books/{book}/canon.md
   - books/{book}/chapters/ch_{chapter}.md
   - books/{book}/chapters/ch_{chapter}.summary.md
   - books/{book}/eval_logs/ch{chapter:02d}_eval.json
@@ -37,7 +39,7 @@ context_mode: book
 The "let it write the rest of the book" command. Drafts a range of
 chapters end-to-end, fixes low-scoring chapters with brief+revise,
 runs anachronism checks, and promotes pending canon at the end so
-the final state is coherent — `shared/canon.md` reflects everything
+the final state is coherent — the book's `canon.md` reflects everything
 the sweep discovered, every chapter is at or above threshold (or
 explicitly flagged as below), and continuity summaries are fresh.
 
@@ -58,7 +60,8 @@ Per chapter, in ascending chapter-number order, sequentially:
         checkpoint and recoverable via autonovel rollback
   5. **`promote-canon`** (skip via --no-promote)  — fold the new
                               pending_canon entries from this chapter
-                              into shared/canon.md *before* moving on
+                              into the book's canon.md (research-cited
+                              facts → shared/canon.md) *before* moving on
                               to chapter N+1. Critical: chapter N+1's
                               draft must see the canonical facts
                               chapter N just established, otherwise
@@ -197,7 +200,8 @@ that stalled long sweeps around chapter 8-10.
       1. DRAFT (full /autonovel:draft body — see the canonical
          workflow at ~/.claude/commands/autonovel/draft.md if you
          need to refer back). Read project.yaml, shared/world.md,
-         shared/characters.md, shared/canon.md, shared/events.md,
+         shared/characters.md, shared/canon.md, books/{book}/canon.md
+         (this book's own canon), shared/events.md,
          books/{book}/voice.md, books/{book}/outline.md (locate
          chapter N's beats), books/{book}/chapters/ch_*.summary.md
          (rolling continuity), and run
@@ -427,6 +431,7 @@ Reads:
 - `project.yaml`
 - `shared/world.md`, `shared/characters.md`, `shared/canon.md`,
   `shared/events.md`, `shared/period_bans.txt`
+- `books/{book}/canon.md` (this book's own canon)
 - `shared/research/notes/*.md` (when the outline names them)
 - `books/{book}/voice.md`, `books/{book}/outline.md`
 - `books/{book}/chapters/ch_{chapter}.md` (during retry / revise)
@@ -441,7 +446,8 @@ Writes (per chapter in range, plus the end-of-sweep promote):
 - `books/{book}/edit_logs/ch{chapter:02d}_anachronism.md`
 - `books/{book}/briefs/ch{chapter:02d}.md` (only if revise loop fires)
 - `books/{book}/pending_canon.md`
-- `shared/canon.md` (only at end-of-sweep promote, only if not --no-promote)
+- `books/{book}/canon.md` (per-chapter + end-of-sweep promote, only if not --no-promote)
+- `shared/canon.md` (same promote; research-cited entries only)
 </files-touched>
 
 <acceptance>

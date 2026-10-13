@@ -10,6 +10,7 @@ allowed-tools:
 reads:
   - project.yaml
   - shared/canon.md
+  - books/*/canon.md
   - shared/characters.md
   - shared/world.md
   - shared/events.md
@@ -18,6 +19,7 @@ reads:
   - books/{book}/pending_canon.md
   - books/{book}/chapters/*.md
 writes:
+  - books/*/canon.md
   - shared/characters.md
   - shared/canon.md
   - shared/events.md
@@ -50,7 +52,8 @@ replacement occurs.
    Missing args are a usage error.
 
 2. Use `file_read` on `project.yaml`, `shared/characters.md`,
-   `shared/canon.md`, `shared/world.md`, and `shared/events.md`.
+   `shared/canon.md`, every `books/*/canon.md`, `shared/world.md`, and
+   `shared/events.md`.
    If `<old-name>` is not in `shared/characters.md`, stop — this
    command only renames established characters, so fat-finger typos
    cannot silently mangle the manuscript. Suggest
@@ -59,6 +62,7 @@ replacement occurs.
 3. Enumerate target files:
    - shared: `shared/characters.md`, `shared/canon.md`,
      `shared/events.md`, `shared/world.md`.
+   - every book's `books/<book>/canon.md` (book-scoped canon).
    - per book (loop over all books in `project.yaml`, or just
      `--book` if passed):
      - `books/{book}/outline.md`

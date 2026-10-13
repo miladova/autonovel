@@ -11,6 +11,7 @@ reads:
   - shared/world.md
   - shared/characters.md
   - shared/canon.md
+  - books/{book}/canon.md
   - books/{book}/voice.md
   - books/{book}/briefs/ch{chapter:02d}.md
   - books/{book}/briefs/conversation.md
@@ -63,8 +64,9 @@ file blocked a full revision-pass.
     `/autonovel:talk`. If the file is missing or no queued entries
     target this chapter, proceed normally.
 
-4. Use `file_read` on the shared canon: `shared/world.md`,
-   `shared/characters.md`, `shared/canon.md`. These are guardrails, not
+4. Use `file_read` on the canon: `shared/world.md`,
+   `shared/characters.md`, `shared/canon.md`, and this book's own
+   `books/{book}/canon.md`. These are guardrails, not
    raw material — the chapter must not contradict them.
 
 5. Use `file_read` on `books/{book}/voice.md` (Parts 1, 2, 3, AND 4).

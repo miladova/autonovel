@@ -86,6 +86,11 @@ class SeriesArcReport:
     backwards_story_time_jumps: list[StoryTimeJump]
     unresolved_threads: list[UnresolvedThread]
     arc_score: float                       # 0.0-10.0 composite
+    # Pairs of books whose project.yaml `story_time_range`s overlap
+    # (e.g. a rewrite of the same story). A story-time reset at the
+    # boundary between two such books is expected, not a structure
+    # problem, so it is not counted as a backwards jump.
+    overlapping_books: list[str] = field(default_factory=list)
 
     def to_dict(self) -> dict:
         return {
@@ -109,6 +114,7 @@ class SeriesArcReport:
             ],
             "cross_book_cast": {k: list(v)
                                   for k, v in self.cross_book_cast.items()},
+            "overlapping_books": list(self.overlapping_books),
             "backwards_story_time_jumps": [
                 {"book": j.book, "chapter": j.chapter,
                  "prev": j.prev_story_time, "this": j.this_story_time}
@@ -138,7 +144,9 @@ def build_report(series_root: Path, *, threshold: float = 7.0) -> SeriesArcRepor
         book_summaries.append(_summarise_book(book_root, threshold=threshold))
 
     cross_book_cast = _cross_book_cast(book_summaries)
-    backwards = _backwards_story_time_jumps(book_summaries, books_dir)
+    overlapping = _overlapping_books(cfg)
+    backwards = _backwards_story_time_jumps(
+        book_summaries, books_dir, overlapping=overlapping)
     unresolved = _unresolved_threads(book_summaries)
     arc_score = _composite_score(book_summaries, threshold,
                                   backwards, unresolved)
@@ -150,6 +158,7 @@ def build_report(series_root: Path, *, threshold: float = 7.0) -> SeriesArcRepor
         backwards_story_time_jumps=backwards,
         unresolved_threads=unresolved,
         arc_score=arc_score,
+        overlapping_books=sorted(f"{a} ~ {b}" for a, b in overlapping),
     )
 
 
@@ -269,19 +278,50 @@ def _cross_book_cast(books: list[BookSummary]) -> dict[str, list[str]]:
     return {n: bs for n, bs in by_char.items() if len(bs) >= 2}
 
 
+def _overlapping_books(cfg) -> list[tuple[str, str]]:
+    """Pairs (earlier, later) of books in declaration order whose
+    `story_time_range`s intersect. Books without a range never overlap."""
+    out: list[tuple[str, str]] = []
+    ranged = [(b.name, b.story_time_range) for b in cfg.books
+              if b.story_time_range and len(b.story_time_range) == 2]
+    for i, (a_name, a_rng) in enumerate(ranged):
+        for b_name, b_rng in ranged[i + 1:]:
+            if a_rng[0] <= b_rng[1] and b_rng[0] <= a_rng[1]:
+                out.append((a_name, b_name))
+    return out
+
+
 def _backwards_story_time_jumps(
     books: list[BookSummary], books_dir: Path,
+    *, overlapping: list[tuple[str, str]] | None = None,
 ) -> list[StoryTimeJump]:
     """Walk every chapter in series order (book order; chapter order
     within each book) and find any ISO `story_time` value that's
     less than the previous chapter's. Lex compare works for ISO
-    dates."""
+    dates.
+
+    The first chapter of a book whose `story_time_range` overlaps the
+    previous book's is exempt: two books covering the same years (a
+    rewrite, a parallel POV) legitimately reset the clock at the
+    boundary."""
+    overlap_set = {frozenset(pair) for pair in (overlapping or [])}
     out: list[StoryTimeJump] = []
     last_st: str | None = None
+    prev_book: str | None = None
     for b in books:
         book_root = books_dir / b.name
         rows = summarize_chapters(book_root)
-        for row in sorted(rows, key=lambda r: r.chapter):
+        boundary_exempt = (
+            prev_book is not None
+            and frozenset((prev_book, b.name)) in overlap_set
+        )
+        for idx, row in enumerate(sorted(rows, key=lambda r: r.chapter)):
+            if idx == 0 and boundary_exempt:
+                st0 = row.story_time
+                if st0 is not None:
+                    last_st = st0
+                prev_book = b.name
+                continue
             st = row.story_time
             if st is None:
                 continue
@@ -291,6 +331,7 @@ def _backwards_story_time_jumps(
                     prev_story_time=last_st, this_story_time=st,
                 ))
             last_st = st
+        prev_book = b.name
     return out
 
 
@@ -408,6 +449,14 @@ def render_markdown(report: SeriesArcReport) -> str:
                          key=lambda kv: -len(kv[1]))
         for name, books in ranked[:20]:
             parts.append(f"- `{name}` — appears in {', '.join(books)}")
+
+    if report.overlapping_books:
+        parts.append("")
+        parts.append(
+            "_Overlapping story-time ranges (the clock reset at these book "
+            "boundaries is expected, not a backwards jump): "
+            + "; ".join(f"`{p}`" for p in report.overlapping_books) + "_"
+        )
 
     if report.backwards_story_time_jumps:
         parts.append("")

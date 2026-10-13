@@ -207,9 +207,11 @@ Design rules:
 
 11. **Auto-pipe research candidates into the canon-promotion queue.**
 
-    > **Hard rule: do NOT write to `shared/canon.md` from this
-    > command. Ever. The only command that writes `shared/canon.md`
-    > is `/autonovel:promote-canon`.** Research candidates go into
+    > **Hard rule: do NOT write to `shared/canon.md` (or any
+    > `books/<book>/canon.md`) from this command. Ever. The only
+    > command that writes canon is `/autonovel:promote-canon`
+    > (research-cited entries land in `shared/canon.md`).** Research
+    > candidates go into
     > the per-book queue file, where they wait for the next
     > promote-canon run. This rule exists because canon.md is the
     > single point of truth across all books in the series, and an

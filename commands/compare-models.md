@@ -12,6 +12,7 @@ reads:
   - shared/world.md
   - shared/characters.md
   - shared/canon.md
+  - books/{book}/canon.md
   - shared/events.md
   - books/{book}/voice.md
   - books/{book}/outline.md
@@ -57,7 +58,7 @@ adapter layer can mediate.
 
 3. Use `file_read` on the standard drafting context:
    `shared/world.md`, `shared/characters.md`, `shared/canon.md`,
-   `shared/events.md`, `books/{book}/voice.md`,
+   `books/{book}/canon.md`, `shared/events.md`, `books/{book}/voice.md`,
    `books/{book}/outline.md`. Pull the chapter `{chapter}`'s entry
    from the outline (story_time, events, beats). If the chapter is
    not in the outline, stop with a one-line gap message.

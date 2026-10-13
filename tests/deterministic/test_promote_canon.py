@@ -178,6 +178,8 @@ def test_classify_finds_contradiction_in_world_md_not_just_canon() -> None:
 
 
 def test_promote_simple_survivors(tmp_path: Path) -> None:
+    """Chapter-derived facts land in the BOOK canon (books/one/canon.md),
+    not shared/canon.md — book-scoped canon, 2026-10-12."""
     series = _make_series(tmp_path)
     _seed_pending(series, "one", [
         "- Tommaso speaks Latin.",
@@ -185,13 +187,96 @@ def test_promote_simple_survivors(tmp_path: Path) -> None:
     ])
     report = pc.promote(series, book="one")
     assert report.books[0].promoted == 2
+    assert report.books[0].promoted_to_book == 2
+    assert report.books[0].promoted_to_shared == 0
     assert report.books[0].conflicts == 0
-    canon_text = (series.shared / "canon.md").read_text(encoding="utf-8")
-    assert "## Promoted" in canon_text
-    assert "Tommaso speaks Latin" in canon_text
-    assert "Niccolò is a glassblower" in canon_text
+    book_canon = (series.books / "one" / "canon.md").read_text(encoding="utf-8")
+    assert book_canon.startswith("# Book canon")
+    assert "## Promoted" in book_canon
+    assert "Tommaso speaks Latin" in book_canon
+    assert "Niccolò is a glassblower" in book_canon
+    shared_text = (series.shared / "canon.md").read_text(encoding="utf-8")
+    assert "Tommaso speaks Latin" not in shared_text
     pending_text = (series.books / "one" / "pending_canon.md").read_text(encoding="utf-8")
     assert pending_text.strip() == "no new facts"
+
+
+def test_scope_series_forces_shared(tmp_path: Path) -> None:
+    series = _make_series(tmp_path)
+    _seed_pending(series, "one", ["- Tommaso speaks Latin."])
+    report = pc.promote(series, book="one", scope="series")
+    assert report.books[0].promoted_to_shared == 1
+    assert "Tommaso speaks Latin" in (series.shared / "canon.md").read_text(encoding="utf-8")
+    assert not (series.books / "one" / "canon.md").read_text(encoding="utf-8").count("Tommaso")
+
+
+def test_scope_book_forces_book_even_for_research(tmp_path: Path) -> None:
+    series = _make_series(tmp_path)
+    _seed_pending(series, "one", ["- Fugger arrived 1478 [fugger-bib] [research:venice]"])
+    report = pc.promote(series, book="one", scope="book")
+    assert report.books[0].promoted_to_book == 1
+    assert "1478" in (series.books / "one" / "canon.md").read_text(encoding="utf-8")
+
+
+def test_research_tagged_goes_to_shared_by_default(tmp_path: Path) -> None:
+    series = _make_series(tmp_path)
+    _seed_pending(series, "one", ["- Fugger arrived 1478 [fugger-bib] [research:venice]"])
+    report = pc.promote(series, book="one")
+    assert report.books[0].promoted_to_shared == 1
+    assert report.books[0].promoted_to_book == 0
+    assert "1478" in (series.shared / "canon.md").read_text(encoding="utf-8")
+
+
+def test_duplicate_detected_against_own_book_canon(tmp_path: Path) -> None:
+    series = _make_series(tmp_path)
+    (series.books / "one" / "canon.md").write_text(
+        "# Book canon\n\n- Tommaso speaks Latin (from one ch_02)\n", encoding="utf-8")
+    _seed_pending(series, "one", ["- Tommaso speaks Latin."])
+    report = pc.promote(series, book="one")
+    assert report.books[0].duplicates == 1
+    assert report.books[0].promoted == 0
+
+
+def test_contradiction_against_own_book_canon_names_that_file(tmp_path: Path) -> None:
+    series = _make_series(tmp_path)
+    (series.books / "one" / "canon.md").write_text(
+        "# Book canon\n\n- Fugger arrived in Venice 1473 (from one ch_03)\n", encoding="utf-8")
+    _seed_pending(series, "one", ["- Fugger arrived in Venice 1478 (from one ch_05)"])
+    report = pc.promote(series, book="one")
+    assert report.books[0].conflicts == 1
+    pending_text = (series.books / "one" / "pending_canon.md").read_text(encoding="utf-8")
+    assert "**Existing canon (in: books/one/canon.md):**" in pending_text
+
+
+def test_sibling_book_canon_is_not_a_constraint(tmp_path: Path) -> None:
+    """A rewrite (book `two`) may contradict book `one`'s own canon
+    freely — only shared/ and its OWN canon bind it."""
+    series = _make_series(tmp_path)
+    new_book(series, book_name="two", pov="Tom")
+    (series.books / "one" / "canon.md").write_text(
+        "# Book canon\n\n- Fugger arrived in Venice 1473 (from one ch_03)\n", encoding="utf-8")
+    _seed_pending(series, "two", ["- Fugger arrived in Venice 1478 (from two ch_01)"])
+    report = pc.promote(series, book="two")
+    br = report.books[0]
+    assert br.conflicts == 0
+    assert br.promoted_to_book == 1
+    assert "1478" in (series.books / "two" / "canon.md").read_text(encoding="utf-8")
+
+
+def test_research_supersedes_line_in_book_canon_writes_block_there(tmp_path: Path) -> None:
+    series = _make_series(tmp_path)
+    (series.books / "one" / "canon.md").write_text(
+        "# Book canon\n\n- Fugger arrived in Venice 1473 (from one ch_03)\n", encoding="utf-8")
+    _seed_pending(series, "one", [
+        "- Fugger arrived in Venice 1478 [fugger-bib] [research:venice-1479-1500]",
+    ])
+    report = pc.promote(series, book="one")
+    assert report.books[0].supersedures == 1
+    book_canon = (series.books / "one" / "canon.md").read_text(encoding="utf-8")
+    assert "## Superseded" in book_canon            # audit trail where the old line lived
+    shared_text = (series.shared / "canon.md").read_text(encoding="utf-8")
+    assert "1478" in shared_text                     # the cited fact itself is series-wide
+    assert "## Superseded" not in shared_text
 
 
 def test_research_tagged_entry_supersedes_existing_canon(tmp_path: Path) -> None:
@@ -292,7 +377,8 @@ def test_canon_line_shape_for_research_tagged(tmp_path: Path) -> None:
     pc.promote(series, book="one")
     canon = (series.shared / "canon.md").read_text(encoding="utf-8")
     assert "Foo fact (from research note venice)" in canon
-    assert "Bar fact (from one ch_02)" in canon
+    book_canon = (series.books / "one" / "canon.md").read_text(encoding="utf-8")
+    assert "Bar fact (from one ch_02)" in book_canon
 
 
 def test_re_running_with_resolved_conflicts_clears_pending(tmp_path: Path) -> None:

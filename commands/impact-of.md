@@ -8,6 +8,7 @@ allowed-tools:
   - file_read
 reads:
   - shared/canon.md
+  - books/{book}/canon.md
   - shared/research/notes/*.md
   - books/{book}/chapters/ch_*.md
 writes: []
@@ -104,7 +105,8 @@ are read-only by contract.
    Two helper shapes depending on `--source`:
 
    - **Canon-driven** (`promote-canon`, `gen-canon`): the helper
-     parses `shared/canon.md` for `## Superseded <UTC-date>`
+     parses `shared/canon.md` AND this book's `books/{book}/canon.md`
+     for `## Superseded <UTC-date>`
      blocks, extracts (prior_value, new_value) pairs, computes
      tokens unique to prior, and greps every
      `books/{book}/chapters/ch_*.md` (frontmatter-stripped) for

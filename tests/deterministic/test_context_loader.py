@@ -150,8 +150,29 @@ def test_build_context_lists_shared_and_book_files(tmp_path: Path) -> None:
     assert "shared/events.md" in bundle.shared
     assert "books/inquisitor/outline.md" in bundle.book_files
     assert "books/inquisitor/voice.md" in bundle.book_files
+    # The book's own canon is per-book context (book-scoped canon).
+    assert "books/inquisitor/canon.md" in bundle.book_files
     # Previous chapter is included when it exists.
     assert "books/inquisitor/chapters/ch_01.md" in bundle.book_files
+
+
+def test_isolated_book_reads_no_sibling_chapters(tmp_path: Path) -> None:
+    """`context: isolated` (a rewrite of a story another book tells)
+    withholds every sibling chapter even when it clears the story-time
+    gate; shared/ lore is still listed."""
+    series = _setup_two_book_series(tmp_path)
+    cfg = project_mod.load(series.project_file)
+    cfg.book_by_name("inquisitor").context = "isolated"
+    project_mod.dump(cfg, series.project_file)
+
+    bundle = build_context(series, book="inquisitor", chapter=2)
+    assert bundle.sibling_chapters == []
+    # apothecary/ch_01 (1521-12-01) would normally be readable.
+    assert "books/apothecary/chapters/ch_01.md" in bundle.excluded_spoilers
+    assert "books/apothecary/chapters/ch_02.md" in bundle.excluded_spoilers
+    assert any("isolated" in n for n in bundle.notes)
+    assert "shared/world.md" in bundle.shared
+    assert "books/inquisitor/outline.md" in bundle.book_files
 
 
 def test_sibling_spoiler_gating(tmp_path: Path) -> None:

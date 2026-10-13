@@ -10,6 +10,7 @@ reads:
   - project.yaml
   - shared/characters.md
   - shared/canon.md
+  - books/{book}/canon.md
   - books/{book}/voice.md
   - books/{book}/outline.md
   - books/{book}/chapters/ch_{chapter}.md
@@ -38,7 +39,7 @@ subplot machinery: the goal is texture and return, not arc.
    heading.
 
 2. Use `file_read` on `project.yaml`, `shared/characters.md`,
-   `shared/canon.md`, `books/{book}/voice.md`,
+   `shared/canon.md`, `books/{book}/canon.md`, `books/{book}/voice.md`,
    `books/{book}/outline.md`, and both target chapters
    (`books/{book}/chapters/ch_{plant}.md` and
    `books/{book}/chapters/ch_{payoff}.md`).

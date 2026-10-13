@@ -1,7 +1,7 @@
 ---
 name: autonovel:evaluate
 description: Score the foundation, a chapter, the whole book, or a head-to-head chapter pair.
-argument-hint: "--phase foundation --book <name> | --phase series | --chapter <N> --book <name> | --full --book <name> | --compare <N>,<M> --book <name>"
+argument-hint: "--phase foundation --book <name> | --phase series | --chapter <N> --book <name> | --full --book <name> | --compare <N>,<M> --book <name> [--vs-book <other>]"
 model_tier: heavy
 allowed-tools:
   - file_read
@@ -12,6 +12,8 @@ reads:
   - shared/world.md
   - shared/characters.md
   - shared/canon.md
+  - books/*/canon.md
+  - books/{book}/canon.md
   - shared/events.md
   - shared/period_bans.txt
   - books/{book}/voice.md
@@ -40,7 +42,9 @@ half is this command's body. Five modes:
   --chapter <N>        score a single chapter
   --full               score the whole book holistically
   --compare <N>,<M>    pick a winner between two chapters (successor to
-                       the deleted `compare_chapters.py`)
+                       the deleted `compare_chapters.py`); add
+                       `--vs-book <other>` to read M from another book
+                       (rewrite vs original)
 
 Eval logs are JSON and land under `books/{book}/eval_logs/<timestamp>_<mode>.json`,
 or `.autonovel/eval_logs/<timestamp>_series.json` for `--phase series`.
@@ -61,7 +65,10 @@ or `.autonovel/eval_logs/<timestamp>_series.json` for `--phase series`.
    `shared/period_bans.txt` if it exists; treat missing as empty.
 
 4. Load the per-book layer with `file_read`: `books/{book}/voice.md`
-   (Parts 1, 2, AND 3) and `books/{book}/outline.md`.
+   (Parts 1, 2, AND 3), `books/{book}/outline.md`, and the book's own
+   `books/{book}/canon.md` (book-scoped facts; `canon_compliance` is
+   judged against shared canon + THIS book's canon, never a sibling
+   book's).
 
 4a. **Parse Part 3 (Custom rubric) from voice.md.** Look for a
     heading exactly matching `## Part 3 — Custom rubric` (em-dash)
@@ -128,7 +135,7 @@ or `.autonovel/eval_logs/<timestamp>_series.json` for `--phase series`.
     - `project.yaml` for the books list.
     - `shared/world.md`, `shared/characters.md`, `shared/canon.md`,
       `shared/events.md`.
-    - For each book: `books/{name}/outline.md`,
+    - For each book: `books/{name}/outline.md`, `books/{name}/canon.md`,
       `books/{name}/voice.md` Part 1+2, every
       `books/{name}/chapters/ch_*.summary.md` (the continuity
       summaries — load these instead of the prose so the
@@ -367,9 +374,17 @@ or `.autonovel/eval_logs/<timestamp>_series.json` for `--phase series`.
 
 8. Mode `--compare <N>,<M>`: use `file_read` on
    `books/{book}/chapters/ch_{chapter}.md` for each of N and M (truncate
-   to ~3000 words each if longer). Pick the better one — no ties
-   allowed. Emit `{winner, winner_chapter, margin, decisive_moment,
-   winner_strength, loser_weakness, best_sentence_a, best_sentence_b}`.
+   to ~3000 words each if longer). With `--vs-book <other>`, chapter M
+   is read from `books/<other>/chapters/ch_M.md` instead — the
+   cross-book head-to-head (old chapter N of a finished book against
+   new chapter N of its rewrite is the natural progress metric for a
+   second version). Pick the better one — no ties allowed. Emit
+   `{winner, winner_chapter, winner_book, margin, decisive_moment,
+   winner_strength, loser_weakness, best_sentence_a, best_sentence_b}`
+   (`winner_book` equals `--book` unless `--vs-book` won). Judge both
+   against the SAME rubric but each against its OWN book's voice.md —
+   a rewrite in a plainer register is not penalised for not sounding
+   like the original.
 
 9. Mechanical slop penalty. For `--chapter` and `--full`, before writing
    the log, use `bash` to run

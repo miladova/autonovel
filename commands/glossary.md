@@ -9,6 +9,7 @@ allowed-tools:
 reads:
   - shared/world.md
   - shared/canon.md
+  - books/{book}/canon.md
   - shared/research/notes/*.md
   - books/{book}/glossary.md
   - books/{book}/chapters/ch_*.md
@@ -33,8 +34,8 @@ Three modes selected by `--from`, paralleling
     extracting period vocabulary from the prose + research notes):
     AI-generate `glossary.md` by walking every chapter for italic-
     formatted foreign terms, names, and titles; cross-referencing
-    `shared/research/notes/`, `shared/canon.md`, and
-    `shared/world.md` for explanations; producing a single
+    `shared/research/notes/`, `shared/canon.md`, `books/{book}/canon.md`,
+    and `shared/world.md` for explanations; producing a single
     alphabetised list with one-line definitions in the writer's
     voice (short, declarative, no parenthetical lecturing).
   - `--from user`: scaffold a starter template with a HOW-TO-EDIT

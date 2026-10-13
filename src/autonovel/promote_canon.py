@@ -1,5 +1,21 @@
 """Pure-Python promote-canon engine — moves candidate facts from
-`books/{book}/pending_canon.md` into `shared/canon.md`.
+`books/{book}/pending_canon.md` into canon.
+
+Two canon files (book-scoped canon, 2026-10-12):
+
+  - `books/{book}/canon.md` — facts THIS book's prose established. They
+    bind this book only; a sibling book (different POV, later period, or
+    a rewrite of the same story) may decide them differently.
+  - `shared/canon.md` — series-wide facts every book must respect.
+
+Routing (`scope`):
+  - "auto" (default): research-cited entries (`[research:<slug>]`, a
+    primary source behind them) → shared; everything else → book canon.
+  - "book" / "series": force every survivor into that one file.
+
+De-dup / contradiction checks run against shared canon + the book's OWN
+canon + world + characters — never against another book's canon, so a
+rewrite is free to diverge from the original.
 
 This module is the single source of truth for the promote-canon
 logic. Three callers consume it:
@@ -108,6 +124,8 @@ class BookReport:
     duplicates: int = 0
     conflicts: int = 0
     supersedures: int = 0
+    promoted_to_book: int = 0     # landed in books/{book}/canon.md
+    promoted_to_shared: int = 0   # landed in shared/canon.md
     promoted_lines: list[str] = field(default_factory=list)
     conflict_records: list[ConflictRecord] = field(default_factory=list)
     supersedure_records: list[SupersedureRecord] = field(default_factory=list)
@@ -120,6 +138,7 @@ class PromotionReport:
     books: list[BookReport] = field(default_factory=list)
     dry_run: bool = False
     no_lock: bool = False
+    scope: str = "auto"
 
     def to_dict(self) -> dict:
         out = asdict(self)
@@ -131,6 +150,22 @@ class PromotionReport:
 # -------------------------------------------------------- core API
 
 
+SCOPES = ("auto", "book", "series")
+
+
+def book_canon_path(series: SeriesLayout, book: str) -> Path:
+    return series.books / book / "canon.md"
+
+
+def _target_for(entry: "PendingEntry", *, scope: str) -> str:
+    """`"shared"` or `"book"` — which canon file a survivor lands in."""
+    if scope == "series":
+        return "shared"
+    if scope == "book":
+        return "book"
+    return "shared" if entry.research_slug else "book"
+
+
 def promote(
     series: SeriesLayout,
     *,
@@ -138,9 +173,11 @@ def promote(
     dry_run: bool = False,
     no_lock: bool = False,
     now: datetime | None = None,
+    scope: str = "auto",
 ) -> PromotionReport:
     """Promote pending canon entries for `book` (or every book if
-    None). When `dry_run`, no files are modified.
+    None). When `dry_run`, no files are modified. `scope` routes
+    survivors (see module docstring).
 
     The `no_lock` flag does NOT affect this function's file
     operations directly — it's recorded in the report for the
@@ -148,12 +185,15 @@ def promote(
     caller (the slash-command's preamble); this function just
     reads/writes files.
     """
+    if scope not in SCOPES:
+        raise ValueError(f"scope must be one of {list(SCOPES)}, got {scope!r}")
     when = now or datetime.now(timezone.utc)
     timestamp = when.strftime("%Y-%m-%d")
     report = PromotionReport(
         timestamp=when.isoformat(),
         dry_run=dry_run,
         no_lock=no_lock,
+        scope=scope,
     )
 
     book_names = _resolve_books(series, book)
@@ -165,12 +205,17 @@ def promote(
     world_text = world_path.read_text(encoding="utf-8") if world_path.is_file() else ""
     characters_text = characters_path.read_text(encoding="utf-8") if characters_path.is_file() else ""
 
-    # We accumulate one set of survivors + supersedures across all
-    # books, then write a single `## Promoted` block (and zero or
-    # more `## Superseded` blocks) at the end. Per-book pending
+    # Survivors + supersedures are grouped by TARGET FILE, then each
+    # target gets a single `## Promoted` block (and zero or more
+    # `## Superseded` blocks) appended at the end. Per-book pending
     # files get rewritten individually.
-    all_survivors: list[tuple[str, PendingEntry]] = []  # (book_name, entry)
-    all_supersedures: list[SupersedureRecord] = []
+    #   key "shared"      → shared/canon.md
+    #   key "book:<name>" → books/<name>/canon.md
+    survivors_by_target: dict[str, list[tuple[str, PendingEntry]]] = {}
+    supersedures_by_target: dict[str, list[SupersedureRecord]] = {}
+
+    def _add_survivor(target_key: str, book_name: str, entry: PendingEntry) -> None:
+        survivors_by_target.setdefault(target_key, []).append((book_name, entry))
 
     for book_name in book_names:
         book_report = BookReport(book=book_name)
@@ -183,6 +228,12 @@ def promote(
         if not entries:
             continue
 
+        own_canon_path = book_canon_path(series, book_name)
+        own_canon_text = (
+            own_canon_path.read_text(encoding="utf-8") if own_canon_path.is_file() else ""
+        )
+        own_canon_rel = f"books/{book_name}/canon.md"
+
         kept_after_classify: list[ConflictRecord] = []
         for entry in entries:
             classification = _classify(
@@ -190,23 +241,35 @@ def promote(
                 canon_text=canon_text,
                 world_text=world_text,
                 characters_text=characters_text,
+                book_canon_text=own_canon_text,
+                book_canon_rel=own_canon_rel,
             )
+            target = _target_for(entry, scope=scope)
+            target_key = "shared" if target == "shared" else f"book:{book_name}"
             if classification["kind"] == "duplicate":
                 book_report.duplicates += 1
             elif classification["kind"] == "contradiction":
                 if entry.research_slug:
                     # Research-tagged: promote, supersede prior line.
+                    # The supersedure audit block lands in the file
+                    # that held the superseded line.
                     sup = SupersedureRecord(
                         new_entry=entry,
                         superseded_line=classification["existing_line"],
                         superseded_file=classification["existing_file"],
                         rationale=classification["rationale"],
                     )
-                    all_supersedures.append(sup)
+                    sup_key = (
+                        f"book:{book_name}"
+                        if classification["existing_file"] == own_canon_rel
+                        else "shared"
+                    )
+                    supersedures_by_target.setdefault(sup_key, []).append(sup)
                     book_report.supersedure_records.append(sup)
                     book_report.supersedures += 1
-                    all_survivors.append((book_name, entry))
+                    _add_survivor(target_key, book_name, entry)
                     book_report.promoted += 1
+                    _count_target(book_report, target)
                 else:
                     conflict = ConflictRecord(
                         candidate=entry,
@@ -218,8 +281,9 @@ def promote(
                     book_report.conflict_records.append(conflict)
                     book_report.conflicts += 1
             else:  # survivor
-                all_survivors.append((book_name, entry))
+                _add_survivor(target_key, book_name, entry)
                 book_report.promoted += 1
+                _count_target(book_report, target)
 
         if dry_run:
             continue
@@ -228,31 +292,52 @@ def promote(
         new_pending = _render_pending_canon(kept_after_classify)
         pending_path.write_text(new_pending, encoding="utf-8")
 
-    if dry_run:
-        return report
-
     # Record survivor lines for the report (string form the canon
-    # file will see).
-    if all_survivors:
-        for book_name, entry in all_survivors:
+    # file will see) — in dry-run too, so the caller can show them.
+    for survivors in survivors_by_target.values():
+        for book_name, entry in survivors:
             line = _render_canon_line(entry, book_name)
             for br in report.books:
                 if br.book == book_name:
                     br.promoted_lines.append(line)
                     break
 
-    # Append survivors + supersedures to shared/canon.md.
-    if all_survivors or all_supersedures:
+    if dry_run:
+        return report
+
+    # Append survivors + supersedures to each target canon file.
+    for target_key in sorted(set(survivors_by_target) | set(supersedures_by_target)):
+        survivors = survivors_by_target.get(target_key, [])
+        supersedures = supersedures_by_target.get(target_key, [])
+        if not survivors and not supersedures:
+            continue
+        if target_key == "shared":
+            path = canon_path
+            header = "# Canon"
+        else:
+            path = book_canon_path(series, target_key.split(":", 1)[1])
+            header = "# Book canon"
+        existing = path.read_text(encoding="utf-8") if path.is_file() else ""
         appended = _render_canon_appendage(
-            survivors=all_survivors,
-            supersedures=all_supersedures,
+            survivors=survivors,
+            supersedures=supersedures,
             timestamp=timestamp,
         )
-        new_canon = canon_text.rstrip() + ("\n\n" if canon_text.strip() else "") + appended
-        canon_path.parent.mkdir(parents=True, exist_ok=True)
-        canon_path.write_text(new_canon, encoding="utf-8")
+        if existing.strip():
+            new_text = existing.rstrip() + "\n\n" + appended
+        else:
+            new_text = f"{header}\n\n" + appended
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(new_text, encoding="utf-8")
 
     return report
+
+
+def _count_target(book_report: BookReport, target: str) -> None:
+    if target == "shared":
+        book_report.promoted_to_shared += 1
+    else:
+        book_report.promoted_to_book += 1
 
 
 # -------------------------------------------------- pending parsing
@@ -350,6 +435,8 @@ def _classify(
     canon_text: str,
     world_text: str,
     characters_text: str,
+    book_canon_text: str = "",
+    book_canon_rel: str = "books/{book}/canon.md",
 ) -> dict:
     """Return one of:
       {"kind": "duplicate"}
@@ -365,6 +452,7 @@ def _classify(
         return {"kind": "survivor"}
 
     candidates = (
+        (book_canon_rel, book_canon_text),
         ("shared/canon.md", canon_text),
         ("shared/world.md", world_text),
         ("shared/characters.md", characters_text),
@@ -488,7 +576,7 @@ def _contradiction_rationale(a: str, b: str) -> str:
 
 
 def _render_canon_line(entry: PendingEntry, book_name: str) -> str:
-    """The canonical line shape that lands in shared/canon.md per
+    """The canonical line shape that lands in a canon file per
     `commands/promote-canon.md` step 5."""
     base = entry.fact_text
     if entry.shortnames:
@@ -530,9 +618,10 @@ HOW TO RESOLVE A CONFLICT
 =========================
 
 Each `## Conflict N` block below names a pending candidate that
-couldn't be promoted because it contradicts something in
-shared/canon.md, shared/world.md, or shared/characters.md. For
-each conflict, pick ONE of the three resolutions and act:
+couldn't be promoted because it contradicts something in this
+book's canon (books/<book>/canon.md), shared/canon.md,
+shared/world.md, or shared/characters.md. For each conflict, pick
+ONE of the three resolutions and act:
 
   (A) ACCEPT the new fact (replace the existing one)
       1. Open the file named in `Existing canon (in: ...)`.

@@ -282,11 +282,14 @@ def build_impact_report(book_root: Path, *, series_root: Path | None = None,
     if source_command not in canon_sources:
         return ImpactReport(source_command=source_command, supersedures=[])
     series_root = series_root or book_root.parent.parent
-    canon_path = series_root / "shared" / "canon.md"
-    if not canon_path.is_file():
-        return ImpactReport(source_command=source_command, supersedures=[])
-    canon_text = canon_path.read_text(encoding="utf-8")
-    supersedures = parse_canon_supersedures(canon_text)
+    # Supersedure audit blocks live in whichever canon file held the
+    # superseded line: series-wide `shared/canon.md` or this book's
+    # own `books/<book>/canon.md` (book-scoped canon, 2026-10-12).
+    supersedures: list[Supersedure] = []
+    for canon_path in (series_root / "shared" / "canon.md", book_root / "canon.md"):
+        if canon_path.is_file():
+            supersedures.extend(
+                parse_canon_supersedures(canon_path.read_text(encoding="utf-8")))
     if not supersedures:
         return ImpactReport(source_command=source_command, supersedures=[])
     matches: list[ChapterMatch] = []
@@ -483,7 +486,7 @@ def render_impact_markdown(report: ImpactReport, *, book: str = "",
     `/autonovel:revise --chapter N` calls."""
     if not report.supersedures:
         return (
-            "_No supersedures found in `shared/canon.md`. "
+            "_No supersedures found in `shared/canon.md` or this book's `canon.md`. "
             "If you just ran `/autonovel:promote-canon`, this means "
             "no facts were superseded — nothing to act on here._\n"
         )

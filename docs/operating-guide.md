@@ -262,8 +262,8 @@ the whole book drafted unattended.
 For each chapter the sweep runs: **draft → anachronism check →
 evaluate → if score < threshold (default 7.0), brief + revise +
 re-eval (keeps best) → promote-canon** (so each chapter's
-discoveries land in `shared/canon.md` before the next chapter
-drafts and reads it). A final `promote-canon` sweep also runs
+discoveries land in the book's `canon.md` — research-cited facts in
+`shared/canon.md` — before the next chapter drafts and reads it). A final `promote-canon` sweep also runs
 after the last chapter to catch anything still pending. Disable
 either with `--no-promote`.
 
@@ -377,8 +377,8 @@ Why this works:
 - The research notes also carry their own `## Candidate Canon
   Entries` section — concrete dated facts (e.g. "Fugger arrived
   in Venice 1478 [bib]") that the per-chapter `promote-canon`
-  step folds into `shared/canon.md` at the end of each chapter's
-  loop. So the research's *facts* land in canon (and supersede
+  step folds into `shared/canon.md` (research-cited entries are
+  series-wide) at the end of each chapter's loop. So the research's *facts* land in canon (and supersede
   any contradictory entries because of the `[research:slug]` tag)
   while the research's *texture* lands in prose.
 

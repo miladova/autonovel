@@ -584,3 +584,14 @@ def test_chapter_count_excludes_summary_files(demo_series: SeriesLayout) -> None
         f"chapter count regressed (saw summary files as chapters?): "
         f"next_step recommended {next_cmd!r}"
     )
+
+
+def test_begin_recreates_missing_session_notes_dir(demo_series: SeriesLayout) -> None:
+    """A series cloned from backup arrives without the (empty, untracked)
+    session-notes dir; the preamble self-heals it so `doctor` stays clean."""
+    import shutil
+    shutil.rmtree(demo_series.session_notes, ignore_errors=True)
+    assert not demo_series.session_notes.exists()
+    lifecycle.begin("autonovel:draft", "5 --book one", series=demo_series)
+    assert demo_series.session_notes.is_dir()
+    lifecycle.end("autonovel:draft", "5 --book one", status="ok", wrote=[], series=demo_series)

@@ -11,6 +11,7 @@ reads:
   - shared/world.md
   - shared/characters.md
   - shared/canon.md
+  - books/{book}/canon.md
   - books/{book}/seed.txt
   - books/{book}/outline.md
   - books/{book}/voice.md
@@ -61,7 +62,7 @@ refuses to clobber author-edited content).
 **Read-failure policy.** `project.yaml`, `books/{book}/outline.md`, and
 the foundation files are load-bearing — stop if `outline.md` is missing
 (there's no story spine to adapt). Treat `books/{book}/chapters/*.md`,
-`shared/canon.md`, and `books/{book}/voice.md` as best-effort
+`shared/canon.md`, `books/{book}/canon.md`, and `books/{book}/voice.md` as best-effort
 enrichment: if a read fails, note the gap and proceed. Do NOT retry on
 `file_read` errors for the best-effort inputs.
 

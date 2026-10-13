@@ -5,6 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
+import yaml
 
 from autonovel import project as project_mod
 from autonovel.housekeeping import scaffold
@@ -73,7 +74,7 @@ def test_new_book_creates_book_tree(series_root: Path) -> None:
 
     book = result.book_root
     assert book.is_dir()
-    for rel in ("seed.txt", "voice.md", "outline.md", "pending_canon.md", "state.json", "results.tsv"):
+    for rel in ("seed.txt", "voice.md", "outline.md", "canon.md", "pending_canon.md", "state.json", "results.tsv"):
         assert (book / rel).is_file(), f"missing books/one/{rel}"
     for rel in ("chapters", "briefs", "edit_logs", "eval_logs", "typeset"):
         assert (book / rel).is_dir(), f"missing books/one/{rel}/"
@@ -82,6 +83,25 @@ def test_new_book_creates_book_tree(series_root: Path) -> None:
     assert [b.name for b in cfg.books] == ["one"]
     assert cfg.books[0].pov == "Ana"
     assert cfg.books[0].story_time_range == [2020, 2021]
+    assert cfg.books[0].context == "series"
+    assert "context" not in yaml.safe_load(series.project_file.read_text(encoding="utf-8"))["books"][0]
+
+
+def test_new_book_isolated_context(series_root: Path) -> None:
+    series = SeriesLayout(root=series_root)
+    scaffold.new_book(series, book_name="retold", context="isolated")
+    cfg = project_mod.load(series.project_file)
+    assert cfg.books[0].context == "isolated"
+    assert cfg.books[0].is_isolated
+    assert yaml.safe_load(series.project_file.read_text(encoding="utf-8"))["books"][0]["context"] == "isolated"
+    with pytest.raises(scaffold.ScaffoldError):
+        scaffold.new_book(series, book_name="bad", context="whatever")
+
+
+def test_new_series_keeps_session_notes_dir_in_git(series_root: Path) -> None:
+    """An empty dir is not tracked by git, so a cloned series used to
+    arrive without .autonovel/session-notes/ and fail `doctor`."""
+    assert (series_root / ".autonovel" / "session-notes" / ".gitkeep").is_file()
 
 
 def test_new_book_rejects_duplicate(series_root: Path) -> None:

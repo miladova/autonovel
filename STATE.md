@@ -1829,7 +1829,61 @@
   viewer-blind read marks cryptic VO as NOT clear), teaser-revise (cryptic-VO
   fix). No test/green-count change. `autonovel install` re-run.
 
+- 2026-10-12 (book-scoped canon + isolated context — rewrite support):
+  pre-work for a second version of the Fugger novel in the SAME series
+  (same POV, same years, new outline / voice / pacing). Audit found two
+  structural gaps: (a) `shared/canon.md` had grown to ~45k words / ~450
+  bullets, most promoted from book-1 prose or outline (a locked coffer, a
+  favour never repaid) and read as SERIES canon by every draft; (b) the
+  story-time spoiler gate made every old chapter legal sibling context for a
+  same-range book, with no opt-out. Decisions: **canon is book-scoped** —
+  new `books/<book>/canon.md` (template + `BookLayout.canon_file`) holds
+  facts a book's prose fixed; `shared/canon.md` keeps series-wide facts
+  (history, world, research-cited). `promote_canon.py` routes
+  chapter-derived → book, `[research:*]` → shared (`--scope auto|book|series`
+  override), classifies against shared + the book's OWN canon only (a
+  rewrite may diverge from the original freely), and writes `## Superseded`
+  blocks into the file that held the old line. Readers updated together
+  (producers AND consumers): context_loader, draft / revise / evaluate /
+  compare-models / add-subplot / foreshadow / deepen-character / talk /
+  treatment / glossary / appendix / impact-of / rename-character /
+  draft-pass / revision-pass / research / import-book / help / gen-canon
+  (outline-committed facts → book half; shared half not rewritten once
+  populated) / run-pipeline (2nd book skips gen-world / gen-characters),
+  impact.py, entity_track, doctor (warn on missing book canon), TUI.
+  Migration: `autonovel canon-partition` (housekeeping/canon_partition.py)
+  moves `(from <book> ch_NN)`-tagged bullets mechanically and reports
+  untagged leftovers; `/autonovel:canon-partition` (new command, standard
+  tier) LLM-classifies them and feeds `--move-key` / `--move-section` back —
+  the LLM never hand-edits canon. **Isolated context**: `project.yaml
+  books[].context: series|isolated` (`new-book --isolated`, validated);
+  the loader withholds every sibling chapter and notes it; `draft.md` step 9
+  honours it. **Rewrite tooling**: `evaluate --compare N,M --vs-book
+  <other>` (cross-book head-to-head, `winner_book`); `series-arc` lists
+  `overlapping_books` and exempts the clock reset at a boundary between
+  books with overlapping `story_time_range`s. **Hygiene from the live
+  series audit**: `status` phase = max(state.json, project.yaml, on-disk
+  inference) so a 24-chapter book no longer shows `seed`;
+  `.autonovel/session-notes/.gitkeep` at scaffold + `_begin` self-heal
+  (empty dir untracked by git → doctor PROBLEM after clone). Docs:
+  multi-book.md (book canon, isolated, new "A rewrite" section),
+  series-layout, commands.md, templates/series/CLAUDE.md, REWRITE-PLAN §6/§7,
+  README, operating-guide, writing-a-historical-series, help topic
+  `rewrite`, FUTURE-TODOS. Tags `prior_to_new_booksupport` on both the
+  codebase and the series repo mark the state before this work. Applied to
+  the live series: 380 bullets moved (360 by tag, 11 by section, 9 by key);
+  shared/canon.md 45,538 → 3,675 words. Regression gate: **Tier 1+2 1908
+  passed, 1 skipped, 0 failed** (+33: promote_canon 8, canon_partition 10,
+  context_loader 1, series_arc 2, scaffold 2, project 1, status 3,
+  lifecycle 1, new command contract pickups).
+
 ## Tests last known green
+- Tier 1 + Tier 2 (deterministic + contracts): 2026-10-12 — **1908
+  passing, 1 skipped** (`pytest tests/deterministic tests/contracts`).
+  +33 since the 1875 mark: book-scoped canon (`promote_canon.py` routing +
+  `housekeeping/canon_partition.py` + `canon-partition` CLI), `context:
+  isolated`, series-arc overlap exemption, status phase inference,
+  session-notes self-heal, `/autonovel:canon-partition` contract pickups.
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-06-09 — **1875
   passing, 1 skipped** (`pytest tests/deterministic tests/contracts`).
   +23 since the 1852 mark: free teaser VO (`teaser/vo.py` + `teaser-vo` CLI +
@@ -2261,6 +2315,20 @@ pre-written cuts file, a minimal brief), and invokes
   on Bells-parity.
 
 ## Resume pointer
+**Book-scoped canon + isolated context (rewrite support) SHIPPED 2026-10-12.**
+The codebase and the live series (`~/books/medieval-king-maker`) are ready
+for a second version of the Fugger novel as a NEW BOOK in the same series.
+The live series' canon is already partitioned (shared ≈ history only; book-1
+inventions in `books/medieval-king-maker/canon.md`). **Next real-world step
+(needs the user):** decide the new book's short-name + write its `seed.txt`
+for the new approach (modern register / pacing), then `autonovel new-book
+<name> --pov "Jakob Fugger" --story-time-range 1471-1525 --isolated`,
+`/autonovel:voice-discovery`, `/autonovel:gen-canon --book <name>`,
+`/autonovel:gen-outline` — NOT gen-world / gen-characters. Recipe:
+`/autonovel:help rewrite` and docs/multi-book.md "A rewrite". Open:
+consider moving the series' `llm:` pins off the 4.x family for the rewrite;
+the April full-book eval was judged at light tier (haiku) and is a soft
+baseline only. Prior:
 **Phase 13 (the AI-video SHORT) SHIPPED 2026-06-08.** After Phases 11+12 the
 teaser was still incoherent because the *shape* was wrong: 180s/30 clips can't
 cohere as AI video. Phase 13 makes the default a **45–60s, ≤12-shot,

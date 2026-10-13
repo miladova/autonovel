@@ -261,6 +261,11 @@ books:
     pov: Gasparo
     story_time_range: [1518, 1524]
     status: seed
+  - name: inquisitor-retold          # a rewrite of `inquisitor`
+    pov: Tommaso
+    story_time_range: [1519, 1523]
+    status: seed
+    context: isolated                 # never reads sibling-book chapters as context
 defaults:
   chapter_target_words: 3200
   foundation_threshold: 7.5
@@ -284,7 +289,7 @@ score: 7.8
 ---
 ```
 
-The `story_time` field is the backbone of multi-book coordination: when drafting chapter X, the context loader shows every already-drafted chapter across all books with story_time less than or equal to X.
+The `story_time` field is the backbone of multi-book coordination: when drafting chapter X, the context loader shows every already-drafted chapter across all books with story_time less than or equal to X. A book with `context: isolated` in `project.yaml` (a rewrite of a story another book tells) opts out: no sibling chapter is ever shown, only `shared/` lore. Canon is book-scoped (2026-10-12): `shared/canon.md` holds series-wide facts, `books/<book>/canon.md` the facts one book's prose fixed; a book is never checked against a sibling's canon.
 
 ---
 

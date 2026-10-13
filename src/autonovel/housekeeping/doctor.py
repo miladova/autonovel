@@ -266,6 +266,11 @@ def run(series_root: Path, *, fix: bool = False, export_tools: bool = True) -> D
         for rel in ("seed.txt", "voice.md", "outline.md", "state.json"):
             if not (book.root / rel).is_file():
                 report.warnings.append(f"books/{b.name}/{rel} missing")
+        if not book.canon_file.is_file():
+            report.warnings.append(
+                f"books/{b.name}/canon.md missing — book-scoped canon (2026-10). "
+                f"Run `autonovel canon-partition` to move this book's chapter-derived "
+                f"facts out of shared/canon.md; promote-canon creates it on first use.")
         if not book.chapters.is_dir():
             if fix:
                 book.chapters.mkdir(parents=True, exist_ok=True)

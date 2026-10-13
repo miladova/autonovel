@@ -107,7 +107,8 @@ Pure mechanical. No LLM call. Light tier — runs in milliseconds.
      `/autonovel:gen-characters`.
    - When `shared/canon.md` is empty: suggest
      `/autonovel:gen-canon` to seed canon FROM the imported
-     prose.
+     prose (series-wide facts → `shared/canon.md`; the manuscript's
+     own plot facts → `books/{book}/canon.md`).
    - Then a chapter-summary backfill pass:
      `/autonovel:summarize-chapter --all --book {book}` to fill
      the per-chapter summaries that revise / brief / panel

@@ -190,6 +190,7 @@ def _load_state(series: SeriesLayout, book: str) -> dict:
         "world.md": (series.shared / "world.md").is_file(),
         "characters.md": (series.shared / "characters.md").is_file(),
         "canon.md": (series.shared / "canon.md").is_file(),
+        "book_canon.md": (book_root / "canon.md").is_file(),
         "voice.md": (book_root / "voice.md").is_file(),
         "outline.md": (book_root / "outline.md").is_file(),
         "seed.txt": (book_root / "seed.txt").is_file(),
@@ -731,6 +732,7 @@ if _TEXTUAL_AVAILABLE:
                 f"  - {tick(f.get('characters.md'))} `shared/characters.md`\n"
                 f"  - {tick(f.get('canon.md'))} `shared/canon.md`\n\n"
                 f"- **Per-book ({self.active_book})**\n"
+                f"  - {tick(f.get('book_canon.md'))} `canon.md` (book-scoped facts)\n"
                 f"  - {tick(f.get('voice.md'))} `voice.md`\n"
                 f"  - {tick(f.get('outline.md'))} `outline.md`\n"
                 f"  - {tick(f.get('seed.txt'))} `seed.txt`\n\n"

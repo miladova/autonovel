@@ -10,7 +10,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from .. import command_log, last_action, lock, project as project_mod
-from ..paths import SeriesLayout
+from ..paths import BookLayout, SeriesLayout
 
 
 @dataclass
@@ -41,7 +41,7 @@ def gather(series: SeriesLayout) -> SeriesStatus:
         bl = series.book(b.name)
         books.append(BookStatus(
             name=b.name,
-            status=_effective_book_status(bl.state_file, b.status),
+            status=_effective_book_status(series, bl, b.status),
             chapters_drafted=_count_chapters(bl.chapters),
             chapters_total=_chapters_total(bl.state_file),
             pending_canon_count=_count_pending_canon(bl.pending_canon),
@@ -72,14 +72,29 @@ def _chapters_total(state_file: Path) -> int:
         return 0
 
 
-def _effective_book_status(state_file: Path, fallback: str) -> str:
-    if not state_file.exists():
-        return fallback
+def _effective_book_status(series: SeriesLayout, book: "BookLayout", fallback: str) -> str:
+    """Most-advanced of three signals: `books/<b>/state.json :: phase`,
+    `project.yaml :: books[].status`, and the phase inferred from what
+    is actually on disk (chapters → drafting, outline/voice → foundation).
+
+    Neither state.json nor project.yaml is reliably advanced by the
+    pipeline (a 24-chapter book showed `seed` for weeks), so the on-disk
+    inference — the same one `/autonovel:next` uses — is the floor."""
+    from .lifecycle import _infer_phase, _phase_rank
+    candidates = [fallback]
+    if book.state_file.exists():
+        try:
+            data = json.loads(book.state_file.read_text(encoding="utf-8"))
+            if data.get("phase"):
+                candidates.append(str(data["phase"]))
+        except (OSError, json.JSONDecodeError):
+            pass
     try:
-        data = json.loads(state_file.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError):
-        return fallback
-    return str(data.get("phase") or fallback)
+        inferred, _n = _infer_phase(series, book.root)
+        candidates.append(inferred)
+    except OSError:
+        pass
+    return max(candidates, key=_phase_rank)
 
 
 def _count_pending_canon(path: Path) -> int:

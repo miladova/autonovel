@@ -33,6 +33,20 @@ class BookEntry:
     # Future modes welcome (e.g. "translate-imported") under the same
     # field; downstream commands check for "draft" specifically.
     mode: str = "draft"
+    # Sibling-context policy for the story-time spoiler gate
+    # (`context_loader.py`):
+    #   "series" (default): other books' chapters whose story_time is
+    #     <= this chapter's are legal drafting context.
+    #   "isolated": NO sibling-book chapter is ever loaded as context.
+    #     For a book that re-tells the same story as an existing book
+    #     (a rewrite / second version) — the old prose must not anchor
+    #     the new draft. Shared lore (world, characters, shared canon,
+    #     events, research) is still read.
+    context: str = "series"
+
+    @property
+    def is_isolated(self) -> bool:
+        return self.context == "isolated"
 
     def to_dict(self) -> dict[str, Any]:
         d: dict[str, Any] = {"name": self.name}
@@ -49,6 +63,8 @@ class BookEntry:
             d["author"] = self.author
         if self.mode != "draft":
             d["mode"] = self.mode
+        if self.context != "series":
+            d["context"] = self.context
         return d
 
     def display_title(self, fallback: str | None = None) -> str:
@@ -159,6 +175,7 @@ class ProjectConfig:
 
 REQUIRED_FIELDS = ("series_name",)
 LLM_REQUIRED = ("heavy", "standard", "light")
+BOOK_CONTEXT_MODES = ("series", "isolated")
 
 
 class ProjectValidationError(ValueError):
@@ -203,6 +220,7 @@ def _from_dict(raw: dict[str, Any]) -> ProjectConfig:
                 subtitle=b.get("subtitle"),
                 author=b.get("author"),
                 mode=b.get("mode", "draft"),
+                context=b.get("context", "series"),
             )
         )
 
@@ -249,4 +267,8 @@ def validate(cfg: ProjectConfig) -> list[str]:
                 problems.append(
                     f"book `{b.name}` story_time_range must be [start, end] with start<=end"
                 )
+        if b.context not in BOOK_CONTEXT_MODES:
+            problems.append(
+                f"book `{b.name}` context must be one of {list(BOOK_CONTEXT_MODES)}, got {b.context!r}"
+            )
     return problems

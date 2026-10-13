@@ -13,6 +13,7 @@ reads:
   - shared/world.md
   - shared/characters.md
   - shared/canon.md
+  - books/{book}/canon.md
   - shared/period_bans.txt
   - shared/research/notes/*.md
   - books/{book}/voice.md
@@ -23,6 +24,7 @@ reads:
   - books/{book}/eval_logs/ch{chapter:02d}_eval.json
   - books/{book}/briefs/conversation.md
 writes:
+  - books/{book}/canon.md
   - books/{book}/edit_logs/ch{chapter:02d}_anachronism.md
   - books/{book}/briefs/ch{chapter:02d}.md
   - books/{book}/briefs/conversation.md
@@ -153,7 +155,8 @@ the whole sweep on a single missing input.
       books/{book}/chapters/ch_{N:02d}.md shared/period_bans.txt`
       for the deterministic half. Then load
       `books/{book}/chapters/ch_{N:02d}.md`,
-      `shared/world.md`, `shared/canon.md` and run an LLM semantic
+      `shared/world.md`, `shared/canon.md`, `books/{book}/canon.md`
+      and run an LLM semantic
       pass for concept/metaphor anachronism (the same logic
       `/autonovel:check-anachronism` carries out). Combine the
       regex hits and the LLM hits into a report at
@@ -226,7 +229,8 @@ the whole sweep on a single missing input.
       pipeline atomically — same logic the slash-command's body
       runs (see `commands/promote-canon.md`) — so per-chapter
       inline promotion lets each revision's discoveries land in
-      `shared/canon.md` before the next chapter's revise reads
+      the book's `books/{book}/canon.md` (research-cited facts in
+      `shared/canon.md`) before the next chapter's revise reads
       canon.
 
       Mirrors the per-chapter promote-canon that draft-pass
@@ -397,6 +401,7 @@ can enumerate them):
 Reads:
 - `project.yaml`
 - `shared/world.md`, `shared/characters.md`, `shared/canon.md`
+- `books/{book}/canon.md` (this book's own canon)
 - `shared/period_bans.txt`
 - `books/{book}/voice.md`, `books/{book}/outline.md`
 - `books/{book}/chapters/ch_{chapter}.md` (per chapter in range)

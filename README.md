@@ -291,7 +291,7 @@ renaissance-europe/
   shared/
     world.md               # filled in later by /autonovel:gen-world
     characters.md
-    canon.md               # the hard-fact database
+    canon.md               # series-wide hard facts (each book also gets its own books/<name>/canon.md)
     events.md              # inter-book event ledger
     period_bans.txt        # period-anachronism word list (pre-seeded for 1400-1600)
     research/              # forced URLs and notes
@@ -451,7 +451,7 @@ same command N times:
 
 | Command | What it batches |
 |---|---|
-| `/autonovel:draft-pass --chapters 1-10` | "Write the rest of the book." Per chapter: draft → anachronism check → evaluate → if score < threshold (default 7.0; tunable via `project.yaml::defaults.chapter_threshold` or per-call `--retry-below`), brief + revise + re-eval (keep best). At sweep end: promote pending canon into `shared/canon.md`. Add `--deep` to also run reader-panel + Opus review at the end and surface the resulting flagged-chapter list. Sequential. |
+| `/autonovel:draft-pass --chapters 1-10` | "Write the rest of the book." Per chapter: draft → anachronism check → evaluate → if score < threshold (default 7.0; tunable via `project.yaml::defaults.chapter_threshold` or per-call `--retry-below`), brief + revise + re-eval (keep best). At sweep end: promote pending canon (chapter-derived facts → the book's own `canon.md`; research-cited → `shared/canon.md`). Add `--deep` to also run reader-panel + Opus review at the end and surface the resulting flagged-chapter list. Sequential. |
 | `/autonovel:revision-pass --chapters 1-10` | The deeper revision pass. Sweeps `check-anachronism → brief → revise → evaluate` across the range; add `--parallel [N]` (default 3) for speed. Use after `draft-pass` (or after any change that needs deepening). |
 | `/autonovel:compare-models --chapter 5 --models claude-opus-4-7,claude-sonnet-4-6` | A/B-draft the same chapter with two models in parallel, judge head-to-head, write verdict to `eval_logs/`. |
 

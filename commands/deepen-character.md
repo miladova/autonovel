@@ -10,6 +10,7 @@ reads:
   - project.yaml
   - shared/characters.md
   - shared/canon.md
+  - books/{book}/canon.md
   - books/{book}/voice.md
   - books/{book}/outline.md
   - books/{book}/chapters/ch_{chapter}.md
@@ -43,7 +44,7 @@ scene.
    lines attributed to them but the fewest in-scene gestures).
 
 2. Use `file_read` on `project.yaml`, `shared/characters.md`,
-   `shared/canon.md`, and `books/{book}/voice.md`. Confirm the
+   `shared/canon.md`, `books/{book}/canon.md`, and `books/{book}/voice.md`. Confirm the
    character exists. If not, stop and suggest
    `/autonovel:add-character --name <name>`.
 

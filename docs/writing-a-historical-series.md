@@ -201,9 +201,13 @@ After every drafting session, observations land in
 ```
 
 This walks every book's pending_canon.md, dedupes against
-`shared/canon.md`, parks any contradictions under a `# Conflicts`
-header, and merges the rest. It's single-threaded across the series
-(see the `.autonovel/in-progress.lock` discipline in `multi-book.md`).
+`shared/canon.md` and the book's own `books/<name>/canon.md`, parks any
+contradictions under a `# Conflicts` header, and merges the rest —
+chapter-derived facts into the book's `canon.md` (they bind that book
+only), research-cited facts into `shared/canon.md`. It's single-threaded
+across the series (see the `.autonovel/in-progress.lock` discipline in
+`multi-book.md`). Writing a second version of one of these books? See
+"A rewrite" in `multi-book.md`.
 
 ## 10. Cross-book event coordination
 

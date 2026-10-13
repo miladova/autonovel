@@ -10,6 +10,7 @@ allowed-tools:
 reads:
   - project.yaml
   - shared/canon.md
+  - books/{book}/canon.md
   - shared/characters.md
   - shared/world.md
   - books/{book}/voice.md
@@ -75,7 +76,8 @@ authoritative.
 
 2. **Read context.** Use `file_read` on:
    - `project.yaml` (book entry, defaults).
-   - `shared/canon.md` and `shared/characters.md` (cast registry —
+   - `shared/canon.md`, `books/{book}/canon.md` (this book's own
+     established facts) and `shared/characters.md` (cast registry —
      resolves who `Jakob`, `Niccolò`, etc. actually are).
    - `shared/world.md` for setting cues when the user's question
      touches geography / institutions / period.

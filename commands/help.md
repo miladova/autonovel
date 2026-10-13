@@ -27,7 +27,7 @@ per-topic. Both are needed.
 Parse `$ARGUMENTS` to one of: empty (overview), or one of the
 canonical topics below. Anything else: print "no help topic
 `<input>`; pick from: art, foundation, drafting, revising, typeset,
-research, front-matter, sweeps, tui, cli, next-steps" and stop.
+research, rewrite, front-matter, sweeps, tui, cli, next-steps" and stop.
 
 For each mode, print a self-contained chat block matching the
 shape below verbatim. The blocks are intentionally concrete:
@@ -77,6 +77,10 @@ workflow. Topics:
                  docs/teaser-craft.md + docs/teaser-render-providers.md.
   research     — research --from-seed / promote-canon /
                  impact-of / research --query.
+  rewrite      — a second version of a story a finished book
+                 already tells: new-book --isolated, book-scoped
+                 canon (canon-partition), evaluate --compare
+                 --vs-book, which foundation steps to skip.
   sweeps       — multi-chapter operations: draft-pass,
                  revision-pass, summarize-chapter --stale.
   tui          — `autonovel tui` long-running terminal browser.
@@ -182,7 +186,8 @@ Order matters; each step reads what previous steps wrote:
   3. /autonovel:voice-discovery --book <name>
         → books/<name>/voice.md (Parts 1-4)
   4. /autonovel:gen-canon --book <name>
-        → shared/canon.md (hard facts)
+        → shared/canon.md (series-wide hard facts) +
+          books/<name>/canon.md (this book's outline facts)
   5. /autonovel:gen-outline --book <name>
         → books/<name>/outline.md (chapter beats)
   6. /autonovel:evaluate --phase foundation --book <name>
@@ -397,6 +402,48 @@ fiction):
 
   /autonovel:art-curate --book <name> --surface cover \
       --provider wikimedia
+```
+
+============================== TOPIC: rewrite =====================
+
+```
+# Rewrite — a second version of a story a finished book already tells
+
+Same world, same cast, same years; a different approach to the book
+(new outline, new voice, new pacing). It is a NEW BOOK in the SAME
+series, with two guards so the old book cannot leak into the new one.
+
+  0. (once per series, before the new book) partition canon:
+     /autonovel:canon-partition --to-book <old-book>
+        Moves the old book's chapter-derived facts out of
+        shared/canon.md into books/<old-book>/canon.md and asks
+        you to classify any untagged leftovers (real history stays
+        shared; the old book's plot inventions move). Without this
+        the rewrite is bound by the original's plot choices.
+
+  1. autonovel new-book <new-name> --pov "<same POV>" \
+        --story-time-range <same years> --isolated
+        `context: isolated` — /autonovel:draft never reads the old
+        book's chapters as sibling context (they would otherwise all
+        clear the story-time gate and anchor the new prose).
+
+  2. Write books/<new-name>/seed.txt for the NEW approach (register,
+     pacing, structure, what to keep, what to drop).
+
+  3. Foundation — skip the series-scoped steps:
+       /autonovel:voice-discovery --book <new-name>   (fresh voice.md)
+       /autonovel:gen-canon --book <new-name>         (book half only)
+       /autonovel:gen-outline --book <new-name>
+     Do NOT re-run gen-world / gen-characters — they would rewrite
+     the shared files the old book was drafted against.
+
+  4. Draft as usual (draft / draft-pass). Measure against the
+     original with the cross-book head-to-head:
+       /autonovel:evaluate --compare N,N --book <new-name> \
+                           --vs-book <old-book>
+
+  /autonovel:series-arc treats the two books' overlapping ranges as
+  expected (no backwards-jump penalty at the boundary).
 ```
 
 ============================== TOPIC: front-matter ================

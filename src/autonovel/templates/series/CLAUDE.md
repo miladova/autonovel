@@ -22,7 +22,7 @@ project.yaml             # series config: genre, period, llm tier mapping
 shared/
   world.md               # universe-level rules
   characters.md          # cast registry (every named character)
-  canon.md               # hard-fact database — append-only via /autonovel:promote-canon
+  canon.md               # series-wide hard facts (history, world rules) — append-only via /autonovel:promote-canon
   events.md              # inter-book event ledger (story_time + rendered_in)
   timeline.md
   period_bans.txt        # forbidden vocabulary (period fiction)
@@ -35,7 +35,8 @@ books/<book>/
   seed.txt               # the user's pitch — authoritative input
   voice.md               # Part 1: generic guardrails. Part 2: book-specific fingerprint
   outline.md             # generated; structure across chapters
-  pending_canon.md       # candidate canon — flushed into shared/canon.md by promote-canon
+  canon.md               # book-scoped canon — facts THIS book's chapters fixed; binds this book only
+  pending_canon.md       # candidate canon — promote-canon routes into canon.md (or shared/ if research-cited)
   chapters/ch_NN.md      # the prose
   briefs/                # generated revision briefs
   edit_logs/             # adversarial-edit + check-anachronism reports
@@ -56,11 +57,15 @@ books/<book>/
    acting *as* one of those commands. Each command owns a lock,
    checkpoint, and log entry; freelance edits skip all three.
 
-2. **`shared/canon.md` is append-only via `/autonovel:promote-canon`.**
+2. **Canon files are append-only via `/autonovel:promote-canon`.**
    Drafting and revision append observations to
-   `books/<book>/pending_canon.md`. Promotion is single-threaded
-   across the series and parks contradictions under a `# Conflicts`
-   header for human resolution. Never optimistically merge.
+   `books/<book>/pending_canon.md`. Promotion routes chapter-derived
+   facts into the book's own `books/<book>/canon.md` and research-cited
+   facts into `shared/canon.md`; it is single-threaded across the
+   series and parks contradictions under a `# Conflicts` header for
+   human resolution. Never optimistically merge. A book's canon binds
+   that book only — a sibling book or a rewrite (`context: isolated`
+   in `project.yaml`) is never checked against it.
 
 3. **Chapter renumbering** after `/autonovel:merge-chapters`,
    `/autonovel:remove-chapter`, or `/autonovel:reorder` runs by

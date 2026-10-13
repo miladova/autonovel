@@ -2,8 +2,9 @@
 
 A `series` in autonovel is a single git-versioned directory that holds
 a `project.yaml`, a `shared/` lore directory, and one or more `books/`.
-Books share the world, characters, canon, events, and research; each
-owns its own outline, voice, chapters, and pending canon.
+Books share the world, characters, series-wide canon, events, and
+research; each owns its own outline, voice, chapters, book-scoped canon,
+and pending canon.
 
 ## Layout
 
@@ -27,7 +28,8 @@ my-series/
       seed.txt
       voice.md               # Part 1 generic guardrails + Part 2 fingerprint
       outline.md
-      pending_canon.md       # parked here; promote-canon merges to shared/
+      canon.md               # book-scoped canon — facts THIS book's prose fixed
+      pending_canon.md       # parked here; promote-canon routes to canon.md / shared/
       chapters/ch_01.md … ch_NN.md
       briefs/                # generated revision briefs
       edit_logs/             # adversarial-edit reports
@@ -52,7 +54,8 @@ its voice, its outline, its chapter prose — belongs in `books/<name>/`.
 |---|---|---|
 | World rules, technology limits, magic costs | `shared/world.md` | `/autonovel:gen-world`, `/autonovel:add-source` |
 | Cast registry (every named character) | `shared/characters.md` | `/autonovel:gen-characters`, `/autonovel:add-character`, `/autonovel:rename-character` |
-| Hard facts confirmed across the series | `shared/canon.md` | `/autonovel:gen-canon`, `/autonovel:promote-canon` |
+| Hard facts true in every book (history, world rules, research-cited) | `shared/canon.md` | `/autonovel:gen-canon`, `/autonovel:promote-canon` (research-cited entries) |
+| Facts one book's outline / prose committed to (bind that book only) | `books/<name>/canon.md` | `/autonovel:gen-canon --book`, `/autonovel:promote-canon` (chapter-derived entries), `/autonovel:canon-partition` |
 | Inter-book event ledger (what happened when) | `shared/events.md` | hand-edited; validated by `src/autonovel/validators/events.py` |
 | Per-book outline | `books/<name>/outline.md` | `/autonovel:gen-outline` |
 | Per-book voice fingerprint | `books/<name>/voice.md` | `/autonovel:voice-discovery` |
@@ -79,6 +82,17 @@ event stays excluded.
 This means a writer can draft `tiny-inquisitor/ch_05` (story-time
 1521-12-04) with full visibility into `tiny-apothecary/ch_02`
 (story-time 1521-12-01) but never the reverse.
+
+### Opting a book out: `context: isolated`
+
+A book entry in `project.yaml` may carry `context: isolated`
+(`autonovel new-book <name> --isolated`). The loader then withholds
+**every** sibling-book chapter regardless of story time, and
+`/autonovel:draft` skips its sibling-context step; `shared/` lore is
+still read. This is for a book that re-tells a story another book in
+the series already tells — a rewrite, a second version — where the old
+chapters would all clear the story-time gate and anchor the new draft
+on exactly the prose being replaced. The default is `context: series`.
 
 ## The events ledger
 
@@ -107,19 +121,39 @@ Validator runs cleanly on parse; cross-consistency check
 ## Promoting canon
 
 Drafting commands append observations to
-`books/<name>/pending_canon.md`. They never write `shared/canon.md`
+`books/<name>/pending_canon.md`. They never write a canon file
 directly — that's `/autonovel:promote-canon`'s job.
 
-Promotion handles three classes:
+Canon is **book-scoped**. Two files:
 
-1. **Compatible.** Pending entry doesn't contradict anything in canon
-   → merged.
-2. **Duplicate.** Already in canon, possibly worded differently →
-   dropped (logged to `edit_logs/`).
-3. **Contradiction.** Pending entry conflicts with canon → parked
-   under a `# Conflicts` header in
-   `books/<name>/pending_canon.md` for human resolution. Never
-   merged optimistically.
+- `shared/canon.md` — facts true in every book: real history, world
+  rules, fixed biography, geography, institutions. Research-cited
+  pending entries (`[research:<slug>]`) land here.
+- `books/<name>/canon.md` — facts this book's chapters established.
+  Chapter-derived pending entries land here. They bind this book only:
+  a sibling book, or a rewrite of the same story, may decide them
+  differently and is never checked against them.
+
+`--scope book|series` forces one target. Promotion classifies each
+pending entry against shared canon + the book's **own** canon + world +
+characters:
+
+1. **Compatible.** Pending entry doesn't contradict anything → merged
+   into its target file under a `## Promoted <date>` heading.
+2. **Duplicate.** Already in either canon file, possibly worded
+   differently → dropped.
+3. **Contradiction.** Pending entry conflicts → parked under a
+   `# Conflicts` header in `books/<name>/pending_canon.md` for human
+   resolution (the conflict block names which file holds the existing
+   line). Never merged optimistically. A research-cited entry instead
+   wins and leaves a `## Superseded` audit block in the file that held
+   the old line.
+
+A series created before book-scoped canon has every fact in
+`shared/canon.md`. `/autonovel:canon-partition --to-book <old-book>`
+moves the tagged chapter-derived bullets out mechanically and
+classifies the untagged leftovers (history stays, plot inventions
+move). Run it once before adding a sibling book.
 
 The `.autonovel/in-progress.lock` written by every command's preamble
 is the cross-book race mitigation: two terminals can draft different
@@ -139,6 +173,36 @@ recipe is:
 
 Steps 2–3 can run book-by-book; the spoiler gate keeps the revisions
 from leaking future-book information into past-book chapters.
+
+## A rewrite: the same story as a second book
+
+A second version of a finished book — same POV, same years, a
+different approach to the whole novel — is the degenerate multi-book
+case: every old chapter clears the story-time gate and the old book's
+promoted facts read as series canon. Two guards make it a clean start:
+
+1. **Partition canon** once: `/autonovel:canon-partition --to-book
+   <old-book>`. The old book's plot inventions become its own
+   `books/<old-book>/canon.md`; real history stays shared and binds the
+   rewrite too.
+2. **Isolate the new book**: `autonovel new-book <new> --pov "<same>"
+   --story-time-range <same> --isolated`.
+
+Then write a fresh `seed.txt` for the new approach and run only the
+per-book foundation steps — `voice-discovery`, `gen-canon --book <new>`,
+`gen-outline`. Do **not** re-run `gen-world` / `gen-characters`; they
+regenerate the shared files the old book was drafted against
+(`/autonovel:run-pipeline` already skips them when the shared layer is
+populated). The period-bans list is shared and still applies; the
+register lever for "more modern language" is the new book's
+`voice.md` (Parts 1–3) and `seed.txt` §6, both per-book.
+
+Progress is measured with the cross-book head-to-head,
+`/autonovel:evaluate --compare N,N --book <new> --vs-book <old>`, which
+judges each chapter against its own book's voice. `/autonovel:series-arc`
+reads the two books' overlapping `story_time_range`s as expected and
+does not count the clock reset at the boundary as a backwards jump.
+`/autonovel:help rewrite` prints this recipe.
 
 ## Multi-book pipeline runs
 

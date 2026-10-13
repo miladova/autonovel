@@ -119,6 +119,13 @@ class BookLayout:
         return self.root / "pending_canon.md"
 
     @property
+    def canon_file(self) -> Path:
+        """Book-scoped canon: facts this book's prose/outline established
+        that bind THIS book only. Series-wide facts stay in
+        `shared/canon.md`."""
+        return self.root / "canon.md"
+
+    @property
     def state_file(self) -> Path:
         return self.root / "state.json"
 

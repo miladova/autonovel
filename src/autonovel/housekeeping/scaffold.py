@@ -84,6 +84,10 @@ def new_series(root: Path, *, series_name: str, genre: str = "general") -> NewSe
     series.autonovel.mkdir(parents=True, exist_ok=True)
     series.checkpoints.mkdir(parents=True, exist_ok=True)
     series.session_notes.mkdir(parents=True, exist_ok=True)
+    keep = series.session_notes / ".gitkeep"
+    if not keep.exists():
+        keep.write_text("", encoding="utf-8")
+        created.append(keep)
     series.books.mkdir(parents=True, exist_ok=True)
     created.extend([series.autonovel, series.checkpoints, series.session_notes, series.books])
 
@@ -119,7 +123,8 @@ def _link_agent_aliases(root: Path, created: list[Path]) -> None:
 
 
 def new_book(series: SeriesLayout, *, book_name: str, pov: str | None = None,
-             story_time_range: list[int] | None = None) -> NewBookResult:
+             story_time_range: list[int] | None = None,
+             context: str = "series") -> NewBookResult:
     _validate_name(book_name, "book")
     cfg = project_mod.load(series.project_file)
     if cfg.book_by_name(book_name) is not None:
@@ -135,11 +140,16 @@ def new_book(series: SeriesLayout, *, book_name: str, pov: str | None = None,
     _copy_tree(tmpl, book_root, created)
     _write_book_state(book_root / "state.json", book_name)
 
+    if context not in project_mod.BOOK_CONTEXT_MODES:
+        raise ScaffoldError(
+            f"context must be one of {list(project_mod.BOOK_CONTEXT_MODES)}, got {context!r}"
+        )
     cfg.books.append(BookEntry(
         name=book_name,
         pov=pov,
         story_time_range=story_time_range,
         status="seed",
+        context=context,
     ))
     project_mod.dump(cfg, series.project_file)
 

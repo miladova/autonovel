@@ -11,6 +11,31 @@ to start.
 
 ## Near-term — pull into the next PR
 
+- **Book-scoped canon + isolated context — rewrite support (shipped
+  2026-10-12).** Pre-work for a second version of the Fugger novel in the
+  same series. (1) **Canon is book-scoped**: `books/<book>/canon.md` (new
+  template file + `BookLayout.canon_file`) holds the facts a book's prose
+  fixed; `shared/canon.md` keeps series-wide facts. `promote_canon.py`
+  routes chapter-derived → book, research-cited → shared (`--scope`
+  override), classifies against shared + the book's OWN canon only, and
+  writes `## Superseded` blocks into whichever file held the old line.
+  `context_loader`, draft/revise/evaluate/+15 command bodies, impact-of,
+  entity-track, doctor, TUI read both. (2) `autonovel canon-partition` +
+  `/autonovel:canon-partition` migrate an old series (provenance-tagged
+  bullets move mechanically; the LLM classifies untagged leftovers via
+  `--move-key` / `--move-section`). (3) `project.yaml books[].context:
+  isolated` (`new-book --isolated`) — the loader withholds every sibling
+  chapter; `draft.md` step 9 honours it. (4) `evaluate --compare N,M
+  --vs-book <other>` cross-book head-to-head; `series-arc` exempts the
+  clock reset between books with overlapping `story_time_range`s. (5)
+  Hygiene: `status` infers phase from disk (a drafted book no longer
+  shows `seed`); `.autonovel/session-notes/.gitkeep` + `_begin`
+  self-heal (doctor PROBLEM on cloned series). `/autonovel:help rewrite`.
+  Tier 1+2 1875 → 1908. **Still open:** `gen-canon` routing is
+  LLM-judged (no mechanical check that a book-canon bullet isn't plain
+  history); a `--vs-book` eval log has no dashboard surface yet; the
+  repo's default model pins are still the 4.x family.
+
 - **Teaser VO synthesis + book concreteness review (shipped 2026-06-09).**
   Two follow-ups from the Phase-13 short. (1) **Free VO/TTS** — new
   `teaser/vo.py` + `teaser-vo` CLI synthesizes the voiceover spine: `stub`

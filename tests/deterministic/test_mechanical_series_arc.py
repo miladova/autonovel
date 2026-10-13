@@ -140,6 +140,44 @@ def test_build_report_backwards_story_time_jumps(series: Path) -> None:
     assert j.book == "a" and j.chapter == 3
 
 
+def test_overlapping_books_do_not_count_boundary_reset_as_backwards(series: Path) -> None:
+    """Two books whose project.yaml ranges overlap (a rewrite, a parallel
+    POV) legitimately reset the clock at the book boundary. Jumps
+    INSIDE either book are still reported."""
+    _seed_book(series, "a", chapters={
+        1: {"story_time": "1473-09-01"},
+        2: {"story_time": "1525-12-01"},
+    })
+    _seed_book(series, "b", chapters={
+        1: {"story_time": "1473-09-01"},   # boundary reset — exempt
+        2: {"story_time": "1480-01-01"},
+        3: {"story_time": "1475-01-01"},   # real in-book backwards jump
+    })
+    cfg = project_mod.load(series / "project.yaml")
+    for b in cfg.books:
+        b.story_time_range = [1471, 1525]
+    project_mod.dump(cfg, series / "project.yaml")
+
+    report = build_report(series)
+    assert report.overlapping_books == ["a ~ b"]
+    assert [(j.book, j.chapter) for j in report.backwards_story_time_jumps] == [("b", 3)]
+    md = render_markdown(report)
+    assert "Overlapping story-time ranges" in md
+    assert report.to_dict()["overlapping_books"] == ["a ~ b"]
+
+
+def test_non_overlapping_books_still_report_boundary_jump(series: Path) -> None:
+    _seed_book(series, "a", chapters={1: {"story_time": "1500-01-01"}})
+    _seed_book(series, "b", chapters={1: {"story_time": "1490-01-01"}})
+    cfg = project_mod.load(series / "project.yaml")
+    cfg.books[0].story_time_range = [1500, 1510]
+    cfg.books[1].story_time_range = [1490, 1495]
+    project_mod.dump(cfg, series / "project.yaml")
+    report = build_report(series)
+    assert report.overlapping_books == []
+    assert [(j.book, j.chapter) for j in report.backwards_story_time_jumps] == [("b", 1)]
+
+
 def test_build_report_above_threshold_count(series: Path) -> None:
     _seed_book(series, "a", chapters={
         1: {"score": 7.5},

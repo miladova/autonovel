@@ -12,7 +12,7 @@ demo/
     last-action.json              # written after the first command runs
     command-log.jsonl             # append-only
     checkpoints/                  # one dir per destructive command
-    session-notes/
+    session-notes/                # kept in git via .gitkeep
   shared/
     world.md
     characters.md
@@ -31,6 +31,7 @@ demo/
       seed.txt
       voice.md
       outline.md
+      canon.md                      # book-scoped canon (this book's own facts)
       pending_canon.md
       state.json
       results.tsv

@@ -74,7 +74,15 @@ should be valid per `autonovel mechanical` — run
    b. If the requested phase includes `foundation` and the state says
       `phase < drafting`: route through the five foundation commands
       until `foundation_score > 7.5 AND lore_score > 7.0` or after
-      20 iterations, whichever comes first. Print the next
+      20 iterations, whichever comes first. **Second and later books
+      in a series skip the series-scoped steps** — `gen-world`,
+      `gen-characters` and the shared half of `gen-canon` are only run
+      when `shared/world.md` / `shared/characters.md` /
+      `shared/canon.md` are still template stubs; a populated shared
+      layer was drafted against by the earlier book and must not be
+      regenerated under it. For such a book run only `voice-discovery`,
+      `gen-canon --book {book}` (book-scoped half) and `gen-outline`.
+      Print the next
       slash-command invocation and stop — routing preserves lock and
       checkpoint guarantees of the target command. Do not shell out
       to `claude -p` from within `bash`; the user (or the outer

@@ -1,7 +1,7 @@
 ---
 name: autonovel:promote-canon
-description: Promote pending canon entries from every book's pending_canon.md into shared/canon.md.
-argument-hint: "[--book <short-name>] [--dry-run]"
+description: Promote pending canon entries from every book's pending_canon.md into canon — chapter-derived facts into that book's canon.md, research-cited facts into shared/canon.md.
+argument-hint: "[--book <short-name>] [--dry-run] [--scope auto|book|series]"
 model_tier: standard
 allowed-tools:
   - file_read
@@ -9,10 +9,12 @@ allowed-tools:
 reads:
   - project.yaml
   - shared/canon.md
+  - books/*/canon.md
   - shared/world.md
   - shared/characters.md
   - books/*/pending_canon.md
 writes:
+  - books/*/canon.md
   - shared/canon.md
   - books/*/pending_canon.md
 context_mode: series
@@ -20,24 +22,34 @@ context_mode: series
 
 <purpose>
 Move candidate facts out of per-book scratchpads
-(`books/{book}/pending_canon.md`) and into the series-wide
-`shared/canon.md`. This is the one command that writes `shared/canon.md`
-— `/autonovel:revise`, `/autonovel:draft`, and every other chapter
-command are forbidden from editing it directly (§19), because two books
+(`books/{book}/pending_canon.md`) and into canon. **Canon is
+book-scoped (2026-10-12):** a chapter-derived fact lands in the book's
+own `books/{book}/canon.md` — it binds that book only, so a sibling book
+(a different POV, a later period, or a *rewrite of the same story*) is
+free to decide it differently. Only research-cited facts
+(`[research:<slug>]`, a primary source behind them) land in the
+series-wide `shared/canon.md`. `--scope book|series` forces one target.
+
+This is the one command that writes either canon file —
+`/autonovel:revise`, `/autonovel:draft`, and every other chapter
+command are forbidden from editing them directly (§19), because two books
 drafting chapters in parallel both appending to the same file is a
 cross-book race condition.
 
 Single-threading is enforced by `.autonovel/in-progress.lock` (acquired
 by the preamble); inside the critical section the command:
 1. reads every pending file,
-2. de-duplicates against existing canon,
+2. de-duplicates against existing canon (`shared/canon.md` + the book's
+   OWN `books/{book}/canon.md` + world + characters — never another
+   book's canon),
 3. rejects contradictions,
-4. appends the survivors to `shared/canon.md` with provenance
-   (which book / chapter proposed them),
+4. appends the survivors to `books/{book}/canon.md` (chapter-derived)
+   or `shared/canon.md` (research-cited) with provenance (which book /
+   chapter proposed them),
 5. empties every pending file it consumed.
 
-The preamble's checkpoint captures both `shared/canon.md` and the
-pending files, so `autonovel rollback` undoes the whole promotion.
+The preamble's checkpoint captures both canon files and the pending
+files, so `autonovel rollback` undoes the whole promotion.
 </purpose>
 
 <workflow>
@@ -55,18 +67,23 @@ pending files, so `autonovel rollback` undoes the whole promotion.
 
 1. Parse `$ARGUMENTS`. `--book <short-name>` restricts the sweep to
    one book's pending file. `--dry-run` prints what would be
-   promoted without writing. No positional arguments.
+   promoted without writing. `--scope auto|book|series` (default
+   `auto`) routes survivors: auto = research-cited → `shared/canon.md`,
+   everything else → `books/{book}/canon.md`. No positional arguments.
 
 2. **Invoke the helper.** Use the `Bash` tool to run:
 
    ```
-   autonovel _promote-canon [--book <name>] [--dry-run] --format json
+   autonovel _promote-canon [--book <name>] [--dry-run] [--scope auto|book|series] --format json
    ```
 
    The CLI does steps 3–8 inline (parse pending, classify against
-   canon/world/characters, emit `## Promoted` and `## Superseded`
-   blocks in `shared/canon.md`, rewrite `pending_canon.md` with
+   shared canon / the book's own canon / world / characters, emit
+   `## Promoted` and `## Superseded` blocks in the target canon file,
+   rewrite `pending_canon.md` with
    either the structured `# Conflicts` block or `no new facts`).
+   The JSON report carries `promoted_to_book` / `promoted_to_shared`
+   per book.
    Parse the JSON output for the per-book counts to feed step 9's
    summary. Steps 3–8 below remain authoritative descriptions of
    the helper's behaviour for review purposes — they are NOT a
@@ -90,14 +107,17 @@ pending files, so `autonovel rollback` undoes the whole promotion.
    they are the `revise` command's placeholder for "I wrote nothing
    new" and carry no payload.
 
-4. Use `file_read` on `shared/canon.md`, `shared/world.md`, and
+4. Use `file_read` on `shared/canon.md`, the book's own
+   `books/{book}/canon.md`, `shared/world.md`, and
    `shared/characters.md`. The existing canon is the baseline for
-   de-duplication and contradiction detection:
+   de-duplication and contradiction detection (another book's
+   `canon.md` is NOT consulted — a rewrite may diverge from the
+   original freely):
    - **Duplicate**: an entry whose substantive content is already
-     stated (possibly in different words) in `shared/canon.md`.
+     stated (possibly in different words) in either canon file.
      Discard silently; record it under the per-book discard list
      for the summary.
-   - **Contradiction**: an entry that contradicts `shared/canon.md`,
+   - **Contradiction**: an entry that contradicts either canon file,
      `shared/world.md`, or `shared/characters.md`. Default-discard
      and record under the per-book conflict list — but with one
      exception below. **Capture which of the three files holds the
@@ -110,8 +130,10 @@ pending files, so `autonovel rollback` undoes the whole promotion.
      by `/autonovel:research --from-seed` and is backed by a cited
      primary source (the `[shortname]` next to it resolves in
      `shared/sources.bib`). When such an entry contradicts existing
-     canon, prefer the research entry: promote it, AND additionally
-     emit a `## Superseded <UTC-date>` block in `shared/canon.md`
+     canon, prefer the research entry: promote it (to
+     `shared/canon.md`), AND additionally
+     emit a `## Superseded <UTC-date>` block in the canon file that
+     held the prior line
      listing the prior canonical line and a one-sentence rationale
      ("research note `<slug>` cites [<shortname>] for <new value>;
      prior value was <old value>"). The user reviewing
@@ -152,10 +174,13 @@ pending files, so `autonovel rollback` undoes the whole promotion.
        - <entry> — contradicts: <canon line>
    ```
 
-7. Otherwise, use `file_write` to append the survivors to
-   `shared/canon.md`. Append under a dated heading:
-   `## Promoted <UTC-date>` (one heading per invocation). Keep the
-   existing body of `shared/canon.md` verbatim; do not rewrite it.
+7. Otherwise, use `file_write` to append the survivors to their
+   target — `books/{book}/canon.md` for chapter-derived entries (the
+   file is created with a `# Book canon` header on first use),
+   `shared/canon.md` for research-cited ones. Append under a dated
+   heading: `## Promoted <UTC-date>` (one heading per invocation per
+   file). Keep the existing body of each file verbatim; do not
+   rewrite it.
 
 8. Use `file_write` to rewrite each consumed
    `books/{book}/pending_canon.md`. After a successful promotion the

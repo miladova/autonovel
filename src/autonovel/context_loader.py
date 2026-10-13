@@ -77,7 +77,8 @@ def build_context(
     chapter: int,
 ) -> ContextBundle:
     cfg = project_mod.load(series.project_file)
-    if cfg.book_by_name(book) is None:
+    entry = cfg.book_by_name(book)
+    if entry is None:
         raise ContextError(f"book {book!r} not in project.yaml")
 
     book_root = series.book(book).root
@@ -107,6 +108,7 @@ def build_context(
             f"books/{book}/voice.md",
             f"books/{book}/outline.md",
             f"books/{book}/seed.txt",
+            f"books/{book}/canon.md",
             f"books/{book}/pending_canon.md",
         ],
     )
@@ -115,13 +117,26 @@ def build_context(
     if (series.root / prev_rel).is_file():
         book_files.append(prev_rel)
 
-    sibling_chapters, excluded = _sibling_chapters(
-        series=series,
-        self_book=book,
-        self_chapter=chapter,
-        self_story_time=story_time,
-        event_ids=event_ids,
-    )
+    if entry.is_isolated:
+        # `context: isolated` (project.yaml books[]): this book never
+        # reads sibling-book prose — the case for a rewrite of a story
+        # another book already tells, where the old chapters would
+        # otherwise all clear the story-time gate and anchor the new
+        # draft on exactly the prose being replaced.
+        sibling_chapters = []
+        excluded = _all_sibling_chapters(series, self_book=book)
+        notes = list(notes) + [
+            f"context: isolated — {len(excluded)} sibling-book chapter(s) "
+            "withheld by project.yaml; only shared/ lore is read"
+        ]
+    else:
+        sibling_chapters, excluded = _sibling_chapters(
+            series=series,
+            self_book=book,
+            self_chapter=chapter,
+            self_story_time=story_time,
+            event_ids=event_ids,
+        )
 
     return ContextBundle(
         book=book,
@@ -270,6 +285,20 @@ def _sibling_chapters(
                 readable_set.add(rel)
 
     return readable, excluded
+
+
+def _all_sibling_chapters(series: SeriesLayout, *, self_book: str) -> list[str]:
+    """Every chapter file in every OTHER book (relative paths). Used to
+    report what `context: isolated` withheld."""
+    from .paths import iter_chapter_files
+    cfg = project_mod.load(series.project_file)
+    out: list[str] = []
+    for book in cfg.books:
+        if book.name == self_book:
+            continue
+        for ch_path in iter_chapter_files(series.book(book.name).chapters):
+            out.append(str(ch_path.relative_to(series.root)))
+    return out
 
 
 def _chapter_story_time(ch_path: Path) -> str | None:

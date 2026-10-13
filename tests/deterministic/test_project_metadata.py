@@ -328,3 +328,22 @@ def test_resolve_image_provider_missing_project_yaml_falls_back(
     )
     data = json.loads(out.stdout)
     assert data == {"provider": "pollinations", "source": "default"}
+
+
+def test_book_context_round_trips_and_validates(tmp_path: Path) -> None:
+    from autonovel.project import BookEntry, ProjectConfig, dump, load, validate
+    cfg = ProjectConfig.default("s")
+    cfg.books.append(BookEntry(name="one"))
+    cfg.books.append(BookEntry(name="two", context="isolated"))
+    path = tmp_path / "project.yaml"
+    dump(cfg, path)
+    text = path.read_text(encoding="utf-8")
+    assert "context: isolated" in text
+    assert text.count("context:") == 1          # default omitted
+    back = load(path)
+    assert back.books[0].context == "series" and not back.books[0].is_isolated
+    assert back.books[1].context == "isolated" and back.books[1].is_isolated
+    assert validate(back) == []
+    back.books[1].context = "bogus"
+    problems = validate(back)
+    assert any("context must be one of" in p for p in problems)

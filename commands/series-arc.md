@@ -22,7 +22,11 @@ crosses book boundaries:
   should generally read forward across books. Backwards jumps
   are legitimate for flashback chapters but the *count* and
   *magnitude* are signal — five backwards jumps in three books
-  is usually a structure problem.
+  is usually a structure problem. Two books whose `project.yaml`
+  `story_time_range`s overlap (a rewrite of the same story, a
+  parallel POV) are expected to reset the clock at the book
+  boundary; that reset is reported under `overlapping_books` and
+  NOT counted as a backwards jump.
 - **Recurring cast**: characters appearing in ≥2 books are the
   high-leverage continuity targets; revise should prioritise
   them.

@@ -166,7 +166,8 @@ def build_report(book_root: Path, *, series_root: Path | None = None,
          `/autonovel:talk` parses an ad-hoc list from the user's
          question).
       2. `books/<book>/entities.md` (hand-authored config).
-      3. `<series_root>/shared/canon.md` (auto-derived; lossy).
+      3. `books/<book>/canon.md` + `<series_root>/shared/canon.md`
+         (auto-derived from `[shortname]` keys; lossy).
     """
     source = "none"
     if entities_override is not None:
@@ -177,7 +178,14 @@ def build_report(book_root: Path, *, series_root: Path | None = None,
         if entities:
             source = "entities.md"
         elif series_root is not None:
-            entities = derive_entities_from_canon(series_root / "shared" / "canon.md")
+            # Book canon first (this book's own named things), then the
+            # series-wide file; de-dup by key.
+            entities = derive_entities_from_canon(book_root / "canon.md")
+            seen = {e.slug for e in entities}
+            for e in derive_entities_from_canon(series_root / "shared" / "canon.md"):
+                if e.slug not in seen:
+                    entities.append(e)
+                    seen.add(e.slug)
             if entities:
                 source = "canon.md"
     rows: list[ChapterRow] = []

@@ -10,6 +10,7 @@ reads:
   - project.yaml
   - shared/characters.md
   - shared/canon.md
+  - books/{book}/canon.md
   - shared/research/notes/*.md
   - shared/sources.bib
   - books/{book}/outline.md
@@ -70,7 +71,8 @@ Three modes selected by `--from`, paralleling
 3. **Load source material.** `file_read`:
    - `project.yaml` for the book's `period.start`, `period.end`,
      `period.region` — the timeline window.
-   - `shared/canon.md` for hardened facts.
+   - `shared/canon.md` for hardened series-wide facts, plus this
+     book's `books/{book}/canon.md` for facts its own chapters fixed.
    - `shared/research/notes/*.md` for primary-source citations.
    - `shared/characters.md` for the cast (use this to identify
      which entries need bios — every named historical figure who

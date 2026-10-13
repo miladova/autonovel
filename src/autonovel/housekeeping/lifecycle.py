@@ -38,6 +38,10 @@ class BeginError(RuntimeError):
 def begin(command_name: str, arg_string: str, *, runtime: str = "claude",
           series: SeriesLayout | None = None) -> BeginResult:
     series = series or load_series()
+    # Self-heal the one runtime dir git cannot track when empty: a
+    # series cloned from backup (or created before `.gitkeep` shipped)
+    # arrives without `.autonovel/session-notes/` and `doctor` flags it.
+    series.session_notes.mkdir(parents=True, exist_ok=True)
     cmd = _load_command(command_name)
     ctx = _parse_arguments(cmd, arg_string)
 

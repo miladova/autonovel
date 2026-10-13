@@ -12,6 +12,7 @@ reads:
   - shared/world.md
   - shared/characters.md
   - shared/canon.md
+  - books/{book}/canon.md
   - shared/events.md
   - shared/research/notes/*.md
   - books/{book}/voice.md
@@ -75,7 +76,9 @@ required reads — surface the error and stop, don't retry.
    references. If the chapter is not in the outline, stop and surface the gap.
 
 4. Use `file_read` on `shared/world.md`, `shared/characters.md`,
-   `shared/canon.md`, and `shared/events.md`. For every event the outline
+   `shared/canon.md`, `books/{book}/canon.md` (this book's OWN canon —
+   facts its earlier chapters established; a sibling book's canon.md is
+   never read), and `shared/events.md`. For every event the outline
    references, use only the `canonical` field and this book's
    `rendered_in` row from `shared/events.md` — ignore other books' POV rows.
 
@@ -138,9 +141,16 @@ required reads — surface the error and stop, don't retry.
    this step shipped — note the gap but do not regenerate it inline;
    the user can backfill via `/autonovel:summarize-chapter`.
 
-9. Use `task` to fan out loading of sibling-book chapters whose `story_time`
-   is less than or equal to this chapter's `story_time`. Budget the loader —
-   truncate oldest first, summarize rather than quote beyond ~8000 tokens.
+9. Sibling-book context. First check this book's entry in `project.yaml`:
+   if it carries `context: isolated`, **skip this step entirely** — load no
+   chapter from any other book (the book is a rewrite / second version of a
+   story another book already tells, and the old prose must not anchor the
+   new draft; shared/ lore above is still in force). Otherwise use `task` to
+   fan out loading of sibling-book chapters whose `story_time` is less than
+   or equal to this chapter's `story_time` (`python -m
+   autonovel.context_loader --book {book} --chapter {chapter}` lists exactly
+   which files are legal). Budget the loader — truncate oldest first,
+   summarize rather than quote beyond ~8000 tokens.
 
 10. Draft the chapter. Target length comes from
    `project.yaml :: defaults.chapter_target_words`. Obey `ANTI-PATTERNS.md`
@@ -197,7 +207,9 @@ required reads — surface the error and stop, don't retry.
     handoff to the next drafter.
 
 14. Use `file_write` to append any new candidate canon facts to
-    `books/{book}/pending_canon.md`. If none are new, append a single line
+    `books/{book}/pending_canon.md` (promote-canon routes them into this
+    book's `canon.md`; only research-cited facts reach `shared/canon.md`).
+    If none are new, append a single line
     noting that no new facts were discovered in this chapter. Never edit
     `shared/canon.md` directly — that is what `autonovel promote-canon` is for.
 </workflow>
