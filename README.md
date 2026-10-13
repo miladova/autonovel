@@ -414,7 +414,7 @@ skipped items land in an `## Onboarding TODO` block that
 `/autonovel:next` surfaces later. After the wizard finishes, open
 Claude Code in the series root and `/autonovel:next` walks you
 through gen-world / gen-characters / voice-discovery / gen-canon
-/ gen-outline / draft 1 in order.
+/ gen-outline / gen-canon --book / draft 1 in order.
 
 For a fresh series, `/autonovel:next` will walk you through the
 foundation in this order:
@@ -422,12 +422,14 @@ foundation in this order:
 1. `/autonovel:gen-world` — series-level world bible.
 2. `/autonovel:gen-characters` — cast registry.
 3. `/autonovel:voice-discovery --book <book>` — voice fingerprint.
-4. `/autonovel:gen-canon` — hard-fact database.
+4. `/autonovel:gen-canon` — series-wide hard-fact database (`shared/canon.md`).
 5. `/autonovel:gen-outline --book <book>` — chapter plan.
-6. `/autonovel:evaluate --phase foundation --book <book>` — score the foundation.
-7. `/autonovel:draft 1 --book <book>` — first chapter when foundation is solid.
+6. `/autonovel:gen-canon --book <book>` — this book's outline-committed facts
+   (`books/<book>/canon.md`; seeded from the outline, so it runs after step 5).
+7. `/autonovel:evaluate --phase foundation --book <book>` — score the foundation.
+8. `/autonovel:draft 1 --book <book>` — first chapter when foundation is solid.
 
-Each command's footer prints the next step automatically. **All five
+Each command's footer prints the next step automatically. **All six
 foundation commands are required before drafting** — `gen-canon`
 needs voice and characters; the chapter draft needs all of them. Skip
 one and the eval score will surface the gap, but it's faster to just

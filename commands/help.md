@@ -185,12 +185,14 @@ Order matters; each step reads what previous steps wrote:
         → shared/characters.md
   3. /autonovel:voice-discovery --book <name>
         → books/<name>/voice.md (Parts 1-4)
-  4. /autonovel:gen-canon --book <name>
-        → shared/canon.md (series-wide hard facts) +
-          books/<name>/canon.md (this book's outline facts)
+  4. /autonovel:gen-canon
+        → shared/canon.md (series-wide hard facts)
   5. /autonovel:gen-outline --book <name>
         → books/<name>/outline.md (chapter beats)
-  6. /autonovel:evaluate --phase foundation --book <name>
+  6. /autonovel:gen-canon --book <name>
+        → books/<name>/canon.md (this book's outline-committed facts;
+          seeded FROM the outline, so it runs after step 5)
+  7. /autonovel:evaluate --phase foundation --book <name>
         → score the foundation; iterate any stage that flagged.
 
 `/autonovel:next` walks you through this in order; it knows
@@ -430,12 +432,15 @@ series, with two guards so the old book cannot leak into the new one.
   2. Write books/<new-name>/seed.txt for the NEW approach (register,
      pacing, structure, what to keep, what to drop).
 
-  3. Foundation — skip the series-scoped steps:
+  3. Foundation — skip the series-scoped steps, in this order:
        /autonovel:voice-discovery --book <new-name>   (fresh voice.md)
-       /autonovel:gen-canon --book <new-name>         (book half only)
        /autonovel:gen-outline --book <new-name>
+       /autonovel:gen-canon --book <new-name>         (book half only;
+                                                        seeded from the outline)
      Do NOT re-run gen-world / gen-characters — they would rewrite
-     the shared files the old book was drafted against.
+     the shared files the old book was drafted against. New people
+     the rewrite needs go in with /autonovel:add-character --book <new-name>.
+     /autonovel:next walks this order for you.
 
   4. Draft as usual (draft / draft-pass). Measure against the
      original with the cross-book head-to-head:

@@ -153,8 +153,9 @@ panel report and disagree with most of it but agree on chapter
 /autonovel:gen-world
 /autonovel:gen-characters
 /autonovel:voice-discovery --book <book>
-/autonovel:gen-canon
+/autonovel:gen-canon                       # series-wide facts → shared/canon.md
 /autonovel:gen-outline --book <book>
+/autonovel:gen-canon --book <book>         # this book's outline facts → books/<book>/canon.md
 /autonovel:evaluate --phase foundation --book <book>
 
 # First-pass draft (one command, walks away)
@@ -983,8 +984,9 @@ nano books/the-cartographer/seed.txt
 Then in Claude Code (in the series root):
 
 ```text
-/autonovel:next        # walks you through voice-discovery + gen-outline for the new book
-                       # (gen-world / gen-characters / gen-canon are already done from book one)
+/autonovel:next        # walks you through voice-discovery, gen-outline, then
+                       # gen-canon --book <new> (the book half) for the new book
+                       # (gen-world / gen-characters / shared gen-canon are already done from book one)
 /autonovel:draft-pass --chapters 1-12 --book the-cartographer
 ```
 
@@ -1023,7 +1025,8 @@ Then in Claude Code:
 ```
 
 Walks you through `gen-world → gen-characters → voice-discovery →
-gen-canon → gen-outline → evaluate-foundation → draft 1`. If
+gen-canon (shared) → gen-outline → gen-canon --book (this book's
+outline facts) → evaluate-foundation → draft 1`. If
 `project.yaml` has a `period` set, the chain prepends
 `/autonovel:research --from-seed`.
 

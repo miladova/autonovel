@@ -189,8 +189,10 @@ promoted facts read as series canon. Two guards make it a clean start:
    --story-time-range <same> --isolated`.
 
 Then write a fresh `seed.txt` for the new approach and run only the
-per-book foundation steps — `voice-discovery`, `gen-canon --book <new>`,
-`gen-outline`. Do **not** re-run `gen-world` / `gen-characters`; they
+per-book foundation steps, in this order — `voice-discovery`,
+`gen-outline`, then `gen-canon --book <new>` (the book half of canon is
+seeded *from* the outline, so it comes last; `/autonovel:next` walks
+the order). Do **not** re-run `gen-world` / `gen-characters`; they
 regenerate the shared files the old book was drafted against
 (`/autonovel:run-pipeline` already skips them when the shared layer is
 populated). The period-bans list is shared and still applies; the

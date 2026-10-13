@@ -1876,14 +1876,40 @@
   passed, 1 skipped, 0 failed** (+33: promote_canon 8, canon_partition 10,
   context_loader 1, series_arc 2, scaffold 2, project 1, status 3,
   lifecycle 1, new command contract pickups).
+- 2026-10-13 (foundation order: book canon AFTER the outline): while
+  creating the Fugger rewrite as book `kingmaker` in the live series, the
+  documented recipe (voice-discovery → `gen-canon --book` → gen-outline)
+  turned out to be wrong in practice: `gen-canon`'s book half is extracted
+  FROM `books/<book>/outline.md`, so run before the outline it seeds
+  nothing, and `/autonovel:next` never asked for it afterwards (its gap
+  chain only checked `shared/canon.md`). Decision: the canonical chain is
+  world → characters → voice → **shared** canon → outline → **book**
+  canon (`gen-canon --book`) → evaluate. `lifecycle._foundation_gap` gains
+  the sixth step, guarded so it only fires while the book has no chapters
+  (a book drafted or imported before book-scoped canon existed must not be
+  told to re-seed; promote-canon owns the file once drafting starts).
+  Docs synced: help (foundation list + `rewrite` topic, which now also
+  points at `add-character --book` for the rewrite's new people),
+  multi-book, operating-guide (3 places), README, writing-a-historical-
+  series, run-pipeline, gen-canon purpose. Tests: lifecycle chain test +
+  integration seam test extended; late-stage fixtures unchanged thanks to
+  the chapter guard. **Tier 1+2 1908 passed, 1 skipped** (count unchanged;
+  two existing tests extended). Live-series note: book `kingmaker`
+  (isolated, 24-chapter outline, two POVs) was created with the lifecycle
+  log intact by wrapping each foundation write in `_begin`/`_end`; two
+  book-1 inventions (`Matthäus Schwarz age`, the 6–1 `Frankfurt election`
+  tally) were moved out of shared canon with `canon-partition --move-key`.
 
 ## Tests last known green
-- Tier 1 + Tier 2 (deterministic + contracts): 2026-10-12 — **1908
+- Tier 1 + Tier 2 (deterministic + contracts): 2026-10-13 — **1908
   passing, 1 skipped** (`pytest tests/deterministic tests/contracts`).
-  +33 since the 1875 mark: book-scoped canon (`promote_canon.py` routing +
-  `housekeeping/canon_partition.py` + `canon-partition` CLI), `context:
-  isolated`, series-arc overlap exemption, status phase inference,
-  session-notes self-heal, `/autonovel:canon-partition` contract pickups.
+  Unchanged count from 2026-10-12 (two existing lifecycle / integration
+  tests extended for the sixth foundation step, `gen-canon --book` after
+  the outline). The 2026-10-12 mark was +33 over 1875: book-scoped canon
+  (`promote_canon.py` routing + `housekeeping/canon_partition.py` +
+  `canon-partition` CLI), `context: isolated`, series-arc overlap
+  exemption, status phase inference, session-notes self-heal,
+  `/autonovel:canon-partition` contract pickups.
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-06-09 — **1875
   passing, 1 skipped** (`pytest tests/deterministic tests/contracts`).
   +23 since the 1852 mark: free teaser VO (`teaser/vo.py` + `teaser-vo` CLI +
@@ -2315,20 +2341,30 @@ pre-written cuts file, a minimal brief), and invokes
   on Bells-parity.
 
 ## Resume pointer
+**The Fugger rewrite exists as book `kingmaker` (2026-10-13); foundation
+order fixed in the pipeline.** In the live series (`~/books/medieval-king-
+maker`) the second book is scaffolded `--isolated` with seed.txt (modern
+spy-and-money thriller, every chapter a wager), voice.md (close-third past-
+tense procedural register, Part 3 rubric that enforces stake / dialogue /
+out-of-the-room / no-aphorism, Part 4 fingerprints), a 24-chapter outline
+in four acts, book canon, and 10 new cast entries — nothing drafted yet.
+The codebase change: `/autonovel:next` now asks for `gen-canon --book` AFTER
+the outline (the book half is seeded from it) and only while the book has no
+chapters; docs list the six-step foundation. **Next real-world step (needs
+the user):** `/autonovel:evaluate --phase foundation --book kingmaker`, then
+`/autonovel:title --book kingmaker`, then `/autonovel:draft 1 --book
+kingmaker`; compare with `evaluate --compare N,N --book kingmaker --vs-book
+medieval-king-maker`. Open: the series' `llm:` pins are still the 4.x family;
+`shared/world.md` mentions the "Fugger Zeitungen", which are anachronistic for
+Jakob's lifetime (book canon forbids the word in `kingmaker`; a shared-world
+correction would need the user's say-so since book 1 was drafted against it).
+Prior:
 **Book-scoped canon + isolated context (rewrite support) SHIPPED 2026-10-12.**
-The codebase and the live series (`~/books/medieval-king-maker`) are ready
-for a second version of the Fugger novel as a NEW BOOK in the same series.
-The live series' canon is already partitioned (shared ≈ history only; book-1
-inventions in `books/medieval-king-maker/canon.md`). **Next real-world step
-(needs the user):** decide the new book's short-name + write its `seed.txt`
-for the new approach (modern register / pacing), then `autonovel new-book
-<name> --pov "Jakob Fugger" --story-time-range 1471-1525 --isolated`,
-`/autonovel:voice-discovery`, `/autonovel:gen-canon --book <name>`,
-`/autonovel:gen-outline` — NOT gen-world / gen-characters. Recipe:
-`/autonovel:help rewrite` and docs/multi-book.md "A rewrite". Open:
-consider moving the series' `llm:` pins off the 4.x family for the rewrite;
-the April full-book eval was judged at light tier (haiku) and is a soft
-baseline only. Prior:
+The live series' canon is partitioned (shared ≈ history only; book-1
+inventions in `books/medieval-king-maker/canon.md`). Recipe:
+`/autonovel:help rewrite` and docs/multi-book.md "A rewrite". The April
+full-book eval was judged at light tier (haiku) and is a soft baseline only.
+Prior:
 **Phase 13 (the AI-video SHORT) SHIPPED 2026-06-08.** After Phases 11+12 the
 teaser was still incoherent because the *shape* was wrong: 180s/30 clips can't
 cohere as AI video. Phase 13 makes the default a **45–60s, ≤12-shot,

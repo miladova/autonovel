@@ -294,9 +294,18 @@ def test_next_step_chains_foundation_in_order(demo_series: SeriesLayout) -> None
                       series=demo_series)
     assert "gen-outline" in r.last_action.next_standard_step
 
-    # Populate outline; foundation gap is closed; expect a non-foundation
-    # next step (evaluate or draft).
+    # Populate outline; the book-scoped canon half is seeded FROM the
+    # outline, so the next gap is `gen-canon --book one` (the stub
+    # books/one/canon.md still carries its template marker).
     (book_root / "outline.md").write_text(f"# Outline\n\n{long}\n", encoding="utf-8")
+    lifecycle.begin("autonovel:draft", "1 --book one", series=demo_series)
+    r = lifecycle.end("autonovel:draft", "1 --book one", status="ok", wrote=[],
+                      series=demo_series)
+    assert "gen-canon --book one" in r.last_action.next_standard_step
+
+    # Populate the book canon; foundation gap is closed; expect a
+    # non-foundation next step (evaluate or draft).
+    (book_root / "canon.md").write_text(f"# Book canon\n\n{long}\n", encoding="utf-8")
     lifecycle.begin("autonovel:draft", "1 --book one", series=demo_series)
     r = lifecycle.end("autonovel:draft", "1 --book one", status="ok", wrote=[],
                       series=demo_series)

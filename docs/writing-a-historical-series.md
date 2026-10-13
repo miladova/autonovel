@@ -124,6 +124,8 @@ file is never modified by this command.
 
 ```text
 /autonovel:voice-discovery --book the-inquisitor
+/autonovel:gen-outline --book the-inquisitor
+/autonovel:gen-canon --book the-inquisitor     # this book's outline facts → books/<name>/canon.md
 /autonovel:draft 1 --book the-inquisitor
 ```
 

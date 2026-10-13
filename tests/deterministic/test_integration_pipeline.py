@@ -49,6 +49,8 @@ def _bootstrap(tmp_path: Path) -> tuple[SeriesLayout, str]:
     book_root = layout.books / "b"
     (book_root / "voice.md").write_text(f"# Voice\n\n{long}\n", encoding="utf-8")
     (book_root / "outline.md").write_text(f"# Outline\n\n{long}\n", encoding="utf-8")
+    # Book-scoped canon half (seeded from the outline by `gen-canon --book`).
+    (book_root / "canon.md").write_text(f"# Book canon\n\n{long}\n", encoding="utf-8")
     return layout, "b"
 
 
@@ -284,6 +286,11 @@ def test_foundation_chain_walks_world_to_outline(tmp_path: Path) -> None:
     # the recommendation is no longer a foundation *gap* (one of the
     # gen-* commands).
     (book_root / "outline.md").write_text(f"# Outline\n\n{long}\n", encoding="utf-8")
+    # The book-scoped canon half is seeded FROM the outline, so it is the
+    # one remaining gap once the outline exists.
+    ns = lifecycle._next_step_for(layout, "b")
+    assert "gen-canon --book b" in ns.command
+    (book_root / "canon.md").write_text(f"# Book canon\n\n{long}\n", encoding="utf-8")
     ns = lifecycle._next_step_for(layout, "b")
     for forbidden in ("gen-world", "gen-characters", "voice-discovery",
                        "gen-canon", "gen-outline"):

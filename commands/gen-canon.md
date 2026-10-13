@@ -35,6 +35,12 @@ Seed canon with hard facts. Two files, two scopes:
 
 Canon is append-only going forward; `/autonovel:promote-canon` grows
 both files from drafted chapters. This command sets the initial state.
+
+Order: the shared half can run as soon as world / characters /
+research exist; the book half is extracted FROM `books/{book}/outline.md`,
+so run `--book <short-name>` after `/autonovel:gen-outline` (on a
+first book that means running this command twice; `/autonovel:next`
+asks for each half at the right moment).
 </purpose>
 
 <workflow>
