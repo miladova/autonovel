@@ -3,6 +3,16 @@
 Operationalizable frameworks for narrative craft. Everything here is
 concrete enough to evaluate against. This is the agent's education.
 
+**Scope and precedence.** Sections 1, 2, 4 and 7 are structural and
+apply to every book. Section 3 is worldbuilding; its magic-system
+material applies only where a book has one. Sections 5 and 6 describe
+prose, and prose has no universal register: a plain-spoken thriller, a
+literary novel and a comic fantasy are all well written in different
+ways. The book's `voice.md` decides the register, and where it
+explicitly overrides anything here, the voice file wins. Nothing in
+this document is a licence to make prose harder to follow than the
+book's register asks for.
+
 ---
 
 ## 1. PLOT STRUCTURE
@@ -208,6 +218,9 @@ Three pillars (can't do all three deeply -- pick 1-2):
 Iceberg principle: Author knows 10x more than appears on page.
   Small unexplained details > over-explained systems.
   World should feel like it exists beyond the story's edges.
+  "Unexplained" means the world's depth, not the sentence's meaning:
+  a reader may not know why the guild wears green, but must always
+  know what the sentence in front of them is saying.
 
 Interconnection: If magic exists, trace implications through society,
   economy, warfare, religion. Magic with zero cultural impact = shallow.
@@ -215,11 +228,16 @@ Interconnection: If magic exists, trace implications through society,
 Pyramid of Abstraction: Ground descriptions in CONCRETE details that
   IMPLY abstract qualities. Not "the city was old" but "moss crusted
   the cracked stone steps leading to a gate whose iron had long since
-  rusted to lace."
+  rusted to lace." Concrete does not mean oblique: the detail should
+  make the point clearer, never turn the sentence into a riddle the
+  next sentence has to solve.
 
 Info-dump avoidance: Worldbuilding through experience, action, and
   dialogue -- not exposition paragraphs. Zero pure-exposition paragraphs
-  over 100 words in chapter 1.
+  over 100 words in chapter 1. One clause of explanation at the moment
+  a term first appears ("the fontegher, the steward who ran the
+  building") is not an info-dump; it is how a reader is kept in the
+  room. Books in a plain register may explain more; see voice.md.
 
 ---
 
@@ -270,38 +288,77 @@ When telling is OK:
   - Mundane context: "She worked as a nurse" (if not plot-critical)
   - Pacing compression of uneventful periods
   - First-person narrators naturally tell about their own feelings
+  - Close-third narrators in a plain register naming a state briefly
+    before showing it ("He was afraid. He kept counting.") -- the
+    label is one short sentence, and the showing follows
+  - Explaining what a thing is or does the first time it appears
 
-Rule: Critical moments (emotional peaks, revelations, climax) should
-be ZERO tell, all show.
+Rule: Critical moments (emotional peaks, revelations, climax) lean
+hard on showing. "Zero tell" is the literary-register default; a
+book's voice.md may allow a plain statement at the peak as long as
+the showing is there too. The failure to avoid is the label standing
+IN PLACE OF the evidence, not the label appearing beside it.
 
 ---
 
 ## 6. PROSE CRAFT (what makes writing alive)
 
-### Le Guin's Core Insight
-In fantasy, STYLE IS NOT ORNAMENT -- it IS the fantasy. The language
-doesn't describe the world; the language CREATES it. If your fantasy
-world sounds like a Poughkeepsie bus schedule, you're not writing
-fantasy. The prose must have a register appropriate to the world.
+### Register is the book's choice, not this document's
+Prose has no universal correct register. A literary fantasy may want
+language that builds the world (Le Guin's point: in that mode, style
+IS the fantasy, and a world that sounds like a bus schedule fails).
+A contemporary thriller wants the opposite: prose that disappears
+behind the events, explains as it goes, and never asks the reader to
+solve a sentence. Both are craft. The book's `voice.md` Part 2 says
+which one this book is; the drafter and the judge apply THAT register
+and do not import the other one. The commonest failure is the model
+defaulting to the literary register (compression, withheld subjects,
+period cadence, riddle openers) because it reads as "writerly". It is
+only writerly in a book that asked for it.
 
-### What the best fantasy prose does
+### What good prose does in any register
 1. SPECIFICITY: Not "a bird" but "a jay." Not "flowers" but "lupine."
-2. SURPRISE: Word choices the reader doesn't predict.
-3. RHYTHM VARIATION: Short. Then long sentences that carry the reader
-   forward. Then short again.
-4. SUBTEXT: What's NOT said matters as much as what is.
+   Not "the official" but "the steward who ran the building."
+2. CLARITY: The reader knows who is doing what in every sentence on
+   the first reading. Surprise lives in what happens, not in making
+   the reader work out what a sentence means.
+3. RHYTHM VARIATION: Short. Then longer sentences that carry the
+   reader forward. Then short again. The band of "longer" is set by
+   the register (a plain thriller caps narrative sentences around 25
+   words; a literary novel may run to 40).
+4. SUBTEXT: What characters do not say to each other matters. This is
+   about dialogue and behaviour, not about the narrator withholding
+   the subject of a sentence.
 5. EARNED METAPHOR: Metaphors from the CHARACTER'S experience, not a
-   thesaurus. A blacksmith thinks in terms of heat and metal.
+   thesaurus. A blacksmith thinks in terms of heat and metal. Books
+   in a plain register use few metaphors and no metonymy.
 6. SENSORY GROUNDING: Anchored in specific senses, not abstraction.
-7. RESTRAINT: Power from what is left OUT, not piled on.
+7. RESTRAINT: Do not pile on. In a literary register this means
+   leaving things out; in a plain register it means saying the thing
+   once, clearly, and moving on.
 8. QUIET MOMENTS: Not every scene is action. Characters sitting,
    thinking, watching rain -- these ground the dramatic moments.
 
-### Le Guin Exercise
+### The no-adjective exercise
 Write description WITHOUT adjectives or adverbs. Forces strong nouns
 and verbs. This is exactly what AI fails at: AI leans on adjective-noun
 clichés ("ancient wisdom," "piercing gaze," "heavy silence") instead
-of specific verbs and nouns.
+of specific verbs and nouns. Use it to find weak words, not as a style:
+"neat handwriting" is better than "a clean hand" even though the second
+has no adjective, because the first is understood on sight.
+
+### Register tells to catch (the model's defaults)
+Kill these unless the book's voice.md asked for them:
+  - Riddle openers: an object or image sentence whose meaning arrives
+    in the next sentence ("The slate had a city on it.")
+  - Metonymy for effect ("not the coin, the iron")
+  - Epigram closers that generalise the scene just shown
+  - Period idiom in narration ("a clean hand", "the ninth hour")
+  - Fragment-thoughts standing in for interiority ("The two years.
+    The wrong-pitched bells.")
+  - Chains of "and ... and ... and" as cadence
+  - A scene that opens on weather or an object rather than a person
+    doing something
 
 ### Fiction-Specific AI Tells (beyond the general anti-slop list)
 Kill these on sight in prose:
@@ -338,7 +395,9 @@ COUNTERMEASURES (actively enforce these):
   - Characters must end TRULY different from how they began
   - Let bad things stay bad. Not everything gets fixed.
   - Allow irreversible decisions and irreversible loss
-  - Withhold information. The reader should not know everything.
+  - Withhold information at the level of plot. The reader should not
+    know everything about what will happen; the reader should always
+    know what the sentence in front of them says.
   - Create genuine moral ambiguity. Let the "right" choice be unclear.
   - Vary emotional intensity: quiet scenes, explosive scenes, dread,
     relief, boredom, wonder, horror. Not a flat line.
@@ -378,9 +437,17 @@ COUNTERMEASURES (actively enforce these):
   - Concrete/sensory details outnumber abstract adjectives
 
 ### Prose
-  - Show-to-tell ratio (heavy showing, especially at emotional peaks)
-  - Sentence length coefficient of variation (higher = more human)
+  - Register match: the prose is in the register voice.md Part 2
+    asks for, judged against THAT register (a plain thriller is not
+    marked down for being plain; a literary novel is not marked down
+    for being dense)
+  - Clarity: every narrative sentence understood on first reading
+  - Show-to-tell ratio (heavy showing, especially at emotional peaks;
+    a plain register may add a brief label beside the showing)
+  - Sentence length variation within the register's band (uniform
+    lengths read as machine-made; so does length for its own sake)
   - Slop penalty (from mechanical anti-slop checker)
-  - Fiction-specific AI tells (banned phrases)
+  - Fiction-specific AI tells (banned phrases) and register tells
+    (§6: riddle openers, metonymy, epigram closers, period idiom)
   - Specificity: concrete nouns > generic nouns
   - No stability trap: genuine change, cost, darkness present

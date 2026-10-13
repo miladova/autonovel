@@ -199,6 +199,17 @@ or `.autonovel/eval_logs/<timestamp>_series.json` for `--phase series`.
    `ai_patterns_detected`, `overall_score`, `weakest_dimension`,
    `top_3_revisions`, `new_canon_entries`.
 
+   **Judge `voice_adherence` and `prose_quality` against the register
+   voice.md Part 2 asks for, not against a general idea of good
+   prose.** A plain contemporary register is not marked down for being
+   plain, explanatory or direct, and a literary register is not marked
+   down for density. The reverse failure is the one to catch: a book
+   that asked for plain English and got compression, riddle openers,
+   metonymy, period cadence or epigram closers (CRAFT.md §6 "register
+   tells"). Where voice.md Part 1 overrides CRAFT.md or ANTI-PATTERNS.md,
+   score to the voice file. Quote the register failures under
+   `three_weakest_sentences` so the brief can act on them.
+
    **`show_dont_tell_ratio` (the LLM-judge upgrade to the
    pre-flight scanner).** Run the mechanical scanner first via
    the `Bash` tool:

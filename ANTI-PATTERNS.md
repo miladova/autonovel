@@ -20,8 +20,12 @@ analyzing what the shaking hands meant.
 **Detection:** After every emotional beat, check: does the next
 paragraph explain what just happened? If yes, cut it.
 
-**Rule:** If a scene shows it, the narrator doesn't say it. Trust
-the image, the gesture, the silence.
+**Rule:** If a scene shows it, the narrator doesn't say it AGAIN.
+Trust the image, the gesture, the silence. This is about the
+paragraph that restates, not about plain statement as such: in a
+plain-register book "He was afraid" followed by what he did is fine
+(see CRAFT.md §5). The over-explain is the paragraph that follows the
+showing and analyses it.
 
 ---
 
@@ -62,8 +66,11 @@ AI compresses reflection into a list of topics the character
 considers. Real interiority is messier -- one thought bleeds into
 another, gets interrupted, loops back.
 
-**Fix:** Replace with: the thought itself as a fragment ("The two
-years. The wrong-pitched bells."), a physical action, or dialogue.
+**Fix:** Replace with: a physical action, dialogue, or the thought
+itself as a sentence the character would actually think ("Two years,
+and the bells still rang wrong."). Fragment-thoughts ("The two years.
+The wrong-pitched bells.") are a literary-register move; use them only
+if the book's voice.md asks for that register.
 
 ---
 

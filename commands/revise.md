@@ -109,8 +109,11 @@ file blocked a full revision-pass.
    eval log and proceed without the prior-chapter quote. The brief
    is the load-bearing input here; the quote is a flavour assist.
 
-7. Draft the rewrite. Follow the brief exactly. Honor the anti-pattern
-   rules:
+7. Draft the rewrite. Follow the brief exactly. Where
+   `books/{book}/voice.md` Parts 1–3 explicitly override `CRAFT.md`,
+   `ANTI-PATTERNS.md` or `ANTI-SLOP.md`, the voice file wins (same
+   precedence rule as `/autonovel:draft` step 10). Otherwise honor the
+   anti-pattern rules:
    - No triadic sensory lists (X. Y. Z.)
    - No "He did not [verb]" more than once
    - No "He thought about [X]" constructions

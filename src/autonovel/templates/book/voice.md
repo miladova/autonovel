@@ -2,7 +2,16 @@
 
 ## Part 1 — Voice principles (series-wide)
 
-<!-- Edit or leave to the default writing principles in CRAFT.md. -->
+<!--
+Edit or leave to the default writing principles in CRAFT.md,
+ANTI-SLOP.md and ANTI-PATTERNS.md. Those three are series-wide
+defaults written with literary prose in mind. If this book wants a
+different register (a plain contemporary thriller, say), list the
+overrides here explicitly ("CRAFT.md §6 does not apply; telling is
+allowed; no riddle openers") — the drafter and reviser give this
+file precedence over the shared craft documents where they conflict.
+-->
+
 
 ## Part 2 — Book-specific fingerprint
 

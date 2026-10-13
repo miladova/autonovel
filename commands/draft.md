@@ -157,6 +157,14 @@ required reads — surface the error and stop, don't retry.
    and `ANTI-SLOP.md`. Do not use any word that appears in
    `shared/period_bans.txt`.
 
+   **Precedence.** `CRAFT.md`, `ANTI-PATTERNS.md` and `ANTI-SLOP.md`
+   are series-wide defaults. Where `books/{book}/voice.md` Parts 1–3
+   explicitly override one of them (a plain-register thriller that
+   says "telling is allowed" or "CRAFT.md §6 does not apply", for
+   instance), the voice file wins. The craft documents were written
+   with literary and fantasy prose in mind; a book's register is the
+   author's call, and the voice file is where that call is recorded.
+
 11. **Write a 2-6 word evocative chapter title.** Concrete object
     or phrase from the chapter's central beat — what the chapter is
     *about*, not a plot summary. Examples: "The Apothecary's

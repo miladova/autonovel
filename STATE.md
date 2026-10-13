@@ -1932,6 +1932,25 @@
   `test_foundation_eval_score_unlocks_draft_one`. **Tier 1+2 1913
   passed, 1 skipped.**
 
+- 2026-10-13 (register precedence: voice.md over CRAFT.md): the first six
+  kingmaker chapters came out in a compressed literary-historical
+  register (riddle openers "The slate … had a city on it", metonymy "a
+  clean hand", epigram closers) despite a voice file asking for plain
+  contemporary English, and the judge scored them 7.3–7.9. Root cause:
+  CRAFT.md §6 presented one genre's aesthetic (Le Guin, "style IS the
+  fantasy", "a register appropriate to the world", surprise / subtext /
+  restraint) as universal craft, §3 and §5 and ANTI-PATTERNS §1/§4 pushed
+  the same way, and nothing said the book's voice file outranks them.
+  Decision: CRAFT.md gets a scope-and-precedence header, §3/§5/§6/§7/§8
+  rewritten register-neutral (register is the book's choice; clarity is
+  a universal; a "register tells" list names the model's literary
+  defaults), ANTI-PATTERNS §1/§4 softened, and `draft.md` step 10 /
+  `revise.md` step 7 state that voice.md Parts 1–3 win on conflict. The
+  book voice template's Part 1 comment now tells authors to list
+  overrides. Live series: kingmaker voice.md carries explicit overrides,
+  a register test, a not-this/this pair from the actual draft, and a
+  Part 3 "Register test" criterion; chapter 2 revised as the proof.
+
 ## Tests last known green
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-13 — **1913
   passing, 1 skipped** (`pytest tests/deterministic tests/contracts`).
