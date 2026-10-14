@@ -359,6 +359,14 @@ Kill these unless the book's voice.md asked for them:
   - Chains of "and ... and ... and" as cadence
   - A scene that opens on weather or an object rather than a person
     doing something
+  - Formal grammar under modern vocabulary, in a book that asked for
+    spoken register: narration that never contracts a negative ("did
+    not", "could not", "was not" on every page and no "didn't"),
+    "whether" for "if", "perhaps" for "maybe", "put in that" for
+    "said", fronted objects ("That part he had decided"), elliptical
+    participles ("watched it hung"). Readers hear this as costume even
+    when every word is modern. Measured in one plain-register draft at
+    27 uncontracted negatives to 0 contracted in a single chapter.
 
 ### Fiction-Specific AI Tells (beyond the general anti-slop list)
 Kill these on sight in prose:
