@@ -203,7 +203,8 @@ and can run them by hand for inspection / debugging.
 | `timeline-extract <book>` | Pull in-narrative dates from chapter summaries + frontmatter for the appendix timeline. The mechanical pre-pass before LLM-side merging of real-world events. |
 | `summary-query <book> --where '<expr>'` | Filter chapter-summary by a small DSL (pov / score / story_time / cast / location / plot). |
 | `dashboard <book>` | Re-render latest `<ts>_full.json` eval log + mechanical augmentations + sparklines. |
-| `syntax-drift <book>` | Per-chapter Flesch-Kincaid grade vs voice/seed baseline. |
+| `syntax-drift <book>` | Per-chapter Flesch-Kincaid grade vs the voice file's declared `FK grade band` (then seed.txt, then the voice file's prose as a weak last resort, then the chapter median). |
+| `register <book> [--chapter N] [--long-utterance 40]` | Register markers, narration and dialogue separately: FK grade, mean sentence length, contraction ratio and every uncontracted negative, formal connectives/tags, fronted openers, elliptical participles, utterance count and mean length, utterances over the threshold, and "explaining to the listener" candidates. Candidate generator for `evaluate`'s `register` dimension and the draft/revise self-check. |
 | `pov-bleed <book>` | Heuristic POV-bleed scan. |
 | `dialogue <book>` | Dialogue-mechanics linter. |
 | `period-register <book>` | Roll period-bans hits across every chapter. |

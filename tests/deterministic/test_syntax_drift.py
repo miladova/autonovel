@@ -126,11 +126,29 @@ _TERSE = (
 ) * 5
 
 
-def test_baseline_prefers_voice_over_seed(tmp_path: Path) -> None:
+def test_baseline_prefers_seed_over_voice_prose(tmp_path: Path) -> None:
+    """2026-10-14: the voice file is a rules document, not a sample of
+    the register, so its own prose is the LAST baseline, after a
+    declared `FK grade band` and after seed.txt."""
     book = _seed_book(tmp_path, voice=_LITERARY, seed=_TERSE,
                        chapters={1: _LITERARY})
     report = build_syntax_drift_report(book)
+    assert report.baseline_source == "seed.txt"
+
+
+def test_baseline_uses_voice_prose_only_as_last_resort(tmp_path: Path) -> None:
+    book = _seed_book(tmp_path, voice=_LITERARY, seed=None,
+                       chapters={1: _LITERARY})
+    report = build_syntax_drift_report(book)
     assert report.baseline_source == "voice.md"
+
+
+def test_baseline_declared_band_wins(tmp_path: Path) -> None:
+    book = _seed_book(tmp_path, voice=_LITERARY + "\nFK grade band: 5–8\n",
+                       seed=_TERSE, chapters={1: _TERSE})
+    report = build_syntax_drift_report(book)
+    assert report.baseline_source == "voice.md:band"
+    assert report.baseline == 6.5 and report.threshold == 1.5
 
 
 def test_baseline_falls_back_to_seed(tmp_path: Path) -> None:
@@ -228,5 +246,5 @@ def test_cli_syntax_drift_json(tmp_path: Path) -> None:
     )
     payload = json.loads(proc.stdout)
     assert payload["baseline"] is not None
-    assert payload["baseline_source"] == "voice.md"
+    assert payload["baseline_source"] == "voice.md"  # no seed, no band: last resort
     assert len(payload["chapter_grades"]) == 2

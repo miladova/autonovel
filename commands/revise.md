@@ -129,6 +129,18 @@ file blocked a full revision-pass.
    - At least one moment that genuinely surprises
    - 70%+ in-scene (dialogue and action, not summary)
    - Dialogue sounds like speech, not written prose
+   When the brief has a `## Register edits` section, apply every
+   entry as a line edit where it stands before doing anything else,
+   and keep the information it removes from a mouth where the entry
+   says it goes. After the rewrite, run
+   `autonovel mechanical register books/{book} --chapter {chapter}`
+   with `bash` and read the candidates against the voice file's
+   declared register (its `FK grade band`, its refusals): fix any
+   uncontracted negative in narration that is not an emphasis, any
+   utterance over 40 words that is a lecture, and any line that
+   explains to its listener what the listener can see. This is the
+   same check `/autonovel:evaluate` scores as `register`; catching
+   it here saves an eval-brief-revise cycle.
    Preserve the chapter's YAML frontmatter (`book`, `chapter`, `pov`,
    `story_time`, `events`) verbatim; update `status` to `revised` and
    recompute `word_count`.

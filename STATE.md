@@ -1991,7 +1991,50 @@
   prose commands name the series path) and the refresh default test
   rewritten. Open items in FUTURE-TODOS near-term.
 
+- **2026-10-14 (later) — Register is measured, not guessed.** After the
+  craft docs reached the writer the author still heard "1500s style"
+  and asked why the harness had not found it: "you should be finding
+  these via the autonovel harness already — why didn't it find it? fix
+  the underlying issues." Quoted line: Tucher telling Jakob "That's San
+  Giacomo's bell, at the end there, and you've got a quarter of an hour
+  before it rings." Diagnosis: (a) the judge is the writer's own model
+  prompted as a literary critic; no persona asks "would this person say
+  this to that listener?"; (b) the pipeline steered by invented counts
+  (dialogue ≥30% of words) and the writer gamed them by moving
+  narration into mouths; (c) the only register instrument,
+  `syntax-drift`, baselined against the voice file's OWN prose (a rules
+  document) and was wired into nothing; (d) word-list scanners cannot
+  see grammar. Measured: narration contraction ratio 0.0 in five of six
+  chapters (27 uncontracted negatives, 0 contracted in ch 4); FK grade
+  4.2–4.9 overall, 5.2–5.8 narration; 11 utterances over 40 words in
+  ch 1, mean utterance 22 words. Decision: new `autonovel mechanical
+  register` (narration vs dialogue split; FK each; contraction ratio and
+  every uncontracted negative; formal connectives/tags; fronted openers;
+  elliptical participles; utterance count/mean/long; listener-explaining
+  candidates) as a candidate generator; `syntax-drift` baselines on a
+  declared `FK grade band: L–H` line in voice.md (seed.txt next, voice
+  prose last with a warning); `evaluate --chapter` gains a `register`
+  dimension judged AS A COPY EDITOR in the book's declared register,
+  emitting `register_edits` (quote → rewrite) that `brief` copies into
+  `## Register edits` and `revise` applies as line edits; `draft` and
+  `revise` run the scanner on their output before writing the summary;
+  `voice-discovery` writes the band, the model authors, the contraction
+  policy and a 150–300-word sample that passes the scanner; the book
+  voice template documents the band line. Tests: `test_register.py`
+  (9), syntax-drift baseline order rewritten (band > seed > voice prose
+  > median). CRAFT.md §6 gains the "formal grammar under modern
+  vocabulary" register tell; the operational register spec (sourced
+  markers and bands) follows from the research pass in progress.
+
 ## Tests last known green
+- Tier 1 + Tier 2 (deterministic + contracts): 2026-10-14 (later) —
+  **1932 passing, 1 skipped** (`pytest tests/deterministic tests/contracts`).
+  +11 over the 1921 mark: `test_register.py` (9: narration/dialogue
+  split, formal vs spoken flagging, contraction ratio, dialogue
+  negatives excluded, long-utterance threshold, curly quotes, build +
+  CLI, declared-band parsing, band beats voice prose) and two
+  syntax-drift baseline-order tests (seed before voice prose; declared
+  band wins), one renamed.
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-14 — **1921
   passing, 1 skipped** (`pytest tests/deterministic tests/contracts`).
   +8 over the 1913 mark: `test_craft_docs.py` (template ships all four

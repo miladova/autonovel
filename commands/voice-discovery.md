@@ -66,14 +66,30 @@ they refuse to name.
      populated; re-run with `--upgrade` to add Parts 3 and 4 without
      touching it, or `--force` to regenerate everything."
 
-6. Draft Part 2. Keep it concrete and usable by a drafting model. Include:
-   - sentence-length tendency and variance,
+6. Draft Part 2. Keep it concrete and usable by a drafting model. The
+   mechanics of prose (how sentences and paragraphs join, how scenes
+   are built, how dialogue is shaped) are `shared/craft/PROSE.md`'s and
+   are not restated here; Part 2 records the REGISTER. Include:
+   - who the reader is, in one sentence, and the two or three published
+     writers whose register is the model (the drafter imitates a named
+     model far better than it follows a rule),
+   - the reading-grade band, on one line in exactly this form so the
+     mechanical scanners have a baseline: `FK grade band: 5–8` (modern
+     commercial fiction sits around 5–8, literary and period registers
+     higher; see `shared/craft/CRAFT.md` §6 "Registers, operationally"),
+   - whether narration contracts (a spoken modern register does:
+     *didn't*, *couldn't*; a formal or period register may not), and
+     the grammar the narrator refuses (for a plain register: *whether*
+     for *if*, *perhaps*, fronted objects, participial ellipsis, a
+     character explaining to a listener what the listener can see),
    - POV distance (close, middle, telescope), tense,
    - 6–12 word "palette" — sensory motifs the narrator returns to,
-   - at least three "do not" rules specific to this POV (anachronisms to
-     avoid, emotional registers the narrator refuses, punctuation habits
-     to resist),
-   - a two-sentence sample paragraph in-voice as a reference.
+   - at least three further "do not" rules specific to this POV
+     (anachronisms to avoid, emotional registers the narrator refuses,
+     punctuation habits to resist),
+   - a sample paragraph in-voice as a reference, 150 to 300 words, with
+     at least one exchange of dialogue in it, that passes
+     `autonovel mechanical register` against the declared band.
 
 6a. **Draft Part 4 — Per-character voice fingerprints** (when the
     cast warrants it). Read `shared/characters.md` and identify the

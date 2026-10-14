@@ -194,7 +194,8 @@ or `.autonovel/eval_logs/<timestamp>_series.json` for `--phase series`.
    zero-padded). Score the dimensions: `voice_adherence`, `beat_coverage`,
    `character_voice`, `plants_seeded`, `prose_quality`, `continuity`,
    `canon_compliance`, `lore_integration`, `engagement`,
-   `irreversible_change`, `show_dont_tell_ratio`, `concreteness`. Each emits
+   `irreversible_change`, `show_dont_tell_ratio`, `concreteness`,
+   `register`. Each emits
    `{score, weakest_moment, fix, note}`. Include
    `three_weakest_sentences`, `three_strongest_sentences`,
    `ai_patterns_detected`, `overall_score`, `weakest_dimension`,
@@ -216,6 +217,64 @@ or `.autonovel/eval_logs/<timestamp>_series.json` for `--phase series`.
    or `shared/craft/ANTI-PATTERNS.md`, score to the voice file. Quote the register
    failures under `three_weakest_sentences` so the brief can act on
    them.
+
+   **`register` (copy-editor pass; the LLM-judge upgrade to the
+   register scanner).** Run the mechanical scanner first via the
+   `Bash` tool:
+
+   ```
+   autonovel mechanical register books/{book} --chapter {N} --format json
+   ```
+
+   It reports, for narration and dialogue separately, the
+   Flesch-Kincaid grade, mean narration sentence length, the
+   contraction ratio and every uncontracted negative, formal
+   connectives and tags (*whether, perhaps, upon, put in that,
+   remarked*), fronted-object openers, elliptical participles,
+   utterance count and mean length, utterances over 40 words, and
+   "explaining to the listener" candidates (*that's the…, over
+   there, at the end there, as you know, you know about*). Read
+   `books/{book}/voice.md` for the book's declared register: the
+   `FK grade band: L–H` line if present, the models it names, and
+   what its narrator refuses. Then judge **as a copy editor at a
+   commercial imprint, not as a literary critic**, in two passes:
+
+     - **Narration.** For each candidate and for any sentence the
+       scanner missed, ask: would a narrator in this book's
+       declared register write this sentence today? Formal grammar
+       under modern vocabulary (uncontracted negatives on every
+       page, *whether*, *perhaps*, fronted objects, participial
+       ellipsis) is the costume failure CRAFT.md §6 names; period
+       nouns are not.
+     - **Dialogue.** For each utterance over 40 words and each
+       listener-explaining candidate, and for any other line that
+       reads as speech for the reader's benefit, ask: would this
+       person say this to that listener, now, standing where they
+       are? A character naming the place they both can see, the
+       time they both know, or the thing in the listener's hand is
+       exposition in a mouth (Turkey City's "As you know, Bob";
+       PROSE.md §6.4). A speech carrying four thoughts is a lecture;
+       spoken turns carry one or two.
+
+   Emit `register_edits`: an array of `{line_no, kind:
+   "narration"|"dialogue", quote, why, rewrite}` with the exact
+   quote and a rewrite in the book's register (for dialogue, cut
+   the exposition from the mouth and say in one phrase where it
+   goes: narration, a character who doesn't know it, or nowhere).
+   Score `register` 0–10: 10 when the chapter's narration FK grade
+   sits inside the declared band, the contraction ratio is above
+   0.9 (or the book declares otherwise), no utterance lectures and
+   no line explains to its listener; subtract roughly a point per
+   two confirmed edits, floor 3. `weakest_moment` = the worst
+   edit's quote; `fix` = its rewrite. Record the scanner's numbers
+   (`fk_narration`, `fk_dialogue`, `contraction_ratio`,
+   `uncontracted_negatives`, `mean_utterance_words`,
+   `long_utterances`) under the dimension so the brief and the
+   dashboard can show them. When the book declares no band and no
+   register, score to PROSE.md §1, §4 and §6 alone and say so in
+   the note. `register_edits` is consumed verbatim by
+   `/autonovel:brief` (its `## Register edits` section), so every
+   entry must be actionable by a line edit.
 
    **`show_dont_tell_ratio` (the LLM-judge upgrade to the
    pre-flight scanner).** Run the mechanical scanner first via
@@ -548,6 +607,7 @@ or `.autonovel/eval_logs/<timestamp>_series.json` for `--phase series`.
     | beat_coverage | 6.5 | midpoint reversal landed flat |
     | character_voice | 7.8 | — |
     | prose_quality | 6.9 | three "she did not" patterns in 2400w |
+    | register | 6.0 | FK narr 5.8 in band; 11 utterances >40w; "That's the bell, at the end there" explains to the listener |
     | engagement | 7.0 | — |
     | internal_consistency | 8.0 | — |
 

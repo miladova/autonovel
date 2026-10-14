@@ -281,7 +281,7 @@ class SyntaxDriftHit:
 @dataclass
 class SyntaxDriftReport:
     baseline: float | None      # FK grade of the baseline source
-    baseline_source: str        # "voice.md" | "seed.txt" | "median-of-chapters" | "none"
+    baseline_source: str        # "voice.md:band" | "seed.txt" | "voice.md" | "median-of-chapters" | "none"
     threshold: float            # delta-above-baseline that triggers a flag
     chapter_grades: list[tuple[int, float | None]]   # (chapter_n, grade or None)
     drift_hits: list[SyntaxDriftHit]
@@ -303,12 +303,61 @@ class SyntaxDriftReport:
         }
 
 
+#: A voice.md may declare the register's reading-grade band on one line,
+#: e.g. ``FK grade band: 5–8`` (en dash, hyphen or "to" all accepted).
+#: The band is the authoritative baseline: its midpoint is the target
+#: and its half-width the tolerance. Grading the voice file's own prose
+#: was the previous fallback and is wrong in principle — a voice file is
+#: a rules document, not a sample of the register — so it is now the
+#: LAST resort, after seed.txt.
+_FK_BAND_RE = re.compile(
+    r"FK\s+grade\s+band\s*:\s*(\d+(?:\.\d+)?)\s*(?:–|-|to)\s*(\d+(?:\.\d+)?)",
+    re.IGNORECASE,
+)
+
+
+def declared_fk_band(voice_text: str) -> tuple[float, float] | None:
+    """Return (low, high) when the voice file declares ``FK grade band: L–H``."""
+    m = _FK_BAND_RE.search(voice_text)
+    if not m:
+        return None
+    lo, hi = float(m.group(1)), float(m.group(2))
+    if hi < lo:
+        lo, hi = hi, lo
+    return lo, hi
+
+
 def _baseline_source(book_root: Path,
-                      series_root: Path) -> tuple[float | None, str]:
-    """Resolve the FK-grade baseline for this book. Order of
-    preference: voice.md (the curated voice fingerprint, most
-    reliable when populated), then seed.txt (the user's pitch),
-    then None (caller falls back to the median of chapter grades)."""
+                      series_root: Path) -> tuple[float | None, str, float | None]:
+    """Resolve the FK-grade baseline for this book. Returns
+    ``(baseline, source, band_half_width)``. Order of preference: a
+    band declared in voice.md (``FK grade band: 5–8``; midpoint is the
+    baseline, half-width the tolerance), then seed.txt (the user's
+    pitch, written in the target voice), then the voice file's own
+    prose (weak: it is a rules document), then None (caller falls back
+    to the median of chapter grades)."""
+    voice = book_root / "voice.md"
+    voice_text = voice.read_text(encoding="utf-8") if voice.is_file() else None
+    if voice_text:
+        band = declared_fk_band(voice_text)
+        if band is not None:
+            lo, hi = band
+            return round((lo + hi) / 2, 2), "voice.md:band", round((hi - lo) / 2, 2)
+    seed = book_root / "seed.txt"
+    if seed.is_file():
+        text = seed.read_text(encoding="utf-8")
+        grade = flesch_kincaid_grade(text)
+        if grade is not None:
+            return grade, "seed.txt", None
+    if voice_text:
+        grade = flesch_kincaid_grade(voice_text)
+        if grade is not None:
+            return grade, "voice.md", None
+    return None, "none", None
+
+
+def _legacy_baseline_source(book_root: Path, series_root: Path) -> tuple[float | None, str]:
+    """Pre-band behaviour kept for callers that only want (grade, source)."""
     voice = book_root / "voice.md"
     if voice.is_file():
         text = voice.read_text(encoding="utf-8")
@@ -341,7 +390,11 @@ def build_syntax_drift_report(
     until the chapter pool has at least 3 entries.
     """
     series = series_root if series_root is not None else book_root.parent.parent
-    baseline, source = _baseline_source(book_root, series)
+    baseline, source, half_width = _baseline_source(book_root, series)
+    if half_width is not None:
+        # A declared band sets its own tolerance: anything inside the
+        # band is on register, anything outside drifts.
+        threshold = half_width
     chapter_grades: list[tuple[int, float | None]] = []
     grades: list[float] = []
     for path in iter_chapter_files(book_root / "chapters"):
@@ -390,11 +443,17 @@ def render_syntax_drift_markdown(report: SyntaxDriftReport, *,
     parts.append("")
     if report.baseline is None:
         parts.append(
-            "_Cannot compute baseline FK grade. Need either populated "
-            "`voice.md` / `seed.txt`, or ≥3 chapters in the book for "
-            "the median fallback._"
+            "_Cannot compute baseline FK grade. Declare one in voice.md "
+            "(`FK grade band: 5–8`), or provide `seed.txt`, or draft ≥3 "
+            "chapters for the median fallback._"
         )
         return "\n".join(parts) + "\n"
+    if report.baseline_source == "voice.md":
+        parts.append(
+            "_Note: baseline is the voice file's own prose, which is a rules "
+            "document, not a sample of the register. Declare `FK grade band: "
+            "L–H` in voice.md for a meaningful baseline._")
+        parts.append("")
     parts.append(
         f"_baseline: FK grade {report.baseline} (source: {report.baseline_source}) · "
         f"flag threshold: ±{report.threshold:.1f} grade level(s)_"

@@ -20,7 +20,15 @@ rules here: PROSE.md already holds the mechanics.
 
 ## Part 2 — Book-specific fingerprint
 
-<!-- Filled by /autonovel:voice-discovery. Leave empty until then. -->
+<!-- Filled by /autonovel:voice-discovery. Leave empty until then.
+Include one line declaring the reading-grade band of the register,
+exactly in this form, so `autonovel mechanical syntax-drift` and the
+`register` dimension in /autonovel:evaluate have a baseline:
+    FK grade band: 5–8
+(modern commercial fiction sits around 5–8; literary and period
+registers run higher). Name the published writers who are the model,
+who the reader is, and what the narrator refuses; the mechanics are
+shared/craft/PROSE.md's and need not be restated. -->
 
 ## Part 3 — Custom rubric
 

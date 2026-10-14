@@ -110,6 +110,10 @@ from .pov_bleed import (
     build_report as build_pov_bleed_report,
     render_markdown as render_pov_bleed_md,
 )
+from .register import (
+    build_report as build_register_report,
+    render_markdown as render_register_md,
+)
 from .series_arc import (
     build_report as build_series_arc_report,
     render_markdown as render_series_arc_md,
@@ -339,6 +343,22 @@ def _cmd_series_arc(args: argparse.Namespace) -> int:
         sys.stdout.write("\n")
     else:
         sys.stdout.write(render_series_arc_md(report))
+    return 0
+
+
+def _cmd_register(args: argparse.Namespace) -> int:
+    book_root = Path(args.book_root)
+    report = build_register_report(
+        book_root, long_utterance=args.long_utterance, chapter=args.chapter,
+    )
+    if args.format == "json":
+        json.dump({"book_root": str(book_root), **report.to_dict()},
+                  sys.stdout, indent=2)
+        sys.stdout.write("\n")
+    else:
+        sys.stdout.write(render_register_md(
+            report, book=book_root.name, show_hits=not args.summary_only,
+        ))
     return 0
 
 
@@ -2049,8 +2069,22 @@ def main(argv: list[str] | None = None) -> int:
     sa.add_argument("--format", choices=("markdown", "json"), default="markdown")
     sa.set_defaults(func=_cmd_series_arc)
 
+    rg = sub.add_parser("register",
+                        help="Per-chapter register markers, narration and dialogue separately: "
+                             "FK grade, contraction ratio, uncontracted negatives, formal "
+                             "connectives, utterance length, explaining-to-the-listener candidates.")
+    rg.add_argument("book_root", help="Path to the book dir (parent of chapters/).")
+    rg.add_argument("--chapter", type=int, default=None,
+                    help="Scan one chapter only (default: every chapter).")
+    rg.add_argument("--long-utterance", type=int, default=40,
+                    help="Words per quoted utterance above which it is a candidate (default 40).")
+    rg.add_argument("--format", choices=("markdown", "json"), default="markdown")
+    rg.add_argument("--summary-only", action="store_true",
+                    help="Skip the per-line block; emit only the per-chapter table.")
+    rg.set_defaults(func=_cmd_register)
+
     sd = sub.add_parser("syntax-drift",
-                          help="Per-chapter Flesch-Kincaid grade vs voice/seed baseline. Catches modern syntax in period-correct vocabulary.")
+                          help="Per-chapter Flesch-Kincaid grade vs the voice file's declared band (or seed/median fallback).")
     sd.add_argument("book_root", help="Path to the book dir (parent of chapters/).")
     sd.add_argument("--series-root", default=None,
                       help="Series root (default: book_root.parent.parent).")

@@ -31,16 +31,26 @@ commercial fiction runs 5-8. The *delta* between a chapter and
 the book's voice baseline matters more than the absolute number.
 
 Baseline source (in priority order):
-1. `books/{book}/voice.md` — the curated voice fingerprint, the
-   authoritative read on intended register.
+1. A band declared in `books/{book}/voice.md` on one line,
+   `FK grade band: 5–8`. Its midpoint is the baseline and its
+   half-width the tolerance; `--threshold` is ignored. This is
+   the authoritative read on intended register (modern commercial
+   fiction sits around grade 5–8; literary and period registers
+   higher).
 2. `books/{book}/seed.txt` — the user's pitch, written in the
    target voice.
-3. Median of chapter grades (when neither of the above yields
-   a usable baseline AND there are ≥3 chapters).
+3. The voice file's own prose. Weak: a voice file is a rules
+   document, not a sample of the register, and the output says so
+   when this fallback is used. Declare a band instead.
+4. Median of chapter grades (when none of the above yields a
+   usable baseline AND there are ≥3 chapters).
 
-Chapters drifting more than `--threshold` (default 1.0 grade
-level) above the baseline get flagged. The LLM judge in
-`/autonovel:evaluate`'s `voice_adherence` dimension does the
+Chapters outside the tolerance (default `--threshold` 1.0 grade
+level when no band is declared) get flagged. For the fuller
+register picture — narration and dialogue graded separately,
+contraction ratio, utterance length, lines that explain to the
+listener — use `autonovel mechanical register` (`/autonovel:evaluate`
+runs it and scores the `register` dimension). The LLM judge does the
 actual scoring; this command surfaces the candidates.
 
 **Review list, not a quality gate.** Real explanations for a

@@ -120,6 +120,20 @@ A good brief names specific passages to change, not vague moods.
      to safe, round-edged endings) is the named ceiling failure from
      the Bells production, and only specific irreversible commitments
      break it. Omit the section when the score is ≥7.
+   - `## Register edits` *(only when the eval log carries a
+     non-empty `register_edits` array)* — copy every entry as one
+     bullet: `L{line_no} ({kind}): "{quote}" → "{rewrite}" — {why}`.
+     These are line edits, not rewrites: the revise applies them
+     where they stand and changes nothing around them. Lead with the
+     dialogue entries, because exposition in a character's mouth
+     ("That's San Giacomo's bell, at the end there") is the failure
+     a reader hears first; for each, say where the information goes
+     instead (narration, a character who doesn't know it, or
+     nowhere). Add one line with the scanner's numbers from the
+     `register` dimension (narration FK grade vs the voice file's
+     band, contraction ratio, mean utterance length, count of
+     utterances over 40 words) so the revise can re-measure. Omit
+     the section when the array is empty or absent.
    - `## Custom-rubric findings` *(only when present)* — for every
      criterion in the eval log's `custom_rubric` array (or the panel
      log's `custom_rubric` block) that scored below 6 or was named

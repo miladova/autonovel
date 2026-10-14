@@ -165,6 +165,20 @@ required reads — surface the error and stop, don't retry.
    series. Obey all four. Do not use any word that appears in
    `shared/period_bans.txt`.
 
+   **Register self-check before the summary.** When the draft is
+   written, run `autonovel mechanical register books/{book}
+   --chapter {chapter}` with `bash`. It measures narration and
+   dialogue separately: Flesch-Kincaid grade, contraction ratio,
+   uncontracted negatives, formal connectives, utterances over 40
+   words, and lines that explain to the listener what the listener
+   can see. Read the candidates against `books/{book}/voice.md`
+   (its `FK grade band: L–H` line and its refusals) and fix them in
+   the draft now: a narration that never contracts a negative, a
+   character delivering a 100-word lecture, or a line like "That's
+   the bell, at the end there" is the register failure a reader
+   hears first, and the judge scores it as `register`. Period nouns
+   are fine; formal grammar under modern vocabulary is not.
+
    **Precedence.** The `shared/craft/` documents are series-wide
    defaults. Where `books/{book}/voice.md` Parts 1–3 explicitly
    override one of them (a plain-register thriller that says "telling
