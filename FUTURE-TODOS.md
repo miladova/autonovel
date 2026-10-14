@@ -45,7 +45,14 @@ to start.
   numbers; (7) a numeric target in a voice file gets gamed by the writer
   (dialogue ≥30% of words produced exposition in mouths): voice templates
   should prefer bands and "look at" thresholds over floors, and the
-  evaluate rubric should say so.
+  evaluate rubric should say so; (8) the register scanner's
+  listener-explaining phrase list catches only the blatant form ("at the
+  end there"); the copy-editor judge found 6–7 per chapter where the
+  scanner found 0–2, so the scanner is a reminder, not the detector — fine,
+  but say so in its header; (9) moving speeches into narration predictably
+  pushes narration sentences over a book's length ceiling (11 in ch 1): add
+  a `--max-sentence N` report of narration sentences over N to the register
+  scanner so revise can catch its own side-effect.
 
 - **Book-scoped canon + isolated context — rewrite support (shipped
   2026-10-12).** Pre-work for a second version of the Fugger novel in the
