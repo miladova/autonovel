@@ -2028,8 +2028,8 @@
 
 ## Tests last known green
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-14 (later) —
-  **1932 passing, 1 skipped** (`pytest tests/deterministic tests/contracts`).
-  +11 over the 1921 mark: `test_register.py` (9: narration/dialogue
+  **1933 passing, 1 skipped** (`pytest tests/deterministic tests/contracts`).
+  +12 over the 1921 mark: `test_register.py` (10: narration/dialogue
   split, formal vs spoken flagging, contraction ratio, dialogue
   negatives excluded, long-utterance threshold, curly quotes, build +
   CLI, declared-band parsing, band beats voice prose) and two

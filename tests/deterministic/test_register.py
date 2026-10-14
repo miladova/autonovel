@@ -135,3 +135,19 @@ def test_syntax_drift_prefers_declared_band_over_voice_prose(tmp_path: Path) -> 
     assert rep.baseline_source == "voice.md:band"
     assert rep.baseline == 6.5
     assert rep.threshold == 1.5  # half the band width
+
+
+def test_syntax_drift_grades_narration_only(tmp_path: Path) -> None:
+    """Dialogue reads lower than narration in every register; the drift
+    report is about the narrator, so quoted speech is stripped."""
+    narration = ("The magistrate considered the sealed correspondence carefully before "
+                 "answering, weighing the consequences of every alternative. ") * 6
+    chatter = '"No." "Yes." "Go." "Stay." "Now." "Why?" ' * 20
+    book = tmp_path / "b"
+    (book / "chapters").mkdir(parents=True)
+    (book / "chapters" / "ch_01.md").write_text("---\nchapter: 1\n---\n\n" + narration, encoding="utf-8")
+    (book / "chapters" / "ch_02.md").write_text("---\nchapter: 2\n---\n\n" + narration + chatter, encoding="utf-8")
+    (book / "chapters" / "ch_03.md").write_text("---\nchapter: 3\n---\n\n" + narration, encoding="utf-8")
+    rep = build_syntax_drift_report(book)
+    grades = dict(rep.chapter_grades)
+    assert grades[1] == grades[2] == grades[3]

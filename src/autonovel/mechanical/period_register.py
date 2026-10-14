@@ -255,6 +255,14 @@ def _syllables_in_word(word: str) -> int:
     return max(1, syllables)
 
 
+_QUOTED_SPAN_RE = re.compile(r'"[^"\n]*"|“[^”\n]*”')
+
+
+def _narration_only(text: str) -> str:
+    """Strip quoted speech so the grade measures the narrator."""
+    return _QUOTED_SPAN_RE.sub(" ", strip_yaml_frontmatter(text))
+
+
 def flesch_kincaid_grade(text: str) -> float | None:
     """FK grade level for `text`. Returns None for empty / single-
     word inputs where the formula is meaningless."""
@@ -402,7 +410,12 @@ def build_syntax_drift_report(
         if not m:
             continue
         text = path.read_text(encoding="utf-8")
-        grade = flesch_kincaid_grade(text)
+        # Grade the NARRATION only. Dialogue legitimately reads two or
+        # three grades lower than narration in any register, so a
+        # dialogue-heavy chapter would otherwise look "too flat" while
+        # its narration sits inside the band. The register scanner
+        # reports both halves; this report is about the narrator.
+        grade = flesch_kincaid_grade(_narration_only(text))
         chapter_grades.append((int(m.group(1)), grade))
         if grade is not None:
             grades.append(grade)

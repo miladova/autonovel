@@ -27,8 +27,13 @@ FK_grade = 0.39 × (words / sentences)
 
 Higher FK grade = harder reading = longer sentences with more
 syllables-per-word. Period fiction often runs 9-12; modern
-commercial fiction runs 5-8. The *delta* between a chapter and
-the book's voice baseline matters more than the absolute number.
+commercial fiction runs 5-8 (every *New York Times* number-one
+bestseller since 1960 falls between 4 and 11; see
+`shared/craft/CRAFT.md` §6 "Registers, operationally"). The grade is
+computed on the NARRATION only (quoted speech stripped), because
+dialogue reads two or three grades lower in any register and would
+make a talk-heavy chapter look flat. The *delta* between a chapter and
+the book's declared band matters more than the absolute number.
 
 Baseline source (in priority order):
 1. A band declared in `books/{book}/voice.md` on one line,
