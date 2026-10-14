@@ -316,6 +316,102 @@ defaulting to the literary register (compression, withheld subjects,
 period cadence, riddle openers) because it reads as "writerly". It is
 only writerly in a book that asked for it.
 
+### Registers, operationally
+
+A voice file names its register; this section says what each one
+measures as, so the drafter can aim and the judge can check instead of
+both guessing. Sources are given so a number can be argued with.
+`autonovel mechanical register` reports most of these per chapter,
+narration and dialogue separately; `/autonovel:evaluate` scores them
+as `register`. A voice file sets the book's position inside a band by
+declaring `FK grade band: L–H` and may tighten anything below;
+nothing below is a gate on its own.
+
+**Plain contemporary (commercial thriller, popular historical).**
+Models: Follett ("transparent prose… I've failed dreadfully if you
+have to read a sentence twice"), Harris ("no interest in stylistic
+self-indulgence"), Lee Child ("a plain, declarative style"), King,
+Leonard ("If it sounds like writing, I rewrite it"), Orwell's rules
+ii–v, Zinsser ("strip every sentence to its cleanest components").
+
+  - Reading grade. Ben Blatt measured every *New York Times* number-one
+    bestseller 1960–2014: all fall between Flesch-Kincaid grade 4 and
+    11; the centre moved from about 8 in the 1960s to about 6 after
+    2000; mean sentence length from 17 words to 12. Shane Snow found no
+    bestselling author above grade 9 and "within a given genre, the
+    best writers tend to write the simplest." Sourced band for this
+    register: **FK 4–9, centre 5–7**. Measure narration and dialogue
+    separately; dialogue runs lower. Mean narration sentence 10–17
+    words, with variance (PROSE.md §3): a run of uniform 12-word
+    sentences is as wrong as a run of 30-word ones. Caveat: FK sees
+    only sentence length and syllables; *Wolf Hall* scores 5.6 and is
+    not plain. So FK is necessary, not sufficient.
+  - Grammar is spoken. Biber's register analysis loads contractions
+    (.90) and analytic negation (.78) on the conversational end and
+    nouns, long words and prepositions on the informational end.
+    Narration in this register contracts its negatives (*didn't,
+    couldn't, wasn't*); an uncontracted *did not* is an emphasis, a few
+    per chapter. **Contraction ratio in narration above 0.9** is the
+    pipeline's calibration; a chapter at 0.0 (27 "did not", no
+    "didn't") reads as costume however modern its words. Also spoken:
+    *if* not *whether*, *maybe* not *perhaps*, normal word order (no
+    "That part he had decided"), full clauses (no "watched it hung").
+  - Verbs carry it. Orwell iv and Zinsser: active over passive. Biber
+    (1993): after a form of *be*, the next word is a passive verb 13%
+    of the time in fiction against 31% in exposition; *To Kill a
+    Mockingbird* runs about 1% passive overall. Adverbs: King ("the
+    road to hell is paved with adverbs"), Leonard rule 4. Blatt:
+    Hemingway 81 *-ly* adverbs per 10,000 words, King 105, Rowling
+    140; books under 50 were rated great 67% of the time, books over
+    150 only 16%. **Under 100 per 10,000 words is the sourced
+    ceiling; under 50 the target.** Exclamation marks: Leonard, "two or
+    three per 100,000 words." Nominalisations (Pinker's "zombie
+    nouns": *-tion, -ment, -ness, -ity*) are the informational-register
+    tell; prefer the verb.
+  - Dialogue is terse and oblique. Stein: "Dialogue, compared to
+    actual speech, is terse"; "If a speech runs over three minutes,
+    you may be speechifying." Real conversation turns have a median of
+    5 words (British National Corpus); fiction runs longer but **a
+    median turn under about 15 words and almost nothing over 40** is
+    the calibration; an utterance over 40 words is a lecture unless
+    the scene is a speech. Every turn carries one or two thoughts.
+    Tags: *said*, or an action beat; no adverb on *said* (Leonard 3–4,
+    Browne & King). No turn tells the listener what the listener can
+    see, knows, or is holding (Turkey City's "As you know, Bob" and
+    "maid and butler dialogue"; McKee: "skill in exposition means
+    making it invisible"). Fix per *Writing Excuses*: "Get your
+    characters into arguments, and let them slip in the information
+    you want as a side issue."
+  - Information lands in narration, coloured by the viewpoint (PROSE.md
+    §4, §7), at the moment someone needs it. Follett and Harris both
+    explain freely; neither explains in a mouth.
+
+**Literary.** The contrast case, not a lesser one. Mantel: "I use
+modern English but shift it sideways a little." Markers critics name:
+present tense, free indirect "he, Cromwell", fronting and inversion for
+cadence, withheld subjects, compression, a higher tolerance for
+reading a sentence twice. FK can still read 5–6. A book that asks for
+this says so in its voice file; a book that asked for plain and got
+this has the register failure listed under "Register tells" below.
+
+**Period fiction in either register.** Stevenson's word for affected
+archaism is "tushery"; Mitchell: "It doesn't really work if you have
+characters using the word harken." Rutherfurd and Gooden: write plain
+modern speech, choose words that existed in the period or still mean
+the same thing, and never attempt the period's own syntax ("the
+attempt to write like the Normans or even the Elizabethans would make
+a book unreadable or, more accurately, unread"). The anachronism that
+breaks a reader is **idiom, not grammar**: Follett's tenth-century
+"What was bugging him?", a Roman saying "Whatever", a Tudor "pressure
+point." So: a hard ban on tushery (*thee, thou, forsooth, hark, 'tis,
+methinks, prithee, gadzooks, harken*) outside quoted period documents;
+a judge question for every colloquialism, "is this a post-1900 idiom
+or a metaphor from a technology or institution that did not exist?";
+tighter scrutiny the nearer the setting is to living memory (Gooden);
+and an asymmetry (Gooden on "sadist"): analytic modern vocabulary is
+allowed in narration and held back in dialogue. Period nouns (ducat,
+Fondaco, galley) are never the problem.
+
 ### What good prose does in any register
 1. SPECIFICITY: Not "a bird" but "a jay." Not "flowers" but "lupine."
    Not "the official" but "the steward who ran the building."
