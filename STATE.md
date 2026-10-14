@@ -1951,7 +1951,55 @@
   a register test, a not-this/this pair from the actual draft, and a
   Part 3 "Register test" criterion; chapter 2 revised as the proof.
 
+- **2026-10-14 — Craft docs reach the writer; sourced PROSE.md.** The
+  author, after a third prose complaint in two days ("too much short
+  conversation", then "disconnected statements"): "it feels like I/we
+  are making up how to write prose on the fly … review online
+  literature guidance for writing fiction perhaps?" Root cause, found
+  while wiring the fix: CRAFT.md / ANTI-SLOP.md / ANTI-PATTERNS.md lived
+  only at the repo root; `draft.md` said "Obey ANTI-PATTERNS.md" with no
+  path; nothing installed them anywhere a series session could read;
+  the series CLAUDE.md template never mentioned them (and the live
+  Fugger series had no CLAUDE.md at all). Every chapter had been drafted
+  from `voice.md` alone, and the voice file had accreted one invented
+  rule per complaint. Decision: (1) the craft docs become a series
+  template subtree `templates/series/shared/craft/` (source of truth;
+  repo-root files are symlinks), copied by `new-series`, refreshed by
+  `refresh-templates` (default scope now `typeset` + `shared/craft`),
+  checked by `doctor` (missing / stale warnings); `draft`, `revise`,
+  `evaluate` read them at `shared/craft/<name>` and run the refresh
+  themselves if the folder is missing. (2) New `PROSE.md`, built from
+  two web-research passes over the craft literature: known-new contract
+  (Williams, Gopen & Swan, Pinker), paragraphs (Le Guin, Prose, Harnby),
+  rhythm as variance (Provost, Le Guin, Follett), psychic distance and
+  free indirect (Gardner, Darwin, Wood), scene as cause-and-effect
+  chain (Swain, Bickham, Ingermanson, McKee's turn test, Follett's
+  turn every 4–6 pages, Child, Bell, Vonnegut), dialogue (Browne &
+  King, Stein's four questions, Leonard, Turkey City, George),
+  information (Darwin, Harris, Palahniuk), endings; a §9 folklore list
+  (genre sentence lengths, dialogue percentages, chapter lengths, "the
+  epigram closer") so pipeline heuristics are labelled as such; a §10
+  judge checklist. (3) The book voice template's Part 1 tells authors
+  to record register, not re-derive mechanics. Live series: kingmaker
+  voice.md Part 2 reduced to reader / register / tuning fork /
+  "Calibration for this book" (numbers labelled as this book's
+  choices) with mechanics delegated to PROSE.md by section; a fourth
+  "Not this" failure (statements with no joins, paragraphs split to
+  game a dialogue count) recorded with its chained rewrite. Tests:
+  `test_craft_docs.py` (template ships all four; root symlinks resolve;
+  new-series copies; doctor missing / stale / quiet; refresh restores;
+  prose commands name the series path) and the refresh default test
+  rewritten. Open items in FUTURE-TODOS near-term.
+
 ## Tests last known green
+- Tier 1 + Tier 2 (deterministic + contracts): 2026-10-14 — **1921
+  passing, 1 skipped** (`pytest tests/deterministic tests/contracts`).
+  +8 over the 1913 mark: `test_craft_docs.py` (template ships all four
+  craft docs; repo-root symlinks resolve to the template; new-series
+  copies `shared/craft/`; doctor warns on missing and on stale, quiet
+  when current; refresh restores after deletion; draft / revise /
+  evaluate name the series path and the self-heal) and the refresh
+  default-scope test rewritten for `typeset` + `shared/craft`.
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-13 — **1913
   passing, 1 skipped** (`pytest tests/deterministic tests/contracts`).
   +5 over the 1908 mark: four promote-canon "same fact" regression tests

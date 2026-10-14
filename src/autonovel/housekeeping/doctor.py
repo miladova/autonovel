@@ -214,6 +214,46 @@ def _scan_for_one_m(value: object, _path: str = "") -> list[str]:
     return out
 
 
+def check_craft_docs(series_root: Path) -> list[str]:
+    """Warn when the craft reference documents the writer / judge
+    commands read (`shared/craft/CRAFT.md`, `PROSE.md`, `ANTI-SLOP.md`,
+    `ANTI-PATTERNS.md`) are missing from the series or differ from the
+    package's copy. Before 2026-10 these documents lived only in the
+    autonovel repository, so a series session never saw them and the
+    writer worked from `voice.md` alone; `autonovel refresh-templates`
+    copies the current versions in."""
+    from . import scaffold
+
+    out: list[str] = []
+    try:
+        tmpl = scaffold.craft_template_dir()
+    except Exception:  # noqa: BLE001 — a broken package install is not the series' fault
+        return out
+    missing: list[str] = []
+    stale: list[str] = []
+    for name in scaffold.CRAFT_DOCS:
+        src = tmpl / name
+        if not src.is_file():
+            continue
+        dst = series_root / "shared" / "craft" / name
+        if not dst.is_file():
+            missing.append(name)
+        elif dst.read_bytes() != src.read_bytes():
+            stale.append(name)
+    if missing:
+        out.append(
+            f"craft docs missing: shared/craft/{{{', '.join(missing)}}} — the "
+            "draft / revise / evaluate commands read these; run "
+            "`autonovel refresh-templates` to copy them in"
+        )
+    if stale:
+        out.append(
+            f"craft docs stale: shared/craft/{{{', '.join(stale)}}} differ from "
+            "the installed autonovel version; run `autonovel refresh-templates`"
+        )
+    return out
+
+
 def missing_export_tools() -> list[str]:
     """Names of export-side tools (tectonic, pandoc, ffmpeg, etc.)
     that are not on PATH. Used by `autonovel doctor --install-missing`
@@ -257,6 +297,9 @@ def run(series_root: Path, *, fix: bool = False, export_tools: bool = True) -> D
     for rel in REQUIRED_SHARED_FILES:
         if not (series_root / rel).is_file():
             report.warnings.append(f"missing shared file: {rel}")
+
+    for line in check_craft_docs(series_root):
+        report.warnings.append(line)
 
     for b in cfg.books:
         book = series.book(b.name)

@@ -11,6 +11,31 @@ to start.
 
 ## Near-term — pull into the next PR
 
+- **Craft docs reach the writer; sourced PROSE.md (shipped 2026-10-14).**
+  Root cause of "we are making up how to write prose on the fly": CRAFT.md /
+  ANTI-SLOP.md / ANTI-PATTERNS.md lived only at the repo root, commands named
+  them with no path, nothing installed them, the series CLAUDE.md never
+  mentioned them — a series session drafted from `voice.md` alone. Now the
+  four docs are a series template subtree (`shared/craft/`; repo-root files
+  are symlinks), `new-series` copies them, `refresh-templates` default
+  includes them, `doctor` warns when missing/stale, draft/revise/evaluate read
+  them by series path and self-heal. `PROSE.md` is new: register-neutral
+  mechanics with every rule traced (Williams known-new; Le Guin; Gardner /
+  Darwin psychic distance; Swain / Bickham / McKee scene chain; Stein /
+  Browne & King / Leonard dialogue; Darwin / Harris information) plus a
+  folklore list (§9) and a judge checklist (§10). **Still open:** (1) other
+  commands that touch prose (reader-panel, review, adversarial-edit, brief,
+  lengthen, shorten, deepen-character, revoice) still don't read
+  `shared/craft/`; (2) `voice-discovery --upgrade` should strip a voice file's
+  home-made mechanics rules that PROSE.md now covers and leave register +
+  calibration; (3) a mechanical `autonovel mechanical prose-shape` candidate
+  generator (dialogue-paragraph share, runs, one-line questions, unjoined
+  openers, connective share) — the session used a scratch script because
+  agents' self-reported counts were wrong three times; (4) the eight
+  `tests/fixtures/tiny-series-*` have no `shared/craft/` (commands self-heal,
+  but smoke runs will each do a refresh); (5) the register-specific
+  CRAFT.md §5–6 could shrink now that PROSE.md holds the mechanics.
+
 - **Book-scoped canon + isolated context — rewrite support (shipped
   2026-10-12).** Pre-work for a second version of the Fugger novel in the
   same series. (1) **Canon is book-scoped**: `books/<book>/canon.md` (new

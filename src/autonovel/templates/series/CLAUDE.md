@@ -26,6 +26,7 @@ shared/
   events.md              # inter-book event ledger (story_time + rendered_in)
   timeline.md
   period_bans.txt        # forbidden vocabulary (period fiction)
+  craft/                 # craft reference docs the writer/judge read (package-owned; see below)
   sources.bib            # research bibliography
   research/
     sources.yaml         # forced URLs that /autonovel:research must consult
@@ -82,6 +83,27 @@ books/<book>/
 5. **The Stability Trap.** AI defaults to safe, round-edged endings.
    Push toward irreversible change, real cost, and one mystery the
    next chapter can pull on.
+
+## Craft reference (`shared/craft/`)
+
+Four documents shipped by autonovel and read by every drafting,
+revision and evaluation command:
+
+- `shared/craft/PROSE.md` — sentence, paragraph, scene and dialogue
+  mechanics, register-neutral, each rule traced to its source in the
+  craft literature (Williams, Gardner, Swain, Browne & King, Stein,
+  Le Guin, Prose, Wood and others).
+- `shared/craft/CRAFT.md` — structure, character, worldbuilding,
+  show/tell, the stability trap, evaluation rubrics.
+- `shared/craft/ANTI-SLOP.md`, `shared/craft/ANTI-PATTERNS.md` —
+  banned phrases and the model's prose tics.
+
+They are package-owned: `autonovel refresh-templates` overwrites them
+with the installed version (and `autonovel doctor` warns when they are
+missing or stale), so do not edit them here. A book's register, and
+any deliberate departure from these documents, is recorded in
+`books/<book>/voice.md` Parts 1–3, which the commands treat as
+outranking the craft documents on conflict.
 
 ## Where per-book guidance lives
 

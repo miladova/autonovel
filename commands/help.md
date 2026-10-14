@@ -638,7 +638,9 @@ Maintenance:
                                        --pin-model to pin per-tier.
   autonovel rollback                   restore from a checkpoint
   autonovel refresh-templates          re-copy package templates over
-                                       a live series
+                                       a live series (default: typeset/
+                                       and the shared/craft/ reference
+                                       docs the writer and judge read)
 
 Import:
 

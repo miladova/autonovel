@@ -16,6 +16,7 @@ reads:
   - books/{book}/canon.md
   - shared/events.md
   - shared/period_bans.txt
+  - shared/craft/*.md
   - books/{book}/voice.md
   - books/{book}/outline.md
   - books/{book}/chapters/ch_{chapter}.md
@@ -205,10 +206,16 @@ or `.autonovel/eval_logs/<timestamp>_series.json` for `--phase series`.
    plain, explanatory or direct, and a literary register is not marked
    down for density. The reverse failure is the one to catch: a book
    that asked for plain English and got compression, riddle openers,
-   metonymy, period cadence or epigram closers (CRAFT.md §6 "register
-   tells"). Where voice.md Part 1 overrides CRAFT.md or ANTI-PATTERNS.md,
-   score to the voice file. Quote the register failures under
-   `three_weakest_sentences` so the brief can act on them.
+   metonymy, period cadence or epigram closers (`shared/craft/CRAFT.md`
+   §6 "register tells"). Judge the mechanics of the prose (how
+   sentences and paragraphs connect, how scenes are built, how
+   dialogue is shaped) against `shared/craft/PROSE.md`, which is
+   register-neutral; read it with `file_read` before scoring, and if
+   `shared/craft/` is missing run `autonovel refresh-templates` with
+   `bash` first. Where voice.md Part 1 overrides `shared/craft/CRAFT.md`
+   or `shared/craft/ANTI-PATTERNS.md`, score to the voice file. Quote the register
+   failures under `three_weakest_sentences` so the brief can act on
+   them.
 
    **`show_dont_tell_ratio` (the LLM-judge upgrade to the
    pre-flight scanner).** Run the mechanical scanner first via

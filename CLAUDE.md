@@ -33,8 +33,15 @@ Authoritative specs:
 Reference docs consumed by writer/judge prompts (do not edit lightly —
 they are the *prompt material*, not project documentation):
 
-- [`CRAFT.md`](CRAFT.md), [`ANTI-SLOP.md`](ANTI-SLOP.md),
-  [`ANTI-PATTERNS.md`](ANTI-PATTERNS.md).
+- [`CRAFT.md`](CRAFT.md), [`PROSE.md`](PROSE.md),
+  [`ANTI-SLOP.md`](ANTI-SLOP.md), [`ANTI-PATTERNS.md`](ANTI-PATTERNS.md).
+  The repo-root files are symlinks; the source of truth is
+  `src/autonovel/templates/series/shared/craft/`, which
+  `autonovel new-series` copies into every series as `shared/craft/`
+  and `autonovel refresh-templates` keeps current. Commands read them
+  at `shared/craft/<name>` inside the series (a series session cannot
+  see this repo). `PROSE.md` is the register-neutral mechanics
+  reference, each rule traced to its source in the craft literature.
 
 ## Layout
 
@@ -54,7 +61,7 @@ autonovel/
       tiny-series-historical/    # the original
       tiny-series-{scifi,literary,mystery,thriller,romance,fantasy,horror}/
       bells-reference/           # Tier-4 regression — populates from autonovel/bells branch
-  CRAFT.md, ANTI-SLOP.md, ANTI-PATTERNS.md
+  CRAFT.md, PROSE.md, ANTI-SLOP.md, ANTI-PATTERNS.md   # symlinks → templates/series/shared/craft/
   CLAUDE.md, AGENTS.md, GEMINI.md   # AGENTS/GEMINI are symlinks to CLAUDE.md
 ```
 

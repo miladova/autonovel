@@ -164,21 +164,42 @@ class RefreshTemplatesResult:
     skipped: list[Path]   # subtrees excluded from refresh by `--only`
 
 
+#: Subtrees `autonovel refresh-templates` refreshes when `--only` is not
+#: given. Both hold package-owned material the user is not expected to
+#: hand-edit: the typeset templates (PDF-header fixes land there) and
+#: the craft reference documents the writer / judge commands read
+#: (`shared/craft/`: CRAFT.md, PROSE.md, ANTI-SLOP.md, ANTI-PATTERNS.md).
+#: Register choices belong in `books/<book>/voice.md`, not in copies of
+#: these files, so refreshing them loses nothing.
+DEFAULT_REFRESH_SUBTREES: tuple[str, ...] = ("typeset", "shared/craft")
+
+#: The craft reference documents shipped into every series at
+#: `shared/craft/`. Source of truth is the template tree; the repo-root
+#: files of the same names are symlinks to it.
+CRAFT_DOCS: tuple[str, ...] = ("CRAFT.md", "PROSE.md", "ANTI-SLOP.md", "ANTI-PATTERNS.md")
+
+
+def craft_template_dir() -> Path:
+    """Package directory holding the craft reference documents."""
+    return _template_root("series") / "shared" / "craft"
+
+
 def refresh_templates(
     series: SeriesLayout,
     *,
-    only: tuple[str, ...] = ("typeset",),
+    only: tuple[str, ...] = DEFAULT_REFRESH_SUBTREES,
     dry_run: bool = False,
 ) -> RefreshTemplatesResult:
     """Re-copy package-shipped series templates over the live series.
 
-    By default, only refreshes `typeset/` (the directory the
-    2026-04-25 / 2026-04-28 PDF-header fixes live in). `only` can be
-    set to a different tuple of subtree names — e.g. `("typeset",
-    "shared")` to refresh research seeds — but the *default is
-    minimal* on purpose, because most other template files (CLAUDE.md,
-    `.gitignore`) the user is allowed to hand-edit and we don't want
-    to clobber.
+    By default refreshes `typeset/` (the directory the 2026-04-25 /
+    2026-04-28 PDF-header fixes live in) and `shared/craft/` (the craft
+    reference documents every drafting / revision / evaluation command
+    reads). `only` can be set to a different tuple of subtree paths,
+    e.g. `("typeset", "shared")` to refresh research seeds too, but the
+    *default is minimal* on purpose, because most other template files
+    (CLAUDE.md, `.gitignore`, `shared/world.md`) the user is allowed to
+    hand-edit and we don't want to clobber.
 
     Returns a report listing files updated, unchanged, and any local-
     only extras (typeset overrides the user has added themselves). On
@@ -224,9 +245,16 @@ def refresh_templates(
                 if rel not in package_rel:
                     extra.append(item)
 
-    # Subtrees explicitly skipped (everything not listed in `only`).
+    # Subtrees explicitly skipped: every top-level template directory
+    # that no `only` entry names or descends into (`shared/craft` counts
+    # as touching `shared`, so `shared` is not reported as skipped).
     for child in sorted(tmpl_root.iterdir()):
-        if child.is_dir() and child.name not in only:
+        if not child.is_dir():
+            continue
+        touched = any(
+            o == child.name or o.startswith(child.name + "/") for o in only
+        )
+        if not touched:
             skipped.append(child)
 
     return RefreshTemplatesResult(

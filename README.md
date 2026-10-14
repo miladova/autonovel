@@ -731,7 +731,11 @@ autonovel/
     fixtures/
       tiny-series-{historical,scifi,literary,mystery,thriller,romance,fantasy,horror}/
       bells-reference/      # Tier-4 regression — populated from the autonovel/bells branch
-  CRAFT.md, ANTI-SLOP.md, ANTI-PATTERNS.md   # prompt material consumed by writer/judge
+  CRAFT.md, PROSE.md, ANTI-SLOP.md, ANTI-PATTERNS.md
+                            # prompt material consumed by writer/judge — symlinks to
+                            # src/autonovel/templates/series/shared/craft/, which
+                            # new-series / refresh-templates copy into every series
+                            # as shared/craft/
   CLAUDE.md, AGENTS.md, GEMINI.md            # AGENTS/GEMINI symlink to CLAUDE.md
 ```
 

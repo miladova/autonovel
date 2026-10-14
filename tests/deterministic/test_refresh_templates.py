@@ -71,13 +71,22 @@ def test_refresh_preserves_local_only_files(fresh_series) -> None:
     assert custom in result.extra
 
 
-def test_refresh_default_only_typeset(fresh_series) -> None:
-    """Default scope is `typeset/` — other subtrees are listed as
-    skipped so the user can opt them in explicitly."""
+def test_refresh_default_scope_is_typeset_and_craft(fresh_series) -> None:
+    """Default scope is `typeset/` plus `shared/craft/` — other
+    subtrees are listed as skipped so the user can opt them in
+    explicitly, and `shared/` as a whole is NOT refreshed (world.md is
+    user-owned) even though `shared/craft/` is."""
+    stale_world = fresh_series.shared / "world.md"
+    stale_world.write_text("# my world\n", encoding="utf-8")
+    stale_craft = fresh_series.shared / "craft" / "CRAFT.md"
+    stale_craft.write_text("# STALE CRAFT\n", encoding="utf-8")
     result = scaffold.refresh_templates(fresh_series)
     skipped_names = {p.name for p in result.skipped}
-    # `shared/` and `books/` are not in the default refresh.
-    assert "shared" in skipped_names or "books" in skipped_names
+    assert "landing" in skipped_names
+    assert "shared" not in skipped_names  # partially refreshed, not skipped
+    assert stale_craft in result.updated
+    assert "STALE CRAFT" not in stale_craft.read_text(encoding="utf-8")
+    assert stale_world.read_text(encoding="utf-8") == "# my world\n"
 
 
 def test_refresh_only_accepts_multiple_subtrees(fresh_series) -> None:

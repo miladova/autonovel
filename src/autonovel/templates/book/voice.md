@@ -3,13 +3,18 @@
 ## Part 1 — Voice principles (series-wide)
 
 <!--
-Edit or leave to the default writing principles in CRAFT.md,
-ANTI-SLOP.md and ANTI-PATTERNS.md. Those three are series-wide
-defaults written with literary prose in mind. If this book wants a
+Edit or leave to the default writing principles in shared/craft/
+(PROSE.md for sentence, paragraph, scene and dialogue mechanics;
+CRAFT.md for structure, character and show/tell; ANTI-SLOP.md and
+ANTI-PATTERNS.md for banned phrases and tics). PROSE.md is
+register-neutral; CRAFT.md §5–6 lean literary. If this book wants a
 different register (a plain contemporary thriller, say), list the
 overrides here explicitly ("CRAFT.md §6 does not apply; telling is
 allowed; no riddle openers") — the drafter and reviser give this
 file precedence over the shared craft documents where they conflict.
+Record the register (who the reader is, which published writers are
+the model, what the narrator refuses) rather than re-deriving prose
+rules here: PROSE.md already holds the mechanics.
 -->
 
 

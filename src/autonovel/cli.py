@@ -182,18 +182,21 @@ def _build_parser() -> argparse.ArgumentParser:
 
     rt = sub.add_parser(
         "refresh-templates",
-        help="Refresh package-shipped templates (default: typeset/) over the live series.",
+        help="Refresh package-shipped templates (default: typeset/ and shared/craft/) over the live series.",
         description=(
             "Re-copy package-shipped series templates over the live "
-            "series. Default refreshes only `typeset/` — that's where "
-            "the PDF page-header fixes live and the only subtree the "
-            "user is unlikely to have hand-edited. Pass `--only` to "
-            "refresh a different set of subtrees."
+            "series. Default refreshes `typeset/` (where the PDF "
+            "page-header fixes live) and `shared/craft/` (the craft "
+            "reference documents the draft / revise / evaluate commands "
+            "read: CRAFT.md, PROSE.md, ANTI-SLOP.md, ANTI-PATTERNS.md). "
+            "Neither is meant to be hand-edited; register choices go in "
+            "books/<book>/voice.md. Pass `--only` to refresh a different "
+            "set of subtrees."
         ),
     )
     rt.add_argument("--series", default=None)
     rt.add_argument("--only", action="append", default=None,
-                    help="Subtree to refresh (repeatable). Default: typeset.")
+                    help="Subtree to refresh (repeatable). Default: typeset, shared/craft.")
     rt.add_argument("--dry-run", action="store_true",
                     help="Print what would change; write no files.")
     rt.set_defaults(func=_cmd_refresh_templates)
@@ -705,7 +708,7 @@ def _cmd_refresh_templates(args: argparse.Namespace) -> int:
     except SeriesNotFound as e:
         print(f"error: {e}", file=sys.stderr)
         return 2
-    only = tuple(args.only) if args.only else ("typeset",)
+    only = tuple(args.only) if args.only else scaffold.DEFAULT_REFRESH_SUBTREES
     result = scaffold.refresh_templates(series, only=only, dry_run=args.dry_run)
     verb = "would update" if args.dry_run else "updated"
     print(f"{verb}: {len(result.updated)} file(s)")

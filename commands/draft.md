@@ -15,6 +15,7 @@ reads:
   - books/{book}/canon.md
   - shared/events.md
   - shared/research/notes/*.md
+  - shared/craft/*.md
   - books/{book}/voice.md
   - books/{book}/outline.md
   - books/{book}/chapters/ch_{prev}.md
@@ -153,17 +154,24 @@ required reads — surface the error and stop, don't retry.
    summarize rather than quote beyond ~8000 tokens.
 
 10. Draft the chapter. Target length comes from
-   `project.yaml :: defaults.chapter_target_words`. Obey `ANTI-PATTERNS.md`
-   and `ANTI-SLOP.md`. Do not use any word that appears in
+   `project.yaml :: defaults.chapter_target_words`. Before writing, use
+   `file_read` on the craft reference documents in the series:
+   `shared/craft/PROSE.md` (sentence, paragraph, scene and dialogue
+   mechanics, with sources), `shared/craft/CRAFT.md` (structure,
+   character, show/tell, the stability trap), `shared/craft/ANTI-SLOP.md`
+   and `shared/craft/ANTI-PATTERNS.md` (banned phrases and tics). If
+   `shared/craft/` is missing, run `autonovel refresh-templates` with
+   `bash` first; it copies the package's current versions into the
+   series. Obey all four. Do not use any word that appears in
    `shared/period_bans.txt`.
 
-   **Precedence.** `CRAFT.md`, `ANTI-PATTERNS.md` and `ANTI-SLOP.md`
-   are series-wide defaults. Where `books/{book}/voice.md` Parts 1–3
-   explicitly override one of them (a plain-register thriller that
-   says "telling is allowed" or "CRAFT.md §6 does not apply", for
-   instance), the voice file wins. The craft documents were written
-   with literary and fantasy prose in mind; a book's register is the
-   author's call, and the voice file is where that call is recorded.
+   **Precedence.** The `shared/craft/` documents are series-wide
+   defaults. Where `books/{book}/voice.md` Parts 1–3 explicitly
+   override one of them (a plain-register thriller that says "telling
+   is allowed" or "CRAFT.md §6 does not apply", for instance), the
+   voice file wins. PROSE.md is register-neutral and is not expected
+   to need overriding; CRAFT.md §5–6 describe a register and a book's
+   voice file is where the author's register is recorded.
 
 11. **Write a 2-6 word evocative chapter title.** Concrete object
     or phrase from the chapter's central beat — what the chapter is

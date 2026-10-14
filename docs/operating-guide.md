@@ -801,7 +801,7 @@ fix that together stop the first sentence of each chapter being
 used as an "alternating page header" — pull it into your series with:
 
 ```bash
-autonovel refresh-templates              # default: only typeset/
+autonovel refresh-templates              # default: typeset/ and shared/craft/
 autonovel refresh-templates --dry-run    # preview; writes nothing
 ```
 
@@ -810,6 +810,18 @@ your local-only files (custom macros, hand-tuned overrides) are
 preserved and listed under `local-only (preserved)` in the report.
 Pass `--only typeset --only shared` to also pull research seeds /
 shared template updates.
+
+**The craft reference documents refresh the same way.** Since
+2026-10 every series carries `shared/craft/` (`CRAFT.md`, `PROSE.md`,
+`ANTI-SLOP.md`, `ANTI-PATTERNS.md`), the documents the draft, revise
+and evaluate commands read before touching prose. Before that they
+lived only in the autonovel repository, where a series session could
+not see them, and the writer worked from `voice.md` alone. A series
+created earlier has no `shared/craft/`: `autonovel doctor` warns, and
+`autonovel refresh-templates` (default scope) copies the current
+versions in. Do not hand-edit them; a book's register and any
+deliberate departures belong in `books/<book>/voice.md` Parts 1–3,
+which outrank the craft documents on conflict.
 
 ### 3b.1. Upgrading an existing book to use new voice.md sections
 
