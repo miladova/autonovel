@@ -219,7 +219,7 @@ def review_phase_book(tmp_path: Path) -> tuple[Path, str]:
     edit_logs.mkdir(exist_ok=True)
     panel = edit_logs / "reader_panel.json"
     panel.write_text(json.dumps({"flagged": []}), encoding="utf-8")
-    review = edit_logs / "opus_review.md"
+    review = edit_logs / "review.md"
     review.write_text("# Opus review\n\nNo flags.\n", encoding="utf-8")
 
     return series, book

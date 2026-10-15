@@ -356,10 +356,27 @@ def test_review_staleness_actions(late_stage_book: tuple[Path, str]) -> None:
     series, book = late_stage_book
     edit_logs = series / "books" / book / "edit_logs"
     edit_logs.mkdir(exist_ok=True)
-    review = edit_logs / "opus_review.md"
+    review = edit_logs / "review.md"
     review.write_text("# Opus review\n\nFlagged.\n", encoding="utf-8")
     older = time.time() - 1000
     os.utime(review, (older, older))
+    _write_chapter(series / "books" / book, 7)
+    actions = next_actions.enumerate_actions(_layout(series), book=book)
+    review_actions = [a for a in actions if "opus review" in a.title.lower()]
+    assert len(review_actions) == 1
+
+
+def test_review_staleness_legacy_name(late_stage_book: tuple[Path, str]) -> None:
+    """A series reviewed before 2026-10 carries `opus_review.md`; with no
+    `review.md` beside it, staleness is still checked against the legacy
+    file."""
+    series, book = late_stage_book
+    edit_logs = series / "books" / book / "edit_logs"
+    (edit_logs / "review.md").unlink(missing_ok=True)
+    legacy = edit_logs / "opus_review.md"
+    legacy.write_text("# Opus review\n\nFlagged.\n", encoding="utf-8")
+    older = time.time() - 1000
+    os.utime(legacy, (older, older))
     _write_chapter(series / "books" / book, 7)
     actions = next_actions.enumerate_actions(_layout(series), book=book)
     review_actions = [a for a in actions if "opus review" in a.title.lower()]

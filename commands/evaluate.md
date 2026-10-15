@@ -101,10 +101,26 @@ or `.autonovel/eval_logs/<timestamp>_series.json` for `--phase series`.
    `project.yaml :: genre` dictates), `world_history`,
    `geography_and_culture`, `lore_interconnection`, `iceberg_depth`,
    `character_depth`, `character_distinctiveness`, `character_secrets`,
-   `outline_completeness`, `foreshadowing_balance`,
+   `outline_completeness`, `foreshadowing_balance`, `clocks_paid`,
    `internal_consistency`, `voice_clarity`, `canon_coverage`,
    `canon_outline_consistency`. For each dimension emit `{score,
-   gap, fix, note}`. Weighting: lore 40%, character 30%, structure
+   gap, fix, note}`.
+
+   **`clocks_paid` — every clock in the outline has a paying beat.**
+   Walk the outline's beats and list every deadline, ultimatum or
+   promise with a date that a beat sets ("three days to…", "come
+   home by Candlemas or…", "the loan falls due at Easter"). For each,
+   find the later beat where it runs out, is met or is bought off,
+   and check that the paying beat is a scene the POV acts in, not a
+   line of summary in the next chapter's opening ("Georg wrote; he
+   has till Michaelmas"). Emit `clocks: [{set_in, clock, paid_in,
+   paid_as: scene|summary|unpaid}]` under the dimension. Score 9-10
+   when every clock is paid as a scene, 7-8 with one paid in summary,
+   5-6 with one unpaid or two in summary, below 5 when a chapter
+   ends on a clock the next chapter opens after. The `fix` names the
+   chapter where the paying scene belongs (CRAFT.md §4 rule 3, PROSE
+   §5.8). Reader panels name this failure as "the missing scene";
+   catching it in the outline is cheaper than catching it in prose. Weighting: lore 40%, character 30%, structure
    20%, craft 10%. Include `overall_score`, `lore_score`,
    `weakest_dimension`, `top_3_improvements`.
 
@@ -412,8 +428,20 @@ or `.autonovel/eval_logs/<timestamp>_series.json` for `--phase series`.
    dimensions: `arc_completion`, `pacing_curve`, `theme_coherence`,
    `foreshadowing_resolution`, `world_consistency`, `voice_consistency`,
    `overall_engagement`, `irreversible_change_arc`,
-   `show_dont_tell_arc`. Include `novel_score`, `weakest_dimension`,
-   `weakest_chapter`, `top_suggestion`.
+   `show_dont_tell_arc`, `clocks_paid`. Include `novel_score`,
+   `weakest_dimension`, `weakest_chapter`, `top_suggestion`.
+
+   **`clocks_paid` (whole-book clock ledger).** From the chapter
+   closings and openings, list every deadline, ultimatum or dated
+   promise a chapter ends on or sets, and for each the chapter and
+   manner of its payment: `scene` (the POV acts in the scene where it
+   runs out), `summary` (reported after the fact, "Georg wrote; I've
+   got till Michaelmas"), `carried` (named again with the date still
+   standing) or `unpaid`. Emit `clocks: [{set_in, clock, paid_in,
+   paid_as}]` and `unpaid_or_summary_clocks` as a list of chapter
+   numbers for the brief / revise loop. Score as the foundation
+   dimension of the same name. This is the one structural fault a
+   per-chapter eval cannot see and a reader panel always does.
 
    **`show_dont_tell_arc` (whole-book show-vs-tell)**: run the
    mechanical scanner once (`autonovel mechanical show-dont-tell

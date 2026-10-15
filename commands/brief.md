@@ -1,7 +1,7 @@
 ---
 name: autonovel:brief
-description: Generate a revision brief for one chapter from cuts, eval, panel feedback, and (optionally) targeted research notes.
-argument-hint: "<chapter-number> --book <short-name> [--from cuts|eval|panel|auto] [--enrich-with <research-notes-path>]"
+description: Generate a revision brief for one chapter from cuts, eval, panel and review feedback, and (optionally) targeted research notes.
+argument-hint: "<chapter-number> --book <short-name> [--from cuts|eval|panel|review|auto] [--enrich-with <research-notes-path>]"
 model_tier: standard
 allowed-tools:
   - file_read
@@ -12,6 +12,7 @@ reads:
   - books/{book}/chapters/ch_{chapter}.md
   - books/{book}/edit_logs/ch{chapter:02d}_cuts.json
   - books/{book}/edit_logs/reader_panel.json
+  - books/{book}/edit_logs/review.json
   - books/{book}/eval_logs/*.json
   - shared/research/notes/*.md
 writes:
@@ -31,8 +32,8 @@ A good brief names specific passages to change, not vague moods.
 
 <workflow>
 1. Parse `$ARGUMENTS`. Expect `<chapter-number> --book <short-name>`.
-   `--from` is one of `cuts`, `eval`, `panel`, or `auto` (default
-   `auto`). `--enrich-with <path>` (optional) names a research notes
+   `--from` is one of `cuts`, `eval`, `panel`, `review`, or `auto`
+   (default `auto`). `--enrich-with <path>` (optional) names a research notes
    file (typically `shared/research/notes/<slug>.md` produced by
    `/autonovel:research`) whose detail the rewrite should weave in
    *lightly* — see step 5b. Missing required args are a usage error
@@ -53,10 +54,20 @@ A good brief names specific passages to change, not vague moods.
    - `eval`: read the most recent
      `books/{book}/eval_logs/ch{chapter:02d}_*.json` file.
    - `panel`: read `books/{book}/edit_logs/reader_panel.json` and
-     isolate the entries that name this chapter number.
+     isolate the entries that name this chapter number (the ten
+     answers per reader, the `disagreements` list and the
+     `custom_rubric` violations).
+   - `review`: read `books/{book}/edit_logs/review.json` (written by
+     `/autonovel:review`) and isolate the `items` whose `full_text`
+     names this chapter number. Each item carries `severity`,
+     `type`, `qualified` and a concrete fix; unqualified `major`
+     items lead the brief.
    - `auto`: read whichever of the above exist, preferring the most
      recent. If two or more exist, merge signals (cuts weighted highest
-     because they're the most concrete).
+     because they're the most concrete, then review items, then eval,
+     then panel). The panel and the review are the only sources that
+     see across chapters; when either names this chapter, the brief
+     carries it even if the chapter's own eval score is high.
 
 5a. **Load enrichment research** (only when `--enrich-with <path>`
     was supplied). Use `file_read` on the named file. Treat the
@@ -78,6 +89,21 @@ A good brief names specific passages to change, not vague moods.
      the cuts JSON if present)
    - `## Specific rewrites` (before → after snippets where the source
      suggested them)
+   - `## Structural findings` *(only when the panel or the review
+     names this chapter)* — one bullet per finding, most severe
+     first, each with the source (`review item N` or the reader's
+     name), the finding in one sentence, and the prescription as a
+     scene instruction: what happens on the page, where in the
+     chapter, who is present, what changes by the end. These are
+     the developmental-edit items the per-chapter eval cannot see:
+     a clock set here and paid offstage in the next chapter, a
+     pivot told in pluperfect or indirect speech instead of played
+     as a scene, a character who acts without a motive, a win with
+     no victim on the page, a scene whose stake is only cited.
+     A structural finding outranks every line edit below it; when
+     one asks for a new scene, the `## Target length` section
+     allows for it instead of asking the revise to fit it into the
+     old count.
    - `## Voice guardrails` (bulleted — preserve from voice.md Part 2)
    - `## Enrichment from research` *(only when `--enrich-with` was
      given AND step 5a found at least one scene where the research

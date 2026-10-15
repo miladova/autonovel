@@ -46,7 +46,7 @@ Every editing command falls into one of four roles:
 | `/autonovel:draft-pass` | Sweep | "Write the rest of the book." Per chapter: draft → anachronism → evaluate → if low, brief + revise + re-eval → promote-canon. With `--deep`: also runs reader-panel + review at end. |
 | `/autonovel:revision-pass` | Sweep | "Improve these chapters." Per chapter: anachronism → brief → revise → evaluate → promote-canon. |
 | `/autonovel:reader-panel` | Whole-book reviewer | Four-persona panel (Editor / Genre Reader / Writer / First Reader). Writes `edit_logs/reader_panel.json`. **Does NOT modify chapters.** |
-| `/autonovel:review` | Whole-book reviewer | Opus dual-persona deep review (literary critic + professor of fiction). Writes `edit_logs/opus_review.md`. **Does NOT modify chapters.** |
+| `/autonovel:review` | Whole-book reviewer | Opus dual-persona deep review (literary critic + professor of fiction). Writes `edit_logs/review.md` + `review.json`. **Does NOT modify chapters.** |
 | `/autonovel:chapter-summary` | Mechanical helper | One-line-per-chapter overview table — Date / POV / Score / Words / Cast / Plot (with location prefix). Pure mechanical, no LLM. The right tool for "which chapters happen in <date range>?" or "where does <character> appear?" before a revision pass. **Does NOT modify chapters.** |
 | `/autonovel:motifs` | Mechanical helper | Per-chapter motif density tracker. Reads `books/{book}/motifs.md` (one bullet per motif: `- slug: keyword1, keyword2`). Flags motifs that drop to zero in the back half of a book they were established in earlier — catches "set up an image, never paid it off". Pure mechanical. **Does NOT modify chapters.** |
 | `/autonovel:talk` | Conversational layer | Ask the book questions or queue edits in natural language. Three modes: **Q+A** (cites chapter+line, no edit), **Suggest-and-stage** (queues an edit in `briefs/conversation.md`), **Mechanical+suggest** (runs `entity-track` first, then queues a structured cut-list). Queued turns get folded into the brief by the next `/autonovel:revise <N>`. |
@@ -120,7 +120,7 @@ sweep finished.
 
 `review` and `reader-panel` then produced **reports**. They wrote
 findings to `edit_logs/reader_panel.json` and
-`edit_logs/opus_review.md`. **They did not touch any chapter.**
+`edit_logs/review.md` (+ `review.json`). **They did not touch any chapter.**
 
 To act on those reports — to actually rewrite the chapters they
 flagged — your next move is:
@@ -456,7 +456,7 @@ sequence that catches the things a sweep can silently break:
 3. **Re-run reader-panel + review on the revised book**
    *(15-30 min compute, 30 min reading)*.
    You changed many chapters; any prior `reader_panel.json` and
-   `opus_review.md` describe the pre-revision book and are now
+   `review.md` describe the pre-revision book and are now
    stale. Re-running gives you a fresh flagged-chapter list:
 
    ```text

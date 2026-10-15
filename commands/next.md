@@ -13,7 +13,7 @@ reads:
   - books/{book}/briefs/ch*.md
   - books/{book}/chapters/ch_*.summary.md
   - books/{book}/edit_logs/reader_panel.json
-  - books/{book}/edit_logs/opus_review.md
+  - books/{book}/edit_logs/review.md
   - books/{book}/typeset/*.pdf
   - books/{book}/preface.md
   - books/{book}/introduction.md
@@ -62,8 +62,8 @@ repeatedly.
        `/autonovel:summarize-chapter --force` recommendation per
        chapter, or `--all` for multi-chapter sweeps)
      - `books/{book}/edit_logs/reader_panel.json` and
-       `opus_review.md` mtimes vs `books/{book}/chapters/ch_*.md`
-       mtimes (staleness)
+       `review.md` (legacy name `opus_review.md`) mtimes vs
+       `books/{book}/chapters/ch_*.md` mtimes (staleness)
      - `books/{book}/typeset/*_latest.pdf` mtime vs
        `books/{book}/chapters/ch_*.md` mtimes (typeset staleness)
      - `project.yaml` for missing `books[].title` / `.author`

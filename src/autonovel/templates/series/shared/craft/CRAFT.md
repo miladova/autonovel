@@ -254,6 +254,15 @@ RULE 2 (payoff -> setup): Every significant element used in the
   climax must have been introduced earlier. Zero unforeshadowed
   elements in the climax.
 
+RULE 3 (clocks): A deadline, ultimatum or promise with a date is a
+  setup with a due date. It is paid in a dramatised scene in which
+  it runs out, is met or is bought off, with the viewpoint
+  character acting. A reprieve reported after the fact ("she wrote;
+  I have until autumn") is an unpaid setup and reads to a panel as
+  the book's missing scene. Outline check: every beat that sets a
+  clock has a later beat that pays it; the paying beat is a scene,
+  not a line of summary.
+
 Foreshadowing types:
   1. Direct: prophecy, warning, statement about the future
   2. Symbolic: objects/images representing future events

@@ -213,11 +213,15 @@ def _load_state(series: SeriesLayout, book: str) -> dict:
 
     # Reviews.
     edit_logs = book_root / "edit_logs"
+    # `/autonovel:review` writes review.md; opus_review.md is the legacy name.
+    review_md = edit_logs / "review.md"
+    if not review_md.is_file() and (edit_logs / "opus_review.md").is_file():
+        review_md = edit_logs / "opus_review.md"
     reviews = {
         "reader_panel": (edit_logs / "reader_panel.json").is_file(),
-        "opus_review": (edit_logs / "opus_review.md").is_file(),
+        "opus_review": review_md.is_file(),
         "reader_panel_mtime": _mtime_if(edit_logs / "reader_panel.json"),
-        "opus_review_mtime": _mtime_if(edit_logs / "opus_review.md"),
+        "opus_review_mtime": _mtime_if(review_md),
     }
 
     # Pending canon.
@@ -800,7 +804,7 @@ if _TEXTUAL_AVAILABLE:
                 f"- {tick(r.get('reader_panel'))} `reader_panel.json` "
                 f"(four-persona) — last run: "
                 f"{r.get('reader_panel_mtime') or '—'}\n"
-                f"- {tick(r.get('opus_review'))} `opus_review.md` "
+                f"- {tick(r.get('opus_review'))} `review.md` "
                 f"(dual-persona Opus) — last run: "
                 f"{r.get('opus_review_mtime') or '—'}\n\n"
                 "Run `/autonovel:reader-panel --book <name>` and "

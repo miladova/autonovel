@@ -2026,7 +2026,44 @@
   vocabulary" register tell; the operational register spec (sourced
   markers and bands) follows from the research pass in progress.
 
+- 2026-10-14 (the editorial letter reaches the rewrite): the first
+  reader-panel + review on kingmaker ch 1–6 after the register pass
+  found no register faults and a unanimous set of structural ones (a
+  chapter-ending clock paid offstage in the next chapter's opening, the
+  act's pivot told in pluperfect and labelled, scene openers on the
+  same announced want, confrontations in indirect speech, a motiveless
+  antagonist). Per-chapter evals scored 8.6–8.8 because every fault
+  sits between chapters or between a rule and its literal reading
+  (voice.md asked for the want "named" → "What Jakob wanted was…";
+  PROSE §6.5 "summarise information exchanges" → confrontations
+  summarised). Pipeline gaps found while tracing it: `brief` read the
+  panel but not `review.json`, so the professor's numbered items never
+  reached `revise`; `next`, the TUI, `draft-pass` and the operating
+  guide watched `edit_logs/opus_review.md` while `review` writes
+  `review.md` + `review.json`; nothing checked that a clock set in one
+  chapter is paid on the page. Decisions: `brief` gains `--from review`,
+  merges review items in `auto`, and emits `## Structural findings`
+  (scene instructions, outranking line edits, allowed to grow the
+  target length); every consumer follows the producer to `review.md`
+  with a legacy fallback to `opus_review.md` in `next_actions` and the
+  TUI; `evaluate` gains `clocks_paid` in `--phase foundation` (outline
+  beats) and `--full` (chapter closings/openings) with a per-clock
+  ledger and `unpaid_or_summary_clocks`; PROSE.md §5 gains rules 8
+  (clocks paid as scenes) and 9 (the chapter's turn is a scene, not a
+  pluperfect report), §5.1 names the announced-want shape, §6.5 names
+  the reverse failure (confrontation as indirect speech), §10 gains
+  four checklist lines; CRAFT.md §4 gains rule 3 (clocks). The
+  structural layer is the trade's developmental edit: outline = beat
+  sheet, panel + review = editorial letter, brief = revision letter,
+  revise = the rewrite; the missing piece was the letter reaching the
+  rewrite.
+
 ## Tests last known green
+- Tier 1 + Tier 2 (deterministic + contracts): 2026-10-14 (night) —
+  **1934 passing, 1 skipped** (`pytest tests/deterministic tests/contracts`).
+  +1 over the 1933 mark: `test_review_staleness_legacy_name` (a series
+  carrying only the pre-2026-10 `opus_review.md` is still checked for
+  staleness).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-14 (later) —
   **1933 passing, 1 skipped** (`pytest tests/deterministic tests/contracts`).
   +12 over the 1921 mark: `test_register.py` (10: narration/dialogue

@@ -470,8 +470,18 @@ def _panel_staleness_actions(book_root: Path, book: str) -> list[NextAction]:
     )
 
 
+def _review_report_path(book_root: Path) -> Path:
+    """`/autonovel:review` writes `edit_logs/review.md`; series reviewed
+    before 2026-10 carry the legacy name `opus_review.md`. Prefer the
+    current name, fall back to the legacy one when only it exists."""
+    edit_logs = book_root / "edit_logs"
+    current = edit_logs / "review.md"
+    legacy = edit_logs / "opus_review.md"
+    return current if current.is_file() or not legacy.is_file() else legacy
+
+
 def _review_staleness_actions(book_root: Path, book: str) -> list[NextAction]:
-    review = book_root / "edit_logs" / "opus_review.md"
+    review = _review_report_path(book_root)
     return _staleness_check(
         report_path=review,
         book_root=book_root,

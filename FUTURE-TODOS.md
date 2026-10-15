@@ -11,6 +11,29 @@ to start.
 
 ## Near-term — pull into the next PR
 
+- **Structural layer: scene ledger and cross-chapter checks (opened
+  2026-10-14).** The kingmaker panel + review found faults no per-chapter
+  eval sees: a clock paid offstage, a pivot told in pluperfect, the same
+  announced-want opener in every scene, confrontations in indirect speech.
+  Shipped the same night: `brief --from review` + `## Structural findings`;
+  `evaluate` `clocks_paid` (foundation + full); PROSE §5.8/§5.9/§6.5 and
+  CRAFT §4 rule 3; consumers follow `review.md`. **Still open:** (1) a
+  per-chapter *scene ledger* surface (Story Grid / Bickham style: one row
+  per scene — goal, opposition, outcome, value shift, on-page vs reported,
+  clock set / paid) emitted by `evaluate --chapter` under `beat_coverage`
+  and compared with the outline beat, so "the pivot is a report" is a
+  scored row, not a panel discovery; (2) an opener-device repetition check
+  across chapters (same sentence shape opening consecutive scenes or
+  chapters: "What X wanted was…", "X was Y when Z") — a candidate list for
+  the judge, not a word list; (3) `evaluate --chapter` should read the
+  previous chapter's *closing* (not just its summary) so an open clock is
+  visible to the per-chapter judge; (4) `reader-panel` and `review` don't
+  read `shared/craft/` and so judge against their own idea of craft;
+  (5) `revision-pass` should print which panel/review items each brief
+  consumed so the user can see the editorial letter being worked through;
+  (6) the review parser keys items to chapters by "Ch N" text — fine for
+  now, brittle if a reviewer writes "chapter five".
+
 - **Craft docs reach the writer; sourced PROSE.md (shipped 2026-10-14).**
   Root cause of "we are making up how to write prose on the fly": CRAFT.md /
   ANTI-SLOP.md / ANTI-PATTERNS.md lived only at the repo root, commands named

@@ -265,7 +265,11 @@ authorial summary, is the one that reads as a disconnected statement.
 1. Every scene has one viewpoint goal the reader can name as a yes/no
    question by the end of its opening third. The want is dramatised
    (action, oblique dialogue, free-indirect thought), not announced in
-   summary.
+   summary. The announcement has a recognisable shape, "What X wanted
+   from the afternoon was…", "X needed one thing from the hour…", and
+   a reader who meets it twice sees the outline under the prose. Used
+   at all, once a chapter, never as the opening device of consecutive
+   scenes.
 2. The goal is pursued against external, visible opposition in
    continuous time, not recalled.
 3. Every paragraph inside a scene is classifiable as motivation
@@ -283,6 +287,21 @@ authorial summary, is the one that reads as a disconnected statement.
    before answering it, on the disaster or on a Bell prompt (impending
    disaster, portent, mysterious line, secret revealed, decision,
    reversal), not on narrator reflection.
+8. A clock set on the page (a deadline, an ultimatum, a promise with a
+   date) is paid on the page: the scene in which it runs out, is met
+   or is bought off is dramatised, with the viewpoint character doing
+   the thing that changes it. Swain's sequel ends in a decision that
+   becomes the next scene's goal; a chapter that ends on a clock and a
+   next chapter that opens after the reprieve ("she wrote; I have till
+   autumn") has skipped the scene the clock was set for, and readers
+   name it as the missing scene.
+9. The scene a chapter exists for, the turn its outline beat names, is
+   played in the present of the scene (continuous time, direct speech
+   for the decisive lines, the other party's reaction), never recalled
+   in pluperfect from after the event and never followed by a label
+   for the feeling it produced. Summary is for logistics (Follett's
+   "undramatic summary" is what the modern form cut); the turn is a
+   scene.
 
 ---
 
@@ -343,7 +362,13 @@ the Lighthouse* 3. There is no authoritative target; the oft-quoted
 5. Dramatise an exchange that turns a value or a relationship;
    summarise, inside narration, an exchange that only transfers
    information ("he asked who the man was, and she told him"). The
-   choice is made by Stein's questions, not by a word budget.
+   choice is made by Stein's questions, not by a word budget. The
+   reverse failure follows from over-applying this rule: a bargain, an
+   accusation or a refusal rendered as indirect speech ("X said that
+   he…, and Y said that…") keeps the reader one step from the people
+   at the moment they most want to hear them (Browne and King, "Show
+   and Tell": the big moments are scenes). When one speaker is trying
+   to move the other, the decisive lines are in quotation marks.
 6. Every dialogue scene has a physical anchor and external stakes.
 7. Interior thought is direct ("Why did he…?") rather than reported ("He
    wondered why…").
@@ -500,6 +525,18 @@ pipeline heuristics the book's voice file may override.
   every paragraph classifiable as motivation or reaction; the scene
   ends No or Yes-but; McKee's two charges differ; a turn at least every
   1,200 to 1,800 words.
+- §5.1 Announced wants ("What X wanted was…") as scene openers: count
+  them across the chapter and the previous one. [flag at two in a
+  chapter, or the same shape opening consecutive scenes]
+- §5.8 Clocks: every deadline, ultimatum or dated promise the previous
+  chapter left open, and whether this chapter pays it on the page,
+  carries it by name, or drops it. [flag any clock resolved only in
+  summary]
+- §5.9 The chapter's biggest turn: played in continuous time with
+  direct speech, or recalled in pluperfect and labelled? Quote it.
+- §6.5 Confrontations in indirect speech ("X said that…, and Y said
+  that…"): count and quote the worst. [flag at more than two in a
+  chapter]
 - §6 Speech verbs other than *said*, adverbs on *said*; a beat on every
   line; question-answer runs of three or more turns where one speaker
   only prompts; "As you know, Bob" exchanges; exchanges that fail all

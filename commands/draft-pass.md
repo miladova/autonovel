@@ -130,8 +130,8 @@ that stalled long sweeps around chapter 8-10.
      - `--skip-eval` (skip steps 3 and 4 entirely; pure drafting)
      - `--deep` (after promote-canon, also run the whole-book
        reader-panel + Opus dual-persona review; produces reports
-       at `books/{book}/edit_logs/reader_panel.md` and
-       `books/{book}/edit_logs/opus_review.md`. Does NOT
+       at `books/{book}/edit_logs/reader_panel.json` and
+       `books/{book}/edit_logs/review.md` + `review.json`. Does NOT
        auto-revise from those reports — the user reviews them and
        decides whether to run a follow-up `/autonovel:revision-pass
        --chapters <list>`. ~10-25 extra minutes of compute on a
@@ -311,10 +311,11 @@ that stalled long sweeps around chapter 8-10.
 
    a. Reproduce `/autonovel:reader-panel --book {book}`'s workflow
       inline. Four-persona pass over the full manuscript; writes
-      `books/{book}/edit_logs/reader_panel.md`.
+      `books/{book}/edit_logs/reader_panel.json`.
    b. Reproduce `/autonovel:review --book {book}`'s workflow
       inline. Opus dual-persona (literary critic + professor of
-      fiction) pass; writes `books/{book}/edit_logs/opus_review.md`.
+      fiction) pass; writes `books/{book}/edit_logs/review.md` and
+      `review.json` (the parsed items `brief --from review` reads).
 
    Both produce REPORTS, not chapter changes. The summary table in
    step (6) names which chapters each report flags so the user can
