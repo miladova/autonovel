@@ -425,17 +425,36 @@ swift, straightforward fashion."
    enters at psychic distance 2 to 3. A fact the reader needs but no
    character would voice goes in as acknowledged narration at level 1
    to 2, kept short.
-3. No character foresees the future or voices a modern parallel.
-   Grep-able: "would one day," "little did," "centuries later," "would
-   become."
-4. Thought verbs and emotion labels are candidates, not failures: the
+3. No character foresees the future or voices a modern parallel
+   (Darwin's "clairvoyant" fault). The narrator is a different case.
+   A narration that declares a retrospective stance in its voice file
+   may make a *promise line*: one concrete, falsifiable statement of
+   what this moment will turn out to be ("It was the first cipher he
+   ever wrote; he would write one a week for forty years"). Follett's
+   chapter openings and the Sanderson "promise" (CRAFT.md §1) are the
+   model; Vonnegut's rule 8 (give the reader enough to finish the
+   story themselves) is the licence. Limits the sources support: one
+   a chapter at most, tied to the book's spine (the thing the whole
+   book is about), never a moral and never "little did he know"
+   (which withholds the fact while advertising it). Grep-able
+   candidates for the judge, not failures: "would one day," "little
+   did," "centuries later," "would become."
+4. A proper noun the reader cannot place (a town, a fortress, a coin,
+   an institution, a battle) is glossed in the sentence it first
+   appears in, by the character who needs it: what it is and why it
+   matters now. Chalking "SCUTARI" on a slate is a scene; the reader
+   still needs, in that sentence or the next, that it is the
+   Republic's fortress in Albania and the Turk is outside it. This is
+   §7.1 applied to names: the need is the reader's, voiced by someone
+   on the page.
+5. Thought verbs and emotion labels are candidates, not failures: the
    fix is to unpack into observable action, not to delete the
    information. A plain register may name a state once and then show
    it; a literary register may show without naming. Both are craft.
-5. Telling is correct for minor matters and transitions. Do not ban it.
-6. Prefer evidence first, conclusion last or implied, over a thesis
+6. Telling is correct for minor matters and transitions. Do not ban it.
+7. Prefer evidence first, conclusion last or implied, over a thesis
    sentence followed by its proof.
-7. Research depth (Harris's ten times more, Mantel's "stick by the
+8. Research depth (Harris's ten times more, Mantel's "stick by the
    truth" because it is "better, stranger, stronger") is a
    foundation-stage rule; at the sentence level the only question is
    who needs this now.
@@ -542,7 +561,15 @@ pipeline heuristics the book's voice file may override.
   only prompts; "As you know, Bob" exchanges; exchanges that fail all
   four of Stein's questions; a dialogue scene with no physical anchor.
 - §7 Information with no character who needs it now; forward-pointing
-  phrases; thought-verb thesis openers (as candidates).
+  phrases (candidates: a declared promise line is allowed once a
+  chapter, a character's clairvoyance never); thought-verb thesis
+  openers (as candidates).
+- §7.4 Unglossed proper nouns: places, fortresses, coins, battles or
+  offices named before the sentence says what they are. Quote each.
+- §7.3 / CRAFT §1 Spine: can the reader say, from this chapter alone,
+  what the book is about and which step this chapter is? [flag a
+  chapter with no promise line and no named step on a book whose
+  voice file asks for them]
 - §8 Chapter ends on reflection or summary rather than the turn or a
   prompt; the same closing device two chapters running.
 
