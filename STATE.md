@@ -2057,6 +2057,19 @@
   sheet, panel + review = editorial letter, brief = revision letter,
   revise = the rewrite; the missing piece was the letter reaching the
   rewrite.
+- 2026-10-15 (promise lines and glossing): the author's own read of
+  kingmaker ch 1–9 found no foreshadowing ("a story of a young merchant
+  boy in Venice"), unglossed names (SCUTARI chalked on a slate), unrelated
+  coins, an event arriving unseeded, and six wagers with no felt spine.
+  PROSE §7 rule 3 had banned all forward-pointing on Emma Darwin's
+  authority; that conflated a character's clairvoyance (still banned)
+  with the narrator's promise line, which commercial fiction uses
+  (Follett; Sanderson's promises; Vonnegut rule 8). Decision: §7.3
+  distinguishes the two and admits a declared promise line once a
+  chapter; new §7.4 glosses every proper noun where it first appears;
+  §10 gains spine and glossing checks. The book-level rules (spine,
+  Venice on the page, money glossed, letters in italics) live in the
+  kingmaker voice file, not here.
 
 ## Tests last known green
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-14 (night) —
