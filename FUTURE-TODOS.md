@@ -33,6 +33,15 @@ to start.
   consumed so the user can see the editorial letter being worked through;
   (6) the review parser keys items to chapters by "Ch N" text — fine for
   now, brittle if a reviewer writes "chapter five".
+  (7) **False stale-summary hints after every sweep (seen 3× on
+  2026-10-15).** The per-chapter worker writes `ch_NN.summary.md`, then the
+  evaluate step rewrites the chapter's frontmatter (`word_count`, `status`),
+  so the chapter's mtime ends up newer than its summary and `next` /
+  the postamble hint say "regenerate stale chapter summaries" for every
+  chapter just revised. Either have revise/draft write the summary as the
+  very last step (after evaluate), or make the staleness check compare the
+  chapter's *body* hash recorded in the summary frontmatter instead of
+  mtimes. Workaround used: `touch` the summaries after the sweep.
 
 - **Craft docs reach the writer; sourced PROSE.md (shipped 2026-10-14).**
   Root cause of "we are making up how to write prose on the fly": CRAFT.md /
