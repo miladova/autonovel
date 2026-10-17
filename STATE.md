@@ -2070,8 +2070,56 @@
   §10 gains spine and glossing checks. The book-level rules (spine,
   Venice on the page, money glossed, letters in italics) live in the
   kingmaker voice file, not here.
+- 2026-10-17 (`/autonovel:diff`: what changed, word by word, in one
+  page): the author could only check discussed edits with line-based
+  `git diff` (a one-word trim lights a whole paragraph; no reading
+  surface). New `autonovel mechanical diff-chapters`
+  (`mechanical/bookdiff.py`): difflib paragraph alignment, then
+  monotonic pairing of similar paragraphs (1:1, split 1:2, merge 2:1;
+  ratio 0.4, calibrated on kingmaker where unrelated paragraphs top out
+  at 0.33), then word-level diff with semantic cleanup; moved paragraphs
+  tagged. Versions: git ref/tag, `last-tag` (default from), `last-read`
+  bookmark (`edit_logs/last_read.json`, written by `--mark-read`),
+  `checkpoint:<ts>|latest`, `worktree` (default to). Output is one
+  self-contained HTML page (j/k jumping, "change N of M", folded
+  context, word deltas, a foundation section) plus a JSON sidecar;
+  `--annotate` adds a fingerprint-checked one-line "why" per change
+  traced to brief / talk turn / review item. Zero-LLM without
+  `--annotate`. Series `.gitignore` drops the regenerable pages.
+- 2026-10-17 (book-level structure tier, "review the reviewers"): the
+  author's read of kingmaker ("a bunch of short anecdotes, not a
+  continuing story building to a climax") contradicted every reviewer:
+  chapter evals 7+, review 4★ for ten passes, panel "all four would buy
+  it". Audit in `docs/reviewer-audit.md`: no rubric asked a causal
+  question; chapter-tier rules reward self-contained wagers; plant/payoff
+  and promise-line ledgers were read as architecture; review's stop rule
+  counted the hedged structural item toward stopping; `evaluate --full`
+  was blind and never run. Decision: a new heavy command,
+  `/autonovel:structure-review`, not a review mode (own inputs, "happens
+  after" by default, reads other reviewers only after scoring,
+  machine-readable output). Mechanical support is data and consistency
+  only: `structure-dossier`, and `structure-validate` (shape, scoring
+  caps over the reviewer's own tables, the gate). review's
+  stop_revising requires the gate (fresh, valid, score ≥ 4, no removable
+  chapter); structural items are never qualified. reader-panel adds four
+  book-level questions. `evaluate --full`: 15 weighted dimensions,
+  structure 50%, novel score ≤ structure subscore + 1.0; foundation
+  adds `causal_spine`. brief writes `kind: structural` briefs; revise
+  restructures inside one chapter and prints cross-chapter commands;
+  `revision-pass --chapters structural`. gen-outline writes Spine /
+  Stakes ladder / Causal spine (`--add-spine`); draft holds to it;
+  draft-pass spine check and `--deep`. Integration rule: prompt
+  material (command bodies, shared/craft) never names a specific book
+  or quotes its verdict, since that primes every later run on that book
+  toward the expected answer; the history lives here and in the audit.
 
 ## Tests last known green
+- Tier 1 + Tier 2 (deterministic + contracts): 2026-10-17 —
+  **2046 passing, 1 skipped** (`pytest tests/deterministic tests/contracts`).
+  +112 over the 1934 mark: `test_mechanical_bookdiff.py` (46) and 6
+  per-command tests for `/autonovel:diff`; `test_mechanical_structure.py`
+  (35), `test_structure_review_contract.py` (19) and 6 per-command tests
+  for `/autonovel:structure-review`.
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-14 (night) —
   **1934 passing, 1 skipped** (`pytest tests/deterministic tests/contracts`).
   +1 over the 1933 mark: `test_review_staleness_legacy_name` (a series
