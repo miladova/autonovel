@@ -2849,7 +2849,7 @@ prose ≈ 8 / 10, with investigation-heavy plots).
 ## Story-map follow-ups (story-map shipped 2026-10-17)
 
 - Cross-link `story_map.html` chapter anchors with the `/autonovel:diff`
-  page once both exist on one branch (deferred: built in parallel).
+  page (both are on master since 2026-10-17; they were built in parallel).
 - `/autonovel:dashboard` (and the TUI sparkline) read `tension` only from a
   `--full` eval log; kingmaker's per-chapter logs carry `tension` for ch 1–9
   but the dashboard shows none. story-map already falls back to the
@@ -2877,8 +2877,8 @@ panel's book-level questions and `gen-outline`'s spine sections. Left:
    field to `PipelineState` (filled by `lifecycle._next_step_for` from
    `structure-validate`) so the postamble's **Next:** line names
    `/autonovel:structure-review` before `/autonovel:review`.
-3. **Story-map view of the structure review.** When `/autonovel:story-map`
-   lands, render `structure_review.json`'s causal chain (because /
+3. **Story-map view of the structure review.** `/autonovel:story-map` is
+   on master; render `structure_review.json`'s causal chain (because /
    after / unrelated per seam), the stakes ladder and the removable
    chapters next to the thread view, so "does it build" is one glance.
 4. **Series level.** `evaluate --phase series` and `series-arc` have no

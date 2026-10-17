@@ -2112,8 +2112,30 @@
   material (command bodies, shared/craft) never names a specific book
   or quotes its verdict, since that primes every later run on that book
   toward the expected answer; the history lives here and in the audit.
+- 2026-10-17 (story map: see the book's shape without re-reading it):
+  the author on kingmaker could not see how the plot develops.
+  `/autonovel:story-map` + `autonovel mechanical story-map` write one
+  self-contained `edit_logs/story_map.html` (+ `.json`) from material
+  already on disk: synopsis in reading order under the outline's act
+  headers (with a one-line-per-chapter skim), a threads × chapters grid
+  (plant / turn / payoff / touch) with score / tension /
+  irreversible-change curves on the same axis directly underneath,
+  characters' presence and state changes, a story-time axis with
+  >1-year gaps labelled, places visited vs named-only. Threads come from
+  a new hand-editable `books/<book>/threads.md` ledger (exact grammar;
+  the LLM writes it from outline + summaries on first run or
+  `--refresh-threads`, never from prose), else an outline `## Threads`
+  ledger, else `events:` ids. Data, not verdicts. Reuse over
+  duplication: `parse_summary_sections()`,
+  `_index_latest_per_chapter_eval(key=…)`, `parse_cast_ordered()`,
+  `dashboard.build_dashboard`. Kingmaker's outline has no thread ledger;
+  its synopsis reads in 18 min full, 2 min skim.
 
 ## Tests last known green
+- Tier 1 + Tier 2 (deterministic + contracts): 2026-10-17 (later) —
+  **2085 passing, 1 skipped**. +39 over the 2046 mark:
+  `test_mechanical_story_map.py` (33) and 6 per-command tests for
+  `/autonovel:story-map`.
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-17 —
   **2046 passing, 1 skipped** (`pytest tests/deterministic tests/contracts`).
   +112 over the 1934 mark: `test_mechanical_bookdiff.py` (46) and 6
