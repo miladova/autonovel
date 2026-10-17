@@ -2798,3 +2798,22 @@ prose ≈ 8 / 10, with investigation-heavy plots).
 4. **No `autonovel mechanical build-epub-metadata` helper exists**; the
    command text says metadata.yaml is "assembled on the fly" but leaves it to
    the LLM. Add the helper.
+
+## Audiobook: free local TTS provider + two bugs (found on the kingmaker audiobook, 2026-10-17)
+
+1. **`audiobook-generate` only knows ElevenLabs.** A free local provider is now
+   proven: Kokoro-82M (Apache-2.0) in a Python 3.12 env renders ~35x real time
+   on an RTX 5060 Ti with Whisper WER ~2%; the single-narrator renderer and
+   assembler used for kingmaker live in the series repo at
+   `books/kingmaker/audiobook/tools/`. Add `provider: kokoro` to `voices.yaml`
+   and the generate command (voice ids like `bm_george`; paragraph/scene
+   pauses; chapter heading spoken), and make `audiobook-assemble` loudnorm to
+   −19 LUFS and attach `art/cover_titled.png`. Qwen3-TTS 1.7B was 0.6x real
+   time without flash-attn; chatterbox-tts does not import on Python 3.13.
+2. **`autonovel mechanical audio-marks --format ffmetadata` returns JSON**
+   (same output as `--format json`), so `audiobook-assemble --format m4b`
+   would embed no chapters. Fix the formatter and add a Tier-1 test that the
+   ffmetadata output starts with `;FFMETADATA1` and has one `[CHAPTER]` per row.
+3. **`.gitignore` template** ignores `books/*/audiobook/*.mp3` but not
+   `books/*/audiobook/chapters/*.mp3`, where `audiobook-generate` writes;
+   add the recursive patterns (and `_work/`).
