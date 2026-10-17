@@ -2772,3 +2772,29 @@ prose ≈ 8 / 10, with investigation-heavy plots).
   no rotation. Add `autonovel test-fixture trim-flakiness --keep N`
   or a `pytest --strict-flakiness` mode that fails when a test has
   flipped > N times in the last K runs.
+
+## Typeset toolchain gotchas found on the kingmaker build (2026-10-16)
+
+1. **WOFF fonts break xdvipdfmx.** On Debian/Ubuntu `fonts-ebgaramond` installs
+   TTF, OTF *and* WOFF copies; fontconfig may hand tectonic the WOFF italic
+   (`Cannot proceed without the font: /usr/share/fonts/woff/ebgaramond/...`).
+   Fix used: a user `~/.config/fontconfig/fonts.conf` rejecting
+   `/usr/share/fonts/woff/*`. `autonovel doctor` should detect WOFF-only
+   matches (`fc-match "EB Garamond:italic"` ending in `.woff`) and print this
+   fix; `install-export-tools` could write the rule.
+2. **EB Garamond 12 Bold lacks glyphs** (ü, curly apostrophe), so TOC lines
+   for titles like "Jüterbog" or "Man's" lose characters. Fix used in the
+   per-book novel.tex: `BoldFont={EB Garamond 12 Regular}` with
+   `BoldFeatures={FakeBold=1.4}`. The template `typeset/novel.tex` should
+   adopt this (or test glyph coverage) so every book gets it.
+3. **ePub metadata template paths.** `typeset/epub_metadata.yaml` carries
+   `css: ../../../typeset/epub_style.css` and `cover-image: ../art/cover_titled.png`
+   relative to the book's typeset dir, but pandoc resolves them against the
+   cwd (the series root), so the css line aborts the build and the cover line
+   fails when a book has no art. The typeset command should drop both lines
+   when rendering `metadata.yaml` (it passes `--css` and `--epub-cover-image`
+   itself) and pass `--metadata title=… author=…` explicitly, since pandoc
+   still warned about a missing `<title>` with the metadata file alone.
+4. **No `autonovel mechanical build-epub-metadata` helper exists**; the
+   command text says metadata.yaml is "assembled on the fly" but leaves it to
+   the LLM. Add the helper.
