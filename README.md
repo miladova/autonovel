@@ -382,6 +382,14 @@ checklist of `/autonovel:revise --chapter N` calls with
 line-snippet evidence — no `ls` + `grep` required to find which
 chapters now disagree with canon.
 
+After a revision pass, run `/autonovel:diff --book <name> --from
+last-read --mark-read` to check what actually changed since you last
+read: it writes one HTML page (path printed) with the word-level
+edits shown inside their paragraphs, unchanged text folded, and
+`j`/`k` jumping from change to change — no re-reading the book and
+no `git diff`. `--annotate` adds a one-line *why* per change, traced
+to the brief, talk turn or review item that asked for it.
+
 Want a long-running window on the series state instead of one-shot
 commands? `autonovel tui` (in a separate terminal from the series
 root, with `pip install 'autonovel[tui]'` or `pipx inject autonovel
@@ -544,6 +552,10 @@ Three categories. Full reference: [`docs/commands.md`](docs/commands.md).
   tell-candidate line (emotion states, interiority verbs,
   perception filters, narrator labels) for line-level revise
   targeting.
+  Plus `diff` — what changed between two versions of the book
+  (a tag, your last read, a checkpoint), word by word inside each
+  paragraph, as one HTML page you open in a browser and step
+  through change by change.
 - **Export:** `art-*`, `cover-*`, `audiobook-*`, `typeset`,
   `title`, `introduction`, `landing`, `package`. The art family
   now includes `art-prompts` — author per-chapter art prompt

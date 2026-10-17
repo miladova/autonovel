@@ -903,6 +903,8 @@ _GENERAL_HINTS: tuple[str, ...] = (
     "/ per command from the command log",
     "`autonovel tui` is a read-only long-running browser for the whole "
     "series — chapters, scores, research, front+back matter, next actions",
+    "`/autonovel:diff --from last-read --mark-read` shows what changed since "
+    "you last read — word by word, in context — as one HTML page",
 )
 
 

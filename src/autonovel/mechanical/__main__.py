@@ -12,6 +12,7 @@ Subcommands:
   motifs <book> [--format]         Per-chapter motif density (reads books/<book>/motifs.md).
   chapter-summary <book> [--format] One-line-per-chapter overview (date/POV/score/cast/plot).
   impact-of <book> [--source N]    Grep chapters for tokens unique to superseded canon facts.
+  diff-chapters --book B [--from R] [--to R]  Word-level HTML diff between two book versions.
   research-index <series>          Per-note metadata table for shared/research/notes/.
   resolve-image-provider [...]     Resolve image provider from CLI flag + project.yaml + default.
   build-epub-md <chapters_dir>     Concatenate ch_NN.md → one ePub-ready markdown.
@@ -531,6 +532,11 @@ def _cmd_impact_of(args: argparse.Namespace) -> int:
         print(f"error: unsupported --source {args.source!r}", file=sys.stderr)
         return 2
     return 0
+
+
+def _cmd_diff_chapters(args: argparse.Namespace) -> int:
+    from .bookdiff import cli as _bookdiff_cli
+    return _bookdiff_cli(args)
 
 
 def _cmd_research_index(args: argparse.Namespace) -> int:
@@ -2135,6 +2141,14 @@ def main(argv: list[str] | None = None) -> int:
     io.add_argument("--format", choices=("markdown", "json"), default="markdown",
                      help="Output format (default: markdown).")
     io.set_defaults(func=_cmd_impact_of)
+
+    from .bookdiff import add_arguments as _bookdiff_args
+    dc = sub.add_parser("diff-chapters",
+                        help="Reader-facing word-level diff between two versions of a book "
+                             "(git ref / tag / checkpoint / last-read / working tree) as a "
+                             "self-contained HTML page + JSON sidecar.")
+    _bookdiff_args(dc)
+    dc.set_defaults(func=_cmd_diff_chapters)
 
     db = sub.add_parser("dashboard",
                         help="Per-book dashboard re-renders eval log + augments mechanical dimensions; no LLM call.")
