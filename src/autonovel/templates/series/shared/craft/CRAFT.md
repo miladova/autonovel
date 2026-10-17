@@ -138,8 +138,8 @@ chapters do not cause each other. Checkable rules, chapter to chapter:
 The named failure is the ANECDOTE CHAIN: every chapter a
 self-contained wager, opened in its first scene and settled in its
 last; continuity carried by cast, objects, callbacks and promise lines;
-each chapter scores well, the book reads as "a bunch of short anecdotes,
-not a continuing story building to a climax." Historical fiction is
+each chapter scores well, the book reads as a string of short anecdotes,
+not a continuing story building to a climax. Historical fiction is
 most exposed: the record is "and then" by nature (deals, deaths,
 elections), so the novel must invent the "therefore": the opposing
 force that persists between recorded events, and the earlier choice of

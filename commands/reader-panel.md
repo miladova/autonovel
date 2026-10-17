@@ -28,10 +28,10 @@ editorial decisions live. Use this after a full revision cycle, when
 you need signal on structural problems that single-chapter evaluation
 can't see.
 
-The four book-level questions were added after *kingmaker*: all four
-personas said they would buy it and none was asked whether it read as
-one story, while the author's own read was "a bunch of short anecdotes,
-not a continuing story building to a climax." The panel is a reader
+The four book-level questions exist because a panel can say it would
+buy a book without ever being asked whether it read as one story; a
+book can please all four personas chapter by chapter and still read as
+a string of anecdotes. The panel is a reader
 signal; the scored structural judgement is `/autonovel:structure-review`.
 </purpose>
 

@@ -447,8 +447,8 @@ or `.autonovel/eval_logs/<timestamp>_series.json` for `--phase series`.
    toward structure so that it cannot be carried by chapter prose: a
    book of strong chapters that do not cause each other is a weak novel,
    and before this weighting the per-chapter tier was all the
-   pipeline measured (on *kingmaker* every chapter held 7+ while the
-   author read the book as "a bunch of short anecdotes").
+   pipeline measured (every chapter can hold 7+ while the book reads
+   as a string of short anecdotes).
 
    **Inputs.** Use `bash` to run `autonovel mechanical
    structure-dossier books/{book}` once: the outline's acts and spine

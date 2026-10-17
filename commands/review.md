@@ -27,13 +27,12 @@ improving in measurable ways. Successor to the deleted `review.py`.
 
 This review is prose-weighted by design: an editorial letter. It is not
 the book-level structure judge. `/autonovel:structure-review` is, and
-the stop-revising verdict below is gated on it, because on *kingmaker*
-this review held at 4★ for ten passes, praised "the spine" (a recurring
-ledger image), typed none of its eleven items `structural`, and hedged
-the one structural observation it made ("Individually each scene is
-fine, and the strain is a cost of ambition") into a qualified item that
-counted toward stopping — while the author read the book as "a bunch of
-short anecdotes, not a continuing story building to a climax."
+the stop-revising verdict below is gated on it. This review's known
+failure is to praise a recurring image as "the spine", type none of its
+items `structural`, and hedge the one structural observation it makes
+("individually each scene is fine … a cost of ambition") into a
+qualified item that counts toward stopping, while the book reads as a
+string of short anecdotes rather than a story building to a climax.
 
 Stop revising only when BOTH hold:
 

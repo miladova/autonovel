@@ -31,11 +31,11 @@ one story building to a climax, or a string of episodes?** The other
 whole-book reviewers do not ask it. `/autonovel:review` writes an editorial
 letter that is mostly about prose; `/autonovel:reader-panel` asks ten
 local questions; `/autonovel:evaluate --full` used to see only the first
-and last 500 characters of each chapter. On the historical novel
-*kingmaker* all three stayed green for ten revision passes (4★, "all
-four would buy it") while the author's own read was *"a bunch of short
-anecdotes and not a continuing story building to a climax."* This
-command exists to catch and name that failure.
+and last 500 characters of each chapter. A book can hold 7+ chapter
+scores, a 4★ review and a panel that would buy it through many revision
+passes while its author reads it as a string of short anecdotes rather
+than one story building to a climax. This command exists to catch and
+name that failure.
 
 It reads the whole manuscript, the outline and every chapter summary, and
 writes:
@@ -69,8 +69,8 @@ These rules bind every judgement below. Re-read them before scoring.
    other way, would this chapter happen as written?* If you cannot name
    the event, the link is "happens after".
 3. **These are not causes:** a recurring character, place or object; a
-   motif or image (a ledger, a cipher, a key); a callback line; a
-   narrator promise or flash-forward ("in 1519 he would…"); a dated
+   motif or image (a recurring object, document or ritual); a callback
+   line; a narrator promise or flash-forward ("years later she would…"); a dated
    clock that is merely carried; a theme. They are continuity. They
    belong under foreshadowing, never in the causal chain.
 4. **History is not causation.** A death, an election, a war, a fair or
@@ -102,25 +102,24 @@ These rules bind every judgement below. Re-read them before scoring.
 Name every one that applies in `failure_modes` (ids in backticks). The
 first is the failure this command was built to catch.
 
-- `anecdote-chain` — **the kingmaker failure.** Every chapter is a
+- `anecdote-chain` — **the failure this command exists to catch.** Every chapter is a
   self-contained wager: its first scene names what the POV can lose
   *this chapter*, its last scene settles it, and the next chapter opens
   on a new counterparty, often after a time jump. Continuity is carried
   by recurring cast, objects, dated clocks, callbacks and narrator
   promise lines, not by consequence. Each chapter is good, so chapter
-  evals hold at 7+, the dual-persona review gives 4★ for ten passes,
-  the panel says all four would buy it — and the author reads it as
-  "a bunch of short anecdotes, not a continuing story building to a
-  climax." Signs: summaries whose "Threads closed" line settles the
+  evals hold at 7+, the dual-persona review gives 4★ pass after pass,
+  the panel says it would buy it — and the author reads it as a string
+  of short anecdotes, not a continuing story building to a climax.
+  Signs: summaries whose "Threads closed" line settles the
   chapter's own stake; most links "happens after"; several chapters
   removable; act stakes that grow in size but reset in kind. Caps the
   score at 2.
-- `motif-spine` — a recurring image or device (a ledger, a cipher, a
-  two-column account, a key) is offered as the spine. A motif ties
+- `motif-spine` — a recurring image or device (an object, a document,
+  a ritual, a refrain) is offered as the spine. A motif ties
   chapters together in the reader's memory; it makes nothing happen.
-  (Kingmaker's review: "The book reads as one line. The spine is the
-  two-page ledger." The seed had asked to drop the ledger-as-metaphor
-  framing.)
+  (Typical review line: "The book reads as one line; the spine is the
+  <recurring image>.")
 - `promise-line-architecture` — planted details and narrator
   flash-forwards paid later are counted as structure ("the
   architecture of promise and payment across fifty years is the book's

@@ -342,10 +342,9 @@ Detail: /autonovel:help structure.
 # Structure — is it one story, or a string of episodes?
 
 Chapter scores, the reader panel and the dual-persona review are
-prose-weighted. On kingmaker all three stayed green (4★, "all four
-would buy it") while the author read the book as "a bunch of short
-anecdotes, not a continuing story building to a climax".
-structure-review is the book-level judge:
+prose-weighted. All three can stay green (4★, "would buy it") while
+the book reads as a string of short anecdotes, not a continuing story
+building to a climax. structure-review is the book-level judge:
 
   /autonovel:structure-review --book <name>
         → books/<name>/edit_logs/structure_review.json + .md

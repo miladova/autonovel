@@ -38,10 +38,10 @@ sections that `/autonovel:draft`, `/autonovel:draft-pass`,
 - `## Causal spine` — one line per chapter: `- N because M: <the event
   in chapter M that forces chapter N>`.
 
-A sequence of good scenes is not an outline. The *kingmaker* outline
-made every chapter "a wager: the first beat names what the POV can
-lose, the last beat settles or raises it", and the draft became a
-string of well-written anecdotes. A chapter-local stake is fine only
+A sequence of good scenes is not an outline. An outline that makes
+every chapter "a wager: the first beat names what the POV can lose, the
+last beat settles or raises it" drafts into a string of well-written
+anecdotes. A chapter-local stake is fine only
 when its result is the next chapter's problem.
 
 `--add-spine` retrofits the three sections onto an existing outline
