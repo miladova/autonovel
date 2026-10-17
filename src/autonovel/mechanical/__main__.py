@@ -13,6 +13,7 @@ Subcommands:
   chapter-summary <book> [--format] One-line-per-chapter overview (date/POV/score/cast/plot).
   structure-dossier <book>         Pack outline + summaries + word counts + story_time + scores for structure-review.
   structure-validate <book|json>   Validate structure_review.json + compute the book-level stop-revising gate.
+  story-map --book <name> [--out P]  One-page HTML story map (synopsis/threads/characters/timeline).
   impact-of <book> [--source N]    Grep chapters for tokens unique to superseded canon facts.
   diff-chapters --book B [--from R] [--to R]  Word-level HTML diff between two book versions.
   research-index <series>          Per-note metadata table for shared/research/notes/.
@@ -669,6 +670,39 @@ def _cmd_structure_validate(args: argparse.Namespace) -> int:
     if not rep.present:
         return 2
     return 0 if rep.valid else 1
+
+
+def _cmd_story_map(args: argparse.Namespace) -> int:
+    """Build the story-map page. Book from a positional book dir, or
+    `--book <name>` under `--series-root` (default: walk up from cwd)."""
+    from .story_map import THREADS_LEDGER_HEADER, build_story_map, write_story_map
+    if args.threads_template:
+        sys.stdout.write(THREADS_LEDGER_HEADER.format(book=args.book or "<book>"))
+        return 0
+    series_root: Path | None = Path(args.series_root) if args.series_root else None
+    if args.book_root:
+        book_root = Path(args.book_root)
+    elif args.book:
+        if series_root is None:
+            from ..paths import SeriesNotFound, find_series_root
+            try:
+                series_root = find_series_root()
+            except SeriesNotFound as e:
+                print(f"error: {e}", file=sys.stderr)
+                return 2
+        book_root = series_root / "books" / args.book
+    else:
+        print("error: pass --book <name> (or a book directory)", file=sys.stderr)
+        return 2
+    if not book_root.is_dir():
+        print(f"error: no book directory at {book_root}", file=sys.stderr)
+        return 2
+    sm = build_story_map(book_root, series_root=series_root)
+    summary = write_story_map(sm, out=Path(args.out) if args.out else None,
+                              fmt=args.format)
+    json.dump(summary, sys.stdout, indent=2, ensure_ascii=False)
+    sys.stdout.write("\n")
+    return 0
 
 
 def _cmd_build_front_matter_tex(args: argparse.Namespace) -> int:
@@ -2267,6 +2301,21 @@ def main(argv: list[str] | None = None) -> int:
     svl.add_argument("--chapters", type=int, default=None,
                      help="Chapter count for --template (default 3).")
     svl.set_defaults(func=_cmd_structure_validate)
+    smp = sub.add_parser("story-map",
+                         help="One self-contained HTML story map of a book — synopsis, "
+                              "thread grid + escalation curve, characters, timeline, places.")
+    smp.add_argument("book_root", nargs="?", default=None,
+                     help="Path to the book dir (alternative to --book).")
+    smp.add_argument("--book", default=None, help="Book short-name under <series>/books/.")
+    smp.add_argument("--series-root", default=None,
+                     help="Series root (default: walk up from cwd; with a book dir, its parent's parent).")
+    smp.add_argument("--format", choices=("html", "json"), default="html",
+                     help="html (default) writes story_map.html + story_map.json; json writes only the JSON.")
+    smp.add_argument("--out", default=None,
+                     help="Output path (default books/<book>/edit_logs/story_map.html; the .json sits beside it).")
+    smp.add_argument("--threads-template", action="store_true",
+                     help="Print the documented header for books/<book>/threads.md and exit.")
+    smp.set_defaults(func=_cmd_story_map)
 
     fm = sub.add_parser("build-front-matter-tex",
                         help="Concatenate preface.md + introduction.md + glossary.md into front_matter.tex.")

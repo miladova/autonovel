@@ -549,7 +549,13 @@ Three categories. Full reference: [`docs/commands.md`](docs/commands.md).
   `dashboard` — score / tension / pacing curve / aggregates with
   sparklines, re-rendered from existing eval logs without firing
   another evaluate; `summaries --where '<expr>'` for a
-  pure-mechanical query DSL over the chapter-summary index; and
+  pure-mechanical query DSL over the chapter-summary index;
+  `story-map` — one HTML page you open in a browser to see the
+  book's shape without re-reading it: the synopsis in reading
+  order, a plot-thread × chapter grid with the score/tension
+  curve underneath, characters, timeline and places (threads
+  from a hand-editable `threads.md` ledger written from the
+  summaries); and
   three pre-flight scanners — `dialogue` (adverb tags / said-
   bookisms / stutters), `period-register` (period-bans roll-up),
   `pov-bleed` (interiority verbs attached to non-POV characters);

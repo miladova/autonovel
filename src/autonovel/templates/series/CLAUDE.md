@@ -196,6 +196,15 @@ each of these and the workaround is in the codebase:
   shape — score / tension sparklines, aggregates, and tension-
   drop alarms re-rendered from the latest eval log without
   firing another evaluate.
+- Run `/autonovel:story-map --book <name>` to *see* how the plot
+  develops: it writes one HTML page
+  (`books/<name>/edit_logs/story_map.html`) with the synopsis in
+  reading order, a plot-thread × chapter grid (plant / turn /
+  payoff) with the score / tension curve under it, characters,
+  timeline and places. The thread ledger it reads,
+  `books/<name>/threads.md`, is written on first run (or
+  `--refresh-threads`) from the outline + summaries and is
+  hand-editable.
 - Run `/autonovel:summaries --book <name> --where '<expr>'` to
   filter the chapter-summary index. Pure mechanical query DSL
   (no LLM): `pov == "Lucia"`, `cast contains Niccolò`,

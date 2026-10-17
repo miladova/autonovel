@@ -52,6 +52,7 @@ Every editing command falls into one of four roles:
 | `/autonovel:motifs` | Mechanical helper | Per-chapter motif density tracker. Reads `books/{book}/motifs.md` (one bullet per motif: `- slug: keyword1, keyword2`). Flags motifs that drop to zero in the back half of a book they were established in earlier — catches "set up an image, never paid it off". Pure mechanical. **Does NOT modify chapters.** |
 | `/autonovel:talk` | Conversational layer | Ask the book questions or queue edits in natural language. Three modes: **Q+A** (cites chapter+line, no edit), **Suggest-and-stage** (queues an edit in `briefs/conversation.md`), **Mechanical+suggest** (runs `entity-track` first, then queues a structured cut-list). Queued turns get folded into the brief by the next `/autonovel:revise <N>`. |
 | `/autonovel:dashboard` | Mechanical helper | Per-book at-a-glance dashboard — re-renders the latest `--full` eval log + mechanical augmentations (cast size, scene count, dialogue density, motif density), plus score and tension sparklines, per-book aggregates, and tension-drop alarms. Re-runs without firing an LLM evaluate pass. **Does NOT modify chapters.** |
+| `/autonovel:story-map` | Reading surface | One HTML page to *see* the book's shape without re-reading it — synopsis in reading order under the outline's act headers, plot threads × chapters (plant / turn / payoff) with the score / tension curve directly under the grid, characters on stage per chapter with their state changes, story-time axis with gaps labelled, places. Writes `edit_logs/story_map.html` (+ `.json`) and, on first run or `--refresh-threads`, the hand-editable thread ledger `threads.md` (LLM, from the outline + summaries — never the prose). Data, not verdicts. **Does NOT modify chapters.** |
 | `/autonovel:summaries` | Mechanical helper | Filter the chapter-summary index by a small DSL — `pov == "Lucia"`, `cast contains Niccolò`, `story_time >= "1521-11"`, `chapter in 5..12`, `score < 7.0 and word_count > 3000`. Pure mechanical, no LLM, free, scriptable. The right tool when you know exactly which chapters you want; `/autonovel:talk` is the LLM-mediated path for fuzzy questions. **Does NOT modify chapters.** |
 | `/autonovel:dialogue` | Mechanical helper | Per-chapter dialogue-mechanics linter — adverb-heavy speech tags, said-bookisms, repeated speech-verb stutters. Fast pre-flight before a heavy-tier evaluate run. **Does NOT modify chapters.** |
 | `/autonovel:period-register` | Mechanical helper | Per-book roll-up of every period-bans hit across every chapter, with worst-offenders ranking. **Does NOT modify chapters.** |
@@ -1423,6 +1424,14 @@ visibility lives in:
 - `git log --oneline` — every successful command's
   preamble/postamble takes a checkpoint, so the git history is the
   paper trail for the project.
+
+For the *book* rather than the pipeline, `/autonovel:story-map
+--book <name>` writes a self-contained HTML page
+(`books/<name>/edit_logs/story_map.html`) you open in any browser:
+the synopsis in reading order, the plot-thread grid with the
+score / tension curve under it, characters, timeline and places.
+It is a static file — re-run the command after revising to redraw
+it.
 
 If you remember NousResearch's earlier autonovel having a richer
 read-only console (file artifact browser + live progress), that
