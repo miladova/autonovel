@@ -51,7 +51,8 @@ workflow. Topics:
   drafting     — draft / draft-pass / sidequest. Writing prose.
   revising     — revise / revision-pass / brief / evaluate /
                  adversarial-edit / apply-cuts / lengthen /
-                 shorten. Iterative quality work.
+                 shorten. Iterative quality work. diff shows
+                 what changed since a tag / your last read.
   typeset      — typeset / package / front matter / back matter.
                  Output (PDF, ePub, audiobook).
   front-matter — title / introduction / glossary / appendix /
@@ -304,6 +305,19 @@ Five report shapes:
 
 Mechanical first; --with-llm classifier for canon-driven sources
 cuts the false-positive review burden.
+
+Checking what a revision actually changed (without re-reading):
+
+  /autonovel:diff --book <name>                       (last tag → now)
+  /autonovel:diff --book <name> --from last-read --mark-read
+  /autonovel:diff --book <name> --from draft_1 --to HEAD --chapters 14
+  /autonovel:diff --book <name> --from checkpoint:latest   (no git needed)
+
+Writes books/<name>/edit_logs/diff_<from>_<to>.html — open it in a
+browser: word-level changes inside their paragraphs, unchanged text
+folded, j/k jumps change to change ("change N of M"), word deltas
+per chapter. Add --annotate for a one-line "why" per change traced
+to the brief / talk turn / review item that asked for it.
 ```
 
 ============================== TOPIC: typeset =====================

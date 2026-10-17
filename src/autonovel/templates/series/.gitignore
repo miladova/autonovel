@@ -52,6 +52,13 @@ books/*/art/pdf/
 # Landing-page output (regenerated via /autonovel:landing).
 books/*/landing/dist/
 
+# Version diffs (regenerated from git / checkpoints by /autonovel:diff;
+# ~1 MB each). The `.why.json` annotations are LLM output and the
+# `last_read.json` bookmark is yours, so both stay tracked.
+books/*/edit_logs/diff_*.html
+books/*/edit_logs/diff_*.json
+!books/*/edit_logs/diff_*.why.json
+
 # Editor / OS junk
 .DS_Store
 Thumbs.db

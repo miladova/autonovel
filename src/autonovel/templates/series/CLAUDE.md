@@ -184,6 +184,14 @@ each of these and the workaround is in the codebase:
   `story_time >= "1521-11"`, `chapter in 5..12`,
   `score < 7.0 and word_count > 3000`. Distinct from
   `/autonovel:talk` (LLM Q+A) by being free + scriptable.
+- Run `/autonovel:diff --book <name> [--from last-read|<tag>|
+  checkpoint:latest] [--mark-read]` when the user asks what changed
+  ("what did the last revise do to ch 14?", "show me the edits since
+  draft_1"). It writes one self-contained HTML page under
+  `books/<name>/edit_logs/` — word-level changes in context, next/prev
+  jumping — and prints its path; hand the user that path rather than
+  pasting `git diff` output. `--annotate` adds a one-line *why* per
+  change from the brief / talk turn / review item.
 - Run `/autonovel:dialogue --book <name>` for the dialogue-
   mechanics linter (adverb tags, said-bookisms, stutters).
 - Run `/autonovel:period-register --book <name>` for a roll-up
