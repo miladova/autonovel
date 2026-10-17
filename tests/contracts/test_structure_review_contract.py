@@ -86,8 +86,13 @@ def test_structure_review_ground_rules_are_present() -> None:
     for hedge in ("cost of", "individually fine", "largely successful"):
         assert hedge in rules
     assert "Do not read the other reviewers first" in rules
-    # The kingmaker symptom is a named failure mode.
-    assert "kingmaker" in _section(body, "failure-modes")
+    # The anecdote-chain symptom is a named failure mode, described
+    # generically: the prompt must not name a specific book, or it
+    # primes every later review of that book toward the expected answer.
+    modes = _section(body, "failure-modes")
+    assert "`anecdote-chain`" in modes
+    assert "string\n  of short anecdotes" in modes or "string of short anecdotes" in modes
+    assert "kingmaker" not in body.lower()
     assert "autonovel mechanical structure-validate books/{book}" in body
     assert "autonovel mechanical structure-dossier books/{book}" in body
 
