@@ -2862,3 +2862,71 @@ Mechanical part is a Python helper (`autonovel mechanical diff-chapters`,
 difflib/`diff-match-patch` at word granularity, paragraph alignment); the
 LLM's only job is the one-line "why" annotations and a per-chapter change
 summary. Pair with `/autonovel:talk` ("what changed in ch 21 since draft_1?").
+
+## Story-map reading surface: summaries, plot, characters, places, timeline (requested 2026-10-17)
+
+The author's report on kingmaker after 24 chapters: *"I don't feel I have a
+good sense of how the plot develops — it feels a little like a bunch of short
+anecdotes and not a continuing story building to a climax."* Two gaps behind
+that: (a) no easy way to *read* the book at the summary level, and (b) the
+tooling may not be measuring book-level build at all (next section).
+
+Need an `/autonovel:story-map` surface (or a tab of the `/autonovel:diff`
+HTML report, same self-contained-page idiom), built from material that
+already exists — `ch_NN.summary.md`, the outline's thread ledger,
+`shared/characters.md`, canon, `story_time` frontmatter — not from a fresh
+LLM read of the prose:
+- **Book synopsis in reading order**: the chapter summaries stitched into one
+  continuous narrative with chapter anchors, so the plot can be read in
+  ~10 minutes.
+- **Plot-thread view**: each outline thread (plant → turns → payoff) as a row
+  across the chapter axis; show which chapters advance it, where it stalls,
+  where it pays off. This is the view that shows whether the book is one
+  story or a string of anecdotes.
+- **Character view**: per principal, their scenes in order with the one-line
+  state change per scene (what they want / what they lose), arc summary.
+- **Location and timeline views**: story_time per chapter on a time axis
+  with gaps flagged; places visited vs named-only.
+- **Escalation curve**: stakes/tension per chapter (reuse the dashboard's
+  tension series) next to the thread view, so "does it build to a climax"
+  is one glance.
+- Everything cross-linked to the chapter and to the diff view, and
+  readable without the shell (the user workflow rule).
+`/autonovel:chapter-summary`, `/autonovel:summaries` and `/autonovel:dashboard`
+are table-shaped CLI output; this is the *reading* surface over the same data.
+
+## Review the reviewers: book-level judgement is the weak tier (requested 2026-10-17)
+
+Audit `evaluate` (book mode), `reader-panel`, `review`, `brief`, `revise`,
+`draft-pass` and `gen-outline` for whether they actually measure and enforce
+**book-level** qualities, and propose concrete improvements. The author's
+standing: line- and paragraph-level prose "is starting to seem reasonable";
+the concern is the whole-book tier. On kingmaker the review held at 4★ for
+ten passes and the panel said "all four would buy it" while the author's own
+read is "anecdotes, not a story building to a climax" — a miss the reviewers
+should have caught and named.
+
+Questions the audit must answer:
+1. Do the book-level reviewers score **causal chain** (does chapter N+1
+   happen *because* of chapter N), **escalation** (are stakes strictly
+   higher per act), **through-line** (one question the book asks and
+   answers), **climax build** (do the last 20% converge threads or just
+   finish them), **episode risk** (chapters that could be removed without
+   breaking anything = anecdotes)? Or do they mostly aggregate chapter-level
+   prose findings?
+2. Do their rubrics let "every chapter is good" masquerade as "the book is
+   good"? Add a *removability test*: for each chapter, what later chapter
+   breaks if it's cut? Chapters with no answer are flagged.
+3. Does `brief --from auto` ever produce a **structural** brief (move a
+   reveal, merge two episodic chapters, add a consequence scene) or only
+   prose fixes? Does `revise` have room to make one?
+4. Does `gen-outline` commit to a stakes ladder and an act-level causal
+   spine that `draft-pass` is then held to, or does it produce a sequence of
+   scenes?
+5. Where does the pipeline decide "stop revising"? `review.stop_revising`
+   is prose-weighted; add a book-level gate.
+Deliverable: a short report with rubric diffs for each command, plus a
+proposed `/autonovel:evaluate --book` dimension set weighted toward
+structure, and the structural brief type. Historical-fiction note: the real
+record is episodic by nature (deals, deaths, elections), so the tools must
+check that the *novel* imposes a spine the history lacks.
