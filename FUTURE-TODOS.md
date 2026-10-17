@@ -2863,37 +2863,15 @@ difflib/`diff-match-patch` at word granularity, paragraph alignment); the
 LLM's only job is the one-line "why" annotations and a per-chapter change
 summary. Pair with `/autonovel:talk` ("what changed in ch 21 since draft_1?").
 
-## Story-map reading surface: summaries, plot, characters, places, timeline (requested 2026-10-17)
+## Story-map follow-ups (story-map shipped 2026-10-17)
 
-The author's report on kingmaker after 24 chapters: *"I don't feel I have a
-good sense of how the plot develops — it feels a little like a bunch of short
-anecdotes and not a continuing story building to a climax."* Two gaps behind
-that: (a) no easy way to *read* the book at the summary level, and (b) the
-tooling may not be measuring book-level build at all (next section).
-
-Need an `/autonovel:story-map` surface (or a tab of the `/autonovel:diff`
-HTML report, same self-contained-page idiom), built from material that
-already exists — `ch_NN.summary.md`, the outline's thread ledger,
-`shared/characters.md`, canon, `story_time` frontmatter — not from a fresh
-LLM read of the prose:
-- **Book synopsis in reading order**: the chapter summaries stitched into one
-  continuous narrative with chapter anchors, so the plot can be read in
-  ~10 minutes.
-- **Plot-thread view**: each outline thread (plant → turns → payoff) as a row
-  across the chapter axis; show which chapters advance it, where it stalls,
-  where it pays off. This is the view that shows whether the book is one
-  story or a string of anecdotes.
-- **Character view**: per principal, their scenes in order with the one-line
-  state change per scene (what they want / what they lose), arc summary.
-- **Location and timeline views**: story_time per chapter on a time axis
-  with gaps flagged; places visited vs named-only.
-- **Escalation curve**: stakes/tension per chapter (reuse the dashboard's
-  tension series) next to the thread view, so "does it build to a climax"
-  is one glance.
-- Everything cross-linked to the chapter and to the diff view, and
-  readable without the shell (the user workflow rule).
-`/autonovel:chapter-summary`, `/autonovel:summaries` and `/autonovel:dashboard`
-are table-shaped CLI output; this is the *reading* surface over the same data.
+- Cross-link `story_map.html` chapter anchors with the `/autonovel:diff`
+  page once both exist on one branch (deferred: built in parallel).
+- `/autonovel:dashboard` (and the TUI sparkline) read `tension` only from a
+  `--full` eval log; kingmaker's per-chapter logs carry `tension` for ch 1–9
+  but the dashboard shows none. story-map already falls back to the
+  per-chapter field (`_index_latest_per_chapter_eval(key="tension")`); the
+  dashboard could do the same.
 
 ## Review the reviewers: book-level judgement is the weak tier (requested 2026-10-17)
 

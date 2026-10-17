@@ -230,15 +230,14 @@ def _parse_frontmatter(text: str) -> dict[str, str]:
 _SECTION_RE = re.compile(r"^\s*\*\*([A-Z][A-Za-z ]+):\*\*\s*(.*)$")
 
 
-def _parse_summary(text: str) -> dict:
-    """Pull `**Plot:**`, `**Cast on stage:**`, `**Story time:**` from
-    a summary.md. Returns a dict with `plot` (one-sentence string),
-    `cast` (list of names), `story_time` (string).
+def parse_summary_sections(text: str) -> dict[str, str]:
+    """Return every `**Field:** value` section of a summary.md as a
+    `{lowercased field name: full text}` mapping — no truncation, no
+    first-sentence pull. Continuation lines are joined with spaces.
 
-    The summary template (commands/draft.md step 12, summarize-
-    chapter.md step) writes each field as `**Field:** value` — the
-    regex above matches that shape and is generous about
-    whitespace.
+    `_parse_summary` (the table-shaped view) and the story map's
+    synopsis (which needs the whole Plot paragraph) both read
+    summaries through this one parser.
     """
     sections: dict[str, str] = {}
     current_key: str | None = None
@@ -265,6 +264,20 @@ def _parse_summary(text: str) -> dict:
             if stripped:
                 current_buf.append(stripped)
     flush()
+    return sections
+
+
+def _parse_summary(text: str) -> dict:
+    """Pull `**Plot:**`, `**Cast on stage:**`, `**Story time:**` from
+    a summary.md. Returns a dict with `plot` (one-sentence string),
+    `cast` (list of names), `story_time` (string).
+
+    The summary template (commands/draft.md step 12, summarize-
+    chapter.md step) writes each field as `**Field:** value` — the
+    regex above matches that shape and is generous about
+    whitespace.
+    """
+    sections = parse_summary_sections(text)
 
     out: dict = {}
     if "plot" in sections:
@@ -386,12 +399,36 @@ def _count_evals_per_chapter(eval_dir: Path) -> dict[int, int]:
     return counts
 
 
-def _index_latest_per_chapter_eval(eval_dir: Path) -> dict[int, float]:
-    """Return {chapter_number: latest overall_score} by scanning
-    `eval_logs/`. Tolerates a few historical naming conventions
+def _eval_number(data: dict, key: str) -> float | None:
+    """Pull a numeric value out of one eval log. `key` may be dotted
+    (`dimensions.irreversible_change`); a dimension stored as
+    `{"score": 8.6, ...}` yields its `score`. None when absent or
+    non-numeric."""
+    value: object = data
+    for part in key.split("."):
+        if not isinstance(value, dict):
+            return None
+        value = value.get(part)
+    if isinstance(value, dict):
+        value = value.get("score")
+    if value is None or isinstance(value, bool):
+        return None
+    try:
+        return float(value)  # type: ignore[arg-type]
+    except (TypeError, ValueError):
+        return None
+
+
+def _index_latest_per_chapter_eval(eval_dir: Path, *,
+                                   key: str = "overall_score") -> dict[int, float]:
+    """Return {chapter_number: latest value of `key`} by scanning
+    `eval_logs/` (default `overall_score`; `key` may be dotted, e.g.
+    `dimensions.irreversible_change`, or a top-level field such as
+    `tension`). Tolerates a few historical naming conventions
     (`<ts>_ch01.json`, `<ts>_ch01_eval.json`, plain `chNN_eval.json`).
-    Picks the latest by filename timestamp prefix, or by mtime when
-    no timestamp prefix is present. Skips files it can't parse.
+    Picks the latest log carrying the field, by filename timestamp
+    prefix, or by mtime when no timestamp prefix is present. Skips
+    files it can't parse.
     """
     if not eval_dir.is_dir():
         return {}
@@ -423,12 +460,8 @@ def _index_latest_per_chapter_eval(eval_dir: Path) -> dict[int, float]:
             continue
         if not isinstance(data, dict):
             continue
-        score = data.get("overall_score")
-        if score is None:
-            continue
-        try:
-            score_f = float(score)
-        except (TypeError, ValueError):
+        score_f = _eval_number(data, key)
+        if score_f is None:
             continue
 
         prior = by_chapter.get(chapter)

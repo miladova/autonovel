@@ -1,7 +1,7 @@
 ---
 name: autonovel:help
 description: Discoverability layer over every autonovel command. Zero-arg shows category-grouped overview; `<topic>` shows in-depth guide for a workflow.
-argument-hint: "[<topic>]   topics: art, foundation, drafting, revising, typeset, research, front-matter, sweeps, tui, cli, next-steps"
+argument-hint: "[<topic>]   topics: art, foundation, drafting, revising, reading, typeset, research, front-matter, sweeps, tui, cli, next-steps"
 model_tier: light
 allowed-tools: []
 reads: []
@@ -26,8 +26,9 @@ per-topic. Both are needed.
 <workflow>
 Parse `$ARGUMENTS` to one of: empty (overview), or one of the
 canonical topics below. Anything else: print "no help topic
-`<input>`; pick from: art, foundation, drafting, revising, typeset,
-research, rewrite, front-matter, sweeps, tui, cli, next-steps" and stop.
+`<input>`; pick from: art, foundation, drafting, revising, reading,
+typeset, research, rewrite, front-matter, sweeps, tui, cli, next-steps"
+and stop.
 
 For each mode, print a self-contained chat block matching the
 shape below verbatim. The blocks are intentionally concrete:
@@ -52,6 +53,10 @@ workflow. Topics:
   revising     — revise / revision-pass / brief / evaluate /
                  adversarial-edit / apply-cuts / lengthen /
                  shorten. Iterative quality work.
+  reading      — see the book's shape without re-reading it:
+                 story-map (one HTML page: synopsis, plot-thread
+                 grid + score/tension curve, characters, timeline,
+                 places) / chapter-summary / summaries / dashboard.
   typeset      — typeset / package / front matter / back matter.
                  Output (PDF, ePub, audiobook).
   front-matter — title / introduction / glossary / appendix /
@@ -304,6 +309,44 @@ Five report shapes:
 
 Mechanical first; --with-llm classifier for canon-driven sources
 cuts the false-positive review burden.
+```
+
+============================== TOPIC: reading =====================
+
+```
+# Reading — see the book's shape without re-reading it
+
+The page (opens in any browser, works offline and on a phone):
+
+  /autonovel:story-map --book <name>
+        → books/<name>/edit_logs/story_map.html  (+ story_map.json)
+
+  Tabs: Synopsis (every chapter summary in reading order, act
+  headers from the outline; a one-line-per-chapter switch reads
+  the whole book in minutes) · Threads (plot threads × chapters —
+  plant / turn / payoff / touch — with the score, tension and
+  irreversible-change curves directly under it on the same
+  chapter axis) · Characters (who is on stage where, each
+  principal's state change per chapter) · Timeline & places
+  (story time to scale, gaps over a year labelled; places
+  visited vs only named).
+
+  First run writes books/<name>/threads.md — the plot-thread
+  ledger — from the outline + chapter summaries (never the
+  prose). Edit it by hand any time; re-run to redraw. Rewrite
+  it from scratch with:
+
+  /autonovel:story-map --book <name> --refresh-threads
+
+  It shows data, not verdicts: which chapters touch a thread and
+  how long it goes untouched; you decide what that means.
+
+Terminal views of the same data:
+
+  /autonovel:chapter-summary --book <name>    one row per chapter
+  /autonovel:summaries --book <name> --where 'cast contains X'
+  /autonovel:dashboard --book <name>          score/tension sparklines
+  /autonovel:talk --book <name> "<question>"  ask the book (LLM)
 ```
 
 ============================== TOPIC: typeset =====================

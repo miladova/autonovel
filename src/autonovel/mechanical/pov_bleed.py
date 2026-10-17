@@ -140,19 +140,28 @@ def parse_cast(characters_md: Path) -> set[str]:
     """Extract named entities from `shared/characters.md`. Honours
     two common shapes: `**Name** — role` bullet form, and `## Name`
     heading form. Returns a set of names."""
+    return set(parse_cast_ordered(characters_md))
+
+
+def parse_cast_ordered(characters_md: Path) -> list[str]:
+    """Same extraction as `parse_cast`, in document order and
+    de-duplicated — for surfaces (the story map) where the order the
+    author listed the cast in is meaningful (principals first)."""
     if not characters_md.is_file():
-        return set()
+        return []
     text = characters_md.read_text(encoding="utf-8")
-    names: set[str] = set()
-    for m in _CAST_NAME_RE.finditer(text):
-        n = m.group(1).strip()
-        if n and len(n) >= 2 and n[0].isupper():
-            names.add(n.split(" — ")[0].split(",")[0].strip())
-    for m in _CAST_HEADING_RE.finditer(text):
-        n = m.group(1).strip()
-        if n and len(n) >= 2 and n[0].isupper():
-            names.add(n.split(" — ")[0].split(",")[0].strip())
-    return names
+    found: list[tuple[int, str]] = []
+    for regex in (_CAST_NAME_RE, _CAST_HEADING_RE):
+        for m in regex.finditer(text):
+            n = m.group(1).strip()
+            if n and len(n) >= 2 and n[0].isupper():
+                found.append((m.start(),
+                              n.split(" — ")[0].split(",")[0].strip()))
+    out: list[str] = []
+    for _pos, name in sorted(found):
+        if name and name not in out:
+            out.append(name)
+    return out
 
 
 # ---------------------------------------------------------- scan
