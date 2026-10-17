@@ -2832,3 +2832,33 @@ prose ≈ 8 / 10, with investigation-heavy plots).
    (Jakob, Sibylla, Ulrich, Maximilian, +1), everyone else on the narrator.
    Dialogue is 25% of the book by words (~3 of 12 h). Trial first: render one
    dialogue-heavy chapter both ways and listen before committing the book.
+
+## Reader-facing diff between book versions (requested 2026-10-17 on kingmaker)
+
+Need a `/autonovel:diff` surface: show what changed between two versions of
+a book — git refs/tags (`draft_1` → `HEAD`), two checkpoints, or "since my
+last read" — *in context*, with easy jumping from change to change, so the
+author can verify discussed edits without re-reading the book or even the
+chapter. Today the only way is `git diff` on markdown, which is line-based
+(whole paragraphs light up for a one-word trim) and has no reading surface.
+
+Shape:
+- `/autonovel:diff --book {book} [--from <ref>] [--to <ref>] [--chapters N-M]`
+  → `books/{book}/edit_logs/diff_<from>_<to>.html` (self-contained, opens in a
+  browser): chapter by chapter, **word-level** inline diff (deletions struck,
+  insertions marked) shown inside the surrounding paragraph(s), unchanged
+  paragraphs collapsed to a line with an expand toggle; a sidebar/hunk list
+  with next/prev (j/k) jumping and a "N of M changes" counter.
+- Annotate each hunk with *why* when known: the matching `briefs/chNN.md`
+  prescription, the `briefs/conversation.md` turn, or the eval/panel/review
+  line that asked for it. Discussed changes that are "not clear or fully
+  spelled out" become checkable against what actually landed.
+- `--from last-read` bookmark: `_end` (or the diff command) records the ref
+  the author last reviewed so the default is "everything since I last looked".
+- Default `--from` = last git tag, `--to` = working tree. Also diff summaries
+  and voice.md/canon.md changes in the same report.
+- Optional PDF mode later (changebars in the typeset) — HTML first.
+Mechanical part is a Python helper (`autonovel mechanical diff-chapters`,
+difflib/`diff-match-patch` at word granularity, paragraph alignment); the
+LLM's only job is the one-line "why" annotations and a per-chapter change
+summary. Pair with `/autonovel:talk` ("what changed in ch 21 since draft_1?").
