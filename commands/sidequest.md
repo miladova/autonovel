@@ -59,6 +59,7 @@ export commands (art, covers, audiobook, typeset, landing, package).
      7.  Score a chapter / book / compare  → /autonovel:evaluate --chapter <N> --book <name>
      8.  Reader panel (4 personas)         → /autonovel:reader-panel --book <name>
      9.  Deep Opus review                  → /autonovel:review --book <name>
+     9a. Book-level structure review       → /autonovel:structure-review --book <name>
 
    Revision:
      10. Adversarial edit (find cuts)      → /autonovel:adversarial-edit <N> --book <name>

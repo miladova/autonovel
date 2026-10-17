@@ -438,7 +438,12 @@ swift, straightforward fashion."
    book is about), never a moral and never "little did he know"
    (which withholds the fact while advertising it). Grep-able
    candidates for the judge, not failures: "would one day," "little
-   did," "centuries later," "would become."
+   did," "centuries later," "would become." A promise line is a
+   callback to the future, not a cause: it never stands in for the
+   chapter happening *because of* the one before it (CRAFT.md §1
+   "Causation, not sequence"), and a book whose chapters are tied
+   together only by promise lines paid later is still a string of
+   episodes.
 4. A proper noun the reader cannot place (a town, a fortress, a coin,
    an institution, a battle) is glossed in the sentence it first
    appears in, by the character who needs it: what it is and why it
@@ -569,7 +574,10 @@ pipeline heuristics the book's voice file may override.
 - §7.3 / CRAFT §1 Spine: can the reader say, from this chapter alone,
   what the book is about and which step this chapter is? [flag a
   chapter with no promise line and no named step on a book whose
-  voice file asks for them]
+  voice file asks for them] This is a chapter-level check of the
+  narration. Whether the chapters cause each other is a book-level
+  test (CRAFT §1 "Causation, not sequence"; `/autonovel:structure-review`),
+  and a promise line passes nothing there.
 - §8 Chapter ends on reflection or summary rather than the turn or a
   prompt; the same closing device two chapters running.
 

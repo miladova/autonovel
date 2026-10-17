@@ -1,6 +1,6 @@
 ---
 name: autonovel:next
-description: Show state-aware next actions — pending conflicts, regressions, fresh briefs, panel/review staleness, backup status, plus the canonical pipeline next step.
+description: Show state-aware next actions — pending conflicts, regressions, fresh briefs, panel/review staleness, the book-level structure gate, backup status, plus the canonical pipeline next step.
 argument-hint: "[--book <short-name>]"
 model_tier: light
 allowed-tools:
@@ -14,6 +14,7 @@ reads:
   - books/{book}/chapters/ch_*.summary.md
   - books/{book}/edit_logs/reader_panel.json
   - books/{book}/edit_logs/review.md
+  - books/{book}/edit_logs/structure_review.json
   - books/{book}/typeset/*.pdf
   - books/{book}/preface.md
   - books/{book}/introduction.md
@@ -64,6 +65,15 @@ repeatedly.
      - `books/{book}/edit_logs/reader_panel.json` and
        `review.md` (legacy name `opus_review.md`) mtimes vs
        `books/{book}/chapters/ch_*.md` mtimes (staleness)
+     - `books/{book}/edit_logs/structure_review.json` — the
+       book-level structure gate (MEDIUM): missing on a drafted book
+       (≥6 chapters and a whole-book report exists or every outlined
+       chapter is drafted) → run `/autonovel:structure-review`;
+       older than a chapter or invalid → re-run it; fresh but the
+       gate blocks (score < 4 or a chapter removable) → act on it
+       with `/autonovel:revision-pass --chapters structural`, with
+       any merge / cut / reorder / split commands the review asked
+       for listed for you to run. Silent when the gate passes.
      - `books/{book}/typeset/*_latest.pdf` mtime vs
        `books/{book}/chapters/ch_*.md` mtimes (typeset staleness)
      - `project.yaml` for missing `books[].title` / `.author`

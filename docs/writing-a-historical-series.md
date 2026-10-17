@@ -186,12 +186,24 @@ optional one-shot retry per chapter if the eval scores below
 **Per book (after all chapters drafted):**
 
 ```text
+/autonovel:structure-review --book the-inquisitor
 /autonovel:reader-panel --book the-inquisitor
 /autonovel:review --book the-inquisitor
 ```
 
-Stop when the reader panel and the dual-persona review converge to
-hedged / qualified items rather than concrete defects.
+Structure first. Historical fiction is the genre most exposed to the
+anecdote chain: the record is episodic by nature (deals, deaths,
+elections, wars arrive on their dates), so a book that follows it
+chapter by chapter reads as a chronicle however good each chapter
+is. `/autonovel:structure-review` checks that the novel imposes a
+spine the history lacks — chapter N+1 happening *because of* chapter
+N, stakes rising per act on the same bet, one question the ending
+answers, no chapter that could be cut — and its structural brief
+candidates feed `/autonovel:revision-pass --chapters structural`.
+Stop when the structure gate passes (score ≥ 4, no removable
+chapter) and the reader panel and the dual-persona review converge to
+hedged / qualified items rather than concrete defects
+(`operating-guide.md` §2g).
 
 ## 9. Promote canon
 

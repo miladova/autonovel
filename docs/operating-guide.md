@@ -18,7 +18,7 @@ your second novel.
 The single most-asked question after a first-pass draft. **Read
 this section first if you're confused about which of `draft`,
 `draft-pass`, `revise`, `revision-pass`, `brief`, `evaluate`,
-`review`, or `reader-panel` to run when.** Everything else in this
+`review`, `structure-review`, or `reader-panel` to run when.** Everything else in this
 doc assumes you've internalised this layout.
 
 ### The four roles
@@ -46,7 +46,8 @@ Every editing command falls into one of four roles:
 | `/autonovel:draft-pass` | Sweep | "Write the rest of the book." Per chapter: draft → anachronism → evaluate → if low, brief + revise + re-eval → promote-canon. With `--deep`: also runs reader-panel + review at end. |
 | `/autonovel:revision-pass` | Sweep | "Improve these chapters." Per chapter: anachronism → brief → revise → evaluate → promote-canon. |
 | `/autonovel:reader-panel` | Whole-book reviewer | Four-persona panel (Editor / Genre Reader / Writer / First Reader). Writes `edit_logs/reader_panel.json`. **Does NOT modify chapters.** |
-| `/autonovel:review` | Whole-book reviewer | Opus dual-persona deep review (literary critic + professor of fiction). Writes `edit_logs/review.md` + `review.json`. **Does NOT modify chapters.** |
+| `/autonovel:review` | Whole-book reviewer | Opus dual-persona deep review (literary critic + professor of fiction). Writes `edit_logs/review.md` + `review.json`. Its stop-revising verdict is gated on `structure-review`. **Does NOT modify chapters.** |
+| `/autonovel:structure-review` | Whole-book reviewer | The book-level structure judge: is it one story building to a climax, or a string of episodes? Through-line, chapter N → N+1 causal chain, stakes ladder per act, removability per chapter, climax build, a 1–5 structure score separate from prose, and 3–7 structural brief candidates. Writes `edit_logs/structure_review.json` + `.md`. **Does NOT modify chapters.** See [§2g](#2g-when-to-stop-revising-the-book-level-gate). |
 | `/autonovel:chapter-summary` | Mechanical helper | One-line-per-chapter overview table — Date / POV / Score / Words / Cast / Plot (with location prefix). Pure mechanical, no LLM. The right tool for "which chapters happen in <date range>?" or "where does <character> appear?" before a revision pass. **Does NOT modify chapters.** |
 | `/autonovel:motifs` | Mechanical helper | Per-chapter motif density tracker. Reads `books/{book}/motifs.md` (one bullet per motif: `- slug: keyword1, keyword2`). Flags motifs that drop to zero in the back half of a book they were established in earlier — catches "set up an image, never paid it off". Pure mechanical. **Does NOT modify chapters.** |
 | `/autonovel:talk` | Conversational layer | Ask the book questions or queue edits in natural language. Three modes: **Q+A** (cites chapter+line, no edit), **Suggest-and-stage** (queues an edit in `briefs/conversation.md`), **Mechanical+suggest** (runs `entity-track` first, then queues a structured cut-list). Queued turns get folded into the brief by the next `/autonovel:revise <N>`. |
@@ -97,16 +98,21 @@ sweep that calls them for you.
                 └───────────────────────────────────────────────────┘
 
                 ┌───────────────────────────────────────────────────┐
+                │  structure-review (whole book → REPORT + structural
+                │                    brief candidates, no rewrites)
                 │  reader-panel  (whole book → REPORT, no rewrites)
-                │  review        (whole book → REPORT, no rewrites)
+                │  review        (whole book → REPORT, no rewrites;
+                │                 stop verdict gated on structure-review)
                 └───────────────────────────────────────────────────┘
                         │
                         │  reports land in edit_logs/
                         ▼
                  You then run revision-pass
                  (which calls brief → revise → evaluate per chapter,
-                  with brief picking up the panel + review evidence
-                  along with the existing eval + cuts).
+                  with brief picking up the structure candidates +
+                  panel + review evidence along with the existing
+                  eval + cuts; `--chapters structural` targets exactly
+                  the chapters the structure review named).
 ```
 
 ### "I ran draft-pass --all, then review, then reader-panel — did I need to run brief?"
@@ -159,12 +165,14 @@ panel report and disagree with most of it but agree on chapter
 /autonovel:evaluate --phase foundation --book <book>
 
 # First-pass draft (one command, walks away)
-/autonovel:draft-pass --chapters 1-19 --deep    # --deep adds review + reader-panel at end
+/autonovel:draft-pass --chapters 1-19 --deep    # --deep adds structure-review + review + reader-panel at end
 
-# Act on the deep-pass reports
+# Act on the deep-pass reports — structure first
+#   (run any merge / cut / reorder it lists yourself, then re-run structure-review)
+/autonovel:revision-pass --chapters structural
 /autonovel:revision-pass --chapters <flagged-from-deep-pass>
 
-# (Repeat the previous two steps until reports are clean.)
+# (Repeat until the structure gate passes and the reports are clean — §2g.)
 
 # Set the title, write the front matter, typeset
 /autonovel:title --book <book>           # propose / pick / set title + author
@@ -186,8 +194,8 @@ grouped overview of every command. `/autonovel:help <topic>`
 walks one workflow with the exact command sequence —
 `/autonovel:help art` is the right place to start if the 10
 art-* / cover-* commands feel opaque. Topics: art, foundation,
-drafting, revising, typeset, research, front-matter, sweeps,
-tui, cli, next-steps.
+drafting, revising, structure, typeset, research, front-matter,
+sweeps, tui, cli, next-steps.
 
 **Quick start: run the onboarding wizard.** Before reading the
 rest of this section:
@@ -222,7 +230,8 @@ input + how long each takes:
 | **Voice discovery** | Accept the AI's pick | Read all 5 trial passages; pick one; optionally rerun for fresh trials | 2 min minimum, **5–10 min recommended** | 2–4 min per run |
 | **Per-chapter draft review** | Skim eval score; let pipeline advance if ≥ threshold | Read the chapter; if it surprised you (good or bad) note why | 1 min minimum, **3–5 min recommended** | 2–5 min per chapter draft (Sonnet) |
 | **Reader-panel feedback** | Run it; read the headline | Read each persona's full report; mark which complaints you agree with before running revise | 5 min minimum, **15–30 min recommended** | 5–10 min for whole book |
-| **Opus review** | Run it once near the end | Iterate review → revise loops until the items become hedged ("perhaps could do") | 5 min minimum, **15–60 min** per round | 5–15 min per pass on whole book |
+| **Structure review** | Run it once the book is drafted; read the verdict and the removable chapters | Read the causal-chain table and the candidates; decide the merges / cuts it proposes yourself; re-run after each structural pass until the gate passes (§2g) | 10 min minimum, **20–40 min** per round | 10–20 min per pass on whole book |
+| **Opus review** | Run it once near the end | Iterate review → revise loops until the items become hedged ("perhaps could do") **and** the structure gate passes | 5 min minimum, **15–60 min** per round | 5–15 min per pass on whole book |
 | **Major decisions** (cut a chapter, add a character, change ending) | Decide; type the sidequest | Decide deliberately; consider impact on canon, outline, downstream chapters | 5–60 min depending on scope | 2–10 min for the sidequest itself |
 | **Export** (PDF, ePub, audiobook, cover) | `/autonovel:package` and walk away | Inspect the typeset PDF for orphan/widow lines; tweak `typeset/novel.tex` | 5 min minimum, **30 min recommended** | 30–60 sec PDF; 5–60 min audiobook depending on length |
 
@@ -268,9 +277,11 @@ discoveries land in the book's `canon.md` — research-cited facts in
 after the last chapter to catch anything still pending. Disable
 either with `--no-promote`.
 
-Add `--deep` and the sweep also runs `reader-panel` and `review`
-on the whole book at the end — produces reports (does not
-auto-revise from them) and surfaces a flagged-chapters list:
+Add `--deep` and the sweep also runs `structure-review`,
+`reader-panel` and `review` on the whole book at the end — produces
+reports (does not auto-revise from them) and surfaces a
+flagged-chapters list. (Every sweep, deep or not, also runs a
+per-chapter spine check against the outline's `## Causal spine`.)
 
 ```text
 /autonovel:draft-pass --chapters 1-19 --deep   # adds ~10–25 min for the deep passes
@@ -453,13 +464,16 @@ sequence that catches the things a sweep can silently break:
    that coincides with the flipped fact in unrelated context),
    so skim each snippet before revising. Cheap, no LLM.
 
-3. **Re-run reader-panel + review on the revised book**
-   *(15-30 min compute, 30 min reading)*.
-   You changed many chapters; any prior `reader_panel.json` and
-   `review.md` describe the pre-revision book and are now
-   stale. Re-running gives you a fresh flagged-chapter list:
+3. **Re-run structure-review, reader-panel + review on the revised
+   book** *(25-50 min compute, 30-45 min reading)*.
+   You changed many chapters; any prior `structure_review.json`,
+   `reader_panel.json` and `review.md` describe the pre-revision
+   book and are now stale. Re-running gives you a fresh
+   flagged-chapter list. Structure first — review's stop-revising
+   verdict is gated on it (§2g):
 
    ```text
+   /autonovel:structure-review --book <book>
    /autonovel:reader-panel --book <book>
    /autonovel:review --book <book>
    ```
@@ -503,9 +517,13 @@ sequence that catches the things a sweep can silently break:
    ```
 
    No `--enrich-with` this time *unless* you have new research.
-   If nothing was flagged, you're done with this round — move
-   on to `/autonovel:title`, `/autonovel:introduction`,
-   `/autonovel:typeset`, `/autonovel:package`.
+   When the structure gate blocks, the next pass is
+   `/autonovel:revision-pass --chapters structural --book <book>`
+   (after running any merge / cut the structure review lists).
+   If nothing was flagged and the structure gate passes, you're
+   done with this round — move on to `/autonovel:title`,
+   `/autonovel:introduction`, `/autonovel:typeset`,
+   `/autonovel:package`.
 
 The same closer applies to a non-`--enrich-with` revision-pass —
 the verify → panel-review → backup → decide loop is what closes
@@ -644,7 +662,11 @@ if you pass `--force`.
 ### 2e. Major change (cut a chapter, change the ending)
 
 Halfway through revision you decide chapter 12 should be cut — its
-beats are folded into chapters 11 and 13.
+beats are folded into chapters 11 and 13. (The usual evidence is
+`/autonovel:structure-review` flagging it `removable` — no later
+chapter breaks without it — with a `cut` or `merge` candidate that
+carries the exact command below and names the chapter that absorbs
+its one needed fact.)
 
 ```text
 /autonovel:remove-chapter 12          # deletes ch_12.md; renumbers 13→12, 14→13, etc.
@@ -719,6 +741,62 @@ For a brand-new character mid-book:
 …then either let downstream chapters pick him up via
 `/autonovel:revise`, or use `/autonovel:deepen-character Eduardo`
 to add an unguarded moment that makes him real.
+
+### 2g. When to stop revising: the book-level gate
+
+Every chapter can be good while the book is not. On *kingmaker* the
+chapter evals held at 7+, `/autonovel:review` held at 4★ for ten
+passes and the reader panel said all four personas would buy it —
+and the author's own read was *"a bunch of short anecdotes and not a
+continuing story building to a climax."* Each of those reviewers is
+prose-weighted; none asked whether chapter N+1 happens *because of*
+chapter N. (The full audit: [`reviewer-audit.md`](reviewer-audit.md).)
+
+So "stop revising" now has two halves, and both must hold:
+
+1. **Book-level gate** — `/autonovel:structure-review --book <book>`
+   has run since the last chapter changed, and it scores the
+   structure ≥ 4/5 with **no chapter removable** (a chapter no later
+   chapter needs is an anecdote).
+2. **Prose level** — the Bells rule `/autonovel:review` applies: 4½★
+   with no major unqualified items, or mostly qualified hedges, or
+   fewer than three items. Structural items never count as hedges.
+
+`/autonovel:review` computes both and writes the verdict to
+`review.json`; when the structure review is missing or stale it says
+"run /autonovel:structure-review first". `/autonovel:next` surfaces the
+same gate, and `autonovel mechanical structure-validate books/<book>
+--format markdown` prints it for free.
+
+The loop when the gate blocks:
+
+```text
+/autonovel:structure-review --book <book>       # verdict + candidates
+#   cross-chapter moves it lists are YOURS to run, before the sweep:
+#   /autonovel:merge-chapters --chapters 15,16 --book <book>
+#   /autonovel:remove-chapter 13 --book <book>
+#   then /autonovel:impact-of --book <book> --source merge-chapters
+#   and re-run /autonovel:structure-review (the numbering changed)
+/autonovel:revision-pass --chapters structural --book <book>
+#   brief --from auto writes `kind: structural` briefs; revise
+#   restructures inside each chapter and never touches a neighbour
+/autonovel:structure-review --book <book>       # re-check
+/autonovel:review --book <book>                 # the prose-level half
+```
+
+A structural pass is measured by the next structure review, not by
+the chapter-score deltas: a consequence scene can lower a chapter's
+prose score while turning an "after" into a "because". Two rotations
+of structural passes without the score rising means the outline is the
+problem — go back to `/autonovel:gen-outline --book <book> --add-spine`,
+read its `## Causal spine`, and decide the restructure yourself.
+
+For **historical fiction** the check matters most: the record is
+episodic by nature (deals, deaths, elections), so the novel has to
+supply the spine — who opposes the protagonist between the recorded
+events, and which earlier choice of his each event punishes or
+rewards. The structure review flags a book whose chapters simply
+follow the record as `chronicle-spine`.
 
 ---
 

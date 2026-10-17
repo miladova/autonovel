@@ -76,6 +76,29 @@ required reads — surface the error and stop, don't retry.
    `{chapter}`. Capture its beats, its `story_time`, and any events it
    references. If the chapter is not in the outline, stop and surface the gap.
 
+3a. **Hold the chapter to the book's spine.** From the same outline,
+    read the `## Spine` section (the through-line `question:`, `want:`,
+    `opposing_force:`), this chapter's act row in `## Stakes ladder`,
+    and two lines of `## Causal spine`: `- {chapter} because M: …` (what
+    this chapter must open on — the earlier event that forces it) and
+    `- {chapter+1} because {chapter}: …` (the fact this chapter must
+    leave for the next one to act on). These are binding, like the
+    beats:
+    - the chapter's first scene acts on the named earlier event —
+      someone does something *because of it*, on the page — rather than
+      opening on a fresh problem;
+    - the chapter's stake is its act's rung on the ladder, on the
+      through-line question — not a new, self-contained bet that the
+      chapter opens and settles;
+    - the chapter ends with the hand-off fact in place, unresolved
+      enough that the next chapter has to deal with it.
+    A `- {chapter} after M:` line is a known weak link: draft it, and
+    still give the chapter one consequence of an earlier chapter if the
+    beats allow. When the outline has none of these sections (outlined
+    before they were required), draft from the beats alone and add one
+    line to the postamble: "outline has no causal spine — run
+    `/autonovel:gen-outline --book {book} --add-spine`". Do not stop.
+
 4. Use `file_read` on `shared/world.md`, `shared/characters.md`,
    `shared/canon.md`, `books/{book}/canon.md` (this book's OWN canon —
    facts its earlier chapters established; a sibling book's canon.md is
@@ -213,7 +236,9 @@ required reads — surface the error and stop, don't retry.
     `books/{book}/chapters/ch_{chapter}.summary.md`. Cover seven
     things, each as a one or two sentence section:
       - **Plot:** what happened in this chapter (action, decisions,
-        outcomes — not theme).
+        outcomes — not theme), opening with the earlier event this
+        chapter acts on and ending with the result the next chapter
+        has to deal with.
       - **Location:** the dominant setting in compact form, e.g.
         `Venice / Rialto`, `Augsburg / Fugger counting-house`,
         `Padua road`. One short phrase. When the chapter spans

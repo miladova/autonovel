@@ -40,7 +40,8 @@ books/<book>/
   pending_canon.md       # candidate canon — promote-canon routes into canon.md (or shared/ if research-cited)
   chapters/ch_NN.md      # the prose
   briefs/                # generated revision briefs
-  edit_logs/             # adversarial-edit + check-anachronism reports
+  edit_logs/             # adversarial-edit + check-anachronism reports; whole-book
+                         # reviews (structure_review.json/.md, reader_panel.json, review.json/.md)
   eval_logs/             # /autonovel:evaluate scoreboards
   audiobook/             # voices.yaml + voices.yaml.example + scripts + audio
   typeset/               # PDF/ePub build artefacts
@@ -149,6 +150,23 @@ each of these and the workaround is in the codebase:
   one-line "💡 Maybe try:" hint in every command's postamble
   drawn from the same enumerator, so most of the time you don't
   need to call `/autonovel:next` separately.
+- Run `/autonovel:structure-review --book <name>` once a book is
+  drafted, and again after every revision sweep. Chapter scores,
+  the reader panel and the dual-persona review are prose-weighted;
+  this is the book-level judge — is it one story building to a
+  climax, or a string of episodes? It writes
+  `edit_logs/structure_review.json` + `.md` (through-line, chapter
+  N → N+1 causal chain, stakes ladder per act, removable chapters,
+  climax build, a 1–5 structure score separate from prose, and
+  structural brief candidates). `/autonovel:revision-pass
+  --chapters structural --book <name>` acts on the candidates
+  (`kind: structural` briefs; revise restructures inside each
+  chapter); merges / cuts / reorders it asks for are yours to run.
+  `/autonovel:review` will not say "stop revising" until the
+  structure gate passes (score ≥ 4, no removable chapter). Before
+  drafting, `/autonovel:gen-outline` commits the book to a
+  `## Spine`, `## Stakes ladder` and `## Causal spine`
+  (`--add-spine` retrofits an older outline).
 - Run `/autonovel:resume` if a previous command left an
   `.autonovel/in-progress.lock` behind. Also detects an
   interrupted sweep (`draft-pass` or `revision-pass`) via

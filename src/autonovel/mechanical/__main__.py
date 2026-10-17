@@ -11,6 +11,8 @@ Subcommands:
   scenes <path> [--full]           Split a chapter into scenes by *** / --- breaks.
   motifs <book> [--format]         Per-chapter motif density (reads books/<book>/motifs.md).
   chapter-summary <book> [--format] One-line-per-chapter overview (date/POV/score/cast/plot).
+  structure-dossier <book>         Pack outline + summaries + word counts + story_time + scores for structure-review.
+  structure-validate <book|json>   Validate structure_review.json + compute the book-level stop-revising gate.
   impact-of <book> [--source N]    Grep chapters for tokens unique to superseded canon facts.
   research-index <series>          Per-note metadata table for shared/research/notes/.
   resolve-image-provider [...]     Resolve image provider from CLI flag + project.yaml + default.
@@ -132,6 +134,11 @@ from .scenes import split_scenes
 from .sensory import channel_balance
 from .slop import period_ban_hits, slop_score
 from .spine import cover_spec
+from .structure_dossier import (
+    build_dossier as build_structure_dossier,
+    render_markdown as render_structure_dossier_md,
+)
+from . import structure_review as structure_review_mod
 from ..export import wikimedia as wikimedia_mod
 from .typeset import latest_filename, output_filename, render_novel_tex
 
@@ -607,6 +614,55 @@ def _cmd_chapter_summary(args: argparse.Namespace) -> int:
     else:
         sys.stdout.write(render_markdown_table(rows))
     return 0
+
+
+def _cmd_structure_dossier(args: argparse.Namespace) -> int:
+    """Data assembly for /autonovel:structure-review (and evaluate --full).
+    No judgement: the LLM reviewer decides causation, escalation and
+    removability; this only packs what it reads besides the prose."""
+    book_root = Path(args.book_root)
+    if not book_root.is_dir():
+        print(f"structure-dossier: no book directory at {book_root}", file=sys.stderr)
+        return 2
+    dossier = build_structure_dossier(book_root)
+    if args.format == "markdown":
+        sys.stdout.write(render_structure_dossier_md(dossier))
+    else:
+        json.dump(dossier, sys.stdout, indent=2, ensure_ascii=False)
+        sys.stdout.write("\n")
+    return 0
+
+
+def _cmd_structure_validate(args: argparse.Namespace) -> int:
+    """Validate edit_logs/structure_review.json and compute the book-level
+    gate. Exit 0 = valid (the gate may still BLOCK — read `gate.passes`),
+    1 = invalid, 2 = missing / unreadable."""
+    if getattr(args, "template", False):
+        json.dump(structure_review_mod.blank_template(args.chapters or 3),
+                  sys.stdout, indent=2, ensure_ascii=False)
+        sys.stdout.write("\n")
+        return 0
+    if not args.path:
+        print("structure-validate: a book directory or structure_review.json path is "
+              "required (or pass --template)", file=sys.stderr)
+        return 2
+    target = Path(args.path)
+    if target.is_dir():
+        book_root = target
+        path = target / "edit_logs" / "structure_review.json"
+    else:
+        book_root = None
+        path = target
+    rep = structure_review_mod.check(path, book_root=book_root)
+    if args.format == "markdown":
+        sys.stdout.write(structure_review_mod.render_markdown(rep, path))
+    else:
+        json.dump({"path": str(path), **rep.to_dict()}, sys.stdout, indent=2,
+                  ensure_ascii=False)
+        sys.stdout.write("\n")
+    if not rep.present:
+        return 2
+    return 0 if rep.valid else 1
 
 
 def _cmd_build_front_matter_tex(args: argparse.Namespace) -> int:
@@ -2175,6 +2231,28 @@ def main(argv: list[str] | None = None) -> int:
     cs.add_argument("--format", choices=("markdown", "json"), default="markdown",
                     help="Output format (default: markdown table).")
     cs.set_defaults(func=_cmd_chapter_summary)
+
+    sdo = sub.add_parser("structure-dossier",
+                         help="Pack outline + summaries + word counts + story_time + eval scores "
+                              "into one JSON for /autonovel:structure-review (data only, no judgement).")
+    sdo.add_argument("book_root", help="Path to the book dir (parent of chapters/).")
+    sdo.add_argument("--format", choices=("json", "markdown"), default="json",
+                     help="Output format (default: json).")
+    sdo.set_defaults(func=_cmd_structure_dossier)
+
+    svl = sub.add_parser("structure-validate",
+                         help="Validate edit_logs/structure_review.json (shape + the rubric caps over its "
+                              "own tables) and compute the book-level stop-revising gate.")
+    svl.add_argument("path", nargs="?", default=None,
+                     help="A book dir (reads edit_logs/structure_review.json and checks staleness "
+                          "against chapters/) or a structure_review.json path.")
+    svl.add_argument("--format", choices=("json", "markdown"), default="json",
+                     help="Output format (default: json).")
+    svl.add_argument("--template", action="store_true",
+                     help="Print a blank structure_review.json skeleton and exit.")
+    svl.add_argument("--chapters", type=int, default=None,
+                     help="Chapter count for --template (default 3).")
+    svl.set_defaults(func=_cmd_structure_validate)
 
     fm = sub.add_parser("build-front-matter-tex",
                         help="Concatenate preface.md + introduction.md + glossary.md into front_matter.tex.")

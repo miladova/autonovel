@@ -88,6 +88,7 @@ def _actions_for_book(series: SeriesLayout, cfg: project_mod.ProjectConfig,
     out.extend(_summary_stale_actions(book_root, book))
     out.extend(_panel_staleness_actions(book_root, book))
     out.extend(_review_staleness_actions(book_root, book))
+    out.extend(_structure_review_actions(book_root, book))
     out.extend(_typeset_staleness_actions(book_root, book, series.root))
     out.extend(_missing_title_author_actions(cfg, book))
     out.extend(_missing_front_matter_actions(book_root, book))
@@ -490,6 +491,111 @@ def _review_staleness_actions(book_root: Path, book: str) -> list[NextAction]:
         rerun_command=f"/autonovel:review --book {book}",
         priority="MEDIUM",
     )
+
+
+# A structure review needs a book to judge: below this many drafted
+# chapters there is no causal chain or act ladder worth reviewing.
+_STRUCTURE_REVIEW_MIN_CHAPTERS = 6
+
+
+def _structure_review_actions(book_root: Path, book: str) -> list[NextAction]:
+    """The book-level gate (`/autonovel:structure-review`). Three states:
+
+      - no `edit_logs/structure_review.json` on a book that is drafted
+        (≥6 chapters AND either a whole-book reviewer report exists or
+        every outlined chapter is drafted) → run it;
+      - present but older than a chapter, or invalid → re-run it;
+      - fresh and the gate blocks (score < 4 or a chapter removable) →
+        act on its structural brief candidates.
+
+    Silent when the gate passes. MEDIUM: this is the signal that the
+    book is a string of episodes, which no per-chapter score shows; it
+    must not outrank data-integrity HIGH items.
+    """
+    chapters = iter_chapter_files(book_root / "chapters")
+    if len(chapters) < _STRUCTURE_REVIEW_MIN_CHAPTERS:
+        return []
+    from ..mechanical import structure_review as sr
+    path = book_root / "edit_logs" / "structure_review.json"
+    command = f"/autonovel:structure-review --book {book}"
+    if not path.is_file():
+        edit_logs = book_root / "edit_logs"
+        whole_book_report = any((edit_logs / name).is_file() for name in (
+            "review.md", "opus_review.md", "review.json", "reader_panel.json"))
+        if not whole_book_report and not _every_outlined_chapter_drafted(book_root, chapters):
+            return []
+        return [NextAction(
+            priority="MEDIUM",
+            title="Run the book-level structure review",
+            command=command,
+            rationale=(
+                f"books/{book} has {len(chapters)} chapters drafted but no "
+                f"edit_logs/structure_review.json. Chapter scores, the panel "
+                f"and the dual-persona review are prose-weighted: none of them "
+                f"tests whether chapter N+1 happens *because of* chapter N, "
+                f"whether stakes rise per act, or which chapters could be cut "
+                f"without breaking anything. /autonovel:review will not "
+                f"declare stop-revising until this gate passes."),
+            book=book,
+        )]
+    try:
+        rep = sr.check(path, book_root=book_root)
+    except Exception:  # noqa: BLE001 — never let /autonovel:next crash
+        return []
+    gate = rep.gate
+    if gate.get("stale") or not rep.valid:
+        why = (f"chapter(s) {', '.join(map(str, gate.get('stale_chapters') or []))} changed since it ran"
+               if gate.get("stale") else "the file does not validate "
+               f"(`autonovel mechanical structure-validate books/{book}` lists the errors)")
+        return [NextAction(
+            priority="MEDIUM",
+            title="Re-run the book-level structure review",
+            command=command,
+            rationale=(
+                f"books/{book}/edit_logs/structure_review.json is no longer "
+                f"usable: {why}. The stop-revising gate reads it, so a stale "
+                f"or invalid review blocks the gate until it is re-run."),
+            book=book,
+        )]
+    if gate.get("passes"):
+        return []
+    score = gate.get("structure_score")
+    removable = gate.get("removable_chapters") or []
+    cross = [c for c in rep.summary.get("cross_chapter_commands") or [] if c]
+    rationale = (
+        f"The structure review scored the book {score}/5"
+        + (f" and flagged chapter(s) {', '.join(map(str, removable))} as removable "
+           f"(no later chapter needs them)" if removable else "")
+        + ". Its structural brief candidates feed `brief --from auto`: the sweep "
+          "below briefs and revises every chapter they touch, inside each chapter.")
+    if cross:
+        rationale += (" Cross-chapter moves are yours to run (revise never "
+                      "executes them): " + "; ".join(cross) + ".")
+    return [NextAction(
+        priority="MEDIUM",
+        title=f"Act on the structure review ({score}/5; gate blocked)",
+        command=f"/autonovel:revision-pass --chapters structural --book {book}",
+        rationale=rationale,
+        book=book,
+    )]
+
+
+def _every_outlined_chapter_drafted(book_root: Path, chapters: list[Path]) -> bool:
+    outline = book_root / "outline.md"
+    if not outline.is_file():
+        return False
+    nums = {int(m) for m in re.findall(r"^##\s+Chapter\s+(\d+)\b",
+                                        outline.read_text(encoding="utf-8"),
+                                        re.MULTILINE | re.IGNORECASE)}
+    if not nums:
+        return False
+    drafted: set[int] = set()
+    for p in chapters:
+        try:
+            drafted.add(int(p.stem.split("_")[-1]))
+        except ValueError:
+            continue
+    return nums <= drafted
 
 
 def _staleness_check(*, report_path: Path, book_root: Path, book: str,

@@ -25,6 +25,7 @@ reads:
   - books/*/outline.md
   - books/*/voice.md
   - books/*/chapters/ch_*.summary.md
+  - books/{book}/edit_logs/structure_review.json
 writes:
   - books/{book}/eval_logs/*.json
   - .autonovel/eval_logs/*.json
@@ -102,9 +103,29 @@ or `.autonovel/eval_logs/<timestamp>_series.json` for `--phase series`.
    `geography_and_culture`, `lore_interconnection`, `iceberg_depth`,
    `character_depth`, `character_distinctiveness`, `character_secrets`,
    `outline_completeness`, `foreshadowing_balance`, `clocks_paid`,
-   `internal_consistency`, `voice_clarity`, `canon_coverage`,
-   `canon_outline_consistency`. For each dimension emit `{score,
-   gap, fix, note}`.
+   `causal_spine`, `internal_consistency`, `voice_clarity`,
+   `canon_coverage`, `canon_outline_consistency`. For each dimension
+   emit `{score, gap, fix, note}`.
+
+   **`causal_spine` — does the outline commit to one story?** Read the
+   outline's `## Spine`, `## Stakes ladder` and `## Causal spine`
+   sections (`/autonovel:gen-outline` writes them). Check: the spine
+   `question:` is one question about the protagonist that the last act
+   answers, posed in the first quarter; every act row on the ladder is
+   strictly higher than the one before *on the same bet* (a bigger sum
+   with a new counterparty is a reset); every `- N because M:` line
+   names an event in chapter M that forces chapter N (not an object,
+   motif, callback or carried date); `after` lines are few and none
+   sits at an act boundary; the chapter beats agree with the lines
+   (chapter N's first beat acts on M's event). Score 9-10 when all
+   hold; 7-8 with one or two `after` links; 5-6 when the ladder resets
+   in kind once or the question is posed late; below 5 when most
+   chapters open and settle their own stake (the outline of an
+   anecdote chain). When the three sections are absent, judge from the
+   beats alone, cap the score at 5, and make the `fix` "run
+   `/autonovel:gen-outline --book {book} --add-spine`". Catching an
+   episodic outline here costs minutes; catching it in a drafted book
+   costs a structural revision pass.
 
    **`clocks_paid` — every clock in the outline has a paying beat.**
    Walk the outline's beats and list every deadline, ultimatum or
@@ -121,7 +142,7 @@ or `.autonovel/eval_logs/<timestamp>_series.json` for `--phase series`.
    chapter where the paying scene belongs (CRAFT.md §4 rule 3, PROSE
    §5.8). Reader panels name this failure as "the missing scene";
    catching it in the outline is cheaper than catching it in prose. Weighting: lore 40%, character 30%, structure
-   20%, craft 10%. Include `overall_score`, `lore_score`,
+   20% (`causal_spine` is half of it), craft 10%. Include `overall_score`, `lore_score`,
    `weakest_dimension`, `top_3_improvements`.
 
    **`canon_outline_consistency` — cross-check canon.md against
@@ -422,14 +443,64 @@ or `.autonovel/eval_logs/<timestamp>_series.json` for `--phase series`.
    to action — chapter 1 endings that leave the door open for the
    protagonist to walk away score capped at 7.
 
-7. Mode `--full`: glob `books/{book}/chapters/*.md` in order. Build a
-   compact chapter-by-chapter summary (opening 500 chars, closing 500
-   chars, word count, any outline beats marked rendered) and score novel
-   dimensions: `arc_completion`, `pacing_curve`, `theme_coherence`,
-   `foreshadowing_resolution`, `world_consistency`, `voice_consistency`,
-   `overall_engagement`, `irreversible_change_arc`,
-   `show_dont_tell_arc`, `clocks_paid`. Include `novel_score`,
-   `weakest_dimension`, `weakest_chapter`, `top_suggestion`.
+7. Mode `--full`: score the book as a book. The aggregate is weighted
+   toward structure so that it cannot be carried by chapter prose: a
+   book of strong chapters that do not cause each other is a weak novel,
+   and before this weighting the per-chapter tier was all the
+   pipeline measured (on *kingmaker* every chapter held 7+ while the
+   author read the book as "a bunch of short anecdotes").
+
+   **Inputs.** Use `bash` to run `autonovel mechanical
+   structure-dossier books/{book}` once: the outline's acts and spine
+   sections, every chapter's full continuity summary
+   (`books/{book}/chapters/ch_NN.summary.md`), word count, position
+   in the book, story_time and gap from the previous chapter, the
+   latest chapter score and the climax window. Glob
+   `books/{book}/chapters/*.md` in order and take each chapter's
+   opening and closing 500 chars and outline beats as before; read a
+   chapter in full wherever a structure dimension below turns on it.
+   When `books/{book}/edit_logs/structure_review.json` exists, run
+   `autonovel mechanical structure-validate books/{book}`: if it is
+   valid and its gate is not `stale`, use its tables (causal chain,
+   escalation, removability, climax) as the evidence for the
+   structure block and do not score any structure dimension more than
+   one point above what those tables imply; record its
+   `structure_score` as `structure_review_score`. Otherwise judge the
+   structure block yourself from the summaries and prose, and set
+   `top_suggestion` to "run /autonovel:structure-review --book {book}"
+   unless something more urgent applies.
+
+   **Dimensions and weights** (each `{score, weakest_moment, fix,
+   note}`, 0–10; record the weights as `dimension_weights`):
+
+   | Group (weight) | Dimension | Weight | What it measures |
+   |---|---|---|---|
+   | Structure (50%) | `causal_chain` | 15 | Share of chapter N → N+1 links where N+1 happens *because of* an earlier chapter (an event, not a motif, callback, carried clock or promise line). Score ≈ 10 × because-share; −1 if an act boundary is only "happens after". |
+   | | `through_line` | 10 | One question about the protagonist, posed in the first quarter, answered by the climax's decision. 9-10 posed ≤15% and answered by a decision; 7-8 posed ≤25%; 5-6 posed late or answered only thematically; 3-4 several questions, none dominant; 1-2 none. |
+   | | `escalation` | 10 | Per act, the stake is strictly higher than the previous act's *on the same bet*. 9-10 every act raises it; 7-8 one plateau; 5-6 grows in size but resets in kind (new counterparty, new bet); 3-4 flat; 1-2 falls. |
+   | | `removability` | 10 | For each chapter, does a later chapter's action fail if it is cut? 10 minus 2 per removable chapter minus 0.5 per weak one, floor 1. List them as `removable_chapters`. |
+   | | `climax_convergence` | 5 | Do the last ~20% force the open threads into one decision (9-10: three or more; 7-8: two) or close them one by one (5-6), or drop some (≤4)? |
+   | Arc & payoff (20%) | `arc_completion` | 7 | The protagonist ends truly different, at a cost. |
+   | | `irreversible_change_arc` | 5 | The chapter-pair state test below. |
+   | | `foreshadowing_resolution` | 4 | Plants paid, payoffs planted. |
+   | | `clocks_paid` | 4 | The clock ledger below. |
+   | Reader pull (15%) | `pacing_curve` | 8 | Tension rises into the climax; no three-chapter decline. |
+   | | `overall_engagement` | 7 | Would a reader keep turning pages, and because of what. |
+   | Prose & consistency (15%) | `voice_consistency` | 4 | |
+   | | `show_dont_tell_arc` | 4 | The whole-book show-vs-tell pass below. |
+   | | `theme_coherence` | 4 | |
+   | | `world_consistency` | 3 | |
+
+   **Aggregate.** `structure_subscore` = the weighted mean of the five
+   structure dimensions. `weighted_mean` = the weighted mean of all
+   fifteen. `raw_novel_score = min(weighted_mean, structure_subscore +
+   1.0)` — the cap is the point: no amount of prose lifts a book more
+   than one point above its structure. `novel_score` is
+   `raw_novel_score` minus the slop penalty (step 9). Include
+   `structure_subscore`, `weighted_mean`, `structure_cap_applied`
+   (true when the cap bound), `weakest_dimension`, `weakest_chapter`,
+   `top_suggestion`. Strong prose is not evidence of structure: never
+   raise a structure dimension because the chapters read well.
 
    **`clocks_paid` (whole-book clock ledger).** From the chapter
    closings and openings, list every deadline, ultimatum or dated
@@ -646,8 +717,11 @@ or `.autonovel/eval_logs/<timestamp>_series.json` for `--phase series`.
 
     For `--phase foundation` and `--full` use the same table shape
     with the dimensions appropriate to the mode (lore /
-    character / structure / craft for foundation;
-    arc_completion / pacing_curve / etc. for full).
+    character / structure / craft for foundation; for full, the
+    fifteen dimensions in their four groups with a Weight column,
+    structure group first, then a line
+    `**Novel:** N (structure X.X; weighted mean Y.Y; cap applied:
+    yes/no; − slop Z)`).
 
     Render every dimension on its own row. Missing values get an
     em-dash, never a blank cell. Do not skip the table because the
@@ -745,6 +819,11 @@ or `.autonovel/eval_logs/<timestamp>_series.json` for `--phase series`.
 - For chapter and full modes the log contains a `slop` block with
   numeric `slop_penalty`, and `overall_score` equals
   `raw_judge_score - slop_penalty` rounded to 2dp.
+- For full mode the log contains the fifteen dimensions of step 7,
+  `dimension_weights`, `structure_subscore`, `weighted_mean` and
+  `structure_cap_applied`, and `raw_novel_score` is at most
+  `structure_subscore + 1.0`.
+- For foundation mode the log contains `causal_spine`.
 - For compare mode the log contains a non-null `winner_chapter` equal
   to one of the two compared chapter numbers.
 </acceptance>

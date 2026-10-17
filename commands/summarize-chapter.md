@@ -90,7 +90,10 @@ stage, what threads opened, what threads closed, where in story time.
      column for at-a-glance "which chapters are set in X?"
      filtering.
    - **Plot:** what happened (action, decisions, outcomes — not
-     theme).
+     theme), opening with the earlier event this chapter acts on
+     (or saying plainly that it opens on something new) and ending
+     with the result the next chapter has to deal with — the shape
+     `/autonovel:draft` step 13 defines.
    - **POV state:** what the POV character knows, wants, fears at
      the close that they didn't at the open.
    - **Cast on stage:** every named character who appeared, with

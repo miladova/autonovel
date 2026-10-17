@@ -217,11 +217,22 @@ def _load_state(series: SeriesLayout, book: str) -> dict:
     review_md = edit_logs / "review.md"
     if not review_md.is_file() and (edit_logs / "opus_review.md").is_file():
         review_md = edit_logs / "opus_review.md"
+    structure_json = edit_logs / "structure_review.json"
+    structure_score = None
+    if structure_json.is_file():
+        try:
+            structure_score = json.loads(
+                structure_json.read_text(encoding="utf-8")).get("structure_score")
+        except Exception:  # noqa: BLE001 — the TUI never crashes on a bad file
+            structure_score = None
     reviews = {
         "reader_panel": (edit_logs / "reader_panel.json").is_file(),
         "opus_review": review_md.is_file(),
+        "structure_review": structure_json.is_file(),
+        "structure_score": structure_score,
         "reader_panel_mtime": _mtime_if(edit_logs / "reader_panel.json"),
         "opus_review_mtime": _mtime_if(review_md),
+        "structure_review_mtime": _mtime_if(structure_json),
     }
 
     # Pending canon.
@@ -806,11 +817,17 @@ if _TEXTUAL_AVAILABLE:
                 f"{r.get('reader_panel_mtime') or '—'}\n"
                 f"- {tick(r.get('opus_review'))} `review.md` "
                 f"(dual-persona Opus) — last run: "
-                f"{r.get('opus_review_mtime') or '—'}\n\n"
-                "Run `/autonovel:reader-panel --book <name>` and "
+                f"{r.get('opus_review_mtime') or '—'}\n"
+                f"- {tick(r.get('structure_review'))} `structure_review.json` "
+                f"(book-level structure, score "
+                f"{r.get('structure_score') if r.get('structure_score') is not None else '—'}/5) "
+                f"— last run: {r.get('structure_review_mtime') or '—'}\n\n"
+                "Run `/autonovel:structure-review --book <name>`, "
+                "`/autonovel:reader-panel --book <name>` and "
                 "`/autonovel:review --book <name>` after a substantive "
-                "revision sweep — both are stale by default once any "
-                "chapter changed.\n"
+                "revision sweep — all three are stale by default once any "
+                "chapter changed, and review will not declare "
+                "stop-revising until the structure gate passes.\n"
             )
             self.query_one("#reviews_md", Markdown).update(text)
 
