@@ -1,7 +1,7 @@
 ---
 name: autonovel:help
 description: Discoverability layer over every autonovel command. Zero-arg shows category-grouped overview; `<topic>` shows in-depth guide for a workflow.
-argument-hint: "[<topic>]   topics: art, foundation, drafting, revising, typeset, research, front-matter, sweeps, tui, cli, next-steps"
+argument-hint: "[<topic>]   topics: art, foundation, drafting, revising, structure, typeset, research, front-matter, sweeps, tui, cli, next-steps"
 model_tier: light
 allowed-tools: []
 reads: []
@@ -26,8 +26,9 @@ per-topic. Both are needed.
 <workflow>
 Parse `$ARGUMENTS` to one of: empty (overview), or one of the
 canonical topics below. Anything else: print "no help topic
-`<input>`; pick from: art, foundation, drafting, revising, typeset,
-research, rewrite, front-matter, sweeps, tui, cli, next-steps" and stop.
+`<input>`; pick from: art, foundation, drafting, revising, structure,
+typeset, research, rewrite, front-matter, sweeps, tui, cli, next-steps"
+and stop.
 
 For each mode, print a self-contained chat block matching the
 shape below verbatim. The blocks are intentionally concrete:
@@ -53,6 +54,10 @@ workflow. Topics:
                  adversarial-edit / apply-cuts / lengthen /
                  shorten. Iterative quality work. diff shows
                  what changed since a tag / your last read.
+  structure    — structure-review: one story building to a climax,
+                 or a string of episodes? Causal chain, stakes
+                 ladder, removable chapters, structural briefs; the
+                 gate review's stop-revising verdict waits on.
   typeset      — typeset / package / front matter / back matter.
                  Output (PDF, ePub, audiobook).
   front-matter — title / introduction / glossary / appendix /
@@ -241,8 +246,11 @@ Sweep (write the rest of the book in one invocation):
 
 Per chapter: draft → check-anachronism → evaluate → if score
 < threshold, brief + revise + re-eval (keep best) → per-chapter
-promote-canon. End of sweep: final promote-canon. With `--deep`:
-also reader-panel + Opus review on the finished pass.
+promote-canon. A SPINE CHECK against the outline's ## Causal spine
+also sends a chapter to the revise loop when it doesn't follow from
+the one before. End of sweep: final promote-canon. With `--deep`:
+also structure-review + reader-panel + Opus review on the finished
+pass.
 
 Single-chapter sidequests (cut a chapter, add a character, change
 ending, etc.):
@@ -318,6 +326,65 @@ browser: word-level changes inside their paragraphs, unchanged text
 folded, j/k jumps change to change ("change N of M"), word deltas
 per chapter. Add --annotate for a one-line "why" per change traced
 to the brief / talk turn / review item that asked for it.
+
+Book-level (after a full draft or a sweep — every chapter can score
+well while the book is a string of episodes):
+
+  /autonovel:structure-review --book <name>
+  /autonovel:revision-pass --chapters structural --book <name>
+
+Detail: /autonovel:help structure.
+```
+
+============================== TOPIC: structure ===================
+
+```
+# Structure — is it one story, or a string of episodes?
+
+Chapter scores, the reader panel and the dual-persona review are
+prose-weighted. On kingmaker all three stayed green (4★, "all four
+would buy it") while the author read the book as "a bunch of short
+anecdotes, not a continuing story building to a climax".
+structure-review is the book-level judge:
+
+  /autonovel:structure-review --book <name>
+        → books/<name>/edit_logs/structure_review.json + .md
+          through-line (one question; does the ending answer it?)
+          causal chain  (ch N → N+1: because / after / unrelated)
+          stakes ladder (per act: strictly higher, same bet?)
+          removability  (which later chapter breaks if this one
+                         is cut? none = an anecdote)
+          climax build  (do the last 20% converge or just finish?)
+          structure score 1–5 (prose is NOT scored here)
+          3–7 structural brief candidates
+
+Acting on it:
+
+  1. Cross-chapter moves it lists (merge / cut / reorder / split)
+     are yours to run, e.g.
+       /autonovel:merge-chapters --chapters 15,16 --book <name>
+     then re-run structure-review (numbering changed).
+  2. /autonovel:revision-pass --chapters structural --book <name>
+       brief --from auto writes `kind: structural` briefs; revise
+       restructures inside each chapter (never touches neighbours).
+  3. /autonovel:structure-review --book <name>      (re-check)
+  4. /autonovel:review --book <name>
+       stop-revising needs structure ≥ 4 and no removable chapter.
+
+Before drafting (cheapest place to fix it):
+
+  /autonovel:gen-outline --book <name>        writes ## Spine,
+                                              ## Stakes ladder,
+                                              ## Causal spine
+  /autonovel:gen-outline --book <name> --add-spine
+        retrofit the three sections onto an existing outline
+  /autonovel:evaluate --phase foundation --book <name>
+        scores `causal_spine`
+
+Free data views (no LLM):
+
+  autonovel mechanical structure-dossier books/<name> --format markdown
+  autonovel mechanical structure-validate books/<name> --format markdown
 ```
 
 ============================== TOPIC: typeset =====================
@@ -584,8 +651,9 @@ Tabs (numeric keys 0-6):
   3  Foundation         status of every foundation file
   4  Front + back matter  presence + word count for preface /
                           introduction / glossary / appendix
-  5  Reviews            reader-panel + Opus review presence
-                        + last-run timestamps
+  5  Reviews            reader-panel + Opus review + structure
+                        review presence, structure score,
+                        last-run timestamps
   6  Commands           last 15 logged commands + situational
                         next-actions + canonical next step
 
@@ -680,6 +748,9 @@ Inspects the live filesystem and emits a prioritised action list:
 
   MEDIUM  reader-panel / Opus review reports stale; git backup
           state.
+  MEDIUM  book-level structure gate: structure-review missing,
+          stale, or blocking (score < 4 / a removable chapter →
+          revision-pass --chapters structural).
 
   LOW     missing title, missing front matter, period fiction
           without a glossary, stale typeset PDF.
@@ -703,8 +774,8 @@ the remaining chapter list.
 </workflow>
 
 <acceptance>
-- Zero-arg invocation prints the category overview with all 11
-  topics listed.
+- Zero-arg invocation prints the category overview with every topic
+  listed (including `structure`).
 - Every named topic prints its in-depth block verbatim.
 - Unknown topic argument prints a usage line listing valid topics
   and stops cleanly.

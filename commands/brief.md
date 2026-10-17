@@ -1,11 +1,12 @@
 ---
 name: autonovel:brief
 description: Generate a revision brief for one chapter from cuts, eval, panel and review feedback, and (optionally) targeted research notes.
-argument-hint: "<chapter-number> --book <short-name> [--from cuts|eval|panel|review|auto] [--enrich-with <research-notes-path>]"
+argument-hint: "<chapter-number> --book <short-name> [--from cuts|eval|panel|review|structure|auto] [--enrich-with <research-notes-path>]"
 model_tier: standard
 allowed-tools:
   - file_read
   - file_write
+  - bash
 reads:
   - project.yaml
   - books/{book}/voice.md
@@ -13,6 +14,7 @@ reads:
   - books/{book}/edit_logs/ch{chapter:02d}_cuts.json
   - books/{book}/edit_logs/reader_panel.json
   - books/{book}/edit_logs/review.json
+  - books/{book}/edit_logs/structure_review.json
   - books/{book}/eval_logs/*.json
   - shared/research/notes/*.md
 writes:
@@ -25,15 +27,33 @@ Produce `books/{book}/briefs/ch{chapter:02d}.md` — the targeted revision
 instructions the next `/autonovel:revise` run will follow literally.
 Default source is `auto`: detect the weakest chapter and assemble a
 brief from whatever artifacts are newest (eval log, cuts file, reader
-panel). Successor to `gen_brief.py`.
+panel, review, structure review). Successor to `gen_brief.py`.
 
 A good brief names specific passages to change, not vague moods.
+
+There are two kinds of brief, marked in a frontmatter block at the top
+of the file:
+
+- `kind: prose` — line, paragraph and scene fixes inside the chapter as
+  it stands (the default; a brief with no frontmatter, written before
+  this marker existed, is a prose brief).
+- `kind: structural` — the chapter's job in the book changes: a
+  consequence scene that makes this chapter happen *because of* an
+  earlier one, a stake retargeted onto the book's through-line, a
+  reveal moved, a plant for the climax, a scene cut because the
+  chapter is being merged. Written when
+  `books/{book}/edit_logs/structure_review.json` (from
+  `/autonovel:structure-review`) has a structural brief candidate that
+  names this chapter. `/autonovel:revise` is allowed to restructure the
+  chapter for it; cross-chapter moves (merge, cut, reorder, split) are
+  listed with the exact command for the author to run and are never
+  executed by revise.
 </purpose>
 
 <workflow>
 1. Parse `$ARGUMENTS`. Expect `<chapter-number> --book <short-name>`.
-   `--from` is one of `cuts`, `eval`, `panel`, `review`, or `auto`
-   (default `auto`). `--enrich-with <path>` (optional) names a research notes
+   `--from` is one of `cuts`, `eval`, `panel`, `review`, `structure`,
+   or `auto` (default `auto`). `--enrich-with <path>` (optional) names a research notes
    file (typically `shared/research/notes/<slug>.md` produced by
    `/autonovel:research`) whose detail the rewrite should weave in
    *lightly* — see step 5b. Missing required args are a usage error
@@ -62,12 +82,32 @@ A good brief names specific passages to change, not vague moods.
      names this chapter number. Each item carries `severity`,
      `type`, `qualified` and a concrete fix; unqualified `major`
      items lead the brief.
+   - `structure`: read `books/{book}/edit_logs/structure_review.json`
+     (written by `/autonovel:structure-review`; run it first if
+     missing). First use `bash` to run `autonovel mechanical
+     structure-validate books/{book}` and read its JSON: when the
+     errors include a `chapter_count` mismatch, the chapters were
+     renumbered since the review (a merge, cut or reorder ran) — do
+     not use its candidates; say "re-run /autonovel:structure-review"
+     in the brief and fall back to the other sources. When the gate
+     only reports `stale`, use the candidates and note in the brief
+     that they predate the latest prose. Isolate every entry in
+     `candidates` whose `chapters` list contains this chapter, and for
+     each its `edits` entry for this chapter, its `kind`, `command`,
+     `expected_effect` and `fixes`. Also note this chapter's row in
+     `causal_chain` (both the link into it and the link out of it), its
+     `removability` verdict, and its act's `escalation` row — the
+     brief explains *why* the chapter is being restructured in those
+     terms.
    - `auto`: read whichever of the above exist, preferring the most
-     recent. If two or more exist, merge signals (cuts weighted highest
-     because they're the most concrete, then review items, then eval,
-     then panel). The panel and the review are the only sources that
-     see across chapters; when either names this chapter, the brief
-     carries it even if the chapter's own eval score is high.
+     recent. If two or more exist, merge signals (structural
+     candidates first — a change to the chapter's job outranks every
+     line edit — then cuts, weighted highest of the rest because
+     they're the most concrete, then review items, then eval, then
+     panel). The structure review, the panel and the review are the
+     only sources that see across chapters; when any of them names
+     this chapter, the brief carries it even if the chapter's own eval
+     score is high.
 
 5a. **Load enrichment research** (only when `--enrich-with <path>`
     was supplied). Use `file_read` on the named file. Treat the
@@ -81,7 +121,50 @@ A good brief names specific passages to change, not vague moods.
     rewrite must add 1–2 period-specific details per relevant scene,
     not restructure or expand the chapter.
 
-5. Draft the revision brief. Required sections, as Markdown H2s:
+5. Draft the revision brief. It opens with a frontmatter block naming
+   its kind:
+
+   ```
+   ---
+   kind: structural          # or: prose
+   structural_candidates: [S2, S5]   # structural only: candidate ids
+   source: books/{book}/edit_logs/structure_review.json   # structural only
+   ---
+   ```
+
+   The kind is `structural` exactly when step 4 found at least one
+   structural candidate for this chapter; otherwise `prose` (and the
+   last two keys are omitted). Required sections, as Markdown H2s:
+   - `## Structural brief` *(structural only; first section after the
+     frontmatter)* — the chapter's new job in one sentence, then one
+     block per candidate, most important first:
+       - **Candidate** `S<n>` (`<kind>`) — its title, and the
+         `expected_effect` verbatim (which links become *because*,
+         which chapter stops being removable, which rung rises).
+       - **Why this chapter**: the causal link into it and out of it
+         from `causal_chain`, its removability verdict, and its act's
+         stake from `escalation`, in one or two sentences.
+       - **What changes on the page**: the candidate's `instruction`
+         for this chapter verbatim, then sharpened into scene terms
+         — where in the chapter (which scene, by its opening line),
+         who is present, what the POV decides, what is different by
+         the chapter's end, and which fact the next chapter must be
+         able to act on.
+       - **Within-chapter moves allowed**: add, cut, merge or reorder
+         scenes *inside this chapter*; move a reveal into or out of
+         it; change its ending. Name each move the candidate needs.
+       - **What must not change**: facts later chapters consume
+         (names, dates, sums, objects, who knows what) unless the
+         candidate says otherwise, the POV, and the period record.
+   - `## Cross-chapter operations — run these yourself` *(structural
+     only, when any candidate touching this chapter has a non-null
+     `command`)* — one line per command, verbatim (e.g.
+     `/autonovel:merge-chapters --chapters 15,16 --book {book}`), with
+     one sentence on what it does to this chapter. These change the
+     chapter list; `/autonovel:revise` never runs them. Say whether to
+     run them before or after this brief's revise (a merge or cut
+     runs first; then re-run `/autonovel:structure-review` because the
+     numbering changes).
    - `## Chapter {chapter} — revision target` (one-line goal)
    - `## What works` (two or three sentences from the source material)
    - `## What drags` (concrete, quote-level, ordered by impact)
@@ -171,20 +254,33 @@ A good brief names specific passages to change, not vague moods.
      the rule. Omit the section entirely when no findings apply.
    - `## Target length` (in words — the Bells learning is that
      `gen_revision` overshoots ~30%, so brief for `target × 0.77` if a
-     final target applies)
+     final target applies). For a structural brief, first set the
+     final target to the current length plus any scene the brief adds
+     (typically 800–1500 words) or minus any scene it cuts, never
+     below ~1800 words, then apply the 0.77 correction; state the
+     final target and the allowed range (±25% for a structural brief,
+     ±15% for a prose one).
 
 6. Use `file_write` to save to
    `books/{book}/briefs/ch{chapter:02d}.md`. Overwrite any prior brief
    for this chapter — briefs are disposable working documents, not
    canonical artifacts.
 
-7. Print the target length and the count of specific cuts / rewrites
-   collected.
+7. Print the brief's kind, the target length and the count of specific
+   cuts / rewrites collected. For a structural brief also print the
+   candidate ids and, verbatim, every cross-chapter command the author
+   has to run.
 </workflow>
 
 <acceptance>
-- `books/{book}/briefs/ch{chapter:02d}.md` exists and contains every
-  required H2 section from step 5.
+- `books/{book}/briefs/ch{chapter:02d}.md` exists, opens with a
+  frontmatter block carrying `kind: prose` or `kind: structural`, and
+  contains every required H2 section from step 5.
+- The kind is `structural` exactly when a structure-review candidate
+  names this chapter; a structural brief has a `## Structural brief`
+  section with each candidate's per-chapter instruction, and lists
+  every candidate `command` under `## Cross-chapter operations — run
+  these yourself`.
 - The brief quotes at least one passage from the chapter (no brief can
   be voice-only hand-waving; specificity is the point).
 - `## Target length` names a word-count number, not a vague target.

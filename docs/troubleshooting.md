@@ -20,8 +20,9 @@ a 1M-context variant (e.g. `claude-opus-4-7[1m]`), and Anthropic's
 1M-context billing tier is not enabled on your account.
 
 **Recommended fix — enable 1M.** autonovel benefits from 1M context;
-`/autonovel:reader-panel` and `/autonovel:review` both read entire
-manuscripts, and multi-book review can blow through 200k. Inside
+`/autonovel:reader-panel`, `/autonovel:review` and
+`/autonovel:structure-review` all read entire manuscripts, and
+multi-book review can blow through 200k. Inside
 Claude Code:
 
 ```

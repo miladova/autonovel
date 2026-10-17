@@ -54,6 +54,11 @@ file blocked a full revision-pass.
    brief is missing, stop and surface:
    "run `/autonovel:brief {chapter} --book {book}` first".
 
+   Read the brief's frontmatter `kind`. `kind: structural` (written by
+   `/autonovel:brief` from a `/autonovel:structure-review` candidate)
+   changes what this rewrite may do — see step 7a. No frontmatter, or
+   `kind: prose`, is a prose brief: rewrite the chapter as it stands.
+
 3a. **Fold queued conversation suggestions into the brief.**
     Use `file_read` on `books/{book}/briefs/conversation.md` if it
     exists. Find every turn block where `Target: chapter {chapter}`
@@ -145,6 +150,34 @@ file blocked a full revision-pass.
    `story_time`, `events`) verbatim; update `status` to `revised` and
    recompute `word_count`.
 
+7a. **Structural brief (`kind: structural`).** The brief's `## Structural
+    brief` section changes the chapter's job in the book, and the
+    rewrite is allowed to restructure the chapter to do it:
+    - Add, cut, merge or reorder scenes **inside this chapter**; move a
+      reveal into or out of it; write the consequence scene that makes
+      this chapter happen because of an earlier one; retarget the
+      chapter's stake onto the book's through-line; change the ending
+      so the next chapter has a fact to act on. Do each move the brief
+      names, and no other structural move.
+    - Keep every fact later chapters consume (names, dates, sums,
+      objects, who knows what) unless the brief says to change it, and
+      keep the POV, the `story_time` window and the period record.
+    - **Never touch another chapter.** The brief's `## Cross-chapter
+      operations — run these yourself` lines (`/autonovel:merge-chapters`,
+      `/autonovel:remove-chapter`, `/autonovel:reorder`,
+      `/autonovel:split-chapter`, …) are for the author; do not execute
+      them and do not imitate them by rewriting a neighbour. Print each
+      one verbatim at the end of the run under "Cross-chapter
+      operations the structure review asked for — run these yourself".
+    - Length follows the brief's `## Target length` and its stated
+      range (±25% for a structural brief).
+    - The structural change outranks line edits: when a `## Register
+      edits` or `## Specific cuts` item sits in a scene the structural
+      brief removes or rewrites, drop that item.
+    - The regenerated summary (step 9) must make the new link visible:
+      its **Plot** names the earlier event this chapter now acts on and
+      the result the next chapter needs.
+
 8. Use `file_write` to overwrite
    `books/{book}/chapters/ch_{chapter}.md` with the full revised
    chapter. Do not truncate. Do not summarize.
@@ -202,7 +235,11 @@ file blocked a full revision-pass.
 - `books/{book}/chapters/ch_{chapter}.md` exists, parses YAML
   frontmatter, and carries `status: revised` plus a fresh `word_count`.
 - The rewrite differs from the prior draft (not a byte-for-byte copy).
-- Chapter length is within ±15% of the brief's stated target.
+- Chapter length is within ±15% of the brief's stated target (±25% for
+  a `kind: structural` brief, or the range the brief states).
+- A structural rewrite changed only this chapter's file (and its
+  summary / pending canon); every cross-chapter command in the brief
+  was printed for the author, none was executed.
 - `books/{book}/chapters/ch_{chapter}.summary.md` exists and reflects
   the revised chapter (mtime is newer than the chapter file's prior
   draft).

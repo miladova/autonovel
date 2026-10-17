@@ -32,6 +32,11 @@ writes:
   - books/{book}/briefs/ch{chapter:02d}.md
   - books/{book}/pending_canon.md
   - shared/canon.md
+  - books/{book}/edit_logs/structure_review.json
+  - books/{book}/edit_logs/structure_review.md
+  - books/{book}/edit_logs/reader_panel.json
+  - books/{book}/edit_logs/review.json
+  - books/{book}/edit_logs/review.md
 context_mode: book
 ---
 
@@ -129,13 +134,15 @@ that stalled long sweeps around chapter 8-10.
      - `--no-promote` (skip step 5)
      - `--skip-eval` (skip steps 3 and 4 entirely; pure drafting)
      - `--deep` (after promote-canon, also run the whole-book
-       reader-panel + Opus dual-persona review; produces reports
-       at `books/{book}/edit_logs/reader_panel.json` and
+       reviewers: the book-level structure review, the reader-panel
+       and the Opus dual-persona review; produces reports at
+       `books/{book}/edit_logs/structure_review.json` + `.md`,
+       `books/{book}/edit_logs/reader_panel.json` and
        `books/{book}/edit_logs/review.md` + `review.json`. Does NOT
        auto-revise from those reports — the user reviews them and
        decides whether to run a follow-up `/autonovel:revision-pass
-       --chapters <list>`. ~10-25 extra minutes of compute on a
-       70k-word book.)
+       --chapters <list>` (or `--chapters structural`). ~15-35 extra
+       minutes of compute on a 70k-word book.)
    Missing `--chapters` → stop with usage hint.
 
 2. Use `file_read` on `project.yaml`. Resolve the book entry, `pov`,
@@ -143,6 +150,15 @@ that stalled long sweeps around chapter 8-10.
    Read `books/{book}/outline.md` to identify chapter numbers
    defined; resolve `all` to outlined chapters that lack a chapter
    file.
+
+   Check the outline for its spine sections — `## Spine`, `## Stakes
+   ladder`, `## Causal spine` (written by `/autonovel:gen-outline`).
+   They are what every chapter in this sweep is held to (step 3, the
+   SPINE CHECK). When they are absent (an outline written before they
+   were required), do not stop: draft from the beats, set the flag
+   `no-spine` for the subagents, and put "outline has no causal spine
+   — run /autonovel:gen-outline --book {book} --add-spine before the
+   next sweep" at the top of the summary at step 6.
 
 2a. **Start sweep-progress tracking.** Use `bash` to invoke:
 
@@ -203,10 +219,18 @@ that stalled long sweeps around chapter 8-10.
          shared/characters.md, shared/canon.md, books/{book}/canon.md
          (this book's own canon), shared/events.md,
          books/{book}/voice.md, books/{book}/outline.md (locate
-         chapter N's beats), books/{book}/chapters/ch_*.summary.md
+         chapter N's beats, AND — unless `no-spine` is in flags —
+         the `## Spine` question, chapter N's act row in `## Stakes
+         ladder`, and the `## Causal spine` lines `- N because M:`
+         and `- N+1 because N:`), books/{book}/chapters/ch_*.summary.md
          (rolling continuity), and run
          `autonovel _tail-chapter --book {book} --chapter {N-1}
          --words 1000` for prior tail (best-effort, no retry).
+         Hold the chapter to the spine exactly as /autonovel:draft
+         step 3a says: open on the earlier event the causal line
+         names, make the chapter's stake its act's rung on the
+         through-line question (not a new self-contained bet), end
+         with the hand-off fact the next chapter acts on.
          Write books/{book}/chapters/ch_{N:02d}.md with YAML
          frontmatter + the 150-250 word
          books/{book}/chapters/ch_{N:02d}.summary.md. Append
@@ -230,11 +254,26 @@ that stalled long sweeps around chapter 8-10.
          Write books/{book}/eval_logs/ch{N:02d}_eval.json.
          Capture overall_score as score_v1.
 
-      4. REVISE LOOP (skip if --skip-eval or --no-revise-low or
-         score_v1 ≥ threshold):
+      3b. SPINE CHECK (skip if `no-spine` is in flags): reread the
+         chapter's first scene and last scene against the outline's
+         two causal-spine lines. spine_ok = yes only when (i) the
+         first scene acts on the event `- N because M:` names, on the
+         page, and (ii) the chapter ends with the fact `- N+1 because
+         N:` needs, still open. A chapter that opens and settles its
+         own stake while neither line holds is the anecdote failure
+         (`/autonovel:structure-review`'s `anecdote-chain`) however
+         well it scores. spine_ok = no sends the chapter to the revise
+         loop even when score_v1 ≥ threshold.
+
+      4. REVISE LOOP (skip if --skip-eval or --no-revise-low, or if
+         score_v1 ≥ threshold AND spine_ok is yes or skipped):
          a. Brief from eval+anachronism: write
             books/{book}/briefs/ch{N:02d}.md with named-passage
-            prescriptions.
+            prescriptions. When spine_ok is no, the brief is
+            `kind: structural` (frontmatter; see /autonovel:brief
+            step 5) and its `## Structural brief` names the missing
+            link — which earlier event the opening must act on, which
+            hand-off the ending must leave — as scene instructions.
          b. Revise: rewrite books/{book}/chapters/ch_{N:02d}.md
             per the brief. Regenerate
             books/{book}/chapters/ch_{N:02d}.summary.md.
@@ -267,10 +306,11 @@ that stalled long sweeps around chapter 8-10.
       Return EXACTLY this single line as your final message
       (nothing else):
 
-      [ch N] draft Xw · anach Y · eval s1 [→ revise → eval s2] · final s · canon +P
+      [ch N] draft Xw · anach Y · eval s1 · spine K [→ revise → eval s2] · final s · canon +P
 
       Where: X = final word count, Y = anachronism hit count or
-      "—" if skipped, s1 = score_v1, s2 = score_v2 (only if
+      "—" if skipped, s1 = score_v1, K = ✓ or ✗ from the SPINE
+      CHECK ("—" if skipped), s2 = score_v2 (only if
       revise ran; otherwise "—"), s = the kept score, P = count
       of canon entries promoted (or "—" if --no-promote).
       ```
@@ -309,10 +349,17 @@ that stalled long sweeps around chapter 8-10.
 
 5. **Deep whole-book review** (only if `--deep`):
 
-   a. Reproduce `/autonovel:reader-panel --book {book}`'s workflow
+   a. Reproduce `/autonovel:structure-review --book {book}`'s workflow
+      inline, first: the book-level structural pass (through-line,
+      causal chain, escalation ladder, removability, climax build);
+      writes `books/{book}/edit_logs/structure_review.json` and
+      `structure_review.md` (the candidates `brief --from auto` turns
+      into structural briefs). It runs first because review's
+      stop-revising verdict is gated on it.
+   b. Reproduce `/autonovel:reader-panel --book {book}`'s workflow
       inline. Four-persona pass over the full manuscript; writes
       `books/{book}/edit_logs/reader_panel.json`.
-   b. Reproduce `/autonovel:review --book {book}`'s workflow
+   c. Reproduce `/autonovel:review --book {book}`'s workflow
       inline. Opus dual-persona (literary critic + professor of
       fiction) pass; writes `books/{book}/edit_logs/review.md` and
       `review.json` (the parsed items `brief --from review` reads).
@@ -339,10 +386,15 @@ that stalled long sweeps around chapter 8-10.
    Plus a one-paragraph headline ("Drafted 3 chapters; 1 revised
    on low score; 4 candidate canon entries promoted; 0 conflicts.").
 
-   With `--deep`: append a second block showing reader-panel and
-   review highlights — top 3 panel concerns, top 3 review items —
+   With `--deep`: append a second block showing the structure
+   review's score, verdict and removable chapters, then reader-panel
+   and review highlights — top 3 panel concerns, top 3 review items —
    plus the chapter list each one flags. This is the user's
    shopping list for the next revision-pass.
+
+   List every chapter whose SPINE CHECK ended ✗ after the revise loop
+   as "chapters that still do not follow from the one before" — a
+   structural signal no score in the table shows.
 
 6a. **Clear sweep-progress tracking.** Use `bash` to invoke
     `autonovel _sweep-clear`. The sweep is over;
@@ -371,17 +423,21 @@ that stalled long sweeps around chapter 8-10.
       Open it and follow the HOW TO RESOLVE block at the top.
       <OR "No conflicts; pending_canon.md is clean." when K=0>
 
-   3. <only when --deep ran:> Reader-panel + review flagged:
+   3. <only when --deep ran:> Structure review: <score>/5, removable
+      <list or "none">; reader-panel + review flagged:
       <chapter list from those reports>.
-      Act on them: /autonovel:revision-pass --chapters <list>
-      <OR "Reader-panel + review flagged nothing." when empty>
+      Act on them: /autonovel:revision-pass --chapters structural
+      (structure candidates) and/or --chapters <list> (panel/review)
+      <OR "Structure gate passes; reader-panel + review flagged
+       nothing." when empty>
 
    4. <only when --deep did NOT run:> Whole-book reviewers
-      haven't run yet on this draft. Run them:
+      haven't run yet on this draft. Run them, structure first:
+        /autonovel:structure-review --book {book}
         /autonovel:reader-panel --book {book}
         /autonovel:review --book {book}
-      Or re-run /autonovel:draft-pass --deep to do both at once
-      next time.
+      Or re-run /autonovel:draft-pass --deep to do all three at
+      once next time.
 
    5. Backup the substantive change:
         cd ~/<series-root>
@@ -410,8 +466,8 @@ that stalled long sweeps around chapter 8-10.
        --next-standard-step "$(cat <<'EOF'
    1. Verify per-chapter scores: ...
    2. Resolve canon conflicts: ...
-   3. (--deep only) Reader-panel + review flagged: ...
-   4. (no --deep) Run whole-book reviewers: ...
+   3. (--deep only) Structure review + reader-panel + review flagged: ...
+   4. (no --deep) Run whole-book reviewers (structure-review first): ...
    5. Backup: git add . && git commit && git push
    6. After acting on (1)/(3), ...
    EOF
@@ -449,6 +505,8 @@ Writes (per chapter in range, plus the end-of-sweep promote):
 - `books/{book}/pending_canon.md`
 - `books/{book}/canon.md` (per-chapter + end-of-sweep promote, only if not --no-promote)
 - `shared/canon.md` (same promote; research-cited entries only)
+- `books/{book}/edit_logs/structure_review.json` + `structure_review.md`,
+  `reader_panel.json`, `review.json` + `review.md` (only with `--deep`)
 </files-touched>
 
 <acceptance>

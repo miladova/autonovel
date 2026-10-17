@@ -370,8 +370,8 @@ to ask anything; the next step is right there in the response.
 When you want the full picture, `/autonovel:next` inspects what's
 on disk — pending canon conflicts, chapter regressions, briefs
 newer than their chapters (the brief→revise pair is the most
-common signal), stale reader-panel/Opus review reports, git
-backup state, missing title or author, missing front matter — and
+common signal), stale reader-panel/Opus review reports, the
+book-level structure gate, git backup state, missing title or author, missing front matter — and
 emits a prioritised action list. The canonical pipeline next step
 appears at the bottom; situational actions take precedence. You do
 not have to memorise the order.
@@ -461,8 +461,8 @@ same command N times:
 
 | Command | What it batches |
 |---|---|
-| `/autonovel:draft-pass --chapters 1-10` | "Write the rest of the book." Per chapter: draft → anachronism check → evaluate → if score < threshold (default 7.0; tunable via `project.yaml::defaults.chapter_threshold` or per-call `--retry-below`), brief + revise + re-eval (keep best). At sweep end: promote pending canon (chapter-derived facts → the book's own `canon.md`; research-cited → `shared/canon.md`). Add `--deep` to also run reader-panel + Opus review at the end and surface the resulting flagged-chapter list. Sequential. |
-| `/autonovel:revision-pass --chapters 1-10` | The deeper revision pass. Sweeps `check-anachronism → brief → revise → evaluate` across the range; add `--parallel [N]` (default 3) for speed. Use after `draft-pass` (or after any change that needs deepening). |
+| `/autonovel:draft-pass --chapters 1-10` | "Write the rest of the book." Per chapter: draft → anachronism check → evaluate → if score < threshold (default 7.0; tunable via `project.yaml::defaults.chapter_threshold` or per-call `--retry-below`), brief + revise + re-eval (keep best). At sweep end: promote pending canon (chapter-derived facts → the book's own `canon.md`; research-cited → `shared/canon.md`). Add `--deep` to also run structure-review + reader-panel + Opus review at the end and surface the resulting flagged-chapter list. A per-chapter spine check holds each chapter to the outline's `## Causal spine`. Sequential. |
+| `/autonovel:revision-pass --chapters 1-10` | The deeper revision pass. Sweeps `check-anachronism → brief → revise → evaluate` across the range; add `--parallel [N]` (default 3) for speed. Use after `draft-pass` (or after any change that needs deepening). `--chapters structural` sweeps every chapter `/autonovel:structure-review` named, with structural briefs. |
 | `/autonovel:compare-models --chapter 5 --models claude-opus-4-7,claude-sonnet-4-6` | A/B-draft the same chapter with two models in parallel, judge head-to-head, write verdict to `eval_logs/`. |
 
 When to use the sweeps vs per-chapter typing:
@@ -497,7 +497,7 @@ expectations for a single ~70,000-word novel:
 | Foundation review | Read `shared/world.md`, `shared/characters.md`, the outline. Re-run any of `/autonovel:gen-world`, `/autonovel:gen-characters`, `/autonovel:gen-outline` if something is off — they reference your seed each time. | 30–90 min total, spread across 1–3 cycles |
 | Voice discovery | `/autonovel:voice-discovery` produces five trial passages; you pick one (or rerun for new trials). | 5–15 min |
 | Drafting | The runtime drafts chapters one at a time. You can let it run unattended; later, glance at chapters that scored low in `/autonovel:evaluate` and decide whether to retry. | 5–30 min of attention per chapter, mostly skimming |
-| Revision | Read the briefs from `/autonovel:reader-panel` and `/autonovel:review`. Override anything you disagree with before running `/autonovel:revise`. | 30–90 min per book per cycle; usually 2–3 cycles |
+| Revision | Read `/autonovel:structure-review` first (is the book one story?), then the reports from `/autonovel:reader-panel` and `/autonovel:review`. Override anything you disagree with before running `/autonovel:revise`; run the merges / cuts the structure review asks for yourself. | 30–90 min per book per cycle; usually 2–3 cycles |
 | Export | `/autonovel:typeset`, `/autonovel:cover-print`, `/autonovel:audiobook-*` are mostly pushbutton if you have the tools and keys. | 1–2 hours, mostly waiting |
 
 **Total wall-clock time** for a tiny 3-chapter book (like the smoke
@@ -512,7 +512,10 @@ work spread across several months.
    produces a vague book.
 2. **The outline review** — fixing a structural issue in the outline
    takes minutes; fixing it after eight chapters are drafted takes
-   hours.
+   hours. Read its `## Spine` (the one question the book answers),
+   `## Stakes ladder` and `## Causal spine` (`- N because M:`): a
+   chapter that opens and settles its own wager, marked `after`, is
+   where a book turns into a string of anecdotes.
 3. **The first chapter eval** — voice problems caught in chapter 1
    compound across the book. Read `/autonovel:evaluate --chapter 1`
    carefully and rerun voice-discovery if needed before drafting more.
@@ -527,9 +530,15 @@ Three categories. Full reference: [`docs/commands.md`](docs/commands.md).
 - **Foundation:** `gen-world`, `gen-characters`, `gen-outline`,
   `voice-discovery`, `gen-canon`, `research`.
 - **Drafting & revision:** `draft`, `evaluate`, `adversarial-edit`,
-  `apply-cuts`, `reader-panel`, `review`, `brief`, `revise`,
-  `check-anachronism`, plus the sweep commands `draft-pass` and
-  `revision-pass` that loop those across many chapters. Plus
+  `apply-cuts`, `reader-panel`, `review`, `structure-review`,
+  `brief`, `revise`, `check-anachronism`, plus the sweep commands
+  `draft-pass` and `revision-pass` that loop those across many
+  chapters. `structure-review` is the book-level judge — is it one
+  story building to a climax, or a string of episodes? — with a
+  causal-chain table, a stakes ladder per act, a removability test
+  per chapter and a 1–5 structure score kept separate from prose;
+  `review`'s stop-revising verdict waits on it, and
+  `revision-pass --chapters structural` acts on its candidates. Plus
   `chapter-summary` for a one-line-per-chapter overview table
   ("which chapters happen in <date range>?", "where does
   <character> appear?"); `motifs` for per-chapter motif density

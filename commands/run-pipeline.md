@@ -35,8 +35,14 @@ Loop structure for each book in `--books`:
      exist, scoring with `evaluate --chapter N`; on score `< 6.0`
      retry once and otherwise continue (forward progress wins).
   3. revision in cycles: `adversarial-edit` → `apply-cuts` →
-     `reader-panel` → briefs → `revise`; stop when score delta
-     `< 0.3` across two consecutive cycles or after 6 cycles.
+     `structure-review` → `reader-panel` → briefs (`brief --from auto`
+     turns structure-review candidates into `kind: structural`
+     briefs) → `revise`; stop when score delta `< 0.3` across two
+     consecutive cycles AND the book-level structure gate passes
+     (`autonovel mechanical structure-validate books/<book>`), or
+     after 6 cycles. Cross-chapter moves the structure review asks
+     for (merge / cut / reorder / split) are surfaced to the user,
+     never run by the loop.
   4. export via PR-7 commands if available; otherwise surface the
      missing command and stop.
 
@@ -102,11 +108,17 @@ should be valid per `autonovel mechanical` — run
 
    d. If the requested phase includes `revision`: score each chapter
       from the previous cycle, compute a mean score, and stop when
-      the delta is `< 0.3` across two consecutive cycles or after
-      `--max-cycles` (default 6). Route through
-      `/autonovel:adversarial-edit`, `/autonovel:apply-cuts`,
+      the delta is `< 0.3` across two consecutive cycles and the
+      structure gate passes (`gate.passes` from `autonovel mechanical
+      structure-validate books/{book}`), or after `--max-cycles`
+      (default 6). Route through `/autonovel:adversarial-edit`,
+      `/autonovel:apply-cuts`, `/autonovel:structure-review`,
       `/autonovel:reader-panel`, `/autonovel:brief`, and
-      `/autonovel:revise` in that order.
+      `/autonovel:revise` in that order. A chapter-score plateau with
+      the structure gate blocked is not a stop: it means the prose is
+      done and the book's shape is not — print the structure
+      review's cross-chapter commands for the user and keep cycling
+      on its structural candidates.
 
    e. If the requested phase includes `export`: surface the PR-7
       commands once they ship. For now, print a single line

@@ -1,7 +1,7 @@
 ---
 name: autonovel:revision-pass
 description: Sweep check-anachronism + brief + revise + evaluate across a range of chapters in one invocation.
-argument-hint: "--chapters <range> [--book <name>] [--skip-anachronism] [--skip-eval] [--no-promote] [--enrich-with <research-notes-path>] [--parallel [N]]"
+argument-hint: "--chapters <range|all|structural> [--book <name>] [--skip-anachronism] [--skip-eval] [--no-promote] [--enrich-with <research-notes-path>] [--parallel [N]]"
 model_tier: heavy
 allowed-tools:
   - file_read
@@ -21,6 +21,9 @@ reads:
   - books/{book}/chapters/ch_{chapter}.md
   - books/{book}/chapters/ch_*.summary.md
   - books/{book}/edit_logs/ch{chapter:02d}_anachronism.md
+  - books/{book}/edit_logs/structure_review.json
+  - books/{book}/edit_logs/review.json
+  - books/{book}/edit_logs/reader_panel.json
   - books/{book}/eval_logs/ch{chapter:02d}_eval.json
   - books/{book}/briefs/conversation.md
 writes:
@@ -42,7 +45,9 @@ invocation. For each chapter in the requested range, sequentially
 runs:
 
   1. `check-anachronism` (period-vocabulary + LLM semantic check)
-  2. `brief --from auto` (synthesize revision brief from cuts/eval/panel)
+  2. `brief --from auto` (synthesize revision brief from cuts/eval/panel/
+     review, and — when `/autonovel:structure-review` has a structural
+     brief candidate for the chapter — a `kind: structural` brief)
   3. `revise` (rewrite chapter against the brief; regenerates the
      summary; folds queued `briefs/conversation.md` entries
      targeting this chapter into the brief and flips them to
@@ -53,6 +58,14 @@ This is the "I have 3 drafted chapters, I want them all revised in
 one go" command. Author preference 2026-04-25: minimise required
 typing for the standard end-to-end flow while keeping the option to
 skip individual stages.
+
+`--chapters structural` is the structural sweep: it resolves to every
+chapter named by a candidate in
+`books/{book}/edit_logs/structure_review.json`, so each one gets a
+`kind: structural` brief and a rewrite that may restructure the chapter
+from the inside. Cross-chapter moves (merge, cut, reorder, split) are
+never executed by the sweep; it collects their exact commands and
+prints them for the author at the end.
 
 Sequential by default within a book — later chapters' revisions read
 earlier chapters' refreshed summaries. **Parallel via `--parallel
@@ -83,8 +96,10 @@ This prevents the 2026-04-25 retry-loop bug class from stalling
 the whole sweep on a single missing input.
 
 1. Parse `$ARGUMENTS`. Required: `--chapters <range>`. The range
-   can be `N-M` (inclusive), `N,M,K` (comma-separated), or `all`
-   (every drafted chapter). `--book` defaults via `_begin`.
+   can be `N-M` (inclusive), `N,M,K` (comma-separated), `all`
+   (every drafted chapter), or `structural` (every chapter a
+   structure-review candidate names; resolved at step 2). `--book`
+   defaults via `_begin`.
    `--skip-anachronism`, `--skip-eval`, and `--no-promote` are
    independent flags that drop those stages from the per-chapter
    sequence. `--enrich-with <research-notes-path>` (optional)
@@ -102,6 +117,19 @@ the whole sweep on a single missing input.
    to run `ls books/{book}/chapters/ch_*.md` and pull the existing
    chapter numbers; resolve `all` to the full list and validate that
    every requested chapter exists.
+
+   Resolve `structural`: use `bash` to run `autonovel mechanical
+   structure-validate books/{book}` and read its JSON. Exit code 2 (no
+   `structure_review.json`) → stop with "run /autonovel:structure-review
+   --book {book} first". An error reporting a `chapter_count` mismatch
+   means chapters were merged, cut or reordered since the review → stop
+   with "chapters were renumbered since the structure review; re-run
+   /autonovel:structure-review --book {book}". A gate that is only
+   `stale` → warn once and continue. Otherwise use `file_read` on
+   `books/{book}/edit_logs/structure_review.json` and take the union of
+   every candidate's `edits[].chapter`, ascending. Remember each
+   candidate's non-null `command` for step 4. With any explicit range,
+   chapters a candidate names still get a structural brief at (b).
 
 2a. **Start sweep-progress tracking.** Use `bash` to invoke:
 
@@ -165,11 +193,17 @@ the whole sweep on a single missing input.
 
    b. **brief --from auto**: Reproduce the body of
       `/autonovel:brief` — read the latest `eval_logs/ch{N:02d}*.json`,
-      `edit_logs/ch{N:02d}_cuts.json` (if any), and the new
-      anachronism report from (a) — then synthesize a revision
-      brief at `books/{book}/briefs/ch{N:02d}.md`. The brief
+      `edit_logs/ch{N:02d}_cuts.json` (if any), the new
+      anachronism report from (a), `edit_logs/review.json` and
+      `edit_logs/reader_panel.json` (if any), and
+      `edit_logs/structure_review.json` (if any) — then synthesize a
+      revision brief at `books/{book}/briefs/ch{N:02d}.md`. The brief
       enumerates specific named passages to change, target word
-      count, and prescriptions per anti-pattern.
+      count, and prescriptions per anti-pattern. When a
+      structure-review candidate names chapter N, the brief is
+      `kind: structural` (frontmatter) with the `## Structural brief`
+      and `## Cross-chapter operations — run these yourself` sections
+      `/autonovel:brief` step 5 defines; otherwise `kind: prose`.
 
       **When this sweep was invoked with `--enrich-with <path>`,
       pass that flag through to the per-chapter brief.** Each
@@ -189,7 +223,11 @@ the whole sweep on a single missing input.
       voice, and rewrite the chapter. Overwrite
       `books/{book}/chapters/ch_{N:02d}.md`. **Regenerate the
       summary** at `books/{book}/chapters/ch_{N:02d}.summary.md`
-      so chapter N+1's revise reads the updated version.
+      so chapter N+1's revise reads the updated version. A
+      `kind: structural` brief lets the rewrite restructure chapter N
+      from the inside (`/autonovel:revise` step 7a); it never edits
+      another chapter and never runs a cross-chapter command — return
+      those commands verbatim to the parent instead.
 
    d. **evaluate** *(skippable via --skip-eval)*: Reproduce the
       body of `/autonovel:evaluate --chapter N` — score the revised
@@ -249,8 +287,11 @@ the whole sweep on a single missing input.
    After each chapter finishes, print one line:
 
    ```
-   [ch N] anachronism: <count> hits | brief: <words>w | revise: <words>w (delta <±N>w) | eval: <prev_score> → <new_score> (Δ <±X.X>) | canon: +<P>
+   [ch N] anachronism: <count> hits | brief: <words>w [structural S2,S5] | revise: <words>w (delta <±N>w) | eval: <prev_score> → <new_score> (Δ <±X.X>) | canon: +<P>
    ```
+
+   (`[structural …]` appears only for a `kind: structural` brief and
+   lists its candidate ids.)
 
    When `prev_score` is None (no prior eval on disk), render the
    eval segment as `eval: — → <new_score>` and omit the Δ. When
@@ -300,6 +341,14 @@ the whole sweep on a single missing input.
    chapter is a real concern and should not be buried in the
    table.
 
+   When any chapter had a structural brief, add a block "Cross-chapter
+   operations the structure review asked for — run these yourself"
+   listing every candidate `command` collected at step 2 and returned
+   by the per-chapter subagents, de-duplicated, verbatim, in candidate
+   priority order. A chapter-score Δ is not the measure of a
+   structural pass (a consequence scene can lower a chapter's prose
+   score); the measure is the next `/autonovel:structure-review`.
+
 5. **Final promote-canon sweep** *(skip if `--no-promote`)*. After
    the loop completes, run `/autonovel:promote-canon` one last time
    to catch any pending_canon entries that the per-chapter step
@@ -336,9 +385,14 @@ the whole sweep on a single missing input.
       <OR "No conflicts; pending_canon.md is clean." when K=0>
 
    3. Re-run whole-book reviewers (prior reports are now stale —
-      <N> chapters changed):
+      <N> chapters changed), structure first because review's
+      stop-revising verdict is gated on it:
+        /autonovel:structure-review --book {book}
         /autonovel:reader-panel --book {book}
         /autonovel:review --book {book}
+      <when structural briefs ran: list the cross-chapter commands
+       collected in step 4, to run before the structure review>
+
 
    4. Backup the substantive change:
         cd ~/<series-root>
@@ -370,6 +424,7 @@ the whole sweep on a single missing input.
    1. Verify deltas: ...
    2. Resolve canon conflicts: ...
    3. Re-run whole-book reviewers: ...
+      /autonovel:structure-review --book {book}
       /autonovel:reader-panel --book {book}
       /autonovel:review --book {book}
    4. Backup: git add . && git commit && git push
@@ -407,6 +462,7 @@ Reads:
 - `books/{book}/chapters/ch_{chapter}.md` (per chapter in range)
 - `books/{book}/chapters/ch_*.summary.md` (rolling continuity)
 - `books/{book}/edit_logs/ch{chapter:02d}_anachronism.md` (read between stages)
+- `books/{book}/edit_logs/structure_review.json` (`--chapters structural`, and structural briefs)
 - `books/{book}/eval_logs/ch{chapter:02d}_eval.json` (read by brief --from auto)
 
 Writes (per chapter in range):

@@ -96,6 +96,57 @@ Every story is a blend of four thread types:
 Rule: Threads close in REVERSE order of opening (nested like HTML tags).
 Open M-I-C, close C-I-M.
 
+### Causation, not sequence (the book-level spine)
+
+Sources: E. M. Forster, *Aspects of the Novel* (1927), ch. 5: "'The
+king died and then the queen died' is a story. 'The king died, and
+then the queen died of grief' is a plot. The time-sequence is
+preserved, but the sense of causality overshadows it." Trey Parker and
+Matt Stone (NYU writing class, 2011): between any two beats the word
+should be "therefore" or "but", never "and then". Robert McKee, *Story*
+(1997): progressive complications — each act turns on a bigger value
+than the last, toward a climax that cannot be reversed.
+
+A book of good chapters is not a good book. The chapter tier (scene
+turns, irreversible endings, paid clocks) can all be green while the
+chapters do not cause each other. Checkable rules, chapter to chapter:
+
+  1. Causal chain. Chapter N+1 happens BECAUSE OF something that
+     happened in an earlier chapter: someone acts on it, a decision
+     there forces this one. "Happens after" (a new arrival, a time
+     jump, a recorded event on its date) is "and then". A recurring
+     object, motif, callback, carried date or narrator promise line is
+     continuity, not cause.
+  2. Removability. For every chapter, name the later chapter whose
+     action fails if this one is cut (allowing one sentence elsewhere
+     to carry any needed fact). A chapter with no answer is an
+     anecdote.
+  3. Stakes ladder. Each act raises the SAME bet: more to lose on the
+     book's question, or a deeper kind of loss. A bigger sum with a
+     new counterparty is a reset, not a raise.
+  4. Through-line. One question about the protagonist, posed in the
+     first quarter (Sanderson's plot promise), answered by the
+     climax's decision — not by a theme.
+  5. Convergence. In the last ~20% the open threads meet in one
+     decision whose outcome depends on all of them, instead of closing
+     one by one (MICE closing order is the mechanics; convergence is
+     the point).
+  6. Chapter-local stakes are fine only when the chapter's result is
+     the next chapter's problem. A chapter that opens its own wager
+     and settles it is a short story.
+
+The named failure is the ANECDOTE CHAIN: every chapter a
+self-contained wager, opened in its first scene and settled in its
+last; continuity carried by cast, objects, callbacks and promise lines;
+each chapter scores well, the book reads as "a bunch of short anecdotes,
+not a continuing story building to a climax." Historical fiction is
+most exposed: the record is "and then" by nature (deals, deaths,
+elections), so the novel must invent the "therefore": the opposing
+force that persists between recorded events, and the earlier choice of
+the protagonist that each recorded event punishes or rewards.
+`/autonovel:structure-review` scores these rules; `/autonovel:gen-outline`
+commits to them in `## Spine`, `## Stakes ladder` and `## Causal spine`.
+
 ---
 
 ## 2. CHARACTER CRAFT
@@ -531,9 +582,17 @@ COUNTERMEASURES (actively enforce these):
   - Beat compliance: major beats present at roughly correct % marks
   - Payoff compliance: promises paid off / promises made
   - Try-fail ratio: % middle scenes as "yes-but" or "no-and"
-  - Escalation: stakes increase through the middle
+  - Escalation: stakes increase through the middle, on the same bet
+    (§1 "Causation, not sequence", rule 3)
   - Scene-to-plot connection: % scenes serving main plot
   - MICE closure: all threads closed in reverse order
+  - Causal chain: % of chapter N → N+1 links that are "because", not
+    "and then" (§1 rule 1); ≥ 80% for one story, < 50% is episodes
+  - Removability: chapters no later chapter needs = 0 (§1 rule 2)
+  - Through-line: one question posed by 25%, answered by the climax's
+    decision (§1 rule 4)
+  - Convergence: open threads meet in the climax decision (§1 rule 5)
+  - Prose quality is not evidence for any line above
 
 ### Character
   - Slider profile: at least 2/3 high OR clear growth trajectory
