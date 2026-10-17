@@ -2817,3 +2817,18 @@ prose ≈ 8 / 10, with investigation-heavy plots).
 3. **`.gitignore` template** ignores `books/*/audiobook/*.mp3` but not
    `books/*/audiobook/chapters/*.mp3`, where `audiobook-generate` writes;
    add the recursive patterns (and `_work/`).
+4. **Light-cast multi-voice edition with Kokoro (deferred 2026-10-17; revisit
+   when the next Kokoro voice release lands).** The pipeline already has the
+   design (`audiobook-voices` → `voices.yaml`, `audiobook-script` →
+   speaker-attributed segments with the narrator keeping the tags); only the
+   renderer needs per-segment voices and the ElevenLabs emotion tags
+   (`[slowly]` etc.) must be stripped or Kokoro reads them aloud. Blocker is
+   voice quality, not count: Kokoro's British set is 8 voices (4f/4m) plus
+   blending, but only bf_emma, bm_george and bm_fable are clean; the other five
+   are muddy, and mixing in American voices breaks the accent. Industry norm is
+   single narrator (duet only in romance/YA; full cast a niche), and kingmaker's
+   narrator is the book's main instrument, so when revisited do a *light cast*:
+   narrator on all narration and tags, own voices only for ~5 principals
+   (Jakob, Sibylla, Ulrich, Maximilian, +1), everyone else on the narrator.
+   Dialogue is 25% of the book by words (~3 of 12 h). Trial first: render one
+   dialogue-heavy chapter both ways and listen before committing the book.
