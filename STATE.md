@@ -2207,7 +2207,7 @@ quality gate).
 
 ## Tests last known green
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-18 (design) —
-  **2128 passing, 1 skipped**. +19: `test_mechanical_design.py` (10),
+  **2129 passing, 1 skipped**. +20: `test_mechanical_design.py` (11),
   three `/autonovel:next` design tests, 6 per-command tests for
   `/autonovel:design`; the two foundation-chain tests now walk
   canon → design → outline.

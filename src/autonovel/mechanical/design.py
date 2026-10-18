@@ -124,6 +124,7 @@ class Design:
     sequences: list[dict] = field(default_factory=list)
     acts: list[dict] = field(default_factory=list)                # {act, first, last}
     tests: dict[str, dict] = field(default_factory=dict)          # D1 -> {verdict, note}
+    unparsed: list[str] = field(default_factory=list)            # lines that look like ledger rows but don't parse
 
     def get(self, section: str, key: str) -> str:
         return self.kv.get(_canon(section), {}).get(_canon(key), "")
@@ -185,6 +186,9 @@ def parse_design(text: str) -> Design:
     for line in d.sections.get("plants", "").splitlines():
         m = re.match(r"^\s*[-*]\s+(P\d+)\b\s*([^:|]*?)\s*:\s*(.*)$", line)
         if not m:
+            if re.match(r"^\s*[-*]\s+P\d+\b", line):
+                d.unparsed.append(f"## Plants: cannot parse {line.strip()[:80]!r} "
+                                  f"(expected `- P1 <name>: <what> | plant: ch N …`)")
             continue
         parts = m.group(3).split("|")
         d.plants.append(Plant(
@@ -318,6 +322,8 @@ class Report:
 def check_design(d: Design, *, outline_text: str | None = None) -> Report:
     rep = Report(present=True)
     err, warn = rep.errors.append, rep.warnings.append
+    for u in d.unparsed:
+        err(u)
     redesign = bool(d.get("shape", "redesign_of"))
     for s in REQUIRED_SECTIONS + (REDESIGN_SECTIONS if redesign else ()):
         if _canon(s) not in d.sections or not d.sections[_canon(s)].strip():
