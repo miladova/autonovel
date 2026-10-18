@@ -2256,7 +2256,39 @@ turn the page, quoting the text), `/autonovel:first-read` (on demand), and
 a mandatory first-reader step in `draft` (fix every item; a second fresh
 reader when the first found serious items). Tier 1+2 2145.
 
+### 2026-10-18 — `/autonovel:cast` and CHARACTER.md: people, not labels; places walked; reminders on return
+
+The author, after liking the redrafted samples: the places still weren't
+described enough ("Mix with through jakobs eyes perhaps? His first day out
+of the German enclave"); "with 7 electors, we will need reminders of who
+they are and what they want when they next appear"; and the characters
+"feel too simple — this may require some research and adding skills to
+autonovel on character development". Diagnosis: the design gave each
+person a one-line want/fear/secret/contradiction/signature and the
+drafter rendered the line — the habit recurred, the person never
+appeared; the places research (walks, only-here details, set pieces)
+existed and went unused because nothing budgeted a set piece; nothing
+re-anchored a returning person. Shipped: `shared/craft/CHARACTER.md`
+(eighth craft doc: flat/round, choice under pressure, Egri's three
+dimensions, the dossier after Elizabeth George, depth on the page,
+real people from the record, ensembles and return tags, failure
+patterns, tests C1–C12); `/autonovel:cast` → `books/<book>/cast.md`
+(dossiers with pressure choices by chapter, "on the page" per chapter,
+private monologue, return tags; relationship table; cold check), read
+by draft (new step 3d), revise (5a), gen-outline, deepen-character and
+evaluate (new chapter dimensions `character_depth`, `sense_of_place`);
+draft step 3c's place rule is now a set piece through the viewpoint's
+eyes using the places notes (600–1,200 words at a major place's first
+appearance) plus a re-anchoring rule for returning people and ensembles;
+design.md places gain `set_piece:` (validator warns); `newcomers` lists
+names returning after a gap (`--gap`, default 2); FIRST-READER.md gains
+Forgot who / Couldn't picture / Who felt real (ten sections; count line
+updated); `/autonovel:next` suggests `cast` when a design exists without
+one. Lesson: a reader who skims a narrator's lecture still wants to see
+the place — the fix is the place seen through a person, not less of it.
+
 ## Tests last known green
+- Tier 1 + Tier 2 (deterministic + contracts): 2026-10-18 (cast + CHARACTER.md) — **2153 passing, 1 skipped** (+1 newcomers returning, +1 cast next-action, +5 cast command contracts).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-18 (first-read) — **2145 passing, 1 skipped** (+3 newcomers, +6 first-read command tests).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-18 (reader's map) — **2136 passing, 1 skipped** (+6: datelines, landscape plates, Terms warnings).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-18 (design) —

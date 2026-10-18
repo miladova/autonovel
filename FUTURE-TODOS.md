@@ -2974,12 +2974,20 @@ panel's book-level questions and `gen-outline`'s spine sections. Left:
   for a man who was fifty-nine that January), so draft needs a
   period-facts check: ages and weekdays computed from canon birth dates
   and the chapter's story_time, journey times checked against distances;
-  (6) every reader skimmed the orientation paragraphs set as blocks
-  ("the story stops for a school lesson"), while the author asks for
-  that picture of the period, so step 3c should say to deliver it through
-  the scene (what the character sees on the road, says, or needs at that
-  moment) rather than as a narrator's paragraph; (7) cap the loop at two
-  readers unless the second still finds someone lost, and log the cost.
+  (6) ~~orientation through the scene~~ shipped 2026-10-18 as draft
+  step 3c's set piece and FIRST-READER's "Couldn't picture"; (7) cap the
+  loop at two readers unless the second still finds someone lost, and log
+  the cost.
+
+- **Characters (2026-10-18, after `/autonovel:cast` shipped).** Left:
+  (1) a front-matter cast list ("Principal characters", grouped, one line
+  each, spoiler-free) built from `cast.md` return tags and typeset before
+  the glossary — customary for historical novels with large casts;
+  (2) `story-map` should read `cast.md` for its characters panel;
+  (3) `structure-review` / `developmental-edit` should check each
+  principal's pressure choices landed where `cast.md` scheduled them;
+  (4) a `cast-validate` helper only if dossiers drift (field presence,
+  return tags) — not a quality gate.
 
 Smaller, from the same audit: cross-family judging for the whole-book
 reviewers (self-preference, §5); a scene map with value/polarity; the

@@ -209,6 +209,12 @@ Order matters; each step reads what previous steps wrote:
           inside its own contest, tested, paid), rehearsals, the cast
           as a web, sequences, clocks, places, voice. Tested against
           shared/craft/DESIGN.md and read cold by a second reader.
+  5b. /autonovel:cast --book <name>
+        → books/<name>/cast.md: a dossier for each principal (the
+          contradiction acted out, the choices that test them by
+          chapter, their history with each other, a private monologue,
+          a return tag) and a short entry for every ensemble player.
+          Real people built from the research (shared/craft/CHARACTER.md).
   6. /autonovel:gen-outline --book <name>
         → books/<name>/outline.md (chapter beats, bound to the design:
           each chapter lists its sequence, plants, tests, payoffs)
@@ -304,7 +310,7 @@ Targeted sub-tasks (use one or more between revise cycles):
 
   /autonovel:lengthen <N> --book <name> --target-words <W>
   /autonovel:shorten <N> --book <name> --target-words <W>
-  /autonovel:deepen-character <N> --book <name> --character <X>
+  /autonovel:deepen-character <name> --chapter <N> --book <name>
   /autonovel:revoice <N> --book <name>
   /autonovel:foreshadow <N> --book <name>
   /autonovel:add-subplot <N> --book <name>
@@ -418,6 +424,8 @@ Before drafting (cheapest place to fix it):
                                               climax, question, rival,
                                               plants, rehearsals, cast,
                                               sequences (design.md)
+  /autonovel:cast --book <name>               character dossiers (cast.md):
+                                              people, not labels
   /autonovel:gen-outline --book <name>        writes ## Spine,
                                               ## Stakes ladder,
                                               ## Causal spine

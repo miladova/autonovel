@@ -38,7 +38,7 @@ bullets unless noted):
     ## Clocks                 bullets
     ## Stakes ladder          | Act | Chapters | Stake | Higher because |
     ## Reader questions       bullets
-    ## Places                 ### <Place>, then orientation, use, signature, arrival, only here
+    ## Places                 ### <Place>, then orientation, use, signature, arrival, only here, set_piece
     ## Terms                  - <term>: ch N — <plain gloss>   (recommended; warning if absent)
     ## Voice                  bullets
     ## Genre contract         bullets
@@ -456,7 +456,7 @@ def check_design(d: Design, *, outline_text: str | None = None) -> Report:
         warn("## Terms: none listed — the words a reader today may not know, "
              "each with the chapter that explains it (DESIGN.md §13a)")
     for pl in d.places:
-        for f in ("orientation", "use", "signature"):
+        for f in ("orientation", "use", "signature", "set_piece"):
             if not pl["fields"].get(f):
                 warn(f"Places: {pl['name']} has no `{f}:` — DESIGN.md D11")
 

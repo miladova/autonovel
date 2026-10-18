@@ -19,6 +19,7 @@ reads:
   - books/{book}/voice.md
   - books/{book}/outline.md
   - books/{book}/design.md
+  - books/{book}/cast.md
   - books/{book}/glossary.md
   - books/{book}/chapters/ch_{prev}.md
   - books/{book}/chapters/ch_*.summary.md
@@ -153,17 +154,74 @@ required reads — surface the error and stop, don't retry.
       before any flourish. In a book that moves between times or
       places, the chapter's `dateline` (step 12) does half of this and
       the first paragraph does the rest.
-    - **What a place was like then.** At a major place's first
-      appearance in the book, give the reader a plain picture of it
-      in its own time — how big, who ruled it, what it lived on, what
-      made it unlike anywhere else or unlike today — then the
-      sensory detail (`design.md` `## Places` `orientation:`).
+    - **What a place was like then: the set piece.** A major place's
+      first appearance in the book gets a set piece, not a paragraph.
+      Give the plain picture of it in its own time — how big, who ruled
+      it, what it lived on, what made it unlike anywhere else or unlike
+      today (`design.md` `## Places` `orientation:`) — and then walk it
+      through the viewpoint character's eyes: what this person, wanting
+      what they want today, sees, hears, smells, pays for, is frightened
+      or dazzled by. Mix the two, a sentence of fact and then the street,
+      so the picture never stops the story for a lecture. A guide is the
+      natural device: a newcomer shown round by someone who lives there
+      and has reasons of their own. Use the research: the places notes
+      in `shared/research/notes/` carry walks, only-here details and set
+      pieces gathered for exactly this, and a set piece that uses none of
+      them is a wasted arrival. Budget roughly 600–1,200 words for a
+      major place's first set piece, spread across the chapter's scenes
+      if need be; a minor place gets a few lines. When the design names
+      a place's `set_piece:`, stage it there. When the place returns,
+      give its signature in a line and what has changed.
+    - **Re-anchor whoever returns.** A person, place or term the reader
+      last met more than a chapter ago — and anyone from the other
+      strand, in a book that alternates — is re-anchored in a clause the
+      first time they come back: who they are and what they want, through
+      action where the scene allows (*Albrecht, the young Archbishop of
+      Mainz who spent faster than anyone Jakob knew, wanted cash in his
+      hand*). In an ensemble — a council, seven princes — re-anchor each
+      member every time the group comes on stage, until the book has
+      shown each of them often enough to stand alone. `books/{book}/cast.md`
+      `return tag:` lines give the facts; vary the wording.
     - **Plain over clever.** When `voice.md` asks for plain English,
       no figure of speech the reader has to decode ("rode as if the
       saddle owed him money"), no compressed witty construction whose
       referent is ambiguous ("vain, gifted and young, and he knew all
       three"), no idiom of recognition ("knew him by the way he sat the
       horse"): say the thing.
+
+3d. **People with depth** (every book). Use `file_read` on
+    `shared/craft/CHARACTER.md` and, when it exists, on
+    `books/{book}/cast.md` (the dossiers `/autonovel:cast` writes). A
+    character who appears with a trait and a habit and nothing else is a
+    type, and a reader feels it within a page. For everyone on stage who
+    matters in this chapter:
+    - **A want of their own in the scene**, apart from the viewpoint
+      character's: they came into the room for a reason, and the scene
+      moves them too (Vonnegut's glass of water).
+    - **The contradiction acted, not named**: the dossier's two
+      qualities in tension show in something the person does, never in a
+      label ("pious and venal").
+    - **A choice under pressure**: when the dossier's `pressure choices`
+      names this chapter, stage it — two things the person values, one
+      given up, a cost the reader sees.
+    - **The viewpoint's inner life beyond the plot**: what they feel and
+      refuse to feel, a memory the moment calls up, the body (age,
+      fatigue, cold, hunger), and at least once a scene a thought at odds
+      with what they say.
+    - **Relationships with a history**: in each important exchange the
+      past between the two (who owes whom, an old grievance or
+      affection) shapes what is said, and the pair has its own register.
+    - **Signatures that deepen, not tics**: a habit or object recurs only
+      when it shows something new; its third appearance means something
+      its first did not.
+    - **Who knows what**: in scenes of secrets and deals, let the reader
+      track what each person believes the others know.
+    - **Real people from the record**: their recorded words, acts and
+      contradictions (the research notes and cast.md cite them); invent
+      only where the record is silent, and never shrink them to their
+      famous trait.
+    Use the dossier's `on the page` line for this chapter: show the thing
+    about each person that no earlier chapter has shown.
 
 4. Use `file_read` on `shared/world.md`, `shared/characters.md`,
    `shared/canon.md`, `books/{book}/canon.md` (this book's OWN canon —
@@ -274,11 +332,13 @@ required reads — surface the error and stop, don't retry.
    **Reader's-map self-check** (step 3c). Run `autonovel mechanical
    newcomers books/{book} --chapter {chapter} --format markdown`: it
    lists the names and terms that appear for the first time in the book
-   in this chapter, and which land in the opening. For each, check that
+   in this chapter, which land in the opening, and which return after an
+   absence. For each, check that
    a new person arrives with who they are, that an unfamiliar term or
    foreign word is explained in plain words where it first appears, and
    that the opening doesn't introduce more than about three new names;
-   fix the draft where it doesn't.
+   and, under "returning", that each person or place back after an
+   absence is re-anchored (step 3c); fix the draft where it doesn't.
 
    **First reader** (always, before the summary). Use `file_read` on
    `shared/craft/FIRST-READER.md` and spawn, with `task`, one fresh
@@ -286,11 +346,13 @@ required reads — surface the error and stop, don't retry.
    chapter and the earlier chapters (the last three in full and the
    rest as summaries when the book is long) — never the outline,
    design, research, voice file or your notes — and it reports in the
-   brief's seven sections, quoting the text. Save its report at
+   brief's ten sections, quoting the text. Save its report at
    `books/{book}/edit_logs/first_read_ch{chapter}.md`. Then fix every
-   item in its sections 1–4 (lost, didn't know, read twice, too many at
-   once) in the chapter, and treat a section-5 stall or a "no" in
-   section 6 as a scene to rework before anything else. When the report
+   item under Lost, Didn't know, Read twice, Too many at once and Forgot
+   who; give each place under Couldn't picture its picture (step 3c's
+   set piece); deepen each person under Who felt real who read as a
+   type (step 3d); and treat a Skimmed-or-bored stall or a "no" to the
+   page turn as a scene to rework before anything else. When the report
    had serious items, spawn a second fresh reader on the fixed chapter
    and fix what it finds. Your own checks can't see what you already
    know; this reader can. The author must never be the first person to

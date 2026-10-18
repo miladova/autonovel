@@ -26,7 +26,7 @@ twice, the opening that crowds in six new people, the page where the
 reader stops. The writer can't see these in their own chapter (they
 know what everything means), and a reviewer judging against the
 writer's style sheet doesn't look. On one book the author found all of
-them himself, after every check had passed. The author should never be
+them themselves, after every check had passed. The author should never be
 the first reader.
 
 The reader is a separate agent that sees only the book — the chapter
@@ -53,15 +53,18 @@ file. `shared/craft/FIRST-READER.md` is its brief.
    the brief's "Who the reader is", "What the reader reports" sections
    (verbatim), the reader line from voice.md if any, then the earlier
    chapters and the chapter. It must not be given anything else, and
-   it must answer in the brief's seven sections, quoting the text.
+   it must answer in the brief's ten sections, quoting the text.
 
 5. Use `file_write` to save its report, unedited, at
    `books/{book}/edit_logs/first_read_ch{chapter}.md`, headed with the
    date and one count line: `lost N · didn't know N · read twice N ·
-   too many at once N · would turn the page: yes|no`.
+   too many N · forgot N · couldn't picture N · types N · skimmed N ·
+   turn the page: yes|no` (types = the people it read as a type).
 
 6. Report the count line, the three most serious items (quoted), and
-   **Next:** when there are items in sections 1–4 or a "no" in 6,
+   **Next:** when there are items under Lost, Didn't know, Read twice,
+   Too many at once, Forgot who, Couldn't picture or Who felt real, or a
+   "no" to the page turn,
    `/autonovel:revise {chapter} --book {book}` with the report as the
    brief (or fix them by hand); otherwise "the chapter reads clean to a
    first reader". Do not edit the chapter here.
@@ -69,7 +72,7 @@ file. `shared/craft/FIRST-READER.md` is its brief.
 
 <acceptance>
 - `books/{book}/edit_logs/first_read_ch{chapter}.md` exists with the
-  seven sections and the count line.
+  ten sections and the count line.
 - The reader was given only chapter text and summaries — never the
   outline, design, research or voice file.
 - The chapter is unchanged.

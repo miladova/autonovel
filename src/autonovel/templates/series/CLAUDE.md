@@ -36,6 +36,8 @@ books/<book>/
   seed.txt               # the user's pitch — authoritative input
   voice.md               # Part 1: generic guardrails. Part 2: book-specific fingerprint
   outline.md             # generated; structure across chapters
+  design.md              # the book-level decisions (/autonovel:design)
+  cast.md                # character dossiers (/autonovel:cast)
   canon.md               # book-scoped canon — facts THIS book's chapters fixed; binds this book only
   pending_canon.md       # candidate canon — promote-canon routes into canon.md (or shared/ if research-cited)
   chapters/ch_NN.md      # the prose
@@ -87,7 +89,7 @@ books/<book>/
 
 ## Craft reference (`shared/craft/`)
 
-Five documents shipped by autonovel and read by the drafting,
+The documents shipped by autonovel and read by the drafting,
 revision, evaluation and editing commands:
 
 - `shared/craft/PROSE.md` — sentence, paragraph, scene and dialogue
@@ -110,6 +112,14 @@ revision, evaluation and editing commands:
   that reads every chapter before anyone else (`/autonovel:draft` runs
   it; `/autonovel:first-read` on demand): someone who knows nothing
   about the subject reports what they couldn't follow.
+- `shared/craft/CHARACTER.md` — how each person in the cast comes
+  alive: what depth is (flat and round, choice under pressure,
+  contradiction), the dossier `/autonovel:cast` writes for each
+  principal into `books/<book>/cast.md`, how depth reaches the page
+  (a want of their own in every scene, the contradiction acted, the
+  inner life beyond the plot, relationships with a history), real people
+  from the record, ensembles and return tags, and the tests C1–C12.
+  `draft` step 3d and `evaluate`'s `character_depth` apply it.
 - `shared/craft/DESIGN.md` — how a novel is designed before it is
   outlined: start from the climax, one action through a long span,
   suspense when the reader knows the outcome, the rival with a plan,
@@ -198,7 +208,11 @@ each of these and the workaround is in the codebase:
   which the outline and every chapter draft are bound to. When a
   developmental edit says a drafted book's problems are design-level,
   `/autonovel:design --book <new-name> --from-book <name> --notes
-  "<the author's words>"` re-designs it as a new isolated book. Before
+  "<the author's words>"` re-designs it as a new isolated book. After
+  the design, `/autonovel:cast --book <name>` writes
+  `books/<name>/cast.md`, the character dossiers the outline, every
+  draft and every revise read so the people on the page are more than a
+  trait and a habit. Before
   drafting, `/autonovel:gen-outline` commits the book to a
   `## Spine`, `## Stakes ladder` and `## Causal spine`
   (`--add-spine` retrofits an older outline).

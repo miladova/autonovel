@@ -437,6 +437,11 @@ foundation in this order:
    any outline: the climax, the question it answers, the rival with a
    dated plan, the skills the climax spends (planted, tested, paid),
    rehearsals, cast, sequences, places, voice (`books/<book>/design.md`).
+   Then `/autonovel:cast --book <book>` — the character dossiers
+   (`books/<book>/cast.md`): for each principal the contradiction acted
+   out, the choices that test them by chapter, their history with the
+   others, a private monologue and a return tag; real people built from
+   the research (`shared/craft/CHARACTER.md`).
 6. `/autonovel:gen-outline --book <book>` — chapter plan, bound to the design.
 7. `/autonovel:gen-canon --book <book>` — this book's outline-committed facts
    (`books/<book>/canon.md`; seeded from the outline, so it runs after step 6).
@@ -551,7 +556,9 @@ Three categories. Full reference: [`docs/commands.md`](docs/commands.md).
   `revision-pass --chapters structural` acts on its candidates.
   `first-read` is a cold reader for one chapter — someone who knows
   nothing about the subject reports every word, name and sentence they
-  couldn't follow and whether they'd turn the page; `draft` runs it on
+  couldn't follow, anyone they'd forgotten when they came back, places
+  they couldn't picture, who felt like a type, and whether they'd turn
+  the page; `draft` runs it on
   every new chapter and fixes what it finds, so the author is never the
   first to find an unexplained term.
   `developmental-edit` is the editor's read: one reader reads the

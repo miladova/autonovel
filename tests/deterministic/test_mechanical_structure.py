@@ -634,3 +634,21 @@ def test_next_flags_invalid_design_then_stale_outline(tmp_path: Path) -> None:
     os.utime(bdir / "outline.md", (old, old))
     found = _design_next(root, book)
     assert [a.command for a in found] == ["/autonovel:gen-outline --book the-book --force"]
+
+
+def test_next_asks_for_cast_dossiers_once_a_design_exists(tmp_path: Path) -> None:
+    from tests.deterministic.test_mechanical_design import GOOD
+
+    def cast_next(root: Path, book: str) -> list:
+        acts = next_actions.enumerate_actions(SeriesLayout(root=root), book=book)
+        return [a for a in acts if a.command and "autonovel:cast" in a.command]
+
+    root, book = _series_with_book(tmp_path, chapters=0)
+    bdir = root / "books" / book
+    assert cast_next(root, book) == []                 # no design yet
+    (bdir / "design.md").write_text(GOOD, encoding="utf-8")
+    found = cast_next(root, book)
+    assert [a.command for a in found] == ["/autonovel:cast --book the-book"]
+    assert found[0].priority == "MEDIUM"
+    (bdir / "cast.md").write_text("# Cast\n", encoding="utf-8")
+    assert cast_next(root, book) == []

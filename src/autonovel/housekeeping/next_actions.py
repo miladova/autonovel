@@ -89,6 +89,7 @@ def _actions_for_book(series: SeriesLayout, cfg: project_mod.ProjectConfig,
     out.extend(_panel_staleness_actions(book_root, book))
     out.extend(_review_staleness_actions(book_root, book))
     out.extend(_design_actions(book_root, book))
+    out.extend(_cast_actions(book_root, book))
     out.extend(_developmental_edit_actions(book_root, book))
     out.extend(_structure_review_actions(book_root, book))
     out.extend(_typeset_staleness_actions(book_root, book, series.root))
@@ -550,6 +551,28 @@ def _design_actions(book_root: Path, book: str) -> list[NextAction]:
             book=book,
         )]
     return []
+
+
+def _cast_actions(book_root: Path, book: str) -> list[NextAction]:
+    """The character dossiers (`/autonovel:cast`): a book with a design but
+    no `cast.md` drafts its people from one-line labels, and readers find
+    them "too simple". MEDIUM before any chapter is drafted (cheapest
+    then); LOW once chapters exist (the dossiers then drive revisions)."""
+    if not (book_root / "design.md").is_file() or (book_root / "cast.md").is_file():
+        return []
+    drafted = bool(iter_chapter_files(book_root / "chapters"))
+    return [NextAction(
+        priority="LOW" if drafted else "MEDIUM",
+        title="Build the character dossiers (cast.md)",
+        command=f"/autonovel:cast --book {book}",
+        rationale=(
+            f"books/{book} has a design but no cast.md. The design gives each "
+            f"character a line; the dossier gives the drafter a person: the "
+            f"contradiction acted out, the choices that test them by chapter, "
+            f"their history with each other, a private monologue and a return "
+            f"tag for when they come back."),
+        book=book,
+    )]
 
 
 def _developmental_edit_actions(book_root: Path, book: str) -> list[NextAction]:

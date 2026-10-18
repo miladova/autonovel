@@ -10,6 +10,7 @@ allowed-tools:
 reads:
   - project.yaml
   - books/{book}/design.md
+  - books/{book}/cast.md
   - shared/craft/DESIGN.md
   - shared/world.md
   - shared/characters.md
@@ -106,8 +107,12 @@ before these sections were required.
       climax chapter's beats play `## Climax` (the action, the plants
       spent, the cost, the threads meeting);
     - a chapter's beats use the design's `## Places` (the place's
-      `use:`) and give each principal on stage something to want in the
-      scene (`## Cast`);
+      `use:`), give a place's first appearance room for its `set_piece:`
+      when it names this chapter, and give each principal on stage
+      something to want in the scene (`## Cast`); when
+      `books/{book}/cast.md` exists (`/autonovel:cast`), use `file_read`
+      on it and give each principal's `pressure choices` a beat in the
+      chapter it names;
     - a sequence's last chapter ends on its `hands on:` result; an act's
       last chapter ends on the act's line in `## Reader questions`.
     Read `shared/craft/DESIGN.md` §8–§10 before writing the beats. When

@@ -15,7 +15,7 @@ by whether a reader can follow it. On one book in this pipeline the
 author was the first person to notice that the electors, fustian and a
 bell called the Marangona were never explained, that a chapter opened on
 too many new names, and that sentences like "rode as if the saddle owed
-him money" were not the plain English he had asked for — after the
+him money" were not the plain English they had asked for — after the
 drafter's own checks and the editor's read had passed them. The author
 should never be the first reader. This one is.
 
@@ -54,10 +54,22 @@ quoting the text for every item, in exactly these sections:
    "they" was.
 4. **Too many at once** — any passage that brought in more new people
    or places than you could hold.
-5. **Skimmed or bored** — where your attention went, and why.
-6. **Would you turn the page?** Yes or no, and why. What do you want to
+5. **Forgot who** — anyone or anywhere from an earlier chapter that you
+   had forgotten or mixed up when they came back. Quote where they
+   return.
+6. **Couldn't picture** — every place you couldn't see in your mind, or
+   wanted to see more of: what it looked like, how big it was, who lived
+   there, what it was like in its own time. Say so even if you'd skim a
+   long description; say what you wanted to see.
+7. **Who felt real** — for each person who matters in the chapter: did
+   they feel like a real person, or like a type (one trait and a habit)?
+   What did they want in their scenes, apart from what the main
+   character wanted? Did any of them surprise you? Whom do you want to
+   know more about, and what?
+8. **Skimmed or bored** — where your attention went, and why.
+9. **Would you turn the page?** Yes or no, and why. What do you want to
    know next? If you would stop reading, say exactly where.
-7. **What worked** — two or three lines, no more.
+10. **What worked** — two or three lines, no more.
 
 Be blunt. Don't be polite, don't praise to soften, don't explain the
 book to yourself. A short report with real items is worth more than a
@@ -66,11 +78,23 @@ why you'd read on.
 
 ## What the writer does with it
 
-Every item in sections 1–4 is a fault in the chapter, not in the reader:
-explain the term in plain words where it first appears, introduce the
-person properly, orient the scene, rewrite the sentence plainly, spread
-the newcomers out. Section 5 and a "no" in section 6 are a scene problem
-to fix before anything else. Fix them all, then — when anything in
-sections 1–4 or 6 was serious — have a fresh reader read the fixed
+Every item under **Lost**, **Didn't know**, **Read twice**, **Too many
+at once** and **Forgot who** is a fault in the chapter, not in the
+reader: explain the term in plain words where it first appears,
+introduce the person properly, orient the scene, rewrite the sentence
+plainly, spread the newcomers out, re-anchor the returning person in a
+clause (who they are, what they want). **Couldn't picture** asks for the
+place on the page: a major place's first appearance gets its set piece,
+seen through the viewpoint character's eyes (`draft` step 3c). **Who
+felt real** is the depth check: a person read as a type gets what
+`shared/craft/CHARACTER.md` and the book's `cast.md` give them — a want
+of their own in the scene, a contradiction shown, a choice under
+pressure. **Couldn't picture** and **Skimmed or bored** pull against
+each other on purpose: a reader skims a narrator's lecture and still
+wants to see the place, so the answer is the place seen through a
+person, not less of it. **Skimmed or bored** and a "no" under **Would
+you turn the page?** are a scene problem to fix before anything else.
+Fix them all, then — when anything in the first five sections or the
+page-turn answer was serious — have a fresh reader read the fixed
 chapter. Keep the report beside the chapter at
 `books/<book>/edit_logs/first_read_chNN.md`.

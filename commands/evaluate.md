@@ -20,6 +20,7 @@ reads:
   - books/{book}/voice.md
   - books/{book}/outline.md
   - books/{book}/design.md
+  - books/{book}/cast.md
   - books/{book}/chapters/ch_{chapter}.md
   - books/{book}/chapters/*.md
   - books/{book}/chapters/ch_*.summary.md
@@ -250,7 +251,7 @@ or `.autonovel/eval_logs/<timestamp>_series.json` for `--phase series`.
    `character_voice`, `plants_seeded`, `prose_quality`, `continuity`,
    `canon_compliance`, `lore_integration`, `engagement`,
    `irreversible_change`, `show_dont_tell_ratio`, `concreteness`,
-   `register`. Each emits
+   `register`, `character_depth`, `sense_of_place`. Each emits
    `{score, weakest_moment, fix, note}`. Include
    `three_weakest_sentences`, `three_strongest_sentences`,
    `ai_patterns_detected`, `overall_score`, `weakest_dimension`,
@@ -423,6 +424,39 @@ or `.autonovel/eval_logs/<timestamp>_series.json` for `--phase series`.
    = the concrete specific it should become (name the thing, the
    number, the sensory detail). When the scanner returned no
    candidates, score 9.0 and note `"no vague candidates flagged"`.
+
+   **`character_depth`.** Use `file_read` on
+   `shared/craft/CHARACTER.md` and, when present, `books/{book}/cast.md`.
+   For each person who matters in the chapter, ask the questions of
+   `/autonovel:draft` step 3d: do they want something of their own in
+   the scene; is their contradiction shown in an act rather than named;
+   is a choice under pressure staged where the dossier's `pressure
+   choices` names this chapter; does the viewpoint have an inner life
+   beyond the plot (a feeling refused, a memory, the body, a thought at
+   odds with speech); does each important pair carry its history; does
+   a recurring habit show something new, or only recur? Score 0–10:
+   9–10 when every principal on stage is a person a reader could
+   describe beyond their function; 5–6 when they are a trait and a habit
+   (the courier with his receipts, the vain clerk and his sleeves);
+   under 5 when people exist to deliver plot. `weakest_moment` = the
+   person who reads most as a type, with the line that shows it; `fix` =
+   the act (from the dossier, if present) that would show them whole.
+   Where `books/{book}/edit_logs/first_read_ch{N}.md` has a "Who felt
+   real" section, read it first: a first reader's "a type" outweighs your
+   impression.
+
+   **`sense_of_place`.** For each place in the chapter, could a reader
+   who knows nothing of the period picture it — how big, who ran it,
+   what it lived on, what it looked, sounded and smelled like then — and
+   is that picture given through someone's attention rather than a
+   narrator's lecture (draft step 3c)? A major place's first appearance
+   is held to its set piece (`design.md` `## Places` `set_piece:`, the
+   places notes in `shared/research/notes/`); a return is held to its
+   signature and what has changed. Score 0–10: low when the chapter
+   happens in a named city the reader cannot see, or stops for a
+   guidebook paragraph. `weakest_moment` = the place the reader would
+   least be able to picture; `fix` = the research detail and the
+   viewpoint moment that would show it.
 
    **`irreversible_change` (Stability Trap antidote).** This is
    the named ceiling failure from the Bells production: AI

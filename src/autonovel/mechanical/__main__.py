@@ -14,7 +14,7 @@ Subcommands:
   structure-dossier <book>         Pack outline + summaries + word counts + story_time + scores for structure-review.
   structure-validate <book|json>   Validate structure_review.json + compute the book-level stop-revising gate.
   design-validate <book> [--outline] Check design.md's shape (DESIGN.md Part II); --outline also checks outline.md carries it.
-  newcomers <book> [--chapter N]   New names/terms first seen in each chapter, and how many land in its opening.
+  newcomers <book> [--chapter N]   New names/terms first seen in each chapter, how many land in its opening, and names returning after a gap.
   prolepsis <book>                 Candidate narrator flash-forwards per chapter (for developmental-edit).
   story-map --book <name> [--out P]  One-page HTML story map (synopsis/threads/characters/timeline).
   impact-of <book> [--source N]    Grep chapters for tokens unique to superseded canon facts.
@@ -666,7 +666,8 @@ def _cmd_newcomers(args: argparse.Namespace) -> int:
     if not (book_root / "chapters").is_dir():
         print(f"newcomers: no chapters/ under {book_root}", file=sys.stderr)
         return 2
-    rep = nc.scan_book(book_root, chapter=args.chapter, first_words=args.first_words)
+    rep = nc.scan_book(book_root, chapter=args.chapter, first_words=args.first_words,
+                       gap=args.gap)
     if args.format == "markdown":
         sys.stdout.write(nc.render_markdown(rep))
     else:
@@ -2364,11 +2365,15 @@ def main(argv: list[str] | None = None) -> int:
                      help="Chapter count for --template (default 3).")
     svl.set_defaults(func=_cmd_structure_validate)
     ncp = sub.add_parser("newcomers",
-                         help="New names and terms first seen in each chapter, and how many "
-                              "land in its opening (candidates for the reader's map).")
+                         help="New names and terms first seen in each chapter, how many land "
+                              "in its opening, and names returning after a gap (candidates "
+                              "for the reader's map).")
     ncp.add_argument("book_root", help="Path to the book dir (parent of chapters/).")
     ncp.add_argument("--chapter", type=int, default=None)
     ncp.add_argument("--first-words", type=int, default=500)
+    ncp.add_argument("--gap", type=int, default=2,
+                     help="A name counts as returning when last seen this many chapters "
+                          "earlier or more (default 2: absent from the previous chapter).")
     ncp.add_argument("--format", choices=("json", "markdown"), default="json")
     ncp.set_defaults(func=_cmd_newcomers)
     dvl = sub.add_parser("design-validate",

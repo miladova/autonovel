@@ -235,6 +235,7 @@ wins over the seed and over any earlier direction.
    - signature: <two or three recurring sense details>
    - arrival: <the moment of pressure it is first seen in>
    - only here: <set-piece moments only this place allows>
+   - set_piece: ch N — <the moment the place is shown whole through the viewpoint's eyes: who walks it, guided by whom, wanting what>
 
    ## Terms
    - <institution, office, coin, trade or foreign word>: ch N — <one-line plain gloss>

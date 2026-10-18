@@ -8,6 +8,8 @@ allowed-tools:
   - file_write
 reads:
   - project.yaml
+  - shared/craft/CHARACTER.md
+  - books/{book}/cast.md
   - shared/characters.md
   - shared/canon.md
   - books/{book}/canon.md
@@ -44,8 +46,11 @@ scene.
    lines attributed to them but the fewest in-scene gestures).
 
 2. Use `file_read` on `project.yaml`, `shared/characters.md`,
-   `shared/canon.md`, `books/{book}/canon.md`, and `books/{book}/voice.md`. Confirm the
-   character exists. If not, stop and suggest
+   `shared/canon.md`, `books/{book}/canon.md`, and `books/{book}/voice.md`, and, when
+   present, `books/{book}/cast.md` (the character's dossier) and
+   `shared/craft/CHARACTER.md` (how depth gets onto the page); take the
+   unguarded moment from the dossier's fear, secret or contradiction.
+   Confirm the character exists. If not, stop and suggest
    `/autonovel:add-character --name <name>`.
 
 3. If `--chapter` was omitted, glob `books/{book}/chapters/*.md`

@@ -14,6 +14,7 @@ reads:
   - books/{book}/canon.md
   - shared/craft/*.md
   - books/{book}/voice.md
+  - books/{book}/cast.md
   - books/{book}/briefs/ch{chapter:02d}.md
   - books/{book}/briefs/conversation.md
   - books/{book}/chapters/ch_{chapter}.md
@@ -94,6 +95,16 @@ file blocked a full revision-pass.
    recognisable from a single line of dialogue. If a character's
    line in the prior draft could plausibly belong to any other
    speaker in the book, that's the line to rewrite first.
+
+5a. When `books/{book}/cast.md` exists, use `file_read` on it and on
+   `shared/craft/CHARACTER.md`. The rewrite holds the people on stage to
+   `/autonovel:draft` step 3d: each who matters has a want of their own
+   in the scene, the dossier's contradiction shows in an act, a
+   `pressure choices` entry for this chapter is staged, and its `on the
+   page` line for this chapter is delivered. A brief item quoting a first
+   reader's "Who felt real" or "Couldn't picture" is answered from the
+   dossier and from the places notes (draft step 3c's set piece), not by
+   adding adjectives.
 
 6. Use `file_read` on `books/{book}/chapters/ch_{chapter}.md` (the
    current draft — the raw material the rewrite carves from). This

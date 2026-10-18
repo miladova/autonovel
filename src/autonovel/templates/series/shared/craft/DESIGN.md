@@ -318,7 +318,9 @@ design read it cold (D14).
     the change is caused by the plot.
 - **Design for it.** For each principal the design writes want, fear,
   secret, contradiction, signature, first entrance, function in the
-  web, and arc.
+  web, and arc. That line is enough to plan with and not enough to
+  write a person: `/autonovel:cast` turns it into a dossier
+  (`shared/craft/CHARACTER.md`) before the outline is written.
 
 ## §8 Plants and payoffs
 
@@ -437,6 +439,18 @@ design read it cold (D14).
   telling you the orientation is missing, however rich the texture.
 - **Introduce a major place at a moment of pressure**, at arrival,
   not in a survey; return to it changed.
+- **The set piece: the place shown whole, through someone's eyes.** A
+  reader of historical fiction wants to see the city, and still skims a
+  narrator's lecture about it. The answer is not less of the place but
+  the place walked: the stranger's first day out (the newcomer shown
+  round by a guide who has reasons of his own), the climb to a roof, the
+  market at the hour it is busiest, the procession, the crossing. Mix a
+  sentence of plain fact with what the viewpoint sees, hears, smells and
+  pays for, chosen by what that person wants that day. For each major
+  place the design names the `set_piece:` — the chapter and the moment —
+  so the outline gives it room (roughly 600–1,200 words in its chapter)
+  and the drafter stages it there rather than in a paragraph of
+  orientation.
 - **Density.** Rich description belongs at arrivals, set pieces and
   turns, where the reader has time and wants to see; it thins in the
   chase. A uniformly sparse book reads as a script; a uniformly thick
@@ -550,7 +564,8 @@ design, not the test.
   reader wants answered that is not "what happens next year".
 - **D11 Place (§12, §13a).** Each set piece's place does work in its
   scene; each major place has an orientation (what it was like then), a
-  sensory signature and an arrival at a moment of pressure; every term
+  sensory signature, an arrival at a moment of pressure and a set piece
+  in which it is seen whole through the viewpoint's eyes; every term
   the story depends on is listed under `## Terms` with the chapter that
   explains it.
 - **D12 Earned outcomes (§15).** No major win turns on luck or a
