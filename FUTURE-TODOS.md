@@ -2968,6 +2968,18 @@ panel's book-level questions and `gen-outline`'s spine sections. Left:
   author meant plain; (3) a cross-model first reader (a different model
   family) to cut self-preference; (4) the reader panel should run on the
   first chapters early, not only on the finished book.
+  From the first real run (kingmaker2 ch 1–2, three readers each,
+  ~670k tokens and ~65 minutes for two chapters): (5) the cold reader
+  cannot catch fact slips it has no way to know (the design said "sixty"
+  for a man who was fifty-nine that January), so draft needs a
+  period-facts check: ages and weekdays computed from canon birth dates
+  and the chapter's story_time, journey times checked against distances;
+  (6) every reader skimmed the orientation paragraphs set as blocks
+  ("the story stops for a school lesson"), while the author asks for
+  that picture of the period, so step 3c should say to deliver it through
+  the scene (what the character sees on the road, says, or needs at that
+  moment) rather than as a narrator's paragraph; (7) cap the loop at two
+  readers unless the second still finds someone lost, and log the cost.
 
 Smaller, from the same audit: cross-family judging for the whole-book
 reviewers (self-preference, §5); a scene map with value/polarity; the
