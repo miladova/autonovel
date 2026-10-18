@@ -2240,7 +2240,24 @@ from the author); design.md `## Places` `orientation:` and `## Terms`
 author who keeps asking "what was it like then?" is missing the map, not
 the street.
 
+### 2026-10-18 — `/autonovel:first-read`: the author must never be the first reader
+
+The author, after finding in the sample chapters the unexplained terms,
+the crowded opening and the not-plain style: "I am not a book editor or
+english major — I shouldn't be the one finding issues like this in the
+writing. why aren't you finding these issues? why isn't autonovel finding
+them?" Cause: every check measured conformance (to voice.md, to the
+register band, to the design), and both the drafter and the editor knew
+what every term meant (the curse of knowledge); nothing read the chapter
+as a newcomer. Shipped `shared/craft/FIRST-READER.md` (seventh craft doc:
+a cold reader who sees only the book so far, never the plan, and reports
+lost / didn't know / read twice / too many at once / skimmed / would you
+turn the page, quoting the text), `/autonovel:first-read` (on demand), and
+a mandatory first-reader step in `draft` (fix every item; a second fresh
+reader when the first found serious items). Tier 1+2 2145.
+
 ## Tests last known green
+- Tier 1 + Tier 2 (deterministic + contracts): 2026-10-18 (first-read) — **2145 passing, 1 skipped** (+3 newcomers, +6 first-read command tests).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-18 (reader's map) — **2136 passing, 1 skipped** (+6: datelines, landscape plates, Terms warnings).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-18 (design) —
   **2130 passing, 1 skipped**. +21: `test_mechanical_design.py` (12),

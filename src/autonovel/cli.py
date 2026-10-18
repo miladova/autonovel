@@ -189,7 +189,7 @@ def _build_parser() -> argparse.ArgumentParser:
             "page-header fixes live) and `shared/craft/` (the craft "
             "reference documents the design / draft / revise / evaluate / edit "
             "commands read: CRAFT.md, PROSE.md, ANTI-SLOP.md, "
-            "ANTI-PATTERNS.md, EDITING.md, DESIGN.md). "
+            "ANTI-PATTERNS.md, EDITING.md, DESIGN.md, FIRST-READER.md). "
             "Neither is meant to be hand-edited; register choices go in "
             "books/<book>/voice.md. Pass `--only` to refresh a different "
             "set of subtrees."

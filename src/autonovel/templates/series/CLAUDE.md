@@ -106,6 +106,10 @@ revision, evaluation and editing commands:
   famous edits, and where an AI writer and editor go wrong. Every claim
   sourced. `/autonovel:developmental-edit` reads it in full every run;
   read its card (§0) before any writing task.
+- `shared/craft/FIRST-READER.md` — the brief for the cold first reader
+  that reads every chapter before anyone else (`/autonovel:draft` runs
+  it; `/autonovel:first-read` on demand): someone who knows nothing
+  about the subject reports what they couldn't follow.
 - `shared/craft/DESIGN.md` — how a novel is designed before it is
   outlined: start from the climax, one action through a long span,
   suspense when the reader knows the outcome, the rival with a plan,

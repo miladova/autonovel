@@ -23,6 +23,7 @@ reads:
   - books/{book}/chapters/ch_{prev}.md
   - books/{book}/chapters/ch_*.summary.md
 writes:
+  - books/{book}/edit_logs/first_read_ch{chapter}.md
   - books/{book}/chapters/ch_{chapter}.md
   - books/{book}/chapters/ch_{chapter}.summary.md
   - books/{book}/pending_canon.md
@@ -278,6 +279,22 @@ required reads — surface the error and stop, don't retry.
    foreign word is explained in plain words where it first appears, and
    that the opening doesn't introduce more than about three new names;
    fix the draft where it doesn't.
+
+   **First reader** (always, before the summary). Use `file_read` on
+   `shared/craft/FIRST-READER.md` and spawn, with `task`, one fresh
+   heavy-tier reader exactly as that brief says: it is given only this
+   chapter and the earlier chapters (the last three in full and the
+   rest as summaries when the book is long) — never the outline,
+   design, research, voice file or your notes — and it reports in the
+   brief's seven sections, quoting the text. Save its report at
+   `books/{book}/edit_logs/first_read_ch{chapter}.md`. Then fix every
+   item in its sections 1–4 (lost, didn't know, read twice, too many at
+   once) in the chapter, and treat a section-5 stall or a "no" in
+   section 6 as a scene to rework before anything else. When the report
+   had serious items, spawn a second fresh reader on the fixed chapter
+   and fix what it finds. Your own checks can't see what you already
+   know; this reader can. The author must never be the first person to
+   find an unexplained word or a sentence that has to be read twice.
 
    **Precedence.** The `shared/craft/` documents are series-wide
    defaults. Where `books/{book}/voice.md` Parts 1–3 explicitly

@@ -35,7 +35,8 @@ they are the *prompt material*, not project documentation):
 
 - [`CRAFT.md`](CRAFT.md), [`PROSE.md`](PROSE.md),
   [`ANTI-SLOP.md`](ANTI-SLOP.md), [`ANTI-PATTERNS.md`](ANTI-PATTERNS.md),
-  [`EDITING.md`](EDITING.md), [`DESIGN.md`](DESIGN.md).
+  [`EDITING.md`](EDITING.md), [`DESIGN.md`](DESIGN.md),
+  [`FIRST-READER.md`](FIRST-READER.md).
   The repo-root files are symlinks; the source of truth is
   `src/autonovel/templates/series/shared/craft/`, which
   `autonovel new-series` copies into every series as `shared/craft/`

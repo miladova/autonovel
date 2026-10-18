@@ -2957,6 +2957,18 @@ panel's book-level questions and `gen-outline`'s spine sections. Left:
   plain English; (3) terms in design.md `## Terms` not yet explained by
   their chapter.
 
+- **The author must never be the first reader (2026-10-18: "I am not a
+  book editor or english major — I shouldn't be the one finding issues
+  like this").** Shipped: `/autonovel:first-read` and the first-reader
+  step in `draft` (FIRST-READER.md). Left: (1) `revise` and
+  `revision-pass` should run the same reader on the revised chapter;
+  (2) `voice-discovery` should offer the author two or three contrasting
+  sample openings (plain / literary / pacy) to choose from instead of the
+  designer choosing — "modern" was read as literary-modern when the
+  author meant plain; (3) a cross-model first reader (a different model
+  family) to cut self-preference; (4) the reader panel should run on the
+  first chapters early, not only on the finished book.
+
 Smaller, from the same audit: cross-family judging for the whole-book
 reviewers (self-preference, §5); a scene map with value/polarity; the
 thriller contract checks (TH1–TH7); an aim test in `review.md`'s critic

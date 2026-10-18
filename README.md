@@ -549,6 +549,11 @@ Three categories. Full reference: [`docs/commands.md`](docs/commands.md).
   per chapter and a 1–5 structure score kept separate from prose;
   `review`'s stop-revising verdict waits on it, and
   `revision-pass --chapters structural` acts on its candidates.
+  `first-read` is a cold reader for one chapter — someone who knows
+  nothing about the subject reports every word, name and sentence they
+  couldn't follow and whether they'd turn the page; `draft` runs it on
+  every new chapter and fixes what it finds, so the author is never the
+  first to find an unexplained term.
   `developmental-edit` is the editor's read: one reader reads the
   whole book in order, cold, keeps notes per chapter, counts what the
   diagnosis rests on, and writes you a ranked letter on the story —
@@ -773,7 +778,7 @@ autonovel/
     fixtures/
       tiny-series-{historical,scifi,literary,mystery,thriller,romance,fantasy,horror}/
       bells-reference/      # Tier-4 regression — populated from the autonovel/bells branch
-  CRAFT.md, PROSE.md, ANTI-SLOP.md, ANTI-PATTERNS.md, EDITING.md, DESIGN.md
+  CRAFT.md, PROSE.md, ANTI-SLOP.md, ANTI-PATTERNS.md, EDITING.md, DESIGN.md, FIRST-READER.md
                             # prompt material consumed by writer/judge — symlinks to
                             # src/autonovel/templates/series/shared/craft/, which
                             # new-series / refresh-templates copy into every series

@@ -1,0 +1,1 @@
+src/autonovel/templates/series/shared/craft/FIRST-READER.md

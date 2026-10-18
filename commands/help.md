@@ -352,6 +352,8 @@ Book-level (after a full draft or a sweep — every chapter can score
 well while the book is a string of episodes):
 
   /autonovel:developmental-edit --book <name>   (an editor's read + letter)
+  /autonovel:first-read <N> --book <name>       (a cold reader: what a newcomer
+                                                 can't follow; draft runs it)
   /autonovel:structure-review --book <name>
   /autonovel:revision-pass --chapters structural --book <name>
 
