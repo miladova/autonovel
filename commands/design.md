@@ -298,7 +298,15 @@ wins over the seed and over any earlier direction.
    answer that exposes a fault. Record the reader's answers, and what
    you changed, in the `D14` line. D14 passes only when the reader's
    one-sentence book matches the pitch and question and no sequence is
-   skippable.
+   skippable. **If the first read changed the design materially** (the
+   climax, the opponent, the shape, a cut sequence), spawn a second,
+   fresh cold reader on the revised design, with the same questions and
+   two more — is the climax's temptation real at that hour, and does
+   the design contradict itself anywhere — and change the design again
+   for what it finds. On the first book designed this way the second
+   read found a temptation that could not tempt and a rule the design
+   had already broken, both missed by the first. Record both reads in
+   D14.
 
 9. **Validate.** Use `bash`:
 

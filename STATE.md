@@ -2205,6 +2205,21 @@ re-design. Decision: the validator checks shape only; whether the design
 is good is the designer's and the cold reader's call (no brittle
 quality gate).
 
+### 2026-10-18 — first real run of `/autonovel:design` (kingmaker2)
+
+Used on kingmaker → kingmaker2 (new isolated book; design.md v3, 19-chapter
+outline, voice.md, book canon, sample ch 1–2). Fixes it forced: plant lines
+that don't parse are errors (not silent); the rival's surname taken from his
+name, not his description; voice-discovery reads design.md (## Voice is the
+brief); draft and evaluate take chapter length from design.md
+(target_words / chapters); the design command requires a second cold read
+when the first changes the design materially — on kingmaker2 the second
+read found the climax's temptation could not tempt and the design broke its
+own rule earlier, both missed by the first. The drafter (Opus, via
+/autonovel:draft bound to the design) produced chapters at FK 7.3/7.7 with
+fully contracted narration and no prolepsis on the first try, and needed
+one factual fix (the ducat–gulden rate).
+
 ## Tests last known green
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-18 (design) —
   **2130 passing, 1 skipped**. +21: `test_mechanical_design.py` (12),
