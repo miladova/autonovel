@@ -12,6 +12,7 @@ reads:
   - shared/characters.md
   - books/{book}/seed.txt
   - books/{book}/outline.md
+  - books/{book}/design.md
   - books/{book}/voice.md
 writes:
   - books/{book}/voice.md
@@ -52,6 +53,14 @@ they refuse to name.
 4. Use `file_read` on `books/{book}/seed.txt` and
    `books/{book}/outline.md`. A seed about grief reads differently from a
    seed about appetite; the outline's pacing shapes cadence.
+
+4a. Use `file_read` on `books/{book}/design.md` if it exists
+    (`/autonovel:design` writes it). Its `## Voice` section is the brief:
+    the register, rhythm, viewpoint plan, density of description,
+    interiority and bans were decided there from the author's stated
+    preferences, and Part 2 elaborates them — never contradicts them. Its
+    `## Cast` entries (want, contradiction, signature) are the source for
+    Part 4's fingerprints, and its `## Places` signatures feed the palette.
 
 5. Use `file_read` on `books/{book}/voice.md`. Keep Part 1 (series voice)
    verbatim.
