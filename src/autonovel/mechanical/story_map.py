@@ -1550,7 +1550,34 @@ document.addEventListener('click',function(ev){
 """
 
 
-def render_html(sm: StoryMap, *, out_dir: Path | None = None) -> str:
+def find_diff_page(out_dir: Path) -> tuple[str, dict[int, int]] | None:
+    """The newest `/autonovel:diff` page beside the story map, as
+    (relative href, {chapter: number of changes}) read from its JSON
+    sidecar, so each synopsis entry can jump to that chapter's changes.
+    None when there is no diff page with a readable sidecar."""
+    try:
+        pages = sorted((p for p in out_dir.glob("diff_*.html")
+                        if p.with_suffix(".json").is_file()),
+                       key=lambda p: p.stat().st_mtime, reverse=True)
+    except OSError:
+        return None
+    for page in pages:
+        try:
+            data = json.loads(page.with_suffix(".json").read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            continue
+        counts = {int(c["chapter"]): int(c.get("hunks") or 0)
+                  for c in data.get("chapters") or []
+                  if isinstance(c, dict) and c.get("chapter") is not None}
+        return page.name, counts
+    return None
+
+
+def render_html(sm: StoryMap, *, out_dir: Path | None = None,
+                diff_page: tuple[str, dict[int, int]] | None = None) -> str:
+    """`diff_page` = (href, {chapter: changes}) from the diff page this
+    map sits beside; adds a link to it in the header and a "N changes"
+    link on each changed chapter."""
     cols = sm.columns
     by_ch = {c.chapter: c for c in sm.chapters}
     span = sm.span
@@ -1568,7 +1595,10 @@ def render_html(sm: StoryMap, *, out_dir: Path | None = None) -> str:
                f"<title>Story map — {_e(sm.title)}</title><style>{_CSS}</style></head><body>")
     out.append('<header class="top"><div class="wrap">'
                f'<p class="eyebrow">Story map · {_e(sm.book)}</p><h1>{_e(sm.title)}</h1>'
-               f'<p class="facts">{" · ".join(_e(f) for f in facts)}</p></div></header>'
+               f'<p class="facts">{" · ".join(_e(f) for f in facts)}</p>'
+               + (f'<p class="facts">What changed: <a href="{_e(diff_page[0])}">'
+                  f'{_e(diff_page[0])}</a></p>' if diff_page else "")
+               + '</div></header>'
                '<div class="tabbar"><nav class="tabs" aria-label="Story map sections">'
                '<a href="#synopsis">Synopsis</a><a href="#threads">Threads</a>'
                '<a href="#characters">Characters</a><a href="#timeline">Timeline &amp; places</a>'
@@ -1606,6 +1636,10 @@ def render_html(sm: StoryMap, *, out_dir: Path | None = None) -> str:
                    f'{_e(c.title or f"Chapter {c.chapter}")}</h3>'
                    f'<span class="meta">{" · ".join(_e(m) for m in meta)}'
                    + (f' · <a href="{_e(link)}">chapter file</a>' if link else "")
+                   + (f' · <a href="{_e(diff_page[0])}#file-ch{c.chapter:02d}">'
+                      f'{diff_page[1][c.chapter]} change'
+                      f'{"s" if diff_page[1][c.chapter] != 1 else ""}</a>'
+                      if diff_page and diff_page[1].get(c.chapter) else "")
                    + "</span>")
         if c.plot:
             out.append(f'<p class="plot">{_inline_md(c.plot)}</p>')
@@ -1923,9 +1957,11 @@ def default_output_path(book_root: Path) -> Path:
 
 
 def write_story_map(sm: StoryMap, *, out: Path | None = None,
-                    fmt: str = "html") -> dict:
+                    fmt: str = "html",
+                    diff_page: tuple[str, dict[int, int]] | None = None) -> dict:
     """Write story_map.html (+ story_map.json sidecar) — or only the JSON
-    when `fmt == "json"` — and return the summary dict the CLI prints."""
+    when `fmt == "json"` — and return the summary dict the CLI prints.
+    `diff_page` defaults to the newest diff page in the same folder."""
     target = Path(out) if out else default_output_path(sm.book_root)
     if target.suffix.lower() not in (".html", ".htm", ".json"):
         target = target / "story_map.html"
@@ -1936,11 +1972,15 @@ def write_story_map(sm: StoryMap, *, out: Path | None = None,
                          encoding="utf-8")
     wrote_html = None
     if fmt == "html":
-        html_path.write_text(render_html(sm, out_dir=html_path.parent), encoding="utf-8")
+        if diff_page is None:
+            diff_page = find_diff_page(html_path.parent)
+        html_path.write_text(render_html(sm, out_dir=html_path.parent, diff_page=diff_page),
+                             encoding="utf-8")
         wrote_html = html_path
     return {
         "html": str(wrote_html.resolve()) if wrote_html else None,
         "url": wrote_html.resolve().as_uri() if wrote_html else None,
+        "diff_page": diff_page[0] if wrote_html and diff_page else None,
         "json": str(json_path.resolve()),
         "chapters": len(sm.chapters),
         "threads": len(sm.threads),

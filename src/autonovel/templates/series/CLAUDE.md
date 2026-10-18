@@ -235,7 +235,9 @@ each of these and the workaround is in the codebase:
   `books/<name>/edit_logs/` — word-level changes in context, next/prev
   jumping — and prints its path; hand the user that path rather than
   pasting `git diff` output. `--annotate` adds a one-line *why* per
-  change from the brief / talk turn / review item.
+  change from the brief / talk turn / review item. The same run
+  rebuilds `story_map.html` (synopsis, threads, characters, timeline,
+  places) beside it, and the two pages link each other.
 - Run `/autonovel:dialogue --book <name>` for the dialogue-
   mechanics linter (adverb tags, said-bookisms, stutters).
 - Run `/autonovel:period-register --book <name>` for a roll-up

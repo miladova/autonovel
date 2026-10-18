@@ -2154,7 +2154,24 @@
   generator, not a gate). `/autonovel:next` suggests the read on a
   drafted book (MEDIUM) and a re-read after chapters change (LOW).
 
+### 2026-10-18 — `/autonovel:diff` rebuilds and links the story map
+
+The author opened the diff page expecting the storyline, characters and
+places there ("I thought they were going there?"). The story map was a
+separate page nothing linked, and had never been built for kingmaker:
+built in parallel, the cross-link stayed a FUTURE-TODO. Now
+`diff-chapters` rebuilds `story_map.html` beside every diff page and the
+two link each other (toolbar button + per-chapter links in the diff;
+"N changes" on changed chapters in the map; a standalone story-map run
+links the newest diff in its folder). A story-map failure is reported in
+the JSON and never fails the diff. Lesson: a tool built for the author
+is not shipped until it is reachable from the page the author already
+opens.
+
 ## Tests last known green
+- Tier 1 + Tier 2 (deterministic + contracts): 2026-10-18 (later) —
+  **2109 passing, 1 skipped**. +4: `_resolve_writes` glob test and
+  `test_diff_story_map_links.py` (3).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-18 —
   **2105 passing, 1 skipped**. +20 over the 2085 mark:
   `test_mechanical_prolepsis.py` (10), four `/autonovel:next`

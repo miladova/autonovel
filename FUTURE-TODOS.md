@@ -2848,8 +2848,6 @@ prose ≈ 8 / 10, with investigation-heavy plots).
 
 ## Story-map follow-ups (story-map shipped 2026-10-17)
 
-- Cross-link `story_map.html` chapter anchors with the `/autonovel:diff`
-  page (both are on master since 2026-10-17; they were built in parallel).
 - `/autonovel:dashboard` (and the TUI sparkline) read `tension` only from a
   `--full` eval log; kingmaker's per-chapter logs carry `tension` for ch 1–9
   but the dashboard shows none. story-map already falls back to the

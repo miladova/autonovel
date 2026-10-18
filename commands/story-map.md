@@ -159,6 +159,12 @@ edit it by hand and re-run.
    `grid_text`. Thread source order: `threads.md` → a `## Threads`
    ledger in `outline.md` → the outline's `events:` ids.
 
+   When a `/autonovel:diff` page (`diff_*.html` with its `.json`) is in
+   the same folder, the newest one is linked from the map's header and
+   each changed chapter in the synopsis gets an "N changes" link into
+   it (`diff_page` in the JSON). `/autonovel:diff` rebuilds this map
+   itself on every run, so the two pages always link each other.
+
 5. **Report** to the user, in this order:
    - The page: `Open: <html>` and the `<url>` on the next line. This is
      the deliverable; never suggest a shell command to view it.

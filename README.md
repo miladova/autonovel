@@ -388,7 +388,9 @@ read: it writes one HTML page (path printed) with the word-level
 edits shown inside their paragraphs, unchanged text folded, and
 `j`/`k` jumping from change to change — no re-reading the book and
 no `git diff`. `--annotate` adds a one-line *why* per change, traced
-to the brief, talk turn or review item that asked for it.
+to the brief, talk turn or review item that asked for it. The same
+run rebuilds the story map (synopsis, plot threads, characters,
+timeline, places) beside it, and the two pages link each other.
 
 Want a long-running window on the series state instead of one-shot
 commands? `autonovel tui` (in a separate terminal from the series

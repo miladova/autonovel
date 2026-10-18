@@ -331,7 +331,10 @@ Writes books/<name>/edit_logs/diff_<from>_<to>.html — open it in a
 browser: word-level changes inside their paragraphs, unchanged text
 folded, j/k jumps change to change ("change N of M"), word deltas
 per chapter. Add --annotate for a one-line "why" per change traced
-to the brief / talk turn / review item that asked for it.
+to the brief / talk turn / review item that asked for it. The same
+run rebuilds story_map.html (synopsis, threads, characters, timeline,
+places) beside it: a Story map button in the diff toolbar, and each
+changed chapter in the map links back to its changes.
 
 Book-level (after a full draft or a sweep — every chapter can score
 well while the book is a string of episodes):

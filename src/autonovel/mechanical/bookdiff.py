@@ -1340,6 +1340,7 @@ a { color: var(--link); }
   border: 1px solid var(--rule); background: var(--bg); color: var(--fg); cursor: pointer; }
 .toolbar button:hover { border-color: var(--accent); }
 .toolbar label { white-space: nowrap; color: var(--muted); }
+.toolbar .maplink { white-space: nowrap; font-weight: 600; }
 .counter { font-variant-numeric: tabular-nums; white-space: nowrap; }
 #navtoggle { display: none; }
 .layout { display: grid; grid-template-columns: 18rem minmax(0, 1fr); }
@@ -1638,7 +1639,8 @@ def _render_flow(f: FileDiff, *, context: int, total: int) -> str:
     return "\n".join(out)
 
 
-def _file_section(f: FileDiff, *, context: int, total: int) -> str:
+def _file_section(f: FileDiff, *, context: int, total: int,
+                  story_map_href: str | None = None) -> str:
     title = f.label + (f" — {f.title}" if f.title and f.kind == "chapter" else "")
     badge = (f' <span class="badge {f.status}">{f.status}</span>'
              if f.status in ("added", "removed") else "")
@@ -1650,7 +1652,10 @@ def _file_section(f: FileDiff, *, context: int, total: int) -> str:
         f'<section class="file st-{f.status}{" doc" if f.kind != "chapter" else ""}" '
         f'id="file-{_esc(f.key)}">',
         f'<h2>{_esc(title)}{badge}</h2>',
-        f'<p class="meta">{_esc(f.file)} · {stats}</p>',
+        f'<p class="meta">{_esc(f.file)} · {stats}'
+        + (f' · <a href="{_esc(story_map_href)}#ch-{f.chapter}">this chapter in the '
+           f'story map</a>' if story_map_href and f.kind == "chapter" and f.chapter else "")
+        + '</p>',
     ]
     if f.why:
         parts.append(f'<div class="file-why"><b>What changed:</b> {_esc(f.why)}</div>')
@@ -1685,8 +1690,11 @@ def _sidebar(report: DiffReport) -> str:
     return "\n".join(out) or '<p class="note">No changes.</p>'
 
 
-def render_html(report: DiffReport, *, context: int = 1) -> str:
-    """One self-contained page: inline CSS + JS, no external requests."""
+def render_html(report: DiffReport, *, context: int = 1,
+                story_map_href: str | None = None) -> str:
+    """One self-contained page: inline CSS + JS, no external requests.
+    `story_map_href` (the story map written beside it) adds a Story map
+    link to the toolbar and to every chapter's heading line."""
     t = report.totals()
     total = t["hunks"]
     title = f"{report.book}: {report.old.label} → {report.new.label}"
@@ -1733,7 +1741,8 @@ def render_html(report: DiffReport, *, context: int = 1) -> str:
                      f"changed since they were written.")
 
     body: list[str] = []
-    chapter_secs = [_file_section(f, context=context, total=total)
+    chapter_secs = [_file_section(f, context=context, total=total,
+                                  story_map_href=story_map_href)
                     for f in report.chapters if f.hunks or f.status != "unchanged"]
     body += chapter_secs
     if report.foundation:
@@ -1761,6 +1770,7 @@ def render_html(report: DiffReport, *, context: int = 1) -> str:
   <button type="button" id="prev" title="Previous change (k or p)">◀ Prev</button>
   <span class="counter">change <b id="cur">–</b> of <b id="total">{total}</b></span>
   <button type="button" id="next" title="Next change (j or n)">Next ▶</button>
+  {f'<a class="maplink" href="{_esc(story_map_href)}" title="Synopsis, threads, characters, timeline and places">Story map</a>' if story_map_href else ''}
   <label title="Expand every unchanged paragraph (e)"><input type="checkbox" id="showall"> <span class="long">show all </span>context</label>
 </div>
 <div class="layout">
@@ -1895,9 +1905,31 @@ def add_arguments(p: argparse.ArgumentParser) -> None:
                    help="Include voice/outline/canon diffs (default: on unless --chapters).")
     p.add_argument("--context", type=int, default=1,
                    help="Unchanged paragraphs shown around each change (default 1).")
+    p.add_argument("--story-map", action=argparse.BooleanOptionalAction, default=True,
+                   help="Also rebuild story_map.html (synopsis, threads, characters, "
+                        "timeline, places) beside the diff page and link the two "
+                        "(default on; html format only).")
     p.add_argument("--threshold", type=float, default=DEFAULT_THRESHOLD,
                    help="Similarity ratio for showing an old/new paragraph pair as one "
                         f"edited paragraph (default {DEFAULT_THRESHOLD}).")
+
+
+def _write_story_map_beside(series_root: Path, book: str, report: DiffReport,
+                            html_path: Path) -> dict:
+    """Rebuild story_map.html in the diff page's folder, linked to this
+    diff. A story-map failure never fails the diff: it comes back as
+    {"html": None, "error": ...} and the diff page simply has no link."""
+    from .story_map import build_story_map, write_story_map
+    counts = {f.chapter: len(f.hunks) for f in report.chapters
+              if f.chapter is not None and f.hunks}
+    try:
+        sm = build_story_map(series_root / "books" / book, series_root=series_root)
+        out = write_story_map(sm, out=html_path.parent / "story_map.html",
+                              diff_page=(html_path.name, counts))
+    except Exception as e:  # noqa: BLE001 — the diff is the product here
+        return {"html": None, "error": f"{type(e).__name__}: {e}"}
+    return {"html": out["html"], "open": _open_hint(Path(out["html"])),
+            "warnings": out["warnings"]}
 
 
 def cli(args: argparse.Namespace) -> int:
@@ -1936,10 +1968,16 @@ def cli(args: argparse.Namespace) -> int:
     json_path.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n",
                          encoding="utf-8")
     wrote_html = None
+    story_map: dict | None = None
     if args.format == "html":
         html_path.parent.mkdir(parents=True, exist_ok=True)
-        html_path.write_text(render_html(report, context=max(0, args.context)),
-                             encoding="utf-8")
+        if getattr(args, "story_map", True):
+            story_map = _write_story_map_beside(series_root, book, report, html_path)
+        html_path.write_text(
+            render_html(report, context=max(0, args.context),
+                        story_map_href=("story_map.html"
+                                        if story_map and story_map.get("html") else None)),
+            encoding="utf-8")
         wrote_html = html_path
     bookmark = write_bookmark(series_root, book, report.new) if args.mark_read else None
 
@@ -1957,6 +1995,7 @@ def cli(args: argparse.Namespace) -> int:
         "why_applied": report.why_applied,
         "why_stale": report.why_stale,
         "bookmark": bookmark,
+        "story_map": story_map,
         "chapters": [
             {"chapter": f.chapter, "title": f.title, "status": f.status,
              "hunks": len(f.hunks), "words_added": f.words_added,

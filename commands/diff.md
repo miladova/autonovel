@@ -24,6 +24,8 @@ writes:
   - books/{book}/edit_logs/diff_*.json
   - books/{book}/edit_logs/diff_*.why.json
   - books/{book}/edit_logs/last_read.json
+  - books/{book}/edit_logs/story_map.html
+  - books/{book}/edit_logs/story_map.json
 context_mode: book
 ---
 
@@ -41,6 +43,16 @@ the ◀ ▶ buttons) jumping from change to change with a
 whole-book word-count deltas. Chapter summaries and the book's
 `voice.md` / `outline.md` / `canon.md` (plus `shared/canon.md`) are
 diffed in a "Summaries and foundation" section after the chapters.
+
+The same run rebuilds the book's **story map**
+(`books/{book}/edit_logs/story_map.html` with its data file
+`books/{book}/edit_logs/story_map.json`, as `/autonovel:story-map`
+writes them: synopsis in reading order, plot threads, characters,
+timeline and places) beside the diff page and links the two: a
+**Story map** button in the diff toolbar, "this chapter in the story
+map" on every chapter heading, and "N changes" on every changed
+chapter of the story map's synopsis. So the author reads where the
+story goes and what changed in one place. `--no-story-map` skips it.
 
 Versions it can compare:
 
@@ -87,8 +99,11 @@ a change nobody asked for stands out.
    `\\wsl.localhost\…` form), `why_path`, `from` / `to` (each with a
    `pinned` value naming that exact version), `hunks`,
    `chapters_changed`, `words_added`, `words_removed`, `net_words`,
-   `chapters` (one row per changed chapter) and `bookmark` (when
-   `--mark-read` wrote `books/{book}/edit_logs/last_read.json`).
+   `chapters` (one row per changed chapter), `bookmark` (when
+   `--mark-read` wrote `books/{book}/edit_logs/last_read.json`) and
+   `story_map` (`html`, `open`, `warnings`, or `error` when the map
+   could not be built — the diff page is still written, without the
+   link).
    Exit code 2 means a version did not resolve (unknown tag, no git
    repository, no such checkpoint): show the helper's stderr message
    and stop.
@@ -150,7 +165,12 @@ a change nobody asked for stands out.
    | Chapters changed | <chapters_changed> of <chapters_compared>: <list of chapter numbers, "added"/"removed" marked> |
    | Words | +<words_added> −<words_removed> (net <net_words>) |
    | Bookmark | moved to <bookmark.sha short or ref> / unchanged |
+   | Story map | <story_map.open>, linked from the diff page (or the error) |
    ```
+
+   If `story_map.warnings` mentions missing summaries, add one line:
+   the synopsis has gaps until `/autonovel:summarize-chapter --stale
+   --book {book}` runs.
 
    Then one line: "In the page: `j`/`k` jump between changes, `e`
    shows all context." If `from.note` is set (e.g. "no last-read
@@ -158,8 +178,8 @@ a change nobody asked for stands out.
    changes, say so in one line and skip the table.
 
 5. Do not edit chapters or any other book file. This command only
-   writes the diff page, its JSON and why sidecars, and (with
-   `--mark-read`) the bookmark.
+   writes the diff page, its JSON and why sidecars, the story map
+   beside it, and (with `--mark-read`) the bookmark.
 </workflow>
 
 <acceptance>
