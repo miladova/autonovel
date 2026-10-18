@@ -2241,6 +2241,7 @@ author who keeps asking "what was it like then?" is missing the map, not
 the street.
 
 ## Tests last known green
+- Tier 1 + Tier 2 (deterministic + contracts): 2026-10-18 (reader's map) — **2136 passing, 1 skipped** (+6: datelines, landscape plates, Terms warnings).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-18 (design) —
   **2130 passing, 1 skipped**. +21: `test_mechanical_design.py` (12),
   three `/autonovel:next` design tests, 6 per-command tests for
