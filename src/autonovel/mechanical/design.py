@@ -482,7 +482,9 @@ def check_design(d: Design, *, outline_text: str | None = None) -> Report:
         if q and oq and _canon(oq) != _canon(q):
             warn("outline ## Spine question differs from design.md's dramatic question")
         if opp and appears:
-            surname = opp.split()[-1].strip(",.")
+            # "Ambrosius Höchstetter (b. 1463), head of …" → "Höchstetter"
+            bare = re.split(r"[(,;—–]", opp, maxsplit=1)[0].strip() or opp
+            surname = bare.split()[-1].strip(",.")
             for c in appears:
                 e = bind.get(c)
                 if e is not None and surname.lower() not in e["text"].lower():

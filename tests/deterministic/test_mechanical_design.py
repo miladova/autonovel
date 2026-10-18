@@ -244,3 +244,13 @@ def test_malformed_plant_line_is_an_error_not_silence(tmp_path: Path) -> None:
                        "- P4 the jewel | plant: ch 5 (the pawn) | payoff: ch 12")
     rep = design.check(_book(tmp_path, bad))
     assert any("cannot parse" in e and "P4" in e for e in rep.errors)
+
+
+def test_opponent_name_with_description_uses_the_surname(tmp_path: Path) -> None:
+    text = GOOD.replace("- name: Ambrosius Rival",
+                        "- name: Ambrosius Rival (b. 1463), head of a house, Jakob's neighbour")
+    outline = "# Outline\n\n" + "\n\n".join(
+        f"## Chapter {n} — T\n- beats:\n  - " + ("Rival waits" if n in (2, 6, 9, 11) else "x")
+        for n in range(1, 13)) + "\n"
+    rep = design.check(_book(tmp_path, text, outline=outline), outline=True)
+    assert not any("should be on stage" in w for w in rep.warnings), rep.warnings
