@@ -647,3 +647,25 @@ def test_foundation_eval_score_unlocks_draft_one(demo_series: SeriesLayout) -> N
 
     # The newest log wins by timestamp prefix even if an older file is touched later.
     assert lifecycle._last_foundation_score(book_root) == 7.82
+
+
+def test_resolve_writes_expands_globs_to_existing_files(tmp_path: Path) -> None:
+    """A glob in `writes:` checkpoints the matching files, never a literal
+    path named `…_*.md` (found on developmental-edit's first run, which
+    archives `editor_letter_<date>.md`)."""
+    from autonovel.adapters.base import CommandDef
+    logs = tmp_path / "books" / "b" / "edit_logs"
+    logs.mkdir(parents=True)
+    (logs / "editor_letter.md").write_text("x", encoding="utf-8")
+    (logs / "editor_letter_2026-10-17.md").write_text("old", encoding="utf-8")
+    cmd = CommandDef(
+        name="autonovel:demo", description="d", argument_hint="--book <short-name>",
+        model_tier="light", allowed_tools=[], reads=[],
+        writes=["books/{book}/edit_logs/editor_letter.md",
+                "books/{book}/edit_logs/editor_letter_*.md",
+                "books/{book}/edit_logs/nothing_*.md"],
+        context_mode="book", body="", source_path=None, raw_frontmatter={})
+    out = lifecycle._resolve_writes(cmd, {"book": "b"}, tmp_path)
+    names = [p.name for p in out]
+    assert names == ["editor_letter.md", "editor_letter_2026-10-17.md"]
+    assert not any("*" in n for n in names)

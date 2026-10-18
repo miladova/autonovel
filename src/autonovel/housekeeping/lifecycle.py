@@ -448,6 +448,13 @@ def _resolve_writes(cmd: CommandDef, ctx: dict[str, str], series_root: Path) -> 
             # Unresolved placeholder — skip rather than crash; the command
             # body is responsible for the real write.
             continue
+        if any(ch in resolved for ch in "*?["):
+            # A glob in `writes:` (e.g. `edit_logs/editor_letter_*.md`)
+            # snapshots the files that exist now; a file the command
+            # creates later is new by definition. Appending the literal
+            # pattern checkpointed a path named "…_*.md".
+            out.extend(sorted(p for p in series_root.glob(resolved) if p.is_file()))
+            continue
         out.append(series_root / resolved)
     return out
 

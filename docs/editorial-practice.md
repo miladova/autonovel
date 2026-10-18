@@ -1,7 +1,7 @@
 # Editorial practice: pipeline audit
 
 The study text this audit measures against — how professional editors,
-agents and critics read, diagnose and fix a novel (§0–§20, sources §25) —
+agents and critics read, diagnose and fix a novel (§0–§20, sources §21) —
 ships to every series as `shared/craft/EDITING.md`
 ([`src/autonovel/templates/series/shared/craft/EDITING.md`](../src/autonovel/templates/series/shared/craft/EDITING.md);
 repo-root symlink `EDITING.md`). `/autonovel:developmental-edit` reads it

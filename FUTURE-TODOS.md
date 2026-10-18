@@ -2905,6 +2905,15 @@ panel's book-level questions and `gen-outline`'s spine sections. Left:
    - It dismissed the book's own frame ("what is he worth?" → the inventory
      with no total) as `motif-spine`. A frame that poses a present-time
      question is a structural device; distinguish it from a recurring image.
+   - Second calibration (after the stage-B revision, 2026-10-18): it
+     counted a cause *stated in a chapter's opening recap paragraph* as
+     "because" (its evidence for 9→10 was the catch-up sentence itself),
+     so it rewards bridges; and it weights a two-year gap at a "because"
+     joint as nothing. Rule to add: a "because" must be enacted by a
+     person in the chapter's scenes; a recap that names the cause is
+     continuity. It also has no line for the opposition's strength or a
+     protagonist who always wins (the developmental-edit letter found
+     both).
    - Prompt bugs the run reported: CRAFT.md section names wrong (§1/§8 are
      subsections); reads `review.json` but the dossier points at
      `review.md`; no rule for reviewer quotes of since-changed text; the
@@ -2946,4 +2955,17 @@ reviewers (self-preference, §5); a scene map with value/polarity; the
 thriller contract checks (TH1–TH7); an aim test in `review.md`'s critic
 stage (Updike rule 1); `structure-review` should read the prose before
 the outline (ground rule order).
+
+## developmental-edit: first-run fixes done, two left (2026-10-18)
+
+Fixed after its first real run on kingmaker: the one-page test now runs
+before the dossier (which carries the outline, summaries and scores); the
+previous letter *and notes* are moved to mtime-stamped names unread;
+ledger last, word cap excludes it; step references; no author quote in
+the prompt or EDITING.md; `_resolve_writes` expands globs instead of
+checkpointing a literal `…_*.md`. Left: (1) `autonovel _end` appends the
+canonical "previous chapter met threshold; advance" rationale to
+whole-book commands where it means nothing — `next_step` should not emit
+a chapter-advance line for book-scope commands; (2) a `--stage` dry-run
+test fixture, so the staging format is pinned by a test.
 

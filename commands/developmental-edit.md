@@ -24,6 +24,7 @@ writes:
   - books/{book}/edit_logs/editor_read_notes.md
   - books/{book}/edit_logs/editor_letter.md
   - books/{book}/edit_logs/editor_letter_*.md
+  - books/{book}/edit_logs/editor_read_notes_*.md
   - books/{book}/briefs/conversation.md
 context_mode: book
 ---
@@ -36,11 +37,10 @@ book is, what must survive revision, what is wrong with the *story* and
 why, and what to do about it in order of effect for the cost.
 
 This command exists because the pipeline's instruments missed what a
-reader saw. On a historical novel the dual-persona review held at 4★ for
-ten passes and the reader panel said all four personas would buy it,
-while the author read the book as "a bunch of short anecdotes, not a
-continuing story building to a climax". The author is not a writer or an
-editor and should not have to be: the editor's judgement is this
+reader saw. A book's dual-persona review can hold at 4★ for many passes
+and its reader panel say every persona would buy it, while the author
+finds the book a string of episodes rather than one story. The author is
+not a writer or an editor and should not have to be: the editor's judgement is this
 command's job. It is not a score and not a gate. Its output is a letter a
 person acts on.
 
@@ -83,7 +83,7 @@ Re-read these before writing the letter.
    count or a list of chapters: how many joints cross a year, how many
    chapters flash forward, how often the protagonist is wrong, where
    each principal first appears, which chapters each opposing force is
-   in. Use the helpers in step 6 for the counts they can make and read
+   in. Use the helpers in step 7 for the counts they can make and read
    the prose to verify every candidate they return.
 5. **Character causation counts as much as plot causation.** A chapter
    that changes a relationship a later chapter's choice depends on is
@@ -92,11 +92,16 @@ Re-read these before writing the letter.
    intention is not evidence of the effect. If the plan says "one wager
    raised four times" and the reader feels four separate wagers, the
    reader is right.
-7. **Recommend story-level moves.** Openings that start on consequence,
-   an opponent who lasts, a frame, a cut or a merge, an error the
-   protagonist must pay for, a question posed earlier. Never recommend
-   a linking sentence at a joint as the fix for a joint, and never a
-   change that breaks the book's own spine or theme to improve a metric.
+7. **Recommend story-level moves.** A question posed earlier, an
+   opponent who lasts and wins sometimes, an error the protagonist must
+   pay for, a choice played on the page, a cut or a merge. Never
+   recommend a linking sentence or a catch-up paragraph at a joint as the
+   fix for a joint: a joint is fixed by what happens in the scenes (a
+   person doing something because of the last chapter), not by a
+   paragraph that says why. Never recommend a change that breaks the
+   book's own spine or theme to improve a metric. A frame is a
+   recommendation only if it carries its own suspense (`EDITING.md` S9);
+   a frame that announces how the life ends is hindsight by structure.
 8. **The record and the author's intent are constraints.** In historical
    fiction the dates and deaths stand; the novel supplies the
    "therefore". Recommendations that change the record say so and why.
@@ -144,12 +149,17 @@ Re-read these before writing the letter.
    missing, stop and tell the author to run
    `autonovel refresh-templates` (or `autonovel doctor` to see why).
 
-3. **Archive the previous letter.** If
-   `books/{book}/edit_logs/editor_letter.md` exists, copy it to
-   `books/{book}/edit_logs/editor_letter_<YYYY-MM-DD>.md` (the date it was
-   written, from its first lines or the file's mtime; `edit_logs/` keeps
-   every past letter) before you overwrite anything.
-   Do not read it yet; step 10 compares against it.
+3. **Archive the previous letter and notes.** Without reading them,
+   use `bash` to move each of `books/{book}/edit_logs/editor_letter.md`
+   and `books/{book}/edit_logs/editor_read_notes.md` that exists to a
+   name stamped with its own mtime to the minute, e.g.
+   `ts=$(date -r books/{book}/edit_logs/editor_letter.md +%Y-%m-%dT%H%M)`
+   then `mv books/{book}/edit_logs/editor_letter.md
+   books/{book}/edit_logs/editor_letter_$ts.md` (likewise
+   `editor_read_notes_$ts.md`; add `-2` if the name is taken).
+   `edit_logs/` keeps every past letter. Moving instead of copying means
+   the new files are written fresh and nothing old is read before
+   step 10 compares against it.
 
 4. **Set up the notes.** Use `file_write` to start
    `books/{book}/edit_logs/editor_read_notes.md` with a header: the
@@ -182,10 +192,24 @@ Re-read these before writing the letter.
    hypotheses about the book's shape. Revise them openly when later
    chapters change your mind; the notes should show the revisions.
 
-6. **The measurement pass.** Use `bash` to run, from the series root:
+6. **The one-page test.** Before any plan, dossier or summary, fill,
+   from the book and your notes alone: the one-sentence pitch (who wants what, against whom,
+   at what cost: `EDITING.md` P1); the dramatic question the reader is
+   waiting on and where it is posed (P2); one action or a life (P3); the
+   controlling idea as "[value] because [cause]" (P4); the genre and its
+   obligatory scenes (P5, G1, and §18 for a thriller); the protagonist's
+   Lie, Want and Need (C2); the opponent who competes for the same prize
+   and his plan (A2, A3); the midpoint's revelation (S5); the climax's
+   choice (E1). Write it under **One page** in the notes. A field you
+   cannot fill from the pages is a decision the book has not made; it
+   belongs in the letter.
+
+7. **The measurement pass.** Only now, use `bash` to run, from the series
+   root (the dossier carries the outline, the chapter summaries and the
+   latest scores, which is why it comes after the one-page test):
    - `autonovel mechanical structure-dossier books/{book} --format json`
      (story-time gaps between chapters, each chapter's position in the
-     book, word counts, cast lines, eval scores);
+     book, word counts, the summaries with their cast lines, eval scores);
    - `autonovel mechanical prolepsis books/{book} --format markdown`
      (candidate narrator flash-forwards per chapter; read each in its
      paragraph and keep the real ones).
@@ -198,18 +222,6 @@ Re-read these before writing the letter.
    which chapters a later chapter's choice depends on (plot or
    relationship). Put the tables in the notes under **Measurements**.
 
-7. **The one-page test.** Before reading any plan, try to fill, from
-   the book alone: the one-sentence pitch (who wants what, against whom,
-   at what cost: `EDITING.md` P1); the dramatic question the reader is
-   waiting on and where it is posed (P2); one action or a life (P3); the
-   controlling idea as "[value] because [cause]" (P4); the genre and its
-   obligatory scenes (P5, G1, and §18 for a thriller); the protagonist's
-   Lie, Want and Need (C2); the opponent who competes for the same prize
-   and his plan (A2, A3); the midpoint's revelation (S5); the climax's
-   choice (E1). Write it under **One page** in the notes. A field you
-   cannot fill from the pages is a decision the book has not made; it
-   belongs in the letter.
-
 8. **The intent pass.** Now read `books/{book}/seed.txt`,
    `books/{book}/outline.md`, `books/{book}/voice.md` and
    `books/{book}/briefs/conversation.md`. Compare intent with what the
@@ -217,12 +229,12 @@ Re-read these before writing the letter.
    (a seed rule that every chapter must open and settle its own stake; a
    voice rule that demands a forward-pointing line per chapter; a staged
    edit that added a scene to pay a clock). Note them under
-   **Causes in the pipeline**. Then compare the One page (step 7) with
+   **Causes in the pipeline**. Then compare the One page (step 6) with
    what the seed and outline intended.
 
 9. **Write the letter.** Use `file_write` to save
-   `books/{book}/edit_logs/editor_letter.md`, 1,800–3,500 words, with
-   these sections:
+   `books/{book}/edit_logs/editor_letter.md`, 1,800–3,500 words (not
+   counting the ledger), with these sections, the ledger always last:
    - `# Editor's letter — <title>` and a first line saying when and how
      the read was done.
    - `## What the book is`: the premise and its real subject, one
@@ -234,9 +246,9 @@ Re-read these before writing the letter.
      one sentence; the evidence (counts, chapters, a quoted line); the
      craft principle and its source in one sentence; what the reader
      experiences because of it. Answer `--focus` directly here. Name
-     the One-page fields (step 7) the book leaves blank.
+     the One-page fields (step 6) the book leaves blank.
    - `## What caused it`: the pipeline rules, staged edits and earlier
-     advice from step 7, plainly, including your own.
+     advice from step 8, plainly, including your own.
    - `## What I recommend, in order of effect for the cost`: numbered.
      Each: the story-level move; the chapters; what it fixes; its cost
      (chapters, rough words); its risk; a direction, concrete enough for
@@ -261,8 +273,9 @@ Re-read these before writing the letter.
    `books/{book}/edit_logs/structure_review.md`,
    `books/{book}/edit_logs/review.md` and
    `books/{book}/edit_logs/reader_panel.json` if they exist, and the
-   archived previous letter from step 3. Append
-   `## Where this read disagrees with the instruments` to the letter:
+   archived previous letter from step 3. Insert
+   `## Where this read disagrees with the instruments` before the
+   ledger:
    for each instrument, what it caught that you also found, what it
    missed, what it got wrong and why (which part of its rubric is
    blind), and any of its proposed fixes that would damage the book.
@@ -316,12 +329,13 @@ Re-read these before writing the letter.
   per quarter of the book, a Measurements section, a One page section
   and a Causes in the pipeline section.
 - `books/{book}/edit_logs/editor_letter.md` exists, is 1,800–3,500
-  words, has every section in steps 9 and 10, answers `--focus` when
-  given, and ends with the recommendations ledger.
+  words without the ledger, has every section in steps 9 and 10,
+  answers `--focus` when given, and ends with the recommendations
+  ledger.
 - Every whole-book claim in the letter cites a count or chapters; at
   least three problems are ones the author has not raised.
-- A previous letter was archived as `editor_letter_<YYYY-MM-DD>.md` before
-  being overwritten.
+- A previous letter and notes were moved to `editor_letter_<stamp>.md`
+  and `editor_read_notes_<stamp>.md` before the new ones were written.
 - With `--stage`, every `in-chapter` ledger row has a queued turn per
   target chapter in `briefs/conversation.md` and its status is
   `staged`; no other row is staged.

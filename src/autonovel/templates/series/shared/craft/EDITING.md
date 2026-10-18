@@ -10,8 +10,8 @@ departures from it belong in that book's `voice.md`.
 Why it exists. The pipeline's own instruments (chapter scores, a
 dual-persona review, a reader panel) can all praise a book's prose and
 miss its story: dialogue that explains to its listener, no felt spine,
-unglossed names, and a book that reads as "a bunch of short anecdotes and
-not a continuing story building to a climax". When that happens it is
+unglossed names, and a book that reads as a string of episodes rather
+than one story building to a climax. When that happens it is
 usually the author, not the instruments, who notices. Professional
 editors, agents and critics have named and fixed these failures for a
 century. This document puts their questions, with sources, where the AI
@@ -51,7 +51,7 @@ memory or a search excerpt and was not checked when this was compiled
 - **Part IV — The commercial thriller** (§18, questions TH1–TH7)
 - **Part V — Case studies of structural editing** (§19)
 - **Part VI — The checklist on one page** (§20)
-- Sources (§25)
+- Sources (§21)
 
 ---
 
@@ -2643,7 +2643,7 @@ one, and know when a text is already tight.
 
 ---
 
-## §25 Sources
+## §21 Sources
 
 Primary craft and theory:
 - Aristotle, *Poetics*, trans. S. H. Butcher, Project Gutenberg #1974,
