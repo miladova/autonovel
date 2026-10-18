@@ -2884,3 +2884,33 @@ panel's book-level questions and `gen-outline`'s spine sections. Left:
 4. **Series level.** `evaluate --phase series` and `series-arc` have no
    cross-book causal chain or ladder; a series whose books are each
    self-contained is the same failure one level up.
+5. **Calibration from the first real run (kingmaker, 2026-10-18: 2/5,
+   gate BLOCK) against a full editor's read (`books/kingmaker/edit_logs/
+   editor_letter.md` in the series).** The reviewer caught the shape the
+   old reviewers missed, but:
+   - It scores plot causation only. Chapters whose load is a relationship
+     (kingmaker 13, 14, 18: the Trevisan reveal, Tucher's confession,
+     Sibylla's grey) came out "weak"/"removable". Add character causation to
+     the link and removability tests: a chapter is load-bearing if a later
+     chapter's choice depends on the state of a relationship it changed.
+   - Narrator prolepsis was one failure mode among five; on the editor's
+     read it was the main cause of the "anecdotes" experience (17 of 24
+     chapters). Add a measured `prolepsis_density` (chapters with a
+     flash-forward past their own story time) to the dossier and make it a
+     cap when high.
+   - Some candidates would raise the because-ratio by breaking the book's
+     declared spine (S2: Jakob tells Tucher the secret price). Candidates
+     must be checked against the seed/voice spine and theme; a linking
+     sentence at a joint is not a fix, a new chapter opening is.
+   - It dismissed the book's own frame ("what is he worth?" → the inventory
+     with no total) as `motif-spine`. A frame that poses a present-time
+     question is a structural device; distinguish it from a recurring image.
+   - Prompt bugs the run reported: CRAFT.md section names wrong (§1/§8 are
+     subsections); reads `review.json` but the dossier points at
+     `review.md`; no rule for reviewer quotes of since-changed text; the
+     `--template` lacks the historical-check, `reviewer_disagreements` and
+     `delta_vs_previous` fields the workflow asks for; `priority`/`fixes`
+     on candidates undefined; weak vs load-bearing boundary unclear;
+     `posed_at_pct` uses chapter start with a strict `>25`; the 400k-token
+     budget rule assumes the agent knows its window; the postamble
+     telemetry paragraph has a garbled sentence.
