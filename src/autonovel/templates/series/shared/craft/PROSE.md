@@ -425,25 +425,36 @@ swift, straightforward fashion."
    enters at psychic distance 2 to 3. A fact the reader needs but no
    character would voice goes in as acknowledged narration at level 1
    to 2, kept short.
-3. No character foresees the future or voices a modern parallel
-   (Darwin's "clairvoyant" fault). The narrator is a different case.
-   A narration that declares a retrospective stance in its voice file
-   may make a *promise line*: one concrete, falsifiable statement of
-   what this moment will turn out to be ("It was the first cipher he
-   ever wrote; he would write one a week for forty years"). Follett's
-   chapter openings and the Sanderson "promise" (CRAFT.md §1) are the
-   model; Vonnegut's rule 8 (give the reader enough to finish the
-   story themselves) is the licence. Limits the sources support: one
-   a chapter at most, tied to the book's spine (the thing the whole
-   book is about), never a moral and never "little did he know"
-   (which withholds the fact while advertising it). Grep-able
-   candidates for the judge, not failures: "would one day," "little
-   did," "centuries later," "would become." A promise line is a
-   callback to the future, not a cause: it never stands in for the
-   chapter happening *because of* the one before it (CRAFT.md §1
-   "Causation, not sequence"), and a book whose chapters are tied
-   together only by promise lines paid later is still a string of
-   episodes.
+3. **The story is lived forward.** No character foresees the future or
+   voices a modern parallel (Darwin's "clairvoyant" fault), and the
+   narrator does not forecast either. Irving Stone: the novelist "may not
+   turn himself into an a posteriori prophet"; stage the story "as though
+   it were happening right now." Mantel: the writer knows the outcome,
+   "so does the reader - but the characters don't", and "the suspense
+   grows in the gap." A narrator's flash-forward ("in 1519 he would…",
+   "thirty years later…", "it was the first of many…") moves the reader
+   from inside the scene to the end of the life looking back, and spends
+   the suspense the scene has just built. A book with one in most
+   chapters reads as remembered episodes of a life already known, which
+   is an anecdote chain however well the chapters are made.
+   Foreshadowing is done inside the story's own time: a planted object, a
+   fear, a question a character asks and nobody answers, a danger the
+   reader can see and the character can't (Hitchcock's bomb;
+   `EDITING.md` V2, V3, H7). The one exception: a narration that
+   declares a retrospective narrator in its voice file may forecast
+   where the forecast sharpens the book's central question into *how*
+   or *why* (Muriel Spark tells us early in *The Prime of Miss Jean
+   Brodie* who will betray Brodie, and the book becomes the why). Then: a
+   handful in the whole book, never at a scene's climax, never a moral,
+   never "little did he know". Candidates for the judge, not failures:
+   "would one day," "years later," "would become," a year past the
+   chapter's story time (`autonovel mechanical prolepsis` lists them).
+   *Decision of 2026-10-18,* replacing the 2026-10-15 rule that allowed
+   one "promise line" a chapter: on the first book it was applied to,
+   flash-forwards in 19 of 24 chapters were the main reason an editor's
+   full read found it a string of anecdotes. A planted detail paid later
+   is still a callback, not a cause (CRAFT.md §1 "Causation, not
+   sequence").
 4. A proper noun the reader cannot place (a town, a fortress, a coin,
    an institution, a battle) is glossed in the sentence it first
    appears in, by the character who needs it: what it is and why it
@@ -566,18 +577,20 @@ pipeline heuristics the book's voice file may override.
   only prompts; "As you know, Bob" exchanges; exchanges that fail all
   four of Stein's questions; a dialogue scene with no physical anchor.
 - §7 Information with no character who needs it now; forward-pointing
-  phrases (candidates: a declared promise line is allowed once a
-  chapter, a character's clairvoyance never); thought-verb thesis
-  openers (as candidates).
+  phrases and narrator forecasts (candidates: `autonovel mechanical
+  prolepsis`; a forecast passes only under a declared retrospective
+  narrator and only where it sharpens the book's central question; a
+  character's clairvoyance never); thought-verb thesis openers (as
+  candidates).
 - §7.4 Unglossed proper nouns: places, fortresses, coins, battles or
   offices named before the sentence says what they are. Quote each.
 - §7.3 / CRAFT §1 Spine: can the reader say, from this chapter alone,
   what the book is about and which step this chapter is? [flag a
-  chapter with no promise line and no named step on a book whose
-  voice file asks for them] This is a chapter-level check of the
+  chapter that names no step of the book's question on a book whose
+  voice file asks for it] This is a chapter-level check of the
   narration. Whether the chapters cause each other is a book-level
   test (CRAFT §1 "Causation, not sequence"; `/autonovel:structure-review`),
-  and a promise line passes nothing there.
+  and a narrator forecast passes nothing there.
 - §8 Chapter ends on reflection or summary rather than the turn or a
   prompt; the same closing device two chapters running.
 
@@ -606,12 +619,17 @@ pipeline heuristics the book's voice file may override.
 - Harris, Robert. Walter Scott Prize interview; Goodreads author Q&A;
   Hot Press and CSMonitor interviews.
 - Hemingway, Ernest. *Death in the Afternoon* (1932).
+- Hitchcock, Alfred, in François Truffaut, *Hitchcock* (1967), p. 52
+  (the bomb under the table); David Bordwell, "Hitchcock, Lessing, and
+  the bomb under the table" (2013).
 - Ingermanson, Randy. "Writing the Perfect Scene."
   advancedfictionwriting.com.
 - Le Guin, Ursula K. *Steering the Craft* (1998; rev. 2015).
 - Leonard, Elmore. "Easy on the Adverbs, Exclamation Points and
   Especially Hooptedoodle." *New York Times*, 16 Jul 2001.
 - Liberman, Mark. "Dialogue proportion." *Language Log*, 29 Dec 2017.
+- Mantel, Hilary. *The Creative Process* interview; NPR *Fresh Air*,
+  26 Nov 2012; Reith Lectures (BBC, 2017).
 - McKee, Robert. *Story* (1997); "Do Your Scenes Turn?" mckeestory.com.
 - Palahniuk, Chuck. "Nuts and Bolts: 'Thought' Verbs." LitReactor,
   12 Aug 2013.
@@ -620,7 +638,9 @@ pipeline heuristics the book's voice file may override.
 - Provost, Gary. *100 Ways to Improve Your Writing* (1985).
 - Scofield, Sandra. *The Scene Book* (2007).
 - Shiner, Lewis, and Bruce Sterling. "Turkey City Lexicon." SFWA.
+- Spark, Muriel. *The Prime of Miss Jean Brodie* (1961).
 - Stein, Sol. *Stein on Writing* (1995); *How to Grow a Novel* (1999).
+- Stone, Irving. "The Biographical Novel" (lecture essay, c. 1957).
 - Swain, Dwight V. *Techniques of the Selling Writer* (1965).
 - Vonnegut, Kurt. *Bagombo Snuff Box* (1999), preface.
 - Williams, Joseph M. *Style: Lessons in Clarity and Grace* (various

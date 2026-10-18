@@ -556,3 +556,44 @@ def test_validate_does_not_mutate_input() -> None:
     before = copy.deepcopy(data)
     sr.validate(data)
     assert data == before
+
+
+# ------------------------------------------- /autonovel:next — developmental-edit
+
+
+def _dev_edit_actions(root: Path, book: str) -> list:
+    acts = next_actions.enumerate_actions(SeriesLayout(root=root), book=book)
+    return [a for a in acts if a.command and "developmental-edit" in a.command]
+
+
+def test_next_suggests_developmental_edit_on_a_drafted_book(tmp_path: Path) -> None:
+    root, book = _series_with_book(tmp_path)
+    found = _dev_edit_actions(root, book)
+    assert len(found) == 1
+    assert found[0].priority == "MEDIUM"
+    assert found[0].command == "/autonovel:developmental-edit --book the-book"
+
+
+def test_next_developmental_edit_silent_below_six_chapters(tmp_path: Path) -> None:
+    root, book = _series_with_book(tmp_path, chapters=5)
+    assert _dev_edit_actions(root, book) == []
+
+
+def test_next_developmental_edit_silent_when_letter_is_fresh(tmp_path: Path) -> None:
+    root, book = _series_with_book(tmp_path)
+    (root / "books" / book / "edit_logs" / "editor_letter.md").write_text(
+        "# Editor's letter\n", encoding="utf-8")
+    assert _dev_edit_actions(root, book) == []
+
+
+def test_next_flags_chapters_changed_since_editor_letter(tmp_path: Path) -> None:
+    root, book = _series_with_book(tmp_path)
+    letter = root / "books" / book / "edit_logs" / "editor_letter.md"
+    letter.write_text("# Editor's letter\n", encoding="utf-8")
+    old = time.time() - 10_000
+    os.utime(letter, (old, old))
+    found = _dev_edit_actions(root, book)
+    assert len(found) == 1
+    assert found[0].priority == "LOW"
+    assert found[0].title.startswith("Re-read")
+    assert "Chapter(s) 1, 2, 3, 4, 5, 6" in found[0].rationale

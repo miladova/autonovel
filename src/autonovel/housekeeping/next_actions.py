@@ -88,6 +88,7 @@ def _actions_for_book(series: SeriesLayout, cfg: project_mod.ProjectConfig,
     out.extend(_summary_stale_actions(book_root, book))
     out.extend(_panel_staleness_actions(book_root, book))
     out.extend(_review_staleness_actions(book_root, book))
+    out.extend(_developmental_edit_actions(book_root, book))
     out.extend(_structure_review_actions(book_root, book))
     out.extend(_typeset_staleness_actions(book_root, book, series.root))
     out.extend(_missing_title_author_actions(cfg, book))
@@ -491,6 +492,67 @@ def _review_staleness_actions(book_root: Path, book: str) -> list[NextAction]:
         rerun_command=f"/autonovel:review --book {book}",
         priority="MEDIUM",
     )
+
+
+def _developmental_edit_actions(book_root: Path, book: str) -> list[NextAction]:
+    """The editor's full read (`/autonovel:developmental-edit`). Two states:
+
+      - no `edit_logs/editor_letter.md` on a drafted book (same threshold
+        as the structure review: ≥6 chapters AND either a whole-book
+        reviewer report exists or every outlined chapter is drafted) →
+        get one;
+      - a letter older than some chapter → the revision it prompted (or
+        any other) has changed the book since the last read; re-read.
+
+    MEDIUM when missing: the reviewers' scores are not an editor's read,
+    and on kingmaker the read found what four stars hid. LOW when stale:
+    a re-read is due but not urgent after every small revise.
+    """
+    chapters = iter_chapter_files(book_root / "chapters")
+    if len(chapters) < _STRUCTURE_REVIEW_MIN_CHAPTERS:
+        return []
+    letter = book_root / "edit_logs" / "editor_letter.md"
+    command = f"/autonovel:developmental-edit --book {book}"
+    if not letter.is_file():
+        edit_logs = book_root / "edit_logs"
+        whole_book_report = any((edit_logs / name).is_file() for name in (
+            "review.md", "opus_review.md", "review.json", "reader_panel.json",
+            "structure_review.json"))
+        if not whole_book_report and not _every_outlined_chapter_drafted(book_root, chapters):
+            return []
+        return [NextAction(
+            priority="MEDIUM",
+            title="Get a developmental editor's full read",
+            command=command,
+            rationale=(
+                f"books/{book} has {len(chapters)} chapters drafted and no "
+                f"edit_logs/editor_letter.md. The panel, the review and the "
+                f"structure review score the book; none of them reads it whole "
+                f"as an editor and writes the author a ranked letter on the "
+                f"story: what must survive, what is wrong and why, what to do "
+                f"first."),
+            book=book,
+        )]
+    newer = [p for p in chapters if p.stat().st_mtime > letter.stat().st_mtime]
+    if not newer:
+        return []
+    nums = []
+    for p in newer:
+        try:
+            nums.append(int(p.stem.split("_")[-1]))
+        except ValueError:
+            continue
+    return [NextAction(
+        priority="LOW",
+        title="Re-read the book (chapters changed since the editor's letter)",
+        command=command,
+        rationale=(
+            f"Chapter(s) {', '.join(map(str, sorted(nums)))} changed after "
+            f"edit_logs/editor_letter.md was written. The next read archives "
+            f"the old letter and says whether the revision did what it "
+            f"recommended."),
+        book=book,
+    )]
 
 
 # A structure review needs a book to judge: below this many drafted

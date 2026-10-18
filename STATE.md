@@ -2130,8 +2130,37 @@
   `_index_latest_per_chapter_eval(key=…)`, `parse_cast_ordered()`,
   `dashboard.build_dashboard`. Kingmaker's outline has no thread ledger;
   its synopsis reads in 18 min full, 2 min skim.
+- 2026-10-18 (the editor's read as a skill; "learn to be the writer,
+  editor and critic"): the author, who is not a writer, said it should not
+  be him supplying review methods, and that the top priority is for the AI
+  itself to learn to write, edit and criticise. A full cold read of
+  kingmaker by the integrator (not delegated) and a ranked developmental
+  letter found what four stars hid: narrator flash-forwards in 19 of 24
+  chapters (the 2026-10-15 promise-line rule, the integrator's own
+  mistake: prolepsis is not foreshadowing), year-plus resets at 14 of 23
+  joints, an unattacked misbelief, a single win-by-noticing engine, no
+  lasting opponent. Decisions: (1) `/autonovel:developmental-edit`
+  encodes that read — one reader, cold, fixed per-chapter notes, a
+  measurement pass, a one-page test, an intent pass, a ranked letter, and
+  comparison with the instruments only afterwards; `--stage` queues
+  in-chapter fixes in `briefs/conversation.md`. (2) The sourced study
+  text (Parts 0–VI, ~22k words: passes, the letter, P/S/SC/C/A/V/T/G/R/O/E
+  questions, historical fiction, the thriller, case studies, where AI
+  editors fail) ships as `shared/craft/EDITING.md` (fifth craft doc);
+  its pipeline audit stays in `docs/editorial-practice.md`. (3) PROSE.md
+  §7.3: the story is lived forward; no narrator forecasts by default
+  (Stone, Mantel), replacing one-promise-line-a-chapter. (4)
+  `autonovel mechanical prolepsis` counts candidate forecasts (candidate
+  generator, not a gate). `/autonovel:next` suggests the read on a
+  drafted book (MEDIUM) and a re-read after chapters change (LOW).
 
 ## Tests last known green
+- Tier 1 + Tier 2 (deterministic + contracts): 2026-10-18 —
+  **2105 passing, 1 skipped**. +20 over the 2085 mark:
+  `test_mechanical_prolepsis.py` (10), four `/autonovel:next`
+  developmental-edit tests, and 6 per-command tests for
+  `/autonovel:developmental-edit` (EDITING.md picked up by the craft-doc
+  tests through `scaffold.CRAFT_DOCS`).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-17 (later) —
   **2085 passing, 1 skipped**. +39 over the 2046 mark:
   `test_mechanical_story_map.py` (33) and 6 per-command tests for

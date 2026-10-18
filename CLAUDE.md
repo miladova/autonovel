@@ -34,7 +34,8 @@ Reference docs consumed by writer/judge prompts (do not edit lightly —
 they are the *prompt material*, not project documentation):
 
 - [`CRAFT.md`](CRAFT.md), [`PROSE.md`](PROSE.md),
-  [`ANTI-SLOP.md`](ANTI-SLOP.md), [`ANTI-PATTERNS.md`](ANTI-PATTERNS.md).
+  [`ANTI-SLOP.md`](ANTI-SLOP.md), [`ANTI-PATTERNS.md`](ANTI-PATTERNS.md),
+  [`EDITING.md`](EDITING.md).
   The repo-root files are symlinks; the source of truth is
   `src/autonovel/templates/series/shared/craft/`, which
   `autonovel new-series` copies into every series as `shared/craft/`
@@ -42,6 +43,10 @@ they are the *prompt material*, not project documentation):
   at `shared/craft/<name>` inside the series (a series session cannot
   see this repo). `PROSE.md` is the register-neutral mechanics
   reference, each rule traced to its source in the craft literature.
+  `EDITING.md` is the study text of how professionals read, diagnose and
+  fix a whole novel, which `/autonovel:developmental-edit` reads every
+  run; its audit of this pipeline against it is
+  [`docs/editorial-practice.md`](docs/editorial-practice.md).
 
 ## Layout
 

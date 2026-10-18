@@ -58,6 +58,8 @@ workflow. Topics:
                  or a string of episodes? Causal chain, stakes
                  ladder, removable chapters, structural briefs; the
                  gate review's stop-revising verdict waits on.
+                 developmental-edit: an editor's full read of the
+                 whole book and a ranked letter on the story.
   reading      — see the book's shape without re-reading it:
                  story-map (one HTML page: synopsis, plot-thread
                  grid + score/tension curve, characters, timeline,
@@ -334,6 +336,7 @@ to the brief / talk turn / review item that asked for it.
 Book-level (after a full draft or a sweep — every chapter can score
 well while the book is a string of episodes):
 
+  /autonovel:developmental-edit --book <name>   (an editor's read + letter)
   /autonovel:structure-review --book <name>
   /autonovel:revision-pass --chapters structural --book <name>
 
@@ -374,6 +377,24 @@ Acting on it:
   4. /autonovel:review --book <name>
        stop-revising needs structure ≥ 4 and no removable chapter.
 
+An editor's read (the judgement no score gives):
+
+  /autonovel:developmental-edit --book <name> [--focus "<your concern>"]
+        one reader reads every chapter in order, cold (before the
+        seed, outline, summaries and reviews), keeping notes per
+        chapter; counts what the diagnosis rests on (time gaps,
+        flash-forwards, where the protagonist is wrong, when each
+        principal and opponent appears); then writes
+        books/<name>/edit_logs/editor_letter.md: what the book is,
+        what must survive, the story's problems ranked by what they
+        cost the reader, what in the pipeline caused them, what to
+        do in order of effect for cost, and where it disagrees with
+        the reviewers. The notes behind it: editor_read_notes.md.
+  /autonovel:developmental-edit --book <name> --stage
+        also queues its in-chapter fixes in briefs/conversation.md
+        for the next revision-pass; frames, cuts and merges stay
+        your decision.
+
 Before drafting (cheapest place to fix it):
 
   /autonovel:gen-outline --book <name>        writes ## Spine,
@@ -388,6 +409,8 @@ Free data views (no LLM):
 
   autonovel mechanical structure-dossier books/<name> --format markdown
   autonovel mechanical structure-validate books/<name> --format markdown
+  autonovel mechanical prolepsis books/<name> --format markdown
+        candidate narrator flash-forwards per chapter
 ```
 
 ============================== TOPIC: reading =====================
@@ -792,6 +815,8 @@ Inspects the live filesystem and emits a prioritised action list:
   MEDIUM  book-level structure gate: structure-review missing,
           stale, or blocking (score < 4 / a removable chapter →
           revision-pass --chapters structural).
+  MEDIUM  no editor's letter on a drafted book →
+          developmental-edit (LOW once chapters change after it).
 
   LOW     missing title, missing front matter, period fiction
           without a glossary, stale typeset PDF.

@@ -2894,7 +2894,7 @@ panel's book-level questions and `gen-outline`'s spine sections. Left:
      the link and removability tests: a chapter is load-bearing if a later
      chapter's choice depends on the state of a relationship it changed.
    - Narrator prolepsis was one failure mode among five; on the editor's
-     read it was the main cause of the "anecdotes" experience (17 of 24
+     read it was the main cause of the "anecdotes" experience (19 of 24
      chapters). Add a measured `prolepsis_density` (chapters with a
      flash-forward past their own story time) to the dossier and make it a
      cap when high.
@@ -2914,3 +2914,36 @@ panel's book-level questions and `gen-outline`'s spine sections. Left:
      `posed_at_pct` uses chapter start with a strict `>25`; the 400k-token
      budget rule assumes the agent knows its window; the postamble
      telemetry paragraph has a garbled sentence.
+
+## From the editorial-practice audit (2026-10-18): design before the outline
+
+`docs/editorial-practice.md` §22–§24 audits the pipeline against the
+study text now shipped as `shared/craft/EDITING.md`: of 58 question-level
+items, 6 covered, 27 partly, 23 missing (the 2 conflicts are decided).
+The pipeline's book-level strength is plot causation; the people and the
+reader are mostly absent. Ranked gaps are in §24; the two that matter
+most:
+
+1. **A heavy-tier design stage before `gen-outline`, which the outline is
+   bound to** (`/autonovel:design --book` or a mandatory first step of
+   gen-outline): `books/{book}/design.md` with the one-sentence pitch and
+   dramatic question and how it stays in doubt; the single action and the
+   span; the controlling idea; the genre's conventions and obligatory
+   scenes per act; the viewpoint decision (incl. the world-historical
+   protagonist); the protagonist's Lie / Want / Need and the beat per act
+   that attacks the Lie; the antagonist's want, plan with dates, and
+   appearance ledger; a reader-question ledger per act boundary.
+   `evaluate --phase foundation` gates on it instead of on lore, and
+   `gen-outline` runs heavy. Drafters only execute what the outline
+   carries, so this is where most of the missing items have to live.
+2. **A re-outline-and-redraft loop.** A developmental-edit letter whose
+   problems are design-level (a frame, a misbelief, an antagonist, a span)
+   should route to a revised `design.md` / outline and a redraft (or a
+   `context: isolated` rewrite book), not to 24 in-chapter briefs.
+
+Smaller, from the same audit: cross-family judging for the whole-book
+reviewers (self-preference, §5); a scene map with value/polarity; the
+thriller contract checks (TH1–TH7); an aim test in `review.md`'s critic
+stage (Updike rule 1); `structure-review` should read the prose before
+the outline (ground rule order).
+

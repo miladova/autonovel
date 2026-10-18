@@ -168,7 +168,8 @@ class RefreshTemplatesResult:
 #: given. Both hold package-owned material the user is not expected to
 #: hand-edit: the typeset templates (PDF-header fixes land there) and
 #: the craft reference documents the writer / judge commands read
-#: (`shared/craft/`: CRAFT.md, PROSE.md, ANTI-SLOP.md, ANTI-PATTERNS.md).
+#: (`shared/craft/`: CRAFT.md, PROSE.md, ANTI-SLOP.md, ANTI-PATTERNS.md,
+#: EDITING.md).
 #: Register choices belong in `books/<book>/voice.md`, not in copies of
 #: these files, so refreshing them loses nothing.
 DEFAULT_REFRESH_SUBTREES: tuple[str, ...] = ("typeset", "shared/craft")
@@ -176,7 +177,7 @@ DEFAULT_REFRESH_SUBTREES: tuple[str, ...] = ("typeset", "shared/craft")
 #: The craft reference documents shipped into every series at
 #: `shared/craft/`. Source of truth is the template tree; the repo-root
 #: files of the same names are symlinks to it.
-CRAFT_DOCS: tuple[str, ...] = ("CRAFT.md", "PROSE.md", "ANTI-SLOP.md", "ANTI-PATTERNS.md")
+CRAFT_DOCS: tuple[str, ...] = ("CRAFT.md", "PROSE.md", "ANTI-SLOP.md", "ANTI-PATTERNS.md", "EDITING.md")
 
 
 def craft_template_dir() -> Path:

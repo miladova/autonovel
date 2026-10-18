@@ -13,6 +13,7 @@ Subcommands:
   chapter-summary <book> [--format] One-line-per-chapter overview (date/POV/score/cast/plot).
   structure-dossier <book>         Pack outline + summaries + word counts + story_time + scores for structure-review.
   structure-validate <book|json>   Validate structure_review.json + compute the book-level stop-revising gate.
+  prolepsis <book>                 Candidate narrator flash-forwards per chapter (for developmental-edit).
   story-map --book <name> [--out P]  One-page HTML story map (synopsis/threads/characters/timeline).
   impact-of <book> [--source N]    Grep chapters for tokens unique to superseded canon facts.
   diff-chapters --book B [--from R] [--to R]  Word-level HTML diff between two book versions.
@@ -620,6 +621,23 @@ def _cmd_chapter_summary(args: argparse.Namespace) -> int:
         sys.stdout.write("\n")
     else:
         sys.stdout.write(render_markdown_table(rows))
+    return 0
+
+
+def _cmd_prolepsis(args: argparse.Namespace) -> int:
+    """Candidate narrator flash-forwards per chapter. A counter for
+    /autonovel:developmental-edit; candidates only, never a gate."""
+    from .prolepsis import render_markdown as render_prolepsis_md, scan_book
+    book_root = Path(args.book_root)
+    if not (book_root / "chapters").is_dir():
+        print(f"prolepsis: no chapters/ under {book_root}", file=sys.stderr)
+        return 2
+    report = scan_book(book_root)
+    if args.format == "markdown":
+        sys.stdout.write(render_prolepsis_md(report))
+    else:
+        json.dump(report, sys.stdout, indent=2, ensure_ascii=False)
+        sys.stdout.write("\n")
     return 0
 
 
@@ -2279,6 +2297,14 @@ def main(argv: list[str] | None = None) -> int:
     cs.add_argument("--format", choices=("markdown", "json"), default="markdown",
                     help="Output format (default: markdown table).")
     cs.set_defaults(func=_cmd_chapter_summary)
+
+    plp = sub.add_parser("prolepsis",
+                         help="Candidate narrator flash-forwards per chapter (sentences that reach "
+                              "past the chapter's story_time). Candidates for the editor, not a gate.")
+    plp.add_argument("book_root", help="Path to the book dir (parent of chapters/).")
+    plp.add_argument("--format", choices=("json", "markdown"), default="json",
+                     help="Output format (default: json).")
+    plp.set_defaults(func=_cmd_prolepsis)
 
     sdo = sub.add_parser("structure-dossier",
                          help="Pack outline + summaries + word counts + story_time + eval scores "

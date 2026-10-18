@@ -87,8 +87,8 @@ books/<book>/
 
 ## Craft reference (`shared/craft/`)
 
-Four documents shipped by autonovel and read by every drafting,
-revision and evaluation command:
+Five documents shipped by autonovel and read by the drafting,
+revision, evaluation and editing commands:
 
 - `shared/craft/PROSE.md` — sentence, paragraph, scene and dialogue
   mechanics, register-neutral, each rule traced to its source in the
@@ -98,6 +98,14 @@ revision and evaluation command:
   show/tell, the stability trap, evaluation rubrics.
 - `shared/craft/ANTI-SLOP.md`, `shared/craft/ANTI-PATTERNS.md` —
   banned phrases and the model's prose tics.
+- `shared/craft/EDITING.md` — how professional editors, agents and
+  critics read, diagnose and fix a whole novel: the reading passes, the
+  editorial letter, the diagnostic questions (premise, structure, scene,
+  character, antagonism, narration, theme, genre, reader experience,
+  openings, endings, historical fiction, the thriller), case studies of
+  famous edits, and where an AI writer and editor go wrong. Every claim
+  sourced. `/autonovel:developmental-edit` reads it in full every run;
+  read its card (§0) before any writing task.
 
 They are package-owned: `autonovel refresh-templates` overwrites them
 with the installed version (and `autonovel doctor` warns when they are
@@ -150,6 +158,15 @@ each of these and the workaround is in the codebase:
   one-line "💡 Maybe try:" hint in every command's postamble
   drawn from the same enumerator, so most of the time you don't
   need to call `/autonovel:next` separately.
+- Run `/autonovel:developmental-edit --book <name>` once a book is
+  drafted, and after each big revision. It is the editor's read the
+  scores can't give: one reader (you, not a fan-out of subagents)
+  reads every chapter in order, cold, keeping notes per chapter, then
+  writes the author `edit_logs/editor_letter.md` — what must survive,
+  the story's problems ranked by what they cost the reader, what in
+  the pipeline caused them, what to do first. Never report a
+  reviewer's stars as the verdict on a book in place of this read;
+  `--stage` queues its in-chapter fixes for `revision-pass`.
 - Run `/autonovel:structure-review --book <name>` once a book is
   drafted, and again after every revision sweep. Chapter scores,
   the reader panel and the dual-persona review are prose-weighted;

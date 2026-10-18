@@ -48,6 +48,7 @@ Every editing command falls into one of four roles:
 | `/autonovel:reader-panel` | Whole-book reviewer | Four-persona panel (Editor / Genre Reader / Writer / First Reader). Writes `edit_logs/reader_panel.json`. **Does NOT modify chapters.** |
 | `/autonovel:review` | Whole-book reviewer | Opus dual-persona deep review (literary critic + professor of fiction). Writes `edit_logs/review.md` + `review.json`. Its stop-revising verdict is gated on `structure-review`. **Does NOT modify chapters.** |
 | `/autonovel:structure-review` | Whole-book reviewer | The book-level structure judge: is it one story building to a climax, or a string of episodes? Through-line, chapter N → N+1 causal chain, stakes ladder per act, removability per chapter, climax build, a 1–5 structure score separate from prose, and 3–7 structural brief candidates. Writes `edit_logs/structure_review.json` + `.md`. **Does NOT modify chapters.** See [§2g](#2g-when-to-stop-revising-the-book-level-gate). |
+| `/autonovel:developmental-edit` | Whole-book editor | A developmental editor's full read: one reader, every chapter in order, cold, with notes per chapter and counted evidence, then a ranked letter on the story (`edit_logs/editor_letter.md`) and where it disagrees with the scoring reviewers. `--stage` queues its in-chapter fixes in `briefs/conversation.md`. **Does NOT modify chapters.** |
 | `/autonovel:chapter-summary` | Mechanical helper | One-line-per-chapter overview table — Date / POV / Score / Words / Cast / Plot (with location prefix). Pure mechanical, no LLM. The right tool for "which chapters happen in <date range>?" or "where does <character> appear?" before a revision pass. **Does NOT modify chapters.** |
 | `/autonovel:motifs` | Mechanical helper | Per-chapter motif density tracker. Reads `books/{book}/motifs.md` (one bullet per motif: `- slug: keyword1, keyword2`). Flags motifs that drop to zero in the back half of a book they were established in earlier — catches "set up an image, never paid it off". Pure mechanical. **Does NOT modify chapters.** |
 | `/autonovel:talk` | Conversational layer | Ask the book questions or queue edits in natural language. Three modes: **Q+A** (cites chapter+line, no edit), **Suggest-and-stage** (queues an edit in `briefs/conversation.md`), **Mechanical+suggest** (runs `entity-track` first, then queues a structured cut-list). Queued turns get folded into the brief by the next `/autonovel:revise <N>`. |
@@ -763,6 +764,13 @@ continuing story building to a climax."* Each of those reviewers is
 prose-weighted; none asked whether chapter N+1 happens *because of*
 chapter N. (The full audit: [`reviewer-audit.md`](reviewer-audit.md).)
 
+Before either half, get an editor's read:
+`/autonovel:developmental-edit --book <book>` reads the whole book in
+order, cold, and writes a ranked letter on the story. The two gates
+below are instruments; the letter is the judgement, and it says where
+the instruments are blind. Revise from the letter, then use the gates
+to check.
+
 So "stop revising" now has two halves, and both must hold:
 
 1. **Book-level gate** — `/autonovel:structure-review --book <book>`
@@ -782,6 +790,8 @@ same gate, and `autonovel mechanical structure-validate books/<book>
 The loop when the gate blocks:
 
 ```text
+/autonovel:developmental-edit --book <book>     # the editor's letter (read it first)
+/autonovel:developmental-edit --book <book> --stage   # queue the in-chapter fixes you accept
 /autonovel:structure-review --book <book>       # verdict + candidates
 #   cross-chapter moves it lists are YOURS to run, before the sweep:
 #   /autonovel:merge-chapters --chapters 15,16 --book <book>

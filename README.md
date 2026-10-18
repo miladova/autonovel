@@ -497,7 +497,7 @@ expectations for a single ~70,000-word novel:
 | Foundation review | Read `shared/world.md`, `shared/characters.md`, the outline. Re-run any of `/autonovel:gen-world`, `/autonovel:gen-characters`, `/autonovel:gen-outline` if something is off — they reference your seed each time. | 30–90 min total, spread across 1–3 cycles |
 | Voice discovery | `/autonovel:voice-discovery` produces five trial passages; you pick one (or rerun for new trials). | 5–15 min |
 | Drafting | The runtime drafts chapters one at a time. You can let it run unattended; later, glance at chapters that scored low in `/autonovel:evaluate` and decide whether to retry. | 5–30 min of attention per chapter, mostly skimming |
-| Revision | Read `/autonovel:structure-review` first (is the book one story?), then the reports from `/autonovel:reader-panel` and `/autonovel:review`. Override anything you disagree with before running `/autonovel:revise`; run the merges / cuts the structure review asks for yourself. | 30–90 min per book per cycle; usually 2–3 cycles |
+| Revision | Read the editor's letter from `/autonovel:developmental-edit` and `/autonovel:structure-review` first (is the book one story?), then the reports from `/autonovel:reader-panel` and `/autonovel:review`. Override anything you disagree with before running `/autonovel:revise`; run the merges / cuts the structure review asks for yourself. | 30–90 min per book per cycle; usually 2–3 cycles |
 | Export | `/autonovel:typeset`, `/autonovel:cover-print`, `/autonovel:audiobook-*` are mostly pushbutton if you have the tools and keys. | 1–2 hours, mostly waiting |
 
 **Total wall-clock time** for a tiny 3-chapter book (like the smoke
@@ -538,7 +538,12 @@ Three categories. Full reference: [`docs/commands.md`](docs/commands.md).
   causal-chain table, a stakes ladder per act, a removability test
   per chapter and a 1–5 structure score kept separate from prose;
   `review`'s stop-revising verdict waits on it, and
-  `revision-pass --chapters structural` acts on its candidates. Plus
+  `revision-pass --chapters structural` acts on its candidates.
+  `developmental-edit` is the editor's read: one reader reads the
+  whole book in order, cold, keeps notes per chapter, counts what the
+  diagnosis rests on, and writes you a ranked letter on the story —
+  what must survive, what's wrong and why, what to do first — then
+  says where it disagrees with the scoring reviewers. Plus
   `chapter-summary` for a one-line-per-chapter overview table
   ("which chapters happen in <date range>?", "where does
   <character> appear?"); `motifs` for per-chapter motif density
@@ -758,7 +763,7 @@ autonovel/
     fixtures/
       tiny-series-{historical,scifi,literary,mystery,thriller,romance,fantasy,horror}/
       bells-reference/      # Tier-4 regression — populated from the autonovel/bells branch
-  CRAFT.md, PROSE.md, ANTI-SLOP.md, ANTI-PATTERNS.md
+  CRAFT.md, PROSE.md, ANTI-SLOP.md, ANTI-PATTERNS.md, EDITING.md
                             # prompt material consumed by writer/judge — symlinks to
                             # src/autonovel/templates/series/shared/craft/, which
                             # new-series / refresh-templates copy into every series
