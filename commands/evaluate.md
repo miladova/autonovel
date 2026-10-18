@@ -61,7 +61,10 @@ or `.autonovel/eval_logs/<timestamp>_series.json` for `--phase series`.
 
 2. Use `file_read` on `project.yaml` to resolve the book entry, its `pov`,
    and `defaults.chapter_target_words` / `defaults.chapter_threshold`. The
-   defaults drive two calibration rules that follow.
+   defaults drive two calibration rules that follow. When
+   `books/{book}/design.md` exists, the chapter length target is its
+   `## Shape` `target_words` divided by `chapters` instead, as
+   `/autonovel:draft` uses.
 
 3. Load the shared layer with `file_read`: `shared/world.md`,
    `shared/characters.md`, `shared/canon.md`, `shared/events.md`. Load

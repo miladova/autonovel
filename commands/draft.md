@@ -203,7 +203,10 @@ required reads — surface the error and stop, don't retry.
    which files are legal). Budget the loader — truncate oldest first,
    summarize rather than quote beyond ~8000 tokens.
 
-10. Draft the chapter. Target length comes from
+10. Draft the chapter. Target length: when `books/{book}/design.md`
+   exists, its `## Shape` `target_words` divided by `chapters`, rounded
+   to the nearest hundred (the design chose the book's length and
+   chapter count together); otherwise
    `project.yaml :: defaults.chapter_target_words`. Before writing, use
    `file_read` on the craft reference documents in the series:
    `shared/craft/PROSE.md` (sentence, paragraph, scene and dialogue
