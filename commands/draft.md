@@ -193,35 +193,37 @@ required reads — surface the error and stop, don't retry.
     `shared/craft/CHARACTER.md` and, when it exists, on
     `books/{book}/cast.md` (the dossiers `/autonovel:cast` writes). A
     character who appears with a trait and a habit and nothing else is a
-    type, and a reader feels it within a page. For everyone on stage who
-    matters in this chapter:
+    type — "a cluster of traits stuck on a name" — and a reader feels it
+    within a page. For everyone on stage who matters in this chapter
+    (CHARACTER.md §4):
     - **A want of their own in the scene**, apart from the viewpoint
-      character's: they came into the room for a reason, and the scene
-      moves them too (Vonnegut's glass of water).
-    - **The contradiction acted, not named**: the dossier's two
-      qualities in tension show in something the person does, never in a
-      label ("pious and venal").
-    - **A choice under pressure**: when the dossier's `pressure choices`
-      names this chapter, stage it — two things the person values, one
-      given up, a cost the reader sees.
-    - **The viewpoint's inner life beyond the plot**: what they feel and
-      refuse to feel, a memory the moment calls up, the body (age,
-      fatigue, cold, hunger), and at least once a scene a thought at odds
-      with what they say.
-    - **Relationships with a history**: in each important exchange the
-      past between the two (who owes whom, an old grievance or
-      affection) shapes what is said, and the pair has its own register.
-    - **Signatures that deepen, not tics**: a habit or object recurs only
-      when it shows something new; its third appearance means something
-      its first did not.
-    - **Who knows what**: in scenes of secrets and deals, let the reader
-      track what each person believes the others know.
+      character's, showing in what they ask for, hide, refuse or reach
+      for; secondaries bring business of their own into the room.
+    - **Choice, not label**: no narrator's verdict ("the vainest man
+      in town"); a choice that costs. When the dossier's choice ladder
+      names this chapter, stage that choice.
+    - **The contradiction acted** in what the person does, and **stress
+      behaviour, not a tic**: a habit recurs only when it shows something
+      new; under pressure they do their particular thing, and it costs.
+    - **The viewpoint's hinterland**: at least three of a feeling he won't
+      admit, a memory, a desire apart from the scheme, an opinion of
+      someone, a fear, a misreading — one pulling against his own plan —
+      and the body (age, fatigue, cold, hunger). Not only calculation.
+    - **Under- rather than over-articulate**: in charged talk people say
+      less than they mean; the history between the two (who owes whom,
+      an old grievance or affection) shapes what is said, and each pair
+      has its own register.
+    - **Who knows what**, in scenes of secrets and deals: let the reader
+      track what each person believes the others know, to about four
+      layers and no deeper.
     - **Real people from the record**: their recorded words, acts and
-      contradictions (the research notes and cast.md cite them); invent
-      only where the record is silent, and never shrink them to their
-      famous trait.
+      contradictions (the research notes and cast.md cite them), in the
+      mind of their own time; invent only in the record's silences, never
+      against it, and never shrink them to their reputation.
+    - **Witness, don't judge**: no verdict from the narrator on a person
+      or on the values of their time.
     Use the dossier's `on the page` line for this chapter: show the thing
-    about each person that no earlier chapter has shown.
+    about each person that no earlier chapter has.
 
 4. Use `file_read` on `shared/world.md`, `shared/characters.md`,
    `shared/canon.md`, `books/{book}/canon.md` (this book's OWN canon —
