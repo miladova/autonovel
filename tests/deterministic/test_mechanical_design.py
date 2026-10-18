@@ -254,3 +254,17 @@ def test_opponent_name_with_description_uses_the_surname(tmp_path: Path) -> None
         for n in range(1, 13)) + "\n"
     rep = design.check(_book(tmp_path, text, outline=outline), outline=True)
     assert not any("should be on stage" in w for w in rep.warnings), rep.warnings
+
+
+def test_terms_and_place_orientation_are_warned_not_required(tmp_path: Path) -> None:
+    rep = design.check(_book(tmp_path))
+    assert rep.ok
+    assert any("## Terms" in w for w in rep.warnings)
+    assert any("Venice has no `orientation:`" in w for w in rep.warnings)
+    better = GOOD.replace("### Venice\n", "### Venice\n- orientation: a merchant republic of 100,000\n").replace(
+        "## Voice", "## Terms\n- fustian: ch 2 — cotton-linen cloth\n\n## Voice")
+    other = tmp_path / "b"
+    other.mkdir()
+    rep2 = design.check(_book(other, better))
+    assert not any("## Terms" in w for w in rep2.warnings)
+    assert not any("orientation" in w for w in rep2.warnings)

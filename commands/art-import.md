@@ -53,6 +53,11 @@ Use cases this was built for (historical fiction, 2026-04-25):
 Manifest (`books/{book}/typeset/plates.yaml`) is human-readable and
 hand-editable — re-running art-import with the same `--slug`
 overwrites the prior entry; deleting an entry by hand also works.
+A full-page plate (`before-chapter` / `after-chapter`) may carry
+`layout: landscape`: the PDF turns that page sideways so a wide
+picture — a city view, a map — fills the page's long side instead of
+shrinking to a strip, and the ePub shows it at full width. Add the
+line by hand under the plate's entry.
 </purpose>
 
 <workflow>

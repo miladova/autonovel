@@ -143,6 +143,23 @@ def _chapter_title(raw: str) -> str:
     return t
 
 
+def frontmatter_value(text_with_frontmatter: str, key: str) -> str:
+    """One scalar `key:` from a chapter's YAML frontmatter, unquoted, or
+    "" — the cheap line parse the title uses, so building the book
+    needs no YAML parser."""
+    if not text_with_frontmatter.startswith("---"):
+        return ""
+    for line in text_with_frontmatter.splitlines()[1:]:
+        if line.strip() == "---":
+            break
+        if line.startswith(f"{key}:"):
+            value = line.split(":", 1)[1].strip()
+            if len(value) >= 2 and value[0] == value[-1] and value[0] in "\"'":
+                value = value[1:-1]
+            return value
+    return ""
+
+
 def _extract_chapter_title(text_with_frontmatter: str) -> str:
     """Pull a chapter title from a chapter file in priority order:
 
@@ -272,6 +289,14 @@ def build_chapters_tex(
                 "\\vspace{0.15in}\n"
             )
 
+        dateline = frontmatter_value(raw, "dateline")
+        dateline_tex = (
+            "\\begin{center}\n"
+            f"{{\\small\\itshape {latex_escape(dateline)}}}\n"
+            "\\end{center}\n"
+            "\\vspace{0.8em}\n"
+        ) if dateline else ""
+
         before_tex = _plates_at(plates_by_chapter, num, "before-chapter")
         start_tex = _plates_at(plates_by_chapter, num, "chapter-start")
         after_tex = _plates_at(plates_by_chapter, num, "after-chapter")
@@ -279,7 +304,7 @@ def build_chapters_tex(
         chapter_block = (
             f"{before_tex}"
             f"\\chapter{{{latex_escape(title)}}}\n\n"
-            f"{ornament_tex}{start_tex}{latex_body}\n"
+            f"{dateline_tex}{ornament_tex}{start_tex}{latex_body}\n"
             f"{after_tex}"
         )
         pieces.append(chapter_block)
@@ -298,8 +323,10 @@ def build_chapters_tex(
 
 def _load_plates_index(
     manifest: Path | None, plates_root: Path | None,
-) -> dict[tuple[int, str], list[tuple[str, str, str]]]:
-    """Return {(chapter, placement): [(file_abs_path, caption, attribution)]}.
+) -> dict[tuple[int, str], list[tuple[str, str, str, str]]]:
+    """Return {(chapter, placement): [(file_abs_path, caption, attribution, layout)]}.
+    `layout` is `landscape` (a wide picture turned to fill a whole page)
+    or `portrait` (the default).
 
     Reading the manifest is intentionally tolerant — a missing or
     malformed manifest is treated as "no plates" rather than failing
@@ -329,31 +356,37 @@ def _load_plates_index(
         placement = str(entry.get("placement", "before-chapter"))
         caption = str(entry.get("caption", "") or "")
         attribution = str(entry.get("attribution", "") or "")
+        layout = str(entry.get("layout", "portrait") or "portrait").strip().lower()
         file_abs = (base / file_rel).resolve()
         out.setdefault((chapter, placement), []).append(
-            (file_abs.as_posix(), caption, attribution)
+            (file_abs.as_posix(), caption, attribution, layout)
         )
     return out
 
 
 def _plates_at(
-    index: dict[tuple[int, str], list[tuple[str, str, str]]],
+    index: dict[tuple[int, str], list[tuple[str, str, str, str]]],
     chapter: int, placement: str,
 ) -> str:
     plates = index.get((chapter, placement))
     if not plates:
         return ""
     blocks = []
-    for file_abs, caption, attribution in plates:
-        blocks.append(_render_plate_block(file_abs, caption, attribution, placement))
+    for file_abs, caption, attribution, layout in plates:
+        blocks.append(_render_plate_block(file_abs, caption, attribution, placement,
+                                          layout=layout))
     return "\n".join(blocks) + "\n"
 
 
-def _render_plate_block(file_abs: str, caption: str, attribution: str, placement: str) -> str:
+def _render_plate_block(file_abs: str, caption: str, attribution: str, placement: str,
+                        *, layout: str = "portrait") -> str:
     """Emit a centered, captioned plate. `before-chapter` and
     `after-chapter` produce a dedicated full-page plate;
     `chapter-start` produces a centered block inside the chapter
-    flow (no page break)."""
+    flow (no page break). `layout: landscape` (plates.yaml) turns a
+    full-page plate sideways (pdflscape) so a wide picture — a city
+    view, a map — fills the page's long side instead of shrinking to
+    a strip across the short one."""
     caption_tex = ""
     if caption:
         caption_tex = f"\\\\\n\\vspace{{0.6em}}\n\\textit{{{latex_escape(caption)}}}"
@@ -362,6 +395,22 @@ def _render_plate_block(file_abs: str, caption: str, attribution: str, placement
         attribution_tex = (
             f"\\\\\n\\vspace{{0.3em}}\n"
             f"{{\\footnotesize {latex_escape(attribution)}}}"
+        )
+    if layout == "landscape" and placement in ("before-chapter", "after-chapter"):
+        lead = "\\cleartoverso\n" if placement == "before-chapter" else "\\cleardoublepage\n"
+        tail = "\\clearpage\n" if placement == "before-chapter" else "\\cleardoublepage\n"
+        return (
+            lead
+            + "\\begin{landscape}\n"
+            "\\thispagestyle{plain}\n"
+            "\\vspace*{\\fill}\n"
+            "\\begin{center}\n"
+            f"\\includegraphics[width=\\linewidth,height=0.8\\textheight,keepaspectratio]{{{file_abs}}}"
+            f"{caption_tex}{attribution_tex}\n"
+            "\\end{center}\n"
+            "\\vspace*{\\fill}\n"
+            "\\end{landscape}\n"
+            + tail
         )
     if placement == "before-chapter":
         # Two-page-spread convention: plate on the verso (left,

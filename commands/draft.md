@@ -19,6 +19,7 @@ reads:
   - books/{book}/voice.md
   - books/{book}/outline.md
   - books/{book}/design.md
+  - books/{book}/glossary.md
   - books/{book}/chapters/ch_{prev}.md
   - books/{book}/chapters/ch_*.summary.md
 writes:
@@ -125,6 +126,43 @@ required reads — surface the error and stop, don't retry.
       and the reader sees his plan working).
     A win the protagonist earns turns on knowledge the reader saw him
     acquire, never on a wager or the odds (`shared/craft/DESIGN.md` §15).
+
+3c. **The reader's map** (every book). A reader who stops because they
+    are lost is gone; a reader who has to look a word up is half gone.
+    - **Explain at first use.** Every institution, office, title, coin,
+      trade word or foreign word a reader today may not know is
+      explained in plain words the first time it appears in the book —
+      in the same sentence or the next, through the scene where it can
+      be (a character's question, a thing seen being used), as briefly
+      as the scene allows: *the seven electors, the princes who by an
+      old law chose the man who would be Emperor*; *fustian, the cheap,
+      hard-wearing cotton-and-linen cloth the family had made its money
+      on*; *the Marangona, the great bell of St Mark's that opened and
+      closed the working day*. Read the earlier chapters' summaries and
+      `books/{book}/glossary.md` (if present) to know what the reader
+      has already been told; once explained, a word is used freely.
+      When `design.md` has a `## Terms` section, explain each term in
+      the chapter it names.
+    - **One new person at a time.** Each new character arrives with
+      name, who they are to the viewpoint character, and one concrete
+      detail. Name only the people the scene needs; no more than three
+      new named people or places on a chapter's first page.
+    - **The first page orients.** Where we are, when, and what is at
+      stake for the viewpoint character today, in plain statements
+      before any flourish. In a book that moves between times or
+      places, the chapter's `dateline` (step 12) does half of this and
+      the first paragraph does the rest.
+    - **What a place was like then.** At a major place's first
+      appearance in the book, give the reader a plain picture of it
+      in its own time — how big, who ruled it, what it lived on, what
+      made it unlike anywhere else or unlike today — then the
+      sensory detail (`design.md` `## Places` `orientation:`).
+    - **Plain over clever.** When `voice.md` asks for plain English,
+      no figure of speech the reader has to decode ("rode as if the
+      saddle owed him money"), no compressed witty construction whose
+      referent is ambiguous ("vain, gifted and young, and he knew all
+      three"), no idiom of recognition ("knew him by the way he sat the
+      horse"): say the thing.
 
 4. Use `file_read` on `shared/world.md`, `shared/characters.md`,
    `shared/canon.md`, `books/{book}/canon.md` (this book's OWN canon —
@@ -258,7 +296,11 @@ required reads — surface the error and stop, don't retry.
 12. Use `file_write` to write `books/{book}/chapters/ch_{chapter}.md`. Start
     with a YAML frontmatter block per `docs/chapter-frontmatter.md`:
     `book`, `chapter`, `pov`, `title` (the 2-6 word title from
-    step 11), `story_time` (ISO date or range), `events`,
+    step 11), `dateline` (place and date as a reader sees them under
+    the chapter title — "Augsburg, January 1519", "Venice, autumn
+    1473"; copy the outline entry's `dateline:` when it has one, and
+    always set it when the book's chapters move between times or
+    places), `story_time` (ISO date or range), `events`,
     `status: drafted`, and `word_count`.
 
 13. **Write the chapter summary.** Use `file_write` to save a

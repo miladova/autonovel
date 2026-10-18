@@ -514,6 +514,12 @@ Detects OS + autonovel install method and walks the install with
 verify-after-install. Handles the apt-tectonic-too-old fallback
 to the upstream prebuilt binary.
 
+Chapter datelines and wide plates: each chapter's frontmatter
+`dateline: "Venice, autumn 1473"` prints under its title (set it when
+the book moves between times or places); a plate in
+books/<name>/typeset/plates.yaml with `layout: landscape` gets a
+sideways full page in the PDF.
+
 For a typography-only cover (no AI art at all):
 
   /autonovel:cover-print --book <name> --pages <N> \

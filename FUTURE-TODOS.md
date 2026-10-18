@@ -2945,6 +2945,19 @@ panel's book-level questions and `gen-outline`'s spine sections. Left:
 - **DESIGN.md sources.** Several claims are marked (unverified); verify
   them as EDITING.md's were.
 
+- **Reader's-map scanners (from the author's first read of kingmaker2,
+  2026-10-18: "I don't know what that style is"; "my first time hearing
+  about electors"; "I didn't understand fustian"; "suddenly introduces
+  several new characters and locations").** `draft` step 3c and the
+  voice rubric now ask for plain words, first-use explanations, one new
+  person at a time and an orienting first page; add candidate
+  generators so the reviewer can see them: (1) new proper names and
+  foreign words first appearing in a chapter, with how many land in its
+  first 500 words; (2) narration similes and idioms ("as if", "as
+  though", "like a") as a review queue for books whose voice asks for
+  plain English; (3) terms in design.md `## Terms` not yet explained by
+  their chapter.
+
 Smaller, from the same audit: cross-family judging for the whole-book
 reviewers (self-preference, §5); a scene map with value/polarity; the
 thriller contract checks (TH1–TH7); an aim test in `review.md`'s critic

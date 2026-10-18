@@ -52,6 +52,7 @@ memory and was not checked against the source when this was compiled
   - §11 Clocks and the stakes ladder
   - §12 Place
   - §13 Voice, decided at design level
+  - §13a Terms the reader must be told
   - §14 The genre contract and obligatory scenes
   - §15 Earned outcomes: knowledge, not luck
 - **Part II — The design tests (D1–D14)**
@@ -426,6 +427,14 @@ design read it cold (D14).
   what things cost, what was dangerous, what people believed. The
   design lists, for each major place, the "only here" moments a
   scene can stage.
+- **Orientation before texture.** A reader who doesn't know the period
+  needs the map before the street. At a major place's first appearance
+  the design records, and the chapter gives, a plain picture of the
+  place in its own time: how big it was, who ruled it, what it lived on,
+  what made it unlike anywhere else and unlike today. Then the sensory
+  detail, which only means something once the reader knows where they
+  are. An author who keeps asking "but what was it like then?" is
+  telling you the orientation is missing, however rich the texture.
 - **Introduce a major place at a moment of pressure**, at arrival,
   not in a survey; return to it changed.
 - **Density.** Rich description belongs at arrivals, set pieces and
@@ -451,6 +460,26 @@ design read it cold (D14).
   protagonist cannot (EDITING V1). Decide which, and why.
 - **Interiority and description** as proportions: how much of a
   chapter is in the head, how much in the room.
+
+## §13a Terms the reader must be told
+
+- **The reader is a stranger to the period.** Every institution,
+  office, title, coin, trade word and foreign word the story turns on
+  (an elector, a fontegher, a ducat, fustian, a bell with a name) is a
+  wall unless it is explained, plainly, the first time it appears.
+  George Orwell's fifth rule: "Never use a foreign phrase, a scientific
+  word, or a jargon word if you can think of an everyday English
+  equivalent" ("Politics and the English Language", 1946). Where the
+  period word is the point, keep it and explain it once.
+- **The design lists them.** For each term the story depends on: the
+  chapter where the reader first meets it and a one-line plain gloss.
+  The drafter explains each in that chapter, inside the scene where it
+  can (a question asked, a thing seen in use), never in a footnote or a
+  paragraph of lecture.
+- **The designer's own jargon is not the reader's.** Words a design
+  uses about itself — *locks*, *keys*, *plants*, *spends*, *beats* —
+  never reach the page or the author: the author is told "what wins
+  each elector's vote", not "the seven locks".
 
 ## §14 The genre contract and obligatory scenes
 
@@ -519,9 +548,11 @@ design, not the test.
   on a crisis in the same contest.
 - **D10 Reader questions (R1).** For each act boundary, a question the
   reader wants answered that is not "what happens next year".
-- **D11 Place (§12).** Each set piece's place does work in its scene;
-  each major place has a sensory signature and an arrival at a moment
-  of pressure.
+- **D11 Place (§12, §13a).** Each set piece's place does work in its
+  scene; each major place has an orientation (what it was like then), a
+  sensory signature and an arrival at a moment of pressure; every term
+  the story depends on is listed under `## Terms` with the chapter that
+  explains it.
 - **D12 Earned outcomes (§15).** No major win turns on luck or a
   gamble; each turns on knowledge the reader saw acquired.
 - **D13 Author's intent.** Every explicit direction in the seed and the

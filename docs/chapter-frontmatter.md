@@ -15,6 +15,9 @@ events: [E-047, E-048]      # required; list of event IDs from shared/events.md
                             # (empty list is allowed)
 status: drafted             # required; one of: drafted | revised | locked
 word_count: 3214            # optional; integer
+dateline: "Venice, autumn 1473"   # optional; place and date printed under the
+                            # chapter title by typeset and the ePub (set it in any
+                            # book whose chapters move between times or places)
 score: 7.8                  # optional; number
 ---
 ```

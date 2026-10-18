@@ -2220,6 +2220,26 @@ own rule earlier, both missed by the first. The drafter (Opus, via
 fully contracted narration and no prolepsis on the first try, and needed
 one factual fix (the ducat–gulden rate).
 
+### 2026-10-18 — the reader's map, datelines, landscape plates (author's first read of kingmaker2)
+
+The author on the sample chapters: the style of ch 1 ("rode as if the
+saddle owed him money") was not plain modern English; a witty line was
+ambiguous; electors, fustian and the Marangona were never explained; ch 2
+opened on too many new people and places; the braid needs clear dates on
+every chapter; "what was 1500 Venice like? Germany? Augsburg — you must
+tell me"; the Venice plate was too small. Shipped: `draft` step 3c (explain
+every term at first use in plain words, one new person at a time, a first
+page that orients, a plain picture of each major place in its own time,
+plain over clever); `dateline:` chapter frontmatter, written by `draft`
+from the outline, printed under the title by the PDF and the ePub;
+`gen-outline` writes a dateline per chapter; `plates.yaml` `layout:
+landscape` (pdflscape) for wide plates; DESIGN.md §12 orientation and
+§13a terms the reader must be told (and the designer's own jargon kept
+from the author); design.md `## Places` `orientation:` and `## Terms`
+(validator warnings). Lesson: richness of texture is not orientation; an
+author who keeps asking "what was it like then?" is missing the map, not
+the street.
+
 ## Tests last known green
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-18 (design) —
   **2130 passing, 1 skipped**. +21: `test_mechanical_design.py` (12),

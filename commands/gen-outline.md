@@ -84,7 +84,11 @@ before these sections were required.
       question`, `posed_in` / `answered_in` from it, `want:` from
       `## Protagonist`, `opposing_force:` = the `## Opponent` name and
       what he wants, `cost:` from `## Climax`;
-    - each chapter entry carries four more bullets after `events:` —
+    - each chapter entry carries a `- dateline: <Place, date>` bullet
+      after `story_time:` (the place and date the reader sees under the
+      chapter title — "Augsburg, January 1519"; required when the book
+      moves between times or places, as a braided design does), and
+      four more bullets after `events:` —
       `- sequence: S<n>` (from `## Sequences`), and `- plants: [P…]`,
       `- tests: [P…]`, `- payoffs: [P…]` listing exactly the plant ids
       whose `plant:`, `test:` and `payoff:` chapter it is (empty lists

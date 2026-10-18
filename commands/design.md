@@ -230,10 +230,14 @@ wins over the seed and over any earlier direction.
 
    ## Places
    ### <Place> (ch …)
+   - orientation: <a plain picture of the place in its own time: how big, who ruled it, what it lived on, what made it unlike anywhere else or unlike today>
    - use: <what the place does in its scenes>
    - signature: <two or three recurring sense details>
    - arrival: <the moment of pressure it is first seen in>
    - only here: <set-piece moments only this place allows>
+
+   ## Terms
+   - <institution, office, coin, trade or foreign word>: ch N — <one-line plain gloss>
 
    ## Voice
    - register / rhythm / viewpoint / description / interiority / dialogue / bans
@@ -272,7 +276,14 @@ wins over the seed and over any earlier direction.
      the research notes (portraits, letters, sayings); every principal
      gets a want in every scene they enter.
    - **Places** (§12): from the research notes, accurate to the year,
-     chosen for what they do in the scene.
+     chosen for what they do in the scene, each with its orientation.
+   - **Terms** (§13a): every word a reader today may not know that the
+     story turns on, with the chapter that explains it.
+   - **Plain words to the author** (§13a): the report and every page
+     written for the author say what the design means in ordinary
+     words — "what wins each elector's vote", "what he learned and
+     where he uses it" — never the design's own terms (locks, keys,
+     plants, spends, beats).
    - **Voice** (§13): from the author's stated preferences first.
    - **Chapters**: honour the seed's length; otherwise
      `project.yaml defaults.chapter_target_words` and a book of

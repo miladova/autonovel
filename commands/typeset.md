@@ -48,6 +48,11 @@ this command copies `typeset/novel.tex` into
 `@SERIES_NAME@`, then hands it to `tectonic`.
 
 Light tier — mechanical. No LLM call.
+Each chapter's frontmatter `dateline:` ("Venice, autumn 1473") is
+printed in small italics under its title in the PDF and the ePub — set
+it in every chapter of a book that moves between times or places.
+Plates marked `layout: landscape` in `plates.yaml` get a sideways
+full page in the PDF.
 </purpose>
 
 <workflow>

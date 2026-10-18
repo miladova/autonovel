@@ -38,7 +38,8 @@ bullets unless noted):
     ## Clocks                 bullets
     ## Stakes ladder          | Act | Chapters | Stake | Higher because |
     ## Reader questions       bullets
-    ## Places                 ### <Place>, then use, signature, arrival, only here
+    ## Places                 ### <Place>, then orientation, use, signature, arrival, only here
+    ## Terms                  - <term>: ch N — <plain gloss>   (recommended; warning if absent)
     ## Voice                  bullets
     ## Genre contract         bullets
     ## Keep ledger            bullets (required when Shape has redesign_of)
@@ -451,8 +452,11 @@ def check_design(d: Design, *, outline_text: str | None = None) -> Report:
         err("## Stakes ladder: no act rows with chapter ranges")
     if not d.places:
         warn("## Places: no `### <Place>` entries")
+    if "terms" not in d.sections or not d.sections["terms"].strip():
+        warn("## Terms: none listed — the words a reader today may not know, "
+             "each with the chapter that explains it (DESIGN.md §13a)")
     for pl in d.places:
-        for f in ("use", "signature"):
+        for f in ("orientation", "use", "signature"):
             if not pl["fields"].get(f):
                 warn(f"Places: {pl['name']} has no `{f}:` — DESIGN.md D11")
 
