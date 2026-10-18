@@ -270,6 +270,15 @@ required reads — surface the error and stop, don't retry.
    hears first, and the judge scores it as `register`. Period nouns
    are fine; formal grammar under modern vocabulary is not.
 
+   **Reader's-map self-check** (step 3c). Run `autonovel mechanical
+   newcomers books/{book} --chapter {chapter} --format markdown`: it
+   lists the names and terms that appear for the first time in the book
+   in this chapter, and which land in the opening. For each, check that
+   a new person arrives with who they are, that an unfamiliar term or
+   foreign word is explained in plain words where it first appears, and
+   that the opening doesn't introduce more than about three new names;
+   fix the draft where it doesn't.
+
    **Precedence.** The `shared/craft/` documents are series-wide
    defaults. Where `books/{book}/voice.md` Parts 1–3 explicitly
    override one of them (a plain-register thriller that says "telling

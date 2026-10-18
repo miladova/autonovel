@@ -2951,9 +2951,8 @@ panel's book-level questions and `gen-outline`'s spine sections. Left:
   several new characters and locations").** `draft` step 3c and the
   voice rubric now ask for plain words, first-use explanations, one new
   person at a time and an orienting first page; add candidate
-  generators so the reviewer can see them: (1) new proper names and
-  foreign words first appearing in a chapter, with how many land in its
-  first 500 words; (2) narration similes and idioms ("as if", "as
+  generators so the reviewer can see them: (1) DONE 2026-10-18 as
+  `autonovel mechanical newcomers` (run by draft); (2) narration similes and idioms ("as if", "as
   though", "like a") as a review queue for books whose voice asks for
   plain English; (3) terms in design.md `## Terms` not yet explained by
   their chapter.

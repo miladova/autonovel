@@ -14,6 +14,7 @@ Subcommands:
   structure-dossier <book>         Pack outline + summaries + word counts + story_time + scores for structure-review.
   structure-validate <book|json>   Validate structure_review.json + compute the book-level stop-revising gate.
   design-validate <book> [--outline] Check design.md's shape (DESIGN.md Part II); --outline also checks outline.md carries it.
+  newcomers <book> [--chapter N]   New names/terms first seen in each chapter, and how many land in its opening.
   prolepsis <book>                 Candidate narrator flash-forwards per chapter (for developmental-edit).
   story-map --book <name> [--out P]  One-page HTML story map (synopsis/threads/characters/timeline).
   impact-of <book> [--source N]    Grep chapters for tokens unique to superseded canon facts.
@@ -655,6 +656,21 @@ def _cmd_structure_dossier(args: argparse.Namespace) -> int:
         sys.stdout.write(render_structure_dossier_md(dossier))
     else:
         json.dump(dossier, sys.stdout, indent=2, ensure_ascii=False)
+        sys.stdout.write("\n")
+    return 0
+
+
+def _cmd_newcomers(args: argparse.Namespace) -> int:
+    from . import newcomers as nc
+    book_root = Path(args.book_root)
+    if not (book_root / "chapters").is_dir():
+        print(f"newcomers: no chapters/ under {book_root}", file=sys.stderr)
+        return 2
+    rep = nc.scan_book(book_root, chapter=args.chapter, first_words=args.first_words)
+    if args.format == "markdown":
+        sys.stdout.write(nc.render_markdown(rep))
+    else:
+        json.dump(rep, sys.stdout, indent=2, ensure_ascii=False)
         sys.stdout.write("\n")
     return 0
 
@@ -2347,6 +2363,14 @@ def main(argv: list[str] | None = None) -> int:
     svl.add_argument("--chapters", type=int, default=None,
                      help="Chapter count for --template (default 3).")
     svl.set_defaults(func=_cmd_structure_validate)
+    ncp = sub.add_parser("newcomers",
+                         help="New names and terms first seen in each chapter, and how many "
+                              "land in its opening (candidates for the reader's map).")
+    ncp.add_argument("book_root", help="Path to the book dir (parent of chapters/).")
+    ncp.add_argument("--chapter", type=int, default=None)
+    ncp.add_argument("--first-words", type=int, default=500)
+    ncp.add_argument("--format", choices=("json", "markdown"), default="json")
+    ncp.set_defaults(func=_cmd_newcomers)
     dvl = sub.add_parser("design-validate",
                          help="Check books/<book>/design.md against DESIGN.md Part II "
                               "(question in the first quarter, climax spends ≥3 plants, "
