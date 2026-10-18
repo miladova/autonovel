@@ -2924,29 +2924,26 @@ panel's book-level questions and `gen-outline`'s spine sections. Left:
 
 ## From the editorial-practice audit (2026-10-18): design before the outline
 
-`docs/editorial-practice.md` §22–§24 audits the pipeline against the
-study text now shipped as `shared/craft/EDITING.md`: of 58 question-level
-items, 6 covered, 27 partly, 23 missing (the 2 conflicts are decided).
-The pipeline's book-level strength is plot causation; the people and the
-reader are mostly absent. Ranked gaps are in §24; the two that matter
-most:
+**Done 2026-10-18:** items 1 and 2 shipped as `/autonovel:design`
+(`books/{book}/design.md`, study text `shared/craft/DESIGN.md`,
+`autonovel mechanical design-validate [--outline]`), with `gen-outline`
+(now heavy) and `draft` bound to it, a `design` dimension in `evaluate
+--phase foundation`, the design step in the foundation order and
+`/autonovel:next`, and the re-design loop as `--from-book` (routed to by
+`developmental-edit` when its diagnosis is design-level). Left:
 
-1. **A heavy-tier design stage before `gen-outline`, which the outline is
-   bound to** (`/autonovel:design --book` or a mandatory first step of
-   gen-outline): `books/{book}/design.md` with the one-sentence pitch and
-   dramatic question and how it stays in doubt; the single action and the
-   span; the controlling idea; the genre's conventions and obligatory
-   scenes per act; the viewpoint decision (incl. the world-historical
-   protagonist); the protagonist's Lie / Want / Need and the beat per act
-   that attacks the Lie; the antagonist's want, plan with dates, and
-   appearance ledger; a reader-question ledger per act boundary.
-   `evaluate --phase foundation` gates on it instead of on lore, and
-   `gen-outline` runs heavy. Drafters only execute what the outline
-   carries, so this is where most of the missing items have to live.
-2. **A re-outline-and-redraft loop.** A developmental-edit letter whose
-   problems are design-level (a frame, a misbelief, an antagonist, a span)
-   should route to a revised `design.md` / outline and a redraft (or a
-   `context: isolated` rewrite book), not to 24 in-chapter briefs.
+- **Calibrate on a real re-design.** The validator's thresholds (≥3
+  plants spent by the climax, ≥2 rehearsals, 6–10 sequences, posed by
+  25%) are first guesses; check them on the first book redrafted from a
+  design, against its developmental-edit letter.
+- **Revision bound to the design.** `revise` / `revision-pass` /
+  `brief` do not read `design.md` yet; a brief that would break a plant
+  or move the rival off stage should say so.
+- **Story map shows the design.** `story_map.html` could draw the plant
+  ledger (plant → test → payoff arcs) and the rival's appearances on the
+  same chapter axis as the threads.
+- **DESIGN.md sources.** Several claims are marked (unverified); verify
+  them as EDITING.md's were.
 
 Smaller, from the same audit: cross-family judging for the whole-book
 reviewers (self-preference, §5); a scene map with value/polarity; the

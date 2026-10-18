@@ -28,7 +28,7 @@ footer.
 Loop structure for each book in `--books`:
   1. foundation until `foundation_score > 7.5 AND lore_score > 7.0`
      (commands, in order: `gen-world`, `gen-characters`,
-     `voice-discovery`, `gen-canon` (shared half), `gen-outline`,
+     `voice-discovery`, `gen-canon` (shared half), `design`, `gen-outline`,
      `gen-canon --book {book}` (book half, seeded from the outline),
      `evaluate --phase foundation`).
   2. drafting every chapter in `outline.md` order that does not yet
@@ -89,8 +89,8 @@ should be valid per `autonovel mechanical` — run
       `shared/canon.md` are still template stubs; a populated shared
       layer was drafted against by the earlier book and must not be
       regenerated under it. For such a book run only `voice-discovery`,
-      `gen-outline`, then `gen-canon --book {book}` (book-scoped half,
-      seeded from the outline).
+      `design`, `gen-outline`, then `gen-canon --book {book}`
+      (book-scoped half, seeded from the outline).
       Print the next
       slash-command invocation and stop — routing preserves lock and
       checkpoint guarantees of the target command. Do not shell out

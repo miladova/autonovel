@@ -13,6 +13,7 @@ Subcommands:
   chapter-summary <book> [--format] One-line-per-chapter overview (date/POV/score/cast/plot).
   structure-dossier <book>         Pack outline + summaries + word counts + story_time + scores for structure-review.
   structure-validate <book|json>   Validate structure_review.json + compute the book-level stop-revising gate.
+  design-validate <book> [--outline] Check design.md's shape (DESIGN.md Part II); --outline also checks outline.md carries it.
   prolepsis <book>                 Candidate narrator flash-forwards per chapter (for developmental-edit).
   story-map --book <name> [--out P]  One-page HTML story map (synopsis/threads/characters/timeline).
   impact-of <book> [--source N]    Grep chapters for tokens unique to superseded canon facts.
@@ -656,6 +657,25 @@ def _cmd_structure_dossier(args: argparse.Namespace) -> int:
         json.dump(dossier, sys.stdout, indent=2, ensure_ascii=False)
         sys.stdout.write("\n")
     return 0
+
+
+def _cmd_design_validate(args: argparse.Namespace) -> int:
+    """Check books/<book>/design.md (and, with --outline, that outline.md
+    carries it). Exit 0 = ok, 1 = errors, 2 = no design.md / no book."""
+    from . import design as design_mod
+    book_root = Path(args.book_root)
+    if not book_root.is_dir():
+        print(f"design-validate: no book directory at {book_root}", file=sys.stderr)
+        return 2
+    rep = design_mod.check(book_root, outline=args.outline)
+    path = book_root / "design.md"
+    if args.format == "markdown":
+        sys.stdout.write(design_mod.render_markdown(rep, path))
+    else:
+        sys.stdout.write(design_mod.to_json(rep, path))
+    if not rep.present:
+        return 2
+    return 0 if rep.ok else 1
 
 
 def _cmd_structure_validate(args: argparse.Namespace) -> int:
@@ -2327,6 +2347,16 @@ def main(argv: list[str] | None = None) -> int:
     svl.add_argument("--chapters", type=int, default=None,
                      help="Chapter count for --template (default 3).")
     svl.set_defaults(func=_cmd_structure_validate)
+    dvl = sub.add_parser("design-validate",
+                         help="Check books/<book>/design.md against DESIGN.md Part II "
+                              "(question in the first quarter, climax spends ≥3 plants, "
+                              "opponent in every act, rehearsals, cast, sequences, D1–D14).")
+    dvl.add_argument("book_root", help="Path to the book dir (books/<book>).")
+    dvl.add_argument("--outline", action="store_true",
+                     help="Also check outline.md carries the design (plants/tests/payoffs "
+                          "on their chapters, same question, same chapter count).")
+    dvl.add_argument("--format", choices=("json", "markdown"), default="json")
+    dvl.set_defaults(func=_cmd_design_validate)
     smp = sub.add_parser("story-map",
                          help="One self-contained HTML story map of a book — synopsis, "
                               "thread grid + escalation curve, characters, timeline, places.")

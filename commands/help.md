@@ -47,8 +47,10 @@ workflow. Topics:
                  Three free paths (typographic / pollinations /
                  wikimedia) + paid (fal / replicate / openai).
   foundation   — gen-world → gen-characters → voice-discovery →
-                 gen-canon → gen-outline. The before-drafting
-                 sequence.
+                 gen-canon → design → gen-outline. The
+                 before-drafting sequence. design makes the
+                 book-level decisions (climax, question, opponent,
+                 plants, sequences) the outline then carries.
   drafting     — draft / draft-pass / sidequest. Writing prose.
   revising     — revise / revision-pass / brief / evaluate /
                  adversarial-edit / apply-cuts / lengthen /
@@ -199,13 +201,23 @@ Order matters; each step reads what previous steps wrote:
         → books/<name>/voice.md (Parts 1-4)
   4. /autonovel:gen-canon
         → shared/canon.md (series-wide hard facts)
-  5. /autonovel:gen-outline --book <name>
-        → books/<name>/outline.md (chapter beats)
-  6. /autonovel:gen-canon --book <name>
+  5. /autonovel:design --book <name>
+        → books/<name>/design.md: the climax first, then the question
+          it answers (posed in the first quarter), the one action and
+          span, the rival who wants the same prize (a dated plan, on
+          stage every act), the skills the climax spends (each planted
+          inside its own contest, tested, paid), rehearsals, the cast
+          as a web, sequences, clocks, places, voice. Tested against
+          shared/craft/DESIGN.md and read cold by a second reader.
+  6. /autonovel:gen-outline --book <name>
+        → books/<name>/outline.md (chapter beats, bound to the design:
+          each chapter lists its sequence, plants, tests, payoffs)
+  7. /autonovel:gen-canon --book <name>
         → books/<name>/canon.md (this book's outline-committed facts;
-          seeded FROM the outline, so it runs after step 5)
-  7. /autonovel:evaluate --phase foundation --book <name>
-        → score the foundation; iterate any stage that flagged.
+          seeded FROM the outline, so it runs after step 6)
+  8. /autonovel:evaluate --phase foundation --book <name>
+        → score the foundation (incl. `design`); iterate any stage
+          that flagged.
 
 `/autonovel:next` walks you through this in order; it knows
 which stage is missing and recommends the right command. Don't
@@ -400,6 +412,10 @@ An editor's read (the judgement no score gives):
 
 Before drafting (cheapest place to fix it):
 
+  /autonovel:design --book <name>             the book-level decisions:
+                                              climax, question, rival,
+                                              plants, rehearsals, cast,
+                                              sequences (design.md)
   /autonovel:gen-outline --book <name>        writes ## Spine,
                                               ## Stakes ladder,
                                               ## Causal spine
@@ -571,18 +587,26 @@ series, with two guards so the old book cannot leak into the new one.
         shared; the old book's plot inventions move). Without this
         the rewrite is bound by the original's plot choices.
 
-  1. autonovel new-book <new-name> --pov "<same POV>" \
-        --story-time-range <same years> --isolated
-        `context: isolated` — /autonovel:draft never reads the old
-        book's chapters as sibling context (they would otherwise all
-        clear the story-time gate and anchor the new prose).
+  1. Re-design it as a new book:
+       /autonovel:design --book <new-name> --from-book <old-book> \
+                         --notes "<what you want the book to be>"
+        Creates the book with `context: isolated` (/autonovel:draft
+        never reads the old book's chapters), copies its art, reads
+        its editor's letters and summaries (never its chapters),
+        writes the new seed from your notes and design.md with a
+        keep-ledger (what worked and has a place) and a fault-ledger
+        (each diagnosed fault and the decision that prevents it).
+        Use this when /autonovel:developmental-edit says the problems
+        are design-level. (By hand instead: `autonovel new-book
+        <new-name> --pov "<same POV>" --story-time-range <same years>
+        --isolated`, write its seed.txt, then /autonovel:design.)
 
-  2. Write books/<new-name>/seed.txt for the NEW approach (register,
-     pacing, structure, what to keep, what to drop).
+  2. Read books/<new-name>/design.md; say what to change.
 
   3. Foundation — skip the series-scoped steps, in this order:
+       /autonovel:gen-outline --book <new-name>      (bound to the design;
+                                                      reassigns the plates)
        /autonovel:voice-discovery --book <new-name>   (fresh voice.md)
-       /autonovel:gen-outline --book <new-name>
        /autonovel:gen-canon --book <new-name>         (book half only;
                                                         seeded from the outline)
      Do NOT re-run gen-world / gen-characters — they would rewrite

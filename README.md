@@ -424,7 +424,7 @@ skipped items land in an `## Onboarding TODO` block that
 `/autonovel:next` surfaces later. After the wizard finishes, open
 Claude Code in the series root and `/autonovel:next` walks you
 through gen-world / gen-characters / voice-discovery / gen-canon
-/ gen-outline / gen-canon --book / draft 1 in order.
+/ design / gen-outline / gen-canon --book / draft 1 in order.
 
 For a fresh series, `/autonovel:next` will walk you through the
 foundation in this order:
@@ -433,11 +433,15 @@ foundation in this order:
 2. `/autonovel:gen-characters` — cast registry.
 3. `/autonovel:voice-discovery --book <book>` — voice fingerprint.
 4. `/autonovel:gen-canon` — series-wide hard-fact database (`shared/canon.md`).
-5. `/autonovel:gen-outline --book <book>` — chapter plan.
-6. `/autonovel:gen-canon --book <book>` — this book's outline-committed facts
-   (`books/<book>/canon.md`; seeded from the outline, so it runs after step 5).
-7. `/autonovel:evaluate --phase foundation --book <book>` — score the foundation.
-8. `/autonovel:draft 1 --book <book>` — first chapter when foundation is solid.
+5. `/autonovel:design --book <book>` — the book-level decisions before
+   any outline: the climax, the question it answers, the rival with a
+   dated plan, the skills the climax spends (planted, tested, paid),
+   rehearsals, cast, sequences, places, voice (`books/<book>/design.md`).
+6. `/autonovel:gen-outline --book <book>` — chapter plan, bound to the design.
+7. `/autonovel:gen-canon --book <book>` — this book's outline-committed facts
+   (`books/<book>/canon.md`; seeded from the outline, so it runs after step 6).
+8. `/autonovel:evaluate --phase foundation --book <book>` — score the foundation.
+9. `/autonovel:draft 1 --book <book>` — first chapter when foundation is solid.
 
 Each command's footer prints the next step automatically. **All six
 foundation commands are required before drafting** — `gen-canon`
@@ -529,8 +533,12 @@ work spread across several months.
 
 Three categories. Full reference: [`docs/commands.md`](docs/commands.md).
 
-- **Foundation:** `gen-world`, `gen-characters`, `gen-outline`,
-  `voice-discovery`, `gen-canon`, `research`.
+- **Foundation:** `gen-world`, `gen-characters`, `design`,
+  `gen-outline`, `voice-discovery`, `gen-canon`, `research`. `design`
+  decides the book before it is outlined — climax first, then the
+  question, the rival, what the hero must learn to win and where he
+  learns it — and `--from-book` re-designs a drafted book as a new
+  one when the editor's letter says the problem is the design.
 - **Drafting & revision:** `draft`, `evaluate`, `adversarial-edit`,
   `apply-cuts`, `reader-panel`, `review`, `structure-review`,
   `brief`, `revise`, `check-anachronism`, plus the sweep commands
@@ -765,7 +773,7 @@ autonovel/
     fixtures/
       tiny-series-{historical,scifi,literary,mystery,thriller,romance,fantasy,horror}/
       bells-reference/      # Tier-4 regression — populated from the autonovel/bells branch
-  CRAFT.md, PROSE.md, ANTI-SLOP.md, ANTI-PATTERNS.md, EDITING.md
+  CRAFT.md, PROSE.md, ANTI-SLOP.md, ANTI-PATTERNS.md, EDITING.md, DESIGN.md
                             # prompt material consumed by writer/judge — symlinks to
                             # src/autonovel/templates/series/shared/craft/, which
                             # new-series / refresh-templates copy into every series

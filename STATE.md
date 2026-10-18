@@ -2168,7 +2168,49 @@ the JSON and never fails the diff. Lesson: a tool built for the author
 is not shipped until it is reachable from the page the author already
 opens.
 
+### 2026-10-18 — `/autonovel:design`: the book is designed before it is outlined
+
+After four in-chapter revision rounds on kingmaker moved causal links
+15→23 of 23 and removed every flash-forward, four cold reads still found
+17 of 24 chapters opening and settling their own contest: the fault was
+the design (a life told contest by contest under a seed rule that every
+chapter is a wager). The author then said what the book should be (the
+skills young Jakob learns as plants for a climax in which he buys the
+election, tension and skulduggery, a modern fuller voice, rich places,
+characters alive, smart moves on early knowledge rather than bets) and
+asked for the design stage first, then a redo.
+
+Shipped: `shared/craft/DESIGN.md` (sixth craft doc; the author's half of
+EDITING.md: climax first, one action through a long span — education
+and campaign, many locks, rehearsal ladder, long project with recurring
+rival, intercut, late start — suspense with a known outcome, the
+competent protagonist and fair play, the rival with a dated plan, the
+cast web and what makes characters come alive, plants inside contests,
+rehearsals, sequences, place, voice, earned outcomes, tests D1–D14, and
+re-designing a drafted book); `commands/design.md` (heavy; climax-first
+decisions into a parseable design.md; self-tests; a cold second reader
+for D14; `design-validate`; `--from-book` creates an isolated new book,
+copies art, reads letters and summaries never chapters, writes keep and
+fault ledgers and the new seed; `--notes` = the author's words, which
+win); `mechanical/design.py` + `design-validate` (structural promises;
+`--outline` checks the outline lists every plant/test/payoff on its
+chapter); `gen-outline` heavy and bound (sequence/plants/tests/payoffs
+bullets per chapter, plates reassigned on a re-design); `draft` step 3b
+(cast signatures and wants, places through the POV's attention, plants
+never announced, wins by knowledge); `evaluate --phase foundation`
+gains `design` (structure 35%); the foundation gap order
+(canon → design → outline, only for undrafted books); `/autonovel:next`
+design actions; `developmental-edit` routes design-level diagnoses to a
+re-design. Decision: the validator checks shape only; whether the design
+is good is the designer's and the cold reader's call (no brittle
+quality gate).
+
 ## Tests last known green
+- Tier 1 + Tier 2 (deterministic + contracts): 2026-10-18 (design) —
+  **2128 passing, 1 skipped**. +19: `test_mechanical_design.py` (10),
+  three `/autonovel:next` design tests, 6 per-command tests for
+  `/autonovel:design`; the two foundation-chain tests now walk
+  canon → design → outline.
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-18 (later) —
   **2109 passing, 1 skipped**. +4: `_resolve_writes` glob test and
   `test_diff_story_map_links.py` (3).

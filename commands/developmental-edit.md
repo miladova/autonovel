@@ -258,8 +258,17 @@ Re-read these before writing the letter.
      (`/autonovel:revision-pass`, `/autonovel:merge-chapters`,
      `/autonovel:remove-chapter`, `/autonovel:reorder`,
      `/autonovel:add-subplot`, `/autonovel:foreshadow`,
-     `/autonovel:gen-outline --add-spine`, or "author's decision" for a
-     frame or a change of POV).
+     `/autonovel:gen-outline --add-spine`,
+     `/autonovel:design --book <new-name> --from-book {book}` for a
+     re-design, or "author's decision" for a frame or a change of POV).
+     **When the problems are design-level** — no single action, no
+     opponent who lasts, the question posed late, a span told by
+     calendar, wins that turn on luck, or a previous letter's in-chapter
+     recommendations were carried out and the self-contained-chapter
+     count did not move — say so first, and make the first
+     recommendation a re-design and redraft (`shared/craft/DESIGN.md`
+     Part III) rather than more chapter briefs. Its kind is
+     `author-decision`: a new book is the author's call.
    - `## What not to do`: fixes that would raise a reviewer's number or
      satisfy a rule while damaging the book.
    - `## Suggested order of work`: cheapest decisive changes first, the

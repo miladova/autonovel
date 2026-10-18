@@ -48,6 +48,7 @@ Every editing command falls into one of four roles:
 | `/autonovel:reader-panel` | Whole-book reviewer | Four-persona panel (Editor / Genre Reader / Writer / First Reader). Writes `edit_logs/reader_panel.json`. **Does NOT modify chapters.** |
 | `/autonovel:review` | Whole-book reviewer | Opus dual-persona deep review (literary critic + professor of fiction). Writes `edit_logs/review.md` + `review.json`. Its stop-revising verdict is gated on `structure-review`. **Does NOT modify chapters.** |
 | `/autonovel:structure-review` | Whole-book reviewer | The book-level structure judge: is it one story building to a climax, or a string of episodes? Through-line, chapter N → N+1 causal chain, stakes ladder per act, removability per chapter, climax build, a 1–5 structure score separate from prose, and 3–7 structural brief candidates. Writes `edit_logs/structure_review.json` + `.md`. **Does NOT modify chapters.** See [§2g](#2g-when-to-stop-revising-the-book-level-gate). |
+| `/autonovel:design` | Foundation (heavy) | The book-level decisions before the outline, worked back from the climax: the question and when it is posed, the one action and span, one rival with a dated plan, the skills the climax spends (each planted inside its own contest, tested, paid), rehearsals, the cast web, sequences, clocks, places, voice → `books/<book>/design.md`. Tested against `shared/craft/DESIGN.md`, read cold by a second reader, checked by `design-validate`. `--from-book <drafted-book>` re-designs a drafted book as a new isolated one (keeps facts and art, never its prose). **Does NOT write chapters or the outline.** |
 | `/autonovel:developmental-edit` | Whole-book editor | A developmental editor's full read: one reader, every chapter in order, cold, with notes per chapter and counted evidence, then a ranked letter on the story (`edit_logs/editor_letter.md`) and where it disagrees with the scoring reviewers. `--stage` queues its in-chapter fixes in `briefs/conversation.md`. **Does NOT modify chapters.** |
 | `/autonovel:chapter-summary` | Mechanical helper | One-line-per-chapter overview table — Date / POV / Score / Words / Cast / Plot (with location prefix). Pure mechanical, no LLM. The right tool for "which chapters happen in <date range>?" or "where does <character> appear?" before a revision pass. **Does NOT modify chapters.** |
 | `/autonovel:motifs` | Mechanical helper | Per-chapter motif density tracker. Reads `books/{book}/motifs.md` (one bullet per motif: `- slug: keyword1, keyword2`). Flags motifs that drop to zero in the back half of a book they were established in earlier — catches "set up an image, never paid it off". Pure mechanical. **Does NOT modify chapters.** |
@@ -163,6 +164,7 @@ panel report and disagree with most of it but agree on chapter
 /autonovel:gen-characters
 /autonovel:voice-discovery --book <book>
 /autonovel:gen-canon                       # series-wide facts → shared/canon.md
+/autonovel:design --book <book>            # climax, question, rival, plants, sequences → design.md
 /autonovel:gen-outline --book <book>
 /autonovel:gen-canon --book <book>         # this book's outline facts → books/<book>/canon.md
 /autonovel:evaluate --phase foundation --book <book>
@@ -1136,7 +1138,7 @@ Then in Claude Code:
 ```
 
 Walks you through `gen-world → gen-characters → voice-discovery →
-gen-canon (shared) → gen-outline → gen-canon --book (this book's
+gen-canon (shared) → design → gen-outline → gen-canon --book (this book's
 outline facts) → evaluate-foundation → draft 1`. If
 `project.yaml` has a `period` set, the chain prepends
 `/autonovel:research --from-seed`.

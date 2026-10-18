@@ -18,6 +18,7 @@ reads:
   - shared/craft/*.md
   - books/{book}/voice.md
   - books/{book}/outline.md
+  - books/{book}/design.md
   - books/{book}/chapters/ch_{prev}.md
   - books/{book}/chapters/ch_*.summary.md
 writes:
@@ -98,6 +99,32 @@ required reads — surface the error and stop, don't retry.
     before they were required), draft from the beats alone and add one
     line to the postamble: "outline has no causal spine — run
     `/autonovel:gen-outline --book {book} --add-spine`". Do not stop.
+
+3b. **Hold the chapter to the design** (when `books/{book}/design.md`
+    exists; `/autonovel:design` writes it). Read from it:
+    - the `## Cast` entry of every principal in this chapter's beats:
+      give each a want in every scene they enter, play their
+      `signature:` (the gesture, object or habit of speech), let their
+      `contradiction:` show at least once, and keep their `secret:`
+      hidden unless the beats expose it;
+    - the `## Places` entry for the chapter's setting: use the place for
+      what its `use:` says, bring in its `signature:` sense details, and
+      when the chapter arrives somewhere or stages a set piece, describe
+      the place fully and concretely through the viewpoint's attention
+      (what this person, wanting this, would notice), accurate to the
+      year — description thins only in the chase;
+    - the `## Plants` rows for the ids on this chapter's `plants:`,
+      `tests:` and `payoffs:` lines. A **plant** is acquired inside the
+      chapter's own contest, while something else is at stake: never
+      explained to the reader, never flagged as important, never
+      forecast. A **test** uses it once at small stakes or shows it in a
+      new light. A **payoff** spends it where it decides the outcome,
+      so a reader recognises it without being reminded in a paragraph;
+    - `## Voice` (with `voice.md`, which wins on line-level detail) and
+      `## Opponent` (if he is on stage, he wants something in the scene
+      and the reader sees his plan working).
+    A win the protagonist earns turns on knowledge the reader saw him
+    acquire, never on a wager or the odds (`shared/craft/DESIGN.md` §15).
 
 4. Use `file_read` on `shared/world.md`, `shared/characters.md`,
    `shared/canon.md`, `books/{book}/canon.md` (this book's OWN canon —

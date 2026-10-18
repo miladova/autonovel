@@ -275,8 +275,13 @@ def test_foundation_chain_walks_world_to_outline(tmp_path: Path) -> None:
     ns = lifecycle._next_step_for(layout, "b")
     assert "gen-canon" in ns.command
 
-    # gen-outline
+    # design — the book-level decisions come before the outline
     (layout.shared / "canon.md").write_text(f"# Canon\n\n{long}\n", encoding="utf-8")
+    ns = lifecycle._next_step_for(layout, "b")
+    assert "/autonovel:design --book b" in ns.command
+
+    # gen-outline
+    (book_root / "design.md").write_text(f"# Design\n\n{long}\n", encoding="utf-8")
     ns = lifecycle._next_step_for(layout, "b")
     assert "gen-outline" in ns.command
 
@@ -293,7 +298,7 @@ def test_foundation_chain_walks_world_to_outline(tmp_path: Path) -> None:
     (book_root / "canon.md").write_text(f"# Book canon\n\n{long}\n", encoding="utf-8")
     ns = lifecycle._next_step_for(layout, "b")
     for forbidden in ("gen-world", "gen-characters", "voice-discovery",
-                       "gen-canon", "gen-outline"):
+                       "gen-canon", "autonovel:design", "gen-outline"):
         assert forbidden not in ns.command
 
 

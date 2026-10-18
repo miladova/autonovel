@@ -19,6 +19,7 @@ reads:
   - shared/craft/*.md
   - books/{book}/voice.md
   - books/{book}/outline.md
+  - books/{book}/design.md
   - books/{book}/chapters/ch_{chapter}.md
   - books/{book}/chapters/*.md
   - books/{book}/chapters/ch_*.summary.md
@@ -103,9 +104,23 @@ or `.autonovel/eval_logs/<timestamp>_series.json` for `--phase series`.
    `geography_and_culture`, `lore_interconnection`, `iceberg_depth`,
    `character_depth`, `character_distinctiveness`, `character_secrets`,
    `outline_completeness`, `foreshadowing_balance`, `clocks_paid`,
-   `causal_spine`, `internal_consistency`, `voice_clarity`,
+   `causal_spine`, `design`, `internal_consistency`, `voice_clarity`,
    `canon_coverage`, `canon_outline_consistency`. For each dimension
    emit `{score, gap, fix, note}`.
+
+   **`design` — was the book designed before it was outlined?** Read
+   `books/{book}/design.md` and run `autonovel mechanical
+   design-validate books/{book} --outline` with `bash`. Then judge what
+   the validator cannot: does the climax turn on the protagonist's own
+   act, spending plants the reader will have seen acquired; is the
+   opponent the one person who wants the same prize; does each sequence
+   hand a result forward; do the protagonist's wins turn on knowledge
+   rather than luck; did a cold reader (D14) retell the book as the
+   pitch says. Score 9-10 when the validator is OK and all hold; 7-8
+   with warnings or one weak answer; 5-6 with validator errors in the
+   outline binding; below 5 when design.md is missing or fails D2/D4/D5.
+   With no design.md, cap at 4 and make the `fix` "run
+   `/autonovel:design --book {book}`".
 
    **`causal_spine` — does the outline commit to one story?** Read the
    outline's `## Spine`, `## Stakes ladder` and `## Causal spine`
@@ -141,8 +156,8 @@ or `.autonovel/eval_logs/<timestamp>_series.json` for `--phase series`.
    ends on a clock the next chapter opens after. The `fix` names the
    chapter where the paying scene belongs (CRAFT.md §4 rule 3, PROSE
    §5.8). Reader panels name this failure as "the missing scene";
-   catching it in the outline is cheaper than catching it in prose. Weighting: lore 40%, character 30%, structure
-   20% (`causal_spine` is half of it), craft 10%. Include `overall_score`, `lore_score`,
+   catching it in the outline is cheaper than catching it in prose. Weighting: lore 30%, character 25%, structure
+   35% (`design` and `causal_spine` are each a third of it), craft 10%. Include `overall_score`, `lore_score`,
    `weakest_dimension`, `top_3_improvements`.
 
    **`canon_outline_consistency` — cross-check canon.md against

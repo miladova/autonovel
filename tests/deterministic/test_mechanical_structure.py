@@ -597,3 +597,40 @@ def test_next_flags_chapters_changed_since_editor_letter(tmp_path: Path) -> None
     assert found[0].priority == "LOW"
     assert found[0].title.startswith("Re-read")
     assert "Chapter(s) 1, 2, 3, 4, 5, 6" in found[0].rationale
+
+
+# ------------------------------------------------- /autonovel:next — design
+
+
+def _design_next(root: Path, book: str) -> list:
+    acts = next_actions.enumerate_actions(SeriesLayout(root=root), book=book)
+    return [a for a in acts if a.command and ("autonovel:design" in a.command
+                                              or "gen-outline" in a.command)]
+
+
+def test_next_asks_for_a_design_before_any_chapter(tmp_path: Path) -> None:
+    root, book = _series_with_book(tmp_path, chapters=0)
+    found = _design_next(root, book)
+    assert [a.command for a in found] == ["/autonovel:design --book the-book"]
+    assert found[0].priority == "HIGH"
+
+
+def test_next_design_silent_once_chapters_exist(tmp_path: Path) -> None:
+    root, book = _series_with_book(tmp_path, chapters=1)
+    assert _design_next(root, book) == []
+
+
+def test_next_flags_invalid_design_then_stale_outline(tmp_path: Path) -> None:
+    from tests.deterministic.test_mechanical_design import GOOD
+    root, book = _series_with_book(tmp_path, chapters=0)
+    bdir = root / "books" / book
+    (bdir / "design.md").write_text(GOOD.replace("- posed_in: 2", "- posed_in: 9"),
+                                    encoding="utf-8")
+    found = _design_next(root, book)
+    assert len(found) == 1 and found[0].command.endswith("--force")
+    assert "first quarter" in found[0].rationale
+    (bdir / "design.md").write_text(GOOD, encoding="utf-8")
+    old = time.time() - 10_000
+    os.utime(bdir / "outline.md", (old, old))
+    found = _design_next(root, book)
+    assert [a.command for a in found] == ["/autonovel:gen-outline --book the-book --force"]

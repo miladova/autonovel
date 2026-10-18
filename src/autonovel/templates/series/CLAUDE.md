@@ -106,6 +106,13 @@ revision, evaluation and editing commands:
   famous edits, and where an AI writer and editor go wrong. Every claim
   sourced. `/autonovel:developmental-edit` reads it in full every run;
   read its card (§0) before any writing task.
+- `shared/craft/DESIGN.md` — how a novel is designed before it is
+  outlined: start from the climax, one action through a long span,
+  suspense when the reader knows the outcome, the rival with a plan,
+  the cast web and characters who come alive, plants and payoffs,
+  rehearsals, sequences, place, voice, earned outcomes, and the design
+  tests D1–D14. `/autonovel:design` reads it in full every run;
+  `/autonovel:gen-outline` reads §8–§10.
 
 They are package-owned: `autonovel refresh-templates` overwrites them
 with the installed version (and `autonovel doctor` warns when they are
@@ -181,6 +188,13 @@ each of these and the workaround is in the codebase:
   chapter); merges / cuts / reorders it asks for are yours to run.
   `/autonovel:review` will not say "stop revising" until the
   structure gate passes (score ≥ 4, no removable chapter). Before
+  outlining, run `/autonovel:design --book <name>`: it decides the
+  climax, the question, the rival, what the protagonist must learn to
+  win and where he learns it, and writes `books/<name>/design.md`,
+  which the outline and every chapter draft are bound to. When a
+  developmental edit says a drafted book's problems are design-level,
+  `/autonovel:design --book <new-name> --from-book <name> --notes
+  "<the author's words>"` re-designs it as a new isolated book. Before
   drafting, `/autonovel:gen-outline` commits the book to a
   `## Spine`, `## Stakes ladder` and `## Causal spine`
   (`--add-spine` retrofits an older outline).

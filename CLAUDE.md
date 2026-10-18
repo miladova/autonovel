@@ -35,7 +35,7 @@ they are the *prompt material*, not project documentation):
 
 - [`CRAFT.md`](CRAFT.md), [`PROSE.md`](PROSE.md),
   [`ANTI-SLOP.md`](ANTI-SLOP.md), [`ANTI-PATTERNS.md`](ANTI-PATTERNS.md),
-  [`EDITING.md`](EDITING.md).
+  [`EDITING.md`](EDITING.md), [`DESIGN.md`](DESIGN.md).
   The repo-root files are symlinks; the source of truth is
   `src/autonovel/templates/series/shared/craft/`, which
   `autonovel new-series` copies into every series as `shared/craft/`
@@ -47,6 +47,9 @@ they are the *prompt material*, not project documentation):
   fix a whole novel, which `/autonovel:developmental-edit` reads every
   run; its audit of this pipeline against it is
   [`docs/editorial-practice.md`](docs/editorial-practice.md).
+  `DESIGN.md` is the author's half: how a book is designed before it is
+  outlined (climax first, plants and payoffs, the rival, rehearsals,
+  the design tests D1–D14), which `/autonovel:design` reads every run.
 
 ## Layout
 
@@ -66,7 +69,7 @@ autonovel/
       tiny-series-historical/    # the original
       tiny-series-{scifi,literary,mystery,thriller,romance,fantasy,horror}/
       bells-reference/           # Tier-4 regression — populates from autonovel/bells branch
-  CRAFT.md, PROSE.md, ANTI-SLOP.md, ANTI-PATTERNS.md   # symlinks → templates/series/shared/craft/
+  CRAFT.md, PROSE.md, ANTI-SLOP.md, ANTI-PATTERNS.md, EDITING.md, DESIGN.md   # symlinks → templates/series/shared/craft/
   CLAUDE.md, AGENTS.md, GEMINI.md   # AGENTS/GEMINI are symlinks to CLAUDE.md
 ```
 

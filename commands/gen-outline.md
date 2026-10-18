@@ -1,13 +1,16 @@
 ---
 name: autonovel:gen-outline
-description: Generate the outline for one book from its seed, world, and characters.
+description: Generate the outline for one book from its design (when present), seed, world, and characters.
 argument-hint: "--book <short-name> [--force] [--add-spine]"
-model_tier: standard
+model_tier: heavy
 allowed-tools:
   - file_read
   - file_write
+  - bash
 reads:
   - project.yaml
+  - books/{book}/design.md
+  - shared/craft/DESIGN.md
   - shared/world.md
   - shared/characters.md
   - shared/events.md
@@ -17,6 +20,7 @@ reads:
   - books/{book}/chapters/ch_*.summary.md
 writes:
   - books/{book}/outline.md
+  - books/{book}/typeset/plates.yaml
 context_mode: book
 ---
 
@@ -44,6 +48,14 @@ last beat settles or raises it" drafts into a string of well-written
 anecdotes. A chapter-local stake is fine only
 when its result is the next chapter's problem.
 
+When `books/{book}/design.md` exists (`/autonovel:design` writes it),
+the outline executes it: the same question, climax, opponent, acts and
+chapter count, every plant, test and payoff on the chapter the design
+names, every sequence's chapters, the opponent on stage where the
+design puts him. The design made the book-level decisions; this command
+turns them into chapters and beats, and `autonovel mechanical
+design-validate --outline` checks that it did.
+
 `--add-spine` retrofits the three sections onto an existing outline
 without touching its chapter entries — the path for books outlined
 before these sections were required.
@@ -62,6 +74,42 @@ before these sections were required.
 
 3. Use `file_read` on `books/{book}/seed.txt`. This is the authorial
    intent. If the seed states a chapter count or length, honor it.
+
+3a. **The design.** Use `file_read` on `books/{book}/design.md`. When it
+    exists it is binding, and it overrides the seed on structure (the
+    design already reconciled the two under `## Author's intent`):
+    - chapter count = `## Shape` `chapters:`; acts and their chapter
+      ranges = the design's `## Stakes ladder`;
+    - `## Spine`: `question:` copied verbatim from `## Dramatic
+      question`, `posed_in` / `answered_in` from it, `want:` from
+      `## Protagonist`, `opposing_force:` = the `## Opponent` name and
+      what he wants, `cost:` from `## Climax`;
+    - each chapter entry carries four more bullets after `events:` —
+      `- sequence: S<n>` (from `## Sequences`), and `- plants: [P…]`,
+      `- tests: [P…]`, `- payoffs: [P…]` listing exactly the plant ids
+      whose `plant:`, `test:` and `payoff:` chapter it is (empty lists
+      allowed);
+    - a chapter that plants a skill has a beat naming the contest it is
+      learned inside (`## Plants` gives it in parentheses) — the beat
+      is about that contest, and the skill is acquired while it plays;
+      never a beat that explains the skill or announces what it will
+      be for;
+    - a chapter in the opponent's `appears_in:` has a beat with him on
+      stage, by name; a chapter in his `wins_in:` has the beat where he
+      wins; his dated `plan:` moves reach the page as consequences the
+      protagonist meets;
+    - each rehearsal's chapters carry its contest and outcome; the
+      climax chapter's beats play `## Climax` (the action, the plants
+      spent, the cost, the threads meeting);
+    - a chapter's beats use the design's `## Places` (the place's
+      `use:`) and give each principal on stage something to want in the
+      scene (`## Cast`);
+    - a sequence's last chapter ends on its `hands on:` result; an act's
+      last chapter ends on the act's line in `## Reader questions`.
+    Read `shared/craft/DESIGN.md` §8–§10 before writing the beats. When
+    there is no design.md, outline from the seed as below, and say in
+    the report: "no design.md — `/autonovel:design --book {book}`
+    makes the book-level decisions first; recommended before drafting."
 
 4. Use `file_read` on `shared/world.md`, `shared/characters.md`, and
    `shared/events.md`. Any chapter whose story_time overlaps a registered
@@ -150,6 +198,29 @@ before these sections were required.
    ladder`, the act headings and chapter entries, and `## Causal spine`
    last. No frontmatter.
 
+8a. **Check the outline carries the design** (only when design.md
+    exists). Use `bash`:
+
+    ```
+    autonovel mechanical design-validate books/{book} --outline --format markdown
+    ```
+
+    Fix every `outline` error (a plant id missing from its chapter's
+    list, a chapter the design names but the outline lacks) by editing
+    the outline, and re-run until it reports OK. Errors in design.md
+    itself are not this command's to fix: report them and recommend
+    `/autonovel:design --book {book} --force`.
+
+8b. **Plates.** If `books/{book}/typeset/plates.yaml` exists and its
+    `chapter:` numbers came from another book (design.md `## Shape`
+    has `redesign_of:`), reassign each plate's `chapter:` to the new
+    chapter whose place or subject matches the plate's `caption:`
+    (the city view before the chapter that arrives in that city, the
+    portrait before the chapter where that person enters), one plate
+    per chapter at most. Change only `chapter:` values. Drop no plate;
+    one with no matching chapter keeps its number and is named in the
+    report.
+
 9. **`--add-spine` (retrofit).** Read the existing outline and every
    `books/{book}/chapters/ch_NN.summary.md` that exists. Write the
    three sections from what the outline (and the drafted chapters)
@@ -178,4 +249,8 @@ before these sections were required.
   (`autonovel mechanical structure-dossier books/{book}` reports no
   outline spine warnings).
 - With `--add-spine`, every chapter entry is unchanged.
+- When `books/{book}/design.md` exists, `autonovel mechanical
+  design-validate books/{book} --outline` reports no outline errors,
+  and every chapter entry has `sequence`, `plants`, `tests` and
+  `payoffs` bullets.
 </acceptance>

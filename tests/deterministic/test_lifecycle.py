@@ -255,7 +255,8 @@ def test_next_step_chains_foundation_in_order(demo_series: SeriesLayout) -> None
     """A user running /autonovel:next after each foundation command
     should walk through the canonical sequence world → characters →
     voice → canon → outline. We assert the first missing link is
-    surfaced rather than a generic foundation-evaluate suggestion."""
+    surfaced rather than a generic foundation-evaluate suggestion.
+    The design step sits between canon and outline."""
     book_root = demo_series.books / "one"
     long = "Real content. " * 30
 
@@ -287,8 +288,15 @@ def test_next_step_chains_foundation_in_order(demo_series: SeriesLayout) -> None
                       series=demo_series)
     assert "gen-canon" in r.last_action.next_standard_step
 
-    # Populate canon; expect gen-outline.
+    # Populate canon; expect the design (book-level decisions) next.
     (demo_series.shared / "canon.md").write_text(f"# Canon\n\n{long}\n", encoding="utf-8")
+    lifecycle.begin("autonovel:draft", "1 --book one", series=demo_series)
+    r = lifecycle.end("autonovel:draft", "1 --book one", status="ok", wrote=[],
+                      series=demo_series)
+    assert "/autonovel:design --book one" in r.last_action.next_standard_step
+
+    # Populate the design; expect gen-outline.
+    (book_root / "design.md").write_text(f"# Design\n\n{long}\n", encoding="utf-8")
     lifecycle.begin("autonovel:draft", "1 --book one", series=demo_series)
     r = lifecycle.end("autonovel:draft", "1 --book one", status="ok", wrote=[],
                       series=demo_series)

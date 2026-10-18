@@ -185,6 +185,19 @@ developmental editor asks about the *people* and the *reader* is absent.
 
 Book-level gaps first. Each names the professional practice it lacks.
 
+> **Update 2026-10-18.** Gaps 1–6 are now addressed by
+> `/autonovel:design` (`books/{book}/design.md`, built from the study
+> text `shared/craft/DESIGN.md`): the climax and question designed first,
+> the protagonist's misbelief attacked per act, one rival with a dated
+> plan on stage every act, reader questions per act boundary and the
+> known-outcome problem (§4 there), the genre's obligatory scenes, and
+> the re-design loop (`--from-book`, routed to by
+> `/autonovel:developmental-edit` when its diagnosis is design-level).
+> `gen-outline` (now heavy) and `draft` are bound to it, `evaluate
+> --phase foundation` scores it, and `autonovel mechanical
+> design-validate` checks its shape. Gap 7 is partly addressed (a cold
+> reader of the design, D14). Gaps 8–9 stand.
+
 1. **No premise-and-design stage before the outline** (P1–P5, H4, V1,
    S8). The practice it lacks: Coyne's Foolscap, Bransford and Reid's
    pitch tests, Stone's "Not every life will fit", Kushner's four months.

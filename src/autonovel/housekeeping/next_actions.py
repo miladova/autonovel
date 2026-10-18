@@ -88,6 +88,7 @@ def _actions_for_book(series: SeriesLayout, cfg: project_mod.ProjectConfig,
     out.extend(_summary_stale_actions(book_root, book))
     out.extend(_panel_staleness_actions(book_root, book))
     out.extend(_review_staleness_actions(book_root, book))
+    out.extend(_design_actions(book_root, book))
     out.extend(_developmental_edit_actions(book_root, book))
     out.extend(_structure_review_actions(book_root, book))
     out.extend(_typeset_staleness_actions(book_root, book, series.root))
@@ -492,6 +493,63 @@ def _review_staleness_actions(book_root: Path, book: str) -> list[NextAction]:
         rerun_command=f"/autonovel:review --book {book}",
         priority="MEDIUM",
     )
+
+
+def _design_actions(book_root: Path, book: str) -> list[NextAction]:
+    """The design stage (`/autonovel:design`), before any chapter exists:
+
+      - no `design.md` → design the book before outlining it (HIGH: every
+        later stage executes what the design decides, and a book outlined
+        without one drafts into episodes);
+      - `design.md` fails `design-validate` → fix it (MEDIUM);
+      - `design.md` newer than a populated `outline.md` → re-outline from
+        it (MEDIUM).
+
+    Silent once chapters are drafted: a drafted book is re-designed as a
+    new book (`--from-book`), which `/autonovel:developmental-edit`
+    recommends when its diagnosis is design-level.
+    """
+    if iter_chapter_files(book_root / "chapters"):
+        return []
+    design = book_root / "design.md"
+    if not design.is_file():
+        if not (book_root / "seed.txt").is_file():
+            return []
+        return [NextAction(
+            priority="HIGH",
+            title="Design the book before outlining it",
+            command=f"/autonovel:design --book {book}",
+            rationale=(
+                f"books/{book} has no design.md. The design decides the climax, "
+                f"the question it answers, the opponent, the plants the climax "
+                f"spends and the sequences; the outline and every chapter execute "
+                f"it. Outlined without one, a book drafts into a string of "
+                f"episodes."),
+            book=book,
+        )]
+    from ..mechanical import design as design_mod
+    rep = design_mod.check(book_root)
+    if not rep.ok:
+        return [NextAction(
+            priority="MEDIUM",
+            title="Fix the design (design-validate reports errors)",
+            command=f"/autonovel:design --book {book} --force",
+            rationale="; ".join(rep.errors[:3])
+            + (f" (+{len(rep.errors) - 3} more)" if len(rep.errors) > 3 else ""),
+            book=book,
+        )]
+    outline = book_root / "outline.md"
+    if (outline.is_file() and "## Chapter" in outline.read_text(encoding="utf-8")
+            and design.stat().st_mtime > outline.stat().st_mtime):
+        return [NextAction(
+            priority="MEDIUM",
+            title="Re-outline from the revised design",
+            command=f"/autonovel:gen-outline --book {book} --force",
+            rationale=(f"books/{book}/design.md changed after outline.md was "
+                       f"written; the outline must carry the design before drafting."),
+            book=book,
+        )]
+    return []
 
 
 def _developmental_edit_actions(book_root: Path, book: str) -> list[NextAction]:
