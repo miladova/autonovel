@@ -2354,10 +2354,13 @@ the page counted 58 changes: the 56 in the prose plus the three chapter
 summaries' rewrites, which the author never reads. Summaries now follow
 `--foundation` (off by default with `--chapters`, so hand-backs from
 revise/draft no longer list them); `--foundation` brings them back with
-voice/outline/canon. Two tests updated to the new default.
+voice/outline/canon. Two tests updated to the new default. Also
+`--title` / `--intro`: the page heading was `<book>: <sha> → worktree`,
+jargon to an author; a page meant for them can carry a plain heading
+and a line on how to read it (+1 test).
 
 ## Tests last known green
-- Tier 1 + Tier 2 (deterministic + contracts): 2026-10-18 (summaries follow --foundation) — **2178 passing, 1 skipped**.
+- Tier 1 + Tier 2 (deterministic + contracts): 2026-10-18 (summaries follow --foundation; --title/--intro) — **2179 passing, 1 skipped** (+1 title/intro).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-18 (merge: diff features + draft-pass template) — **2178 passing, 1 skipped**.
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-18 (diff hand-back + page) — **2178 passing, 1 skipped** (+17 bookdiff, +2 browser (skip without Playwright), +6 hand-back contracts).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-18 (draft-pass template) — **2153 passing, 1 skipped** (no new tests; contract test covers the new first-read write).

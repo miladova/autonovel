@@ -921,3 +921,13 @@ def test_if_read_needs_last_read(tagged_series: Path) -> None:
 def test_hunk_list_asks_for_what_why_and_big(tagged_series: Path) -> None:
     listing = bookdiff.render_hunk_list(build_diff(tagged_series, BOOK))
     assert '`{"what": "...", "why": "...", "big": true, "fp": "<fp>"}`' in listing
+
+
+def test_title_and_intro_for_an_author_page(tagged_series: Path) -> None:
+    rep = build_diff(tagged_series, BOOK, from_spec="draft_1")
+    html = render_html(rep, title="Kingmaker: chapters 1–3", intro="New text is *highlighted*.")
+    assert "<title>Kingmaker: chapters 1–3</title>" in html
+    assert "<h1>Kingmaker: chapters 1–3</h1>" in html
+    assert '<p class="intro">New text is <em>highlighted</em>.</p>' in html
+    plain = render_html(rep)
+    assert f"<h1>{BOOK}: what changed</h1>" in plain and 'class="intro"' not in plain

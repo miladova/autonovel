@@ -1657,6 +1657,7 @@ main { min-width: 0;
 .wrap { max-width: 44rem; margin: 0 auto; }
 header.report h1 { font-size: 1.35rem; margin: .2rem 0 .4rem; }
 .meta { color: var(--muted); margin: .15rem 0; overflow-wrap: anywhere; }
+.intro { margin: .4rem 0 .8rem; max-width: 40rem; }
 .note { color: var(--muted); font-style: italic; }
 .legend { margin: .6rem 0 1rem; color: var(--muted); }
 .tablewrap { overflow-x: auto; margin: .8rem 0 1.2rem; }
@@ -2177,15 +2178,19 @@ def _sidebar(report: DiffReport) -> str:
 
 
 def render_html(report: DiffReport, *, context: int = 1,
-                story_map_href: str | None = None) -> str:
+                story_map_href: str | None = None,
+                title: str | None = None, intro: str | None = None) -> str:
     """One self-contained page: inline CSS + JS, no external requests.
     Three views of the same text (Changes / Whole chapter / Clean text)
     and a big-changes filter. `story_map_href` (the story map written
     beside it) adds a Story map link to the toolbar and to every
-    chapter's heading line."""
+    chapter's heading line. `title` replaces the page title and heading
+    (a page for the author, not the pipeline); `intro` is a plain
+    paragraph under the heading."""
     t = report.totals()
     total = t["hunks"]
-    title = f"{report.book}: {report.old.label} → {report.new.label}"
+    heading = title or f"{report.book}: what changed"
+    title = title or f"{report.book}: {report.old.label} → {report.new.label}"
     rows: list[str] = []
     for f in report.changed_chapters:
         rows.append(
@@ -2276,7 +2281,8 @@ def render_html(report: DiffReport, *, context: int = 1,
 <aside aria-label="Changes by chapter">{_sidebar(report)}</aside>
 <main><div class="wrap">
 <header class="report">
-<h1>{_esc(report.book)}: what changed</h1>
+<h1>{_esc(heading)}</h1>
+{f'<p class="intro">{md_inline_html(intro)}</p>' if intro else ""}
 <p class="meta">From {_snap_line(report.old)}</p>
 <p class="meta">To {_snap_line(report.new)}</p>
 <p class="meta">{total} change{"s" if total != 1 else ""}{big_note} · generated {_esc(report.generated)}</p>
@@ -2423,6 +2429,11 @@ def add_arguments(p: argparse.ArgumentParser) -> None:
                         "handing a rewritten chapter back.")
     p.add_argument("--foundation", action=argparse.BooleanOptionalAction, default=None,
                    help="Include the chapter summaries and the voice/outline/canon diffs (default: on unless --chapters).")
+    p.add_argument("--title", default=None,
+                   help="Page title and heading, for a page meant for the author "
+                        "(default: '<book>: <from> → <to>').")
+    p.add_argument("--intro", default=None,
+                   help="A plain paragraph under the heading (markdown emphasis allowed).")
     p.add_argument("--context", type=int, default=1,
                    help="Unchanged paragraphs shown around each change (default 1).")
     p.add_argument("--story-map", action=argparse.BooleanOptionalAction, default=True,
@@ -2505,7 +2516,8 @@ def cli(args: argparse.Namespace) -> int:
         html_path.write_text(
             render_html(report, context=max(0, args.context),
                         story_map_href=("story_map.html"
-                                        if story_map and story_map.get("html") else None)),
+                                        if story_map and story_map.get("html") else None),
+                        title=args.title, intro=args.intro),
             encoding="utf-8")
         wrote_html = html_path
     bookmark = write_bookmark(series_root, book, report.new) if args.mark_read else None

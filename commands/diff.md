@@ -1,7 +1,7 @@
 ---
 name: autonovel:diff
 description: Show what changed between two versions of a book — word-level edits in context, chapter by chapter, with next/prev stepping, Changes / Whole chapter / Clean text views and a big-changes filter — as one HTML page you open in a browser. Zero-LLM unless --annotate (a plain what-changed note, a why and a big flag per change).
-argument-hint: "[--book <short-name>] [--from <tag|commit|last-read|last-tag|checkpoint:<timestamp>|checkpoint:latest>] [--to <tag|commit|worktree>] [--chapters N-M|N,M] [--mark-read] [--annotate]"
+argument-hint: "[--book <short-name>] [--from <tag|commit|last-read|last-tag|checkpoint:<timestamp>|checkpoint:latest>] [--to <tag|commit|worktree>] [--chapters N-M|N,M] [--mark-read] [--annotate] [--title <text>] [--intro <text>]"
 model_tier: light
 allowed-tools:
   - bash
@@ -108,7 +108,10 @@ go back to the author as this page.
    foundation files and the chapter summaries are skipped (pass
    `--foundation` to include them: summaries are pipeline notes the
    author doesn't read, so they would only pad the change count).
-   `--mark-read` and `--annotate` are flags.
+   `--mark-read` and `--annotate` are flags. `--title "<text>"` and
+   `--intro "<text>"` pass through to the helper for a page meant for the
+   author (a plain heading and a line on how to read it, instead of
+   `<book>: <from> → <to>`).
 
 2. **Mechanical diff.** Use `bash` to run, from the series root:
 
