@@ -6,6 +6,7 @@ model_tier: heavy
 allowed-tools:
   - file_read
   - file_write
+  - bash
 reads:
   - project.yaml
   - shared/world.md
@@ -19,11 +20,16 @@ reads:
   - books/{book}/briefs/conversation.md
   - books/{book}/chapters/ch_{chapter}.md
   - books/{book}/chapters/ch_{prev}.md
+  - books/{book}/edit_logs/last_read.json
 writes:
   - books/{book}/chapters/ch_{chapter}.md
   - books/{book}/chapters/ch_{chapter}.summary.md
   - books/{book}/pending_canon.md
   - books/{book}/briefs/conversation.md
+  - books/{book}/edit_logs/diff_*.html
+  - books/{book}/edit_logs/diff_*.json
+  - books/{book}/edit_logs/story_map.html
+  - books/{book}/edit_logs/story_map.json
 context_mode: book
 ---
 
@@ -240,6 +246,39 @@ file blocked a full revision-pass.
     byte-for-byte — only the matching `Status: queued` lines flip
     to `Status: applied`. If no entries were folded, do not touch
     the file.
+
+12. **Hand the chapter back as a diff.** An author who has already
+    read this chapter must not have to read it whole again to find
+    what the rewrite did. Use `bash` to run, from the series root:
+
+    ```
+    autonovel mechanical diff-chapters --book {book} --from last-read --chapters {chapter} --if-read
+    ```
+
+    It compares the chapter as the author last read it — the version
+    `books/{book}/edit_logs/last_read.json` records, which
+    `/autonovel:diff --mark-read` writes — with the rewrite on disk,
+    and writes the page `books/{book}/edit_logs/diff_*.html` (named for
+    the chapter, with its data file `diff_*.json`, and the story map
+    `books/{book}/edit_logs/story_map.html` / `story_map.json` rebuilt
+    beside it). When there is no bookmark, or the chapter did not exist
+    in the version last read, it writes nothing and prints
+    `"skipped": "<reason>"`: say nothing about it. Otherwise end the
+    final report with:
+
+    ```
+    What changed in chapter {chapter} since you last read it: <open>
+      (<html>) — <hunks> changes, <big_hunks> big, +<words_added> −<words_removed> words.
+      The page opens on the changes; Whole chapter and Clean text show the same text whole.
+    ```
+
+    (`open` and `html` come from the helper's JSON.) For a plain note
+    and a big/small flag on every change, the author can run
+    `/autonovel:diff --book {book} --from last-read --chapters {chapter} --annotate`.
+    Do not pass `--mark-read`: the author marks the version read after
+    reading it. Inside `/autonovel:revision-pass` skip this step — the
+    sweep hands the whole range back at the end. Best-effort: if the
+    helper fails, say so in one line and finish.
 </workflow>
 
 <acceptance>
@@ -259,4 +298,7 @@ file blocked a full revision-pass.
 - Any `briefs/conversation.md` entries with
   `Target: chapter {chapter}` + `Status: queued` are flipped to
   `Status: applied` exactly once. Untouched turns are byte-identical.
+- When the author had read the chapter (`last_read.json` exists and
+  the chapter was in that version), the final report names the diff
+  page from step 12; the bookmark itself is unchanged.
 </acceptance>

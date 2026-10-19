@@ -16,19 +16,28 @@ Three layers, all `difflib`:
    *hunk* -- the unit of next/prev navigation.
 2. **Pairing inside a hunk.** The hunk's old and new paragraphs are
    paired by similarity (1:1, or 1:2 / 2:1 for a split or merged
-   paragraph) with a small monotonic DP that maximises matched words, so
-   a one-word edit shows as one inline change instead of a whole
-   paragraph deleted and re-inserted. Unpaired paragraphs are pure
-   deletions or insertions (and "moved" when the same text is deleted in
-   one place and inserted in another).
+   paragraph) with a monotonic DP that maximises the summed similarity
+   ratio of the pairs, so a one-word edit shows as one inline change
+   instead of a whole paragraph deleted and re-inserted, and a paragraph
+   pushed down past newly written ones is still shown as an edit of
+   itself. Unpaired paragraphs are pure deletions or insertions (and
+   "moved" when the same text is deleted in one place and inserted in
+   another).
 3. **Word-level diff inside a pair.** Tokens are whitespace-split words
    with punctuation attached; `SequenceMatcher` over the token lists,
-   then a semantic cleanup that folds short coincidental equalities (a
-   stray "the" inside a rewritten sentence) into the surrounding edit,
-   as diff-match-patch's ``cleanupSemantic`` does.
+   then unchanged islands of one or two words between edits are folded
+   into the edit and a semantic cleanup folds short coincidental
+   equalities (a stray "the" inside a rewritten sentence), as
+   diff-match-patch's ``cleanupSemantic`` does. A pair that kept too
+   little of the old paragraph is shown *rewritten*: the new text, with
+   the earlier draft in a fold.
 
-Pure mechanical; no LLM. `/autonovel:diff --annotate` adds one-line
-*why* annotations by writing a sidecar JSON that ``--why`` feeds back in.
+The page has three views of one text -- Changes (unchanged runs
+folded), Whole chapter, and Clean text (the new version only) -- and a
+"big changes only" filter. Pure mechanical; no LLM.
+`/autonovel:diff --annotate` adds a plain *what* note, a *why* and a
+big/small flag per change by writing a sidecar JSON that ``--why``
+feeds back in.
 """
 
 from __future__ import annotations
@@ -66,6 +75,21 @@ LB = "\n"
 
 BOOKMARK_NAME = "last_read.json"
 
+ISLAND_WORDS = 2
+"""An unchanged run of at most this many words between two edits is
+folded into them, so a reworded phrase reads as one change."""
+
+REWRITE_RULES = ((0.5, 4), (0.6, 10))
+"""``(kept, runs)``: a paired paragraph is shown rewritten -- the new
+text, the earlier draft folded away -- when under ``kept`` of the old
+paragraph's words survive and the diff has at least ``runs`` deleted or
+inserted runs (interleaved fragments that dense are unreadable)."""
+
+BIG_WORDS = 40
+"""Without annotations, a change is "big" (kept by the big-changes
+filter) when it adds plus removes at least this many words, or moves a
+paragraph."""
+
 # Frontmatter keys that change on every revision and say nothing to a
 # reader (word_count is recomputed by the pipeline).
 _IGNORED_FRONTMATTER_KEYS = frozenset({"word_count"})
@@ -78,6 +102,7 @@ _PARA_SPLIT_RE = re.compile(r"\n\s*\n")
 _BLOCK_LINE_RE = re.compile(r"^(?:[-*+]\s|\d+[.)]\s|#{1,6}\s|>|\|)")
 _CHAPTER_NUM_RE = re.compile(r"^ch_(\d+)\.md$")
 _HEX_SHA_RE = re.compile(r"^[0-9a-fA-F]{7,40}$")
+_WORDISH_RE = re.compile(r"\w")
 
 
 class DiffError(Exception):
@@ -220,8 +245,28 @@ def _cleanup_semantic(segs: list[Seg]) -> list[Seg]:
     return segs
 
 
+def _fold_islands(segs: list[Seg]) -> list[Seg]:
+    """Fold an unchanged run of at most `ISLAND_WORDS` words (tokens with
+    no letter or digit don't count) sitting between two edits into one
+    edit, so "the old man" -> "an old woman" reads as one phrase, not
+    three fragments. Runs that hold a paragraph or line break stay."""
+    out: list[Seg] = []
+    for k, s in enumerate(segs):
+        island = (
+            s.tag == "eq" and k + 1 < len(segs) and segs[k + 1].tag == "chg"
+            and bool(out) and out[-1].tag == "chg"
+            and PARA not in s.old and LB not in s.old
+            and sum(1 for t in s.old if _WORDISH_RE.search(t)) <= ISLAND_WORDS
+        )
+        if island or (s.tag == "chg" and out and out[-1].tag == "chg"):
+            out[-1] = Seg("chg", out[-1].old + s.old, out[-1].new + s.new)
+        else:
+            out.append(Seg(s.tag, list(s.old), list(s.new)))
+    return out
+
+
 def word_diff(old_tokens: list[str], new_tokens: list[str]) -> list[Seg]:
-    """Token-level diff with semantic cleanup."""
+    """Token-level diff, small islands folded, with semantic cleanup."""
     sm = difflib.SequenceMatcher(None, old_tokens, new_tokens, autojunk=False)
     segs: list[Seg] = []
     for tag, i1, i2, j1, j2 in sm.get_opcodes():
@@ -232,7 +277,7 @@ def word_diff(old_tokens: list[str], new_tokens: list[str]) -> list[Seg]:
             segs[-1].new.extend(new_tokens[j1:j2])
         else:
             segs.append(Seg("chg", list(old_tokens[i1:i2]), list(new_tokens[j1:j2])))
-    return _cleanup_semantic(segs)
+    return _cleanup_semantic(_fold_islands(segs))
 
 
 def _seg_counts(segs: list[Seg]) -> tuple[int, int]:
@@ -241,26 +286,49 @@ def _seg_counts(segs: list[Seg]) -> tuple[int, int]:
     return added, removed
 
 
+def is_rewritten(segs: list[Seg]) -> bool:
+    """True when a paired paragraph kept so little of its old words, in
+    so many fragments, that it reads better as new text (`REWRITE_RULES`)."""
+    old_words = sum(_word_count_tokens(s.old) for s in segs)
+    if not old_words:
+        return False
+    kept = sum(_word_count_tokens(s.new) for s in segs if s.tag == "eq") / old_words
+    runs = sum(bool(_word_count_tokens(s.old)) + bool(_word_count_tokens(s.new))
+               for s in segs if s.tag == "chg")
+    return any(kept < k and runs >= r for k, r in REWRITE_RULES)
+
+
 # ===================================================================
 # Paragraph pairing inside a hunk
 # ===================================================================
 
 
-def _matched_tokens(a: list[str], b: list[str], threshold: float) -> int | None:
-    """Matched-token count when ``a`` and ``b`` are similar enough to
-    pair (ratio >= threshold), else None."""
-    if not a or not b:
+def _ratio(sm: difflib.SequenceMatcher, threshold: float) -> float | None:
+    """``sm.ratio()`` when it reaches ``threshold``, else None; the two
+    cheap upper bounds reject most unrelated paragraphs first."""
+    if sm.real_quick_ratio() < threshold or sm.quick_ratio() < threshold:
         return None
-    la, lb = len(a), len(b)
-    if 2.0 * min(la, lb) / (la + lb) < threshold:  # real_quick_ratio bound
-        return None
-    sm = difflib.SequenceMatcher(None, a, b, autojunk=False)
-    if sm.quick_ratio() < threshold:
-        return None
-    matched = sum(blk.size for blk in sm.get_matching_blocks())
-    if 2.0 * matched / (la + lb) < threshold:
-        return None
-    return matched
+    r = sm.ratio()
+    return r if r >= threshold else None
+
+
+def _similarities(old_toks: list[list[str]], new_toks: list[list[str]],
+                  threshold: float) -> dict[tuple[int, int], float]:
+    """Every 1:1 old/new paragraph ratio that reaches ``threshold``.
+    One matcher per new paragraph, so its index is built once."""
+    out: dict[tuple[int, int], float] = {}
+    sm = difflib.SequenceMatcher(None, autojunk=False)
+    for j, b in enumerate(new_toks):
+        if not b:
+            continue
+        sm.set_seq2(b)
+        for i, a in enumerate(old_toks):
+            if a:
+                sm.set_seq1(a)
+                r = _ratio(sm, threshold)
+                if r is not None:
+                    out[(i, j)] = r
+    return out
 
 
 def pair_paragraphs(old_toks: list[list[str]], new_toks: list[list[str]],
@@ -270,56 +338,58 @@ def pair_paragraphs(old_toks: list[list[str]], new_toks: list[list[str]],
 
     Returns display-ordered items ``(kind, old_indices, new_indices)``
     with kind ``pair`` (1:1, 1:2 split, 2:1 merge), ``del`` or ``ins``.
-    A monotonic DP maximises the total matched-token count; ties prefer
-    a 1:1 pair, then deletions before insertions. Large hunks restrict
-    pairing to a diagonal band so a whole-chapter rewrite stays fast.
+    A monotonic DP maximises the summed similarity ratio of the pairs
+    (each at least ``threshold``), over the whole hunk: a paragraph that
+    moved down past newly written ones still pairs with its new self. A
+    split or merge scores the ratio of the joined text, so it only beats
+    a 1:1 pair when the joined text really is more alike -- a neighbour
+    that merely shares a few words is not glued on -- and is only tried
+    beside a 1:1 pair that passed. Ties prefer a 1:1 pair, then
+    deletions before insertions.
     """
     n, m = len(old_toks), len(new_toks)
     if n == 0:
         return [("ins", [], [j]) for j in range(m)]
     if m == 0:
         return [("del", [i], []) for i in range(n)]
-    band = None if n * m <= 400 else 6
-    cache: dict[tuple[int, int, int, int], int | None] = {}
+    sims = _similarities(old_toks, new_toks, threshold)
+    joined: dict[tuple[int, int, int, int], float | None] = {}
 
-    def gain(i0: int, i1: int, j0: int, j1: int) -> int | None:
+    def group(i0: int, i1: int, j0: int, j1: int) -> float | None:
         key = (i0, i1, j0, j1)
-        if key not in cache:
-            cache[key] = _matched_tokens(
-                _join_tokens(old_toks[i0:i1]), _join_tokens(new_toks[j0:j1]),
-                threshold,
-            )
-        return cache[key]
+        if key not in joined:
+            joined[key] = _ratio(difflib.SequenceMatcher(
+                None, _join_tokens(old_toks[i0:i1]), _join_tokens(new_toks[j0:j1]),
+                autojunk=False), threshold)
+        return joined[key]
 
-    def in_band(i: int, j: int) -> bool:
-        return band is None or abs(i * m / n - j) <= band
-
-    best = [[0] * (m + 1) for _ in range(n + 1)]
+    best = [[0.0] * (m + 1) for _ in range(n + 1)]
     move: list[list[tuple[str, int, int] | None]] = [[None] * (m + 1) for _ in range(n + 1)]
     for i in range(n, -1, -1):
         for j in range(m, -1, -1):
             if i == n and j == m:
                 continue
-            # (score, -priority, move) -- max() picks highest score,
-            # then lowest priority number.
-            cands: list[tuple[int, int, tuple[str, int, int]]] = []
-            if i < n and j < m and in_band(i, j):
-                g = gain(i, i + 1, j, j + 1)
+            # (score, priority, move) -- max() picks the highest score
+            # (rounded, so float noise never beats a preference), then
+            # the highest priority.
+            cands: list[tuple[float, int, tuple[str, int, int]]] = []
+            if i < n and j < m:
+                g = sims.get((i, j))
                 if g is not None:
                     cands.append((best[i + 1][j + 1] + g, 0, ("pair", 1, 1)))
-                if j + 1 < m:
-                    g = gain(i, i + 1, j, j + 2)
-                    if g is not None:
-                        cands.append((best[i + 1][j + 2] + g, -1, ("pair", 1, 2)))
-                if i + 1 < n:
-                    g = gain(i, i + 2, j, j + 1)
-                    if g is not None:
-                        cands.append((best[i + 2][j + 1] + g, -1, ("pair", 2, 1)))
+                if j + 1 < m and (g is not None or (i, j + 1) in sims):
+                    g2 = group(i, i + 1, j, j + 2)
+                    if g2 is not None:
+                        cands.append((best[i + 1][j + 2] + g2, -1, ("pair", 1, 2)))
+                if i + 1 < n and (g is not None or (i + 1, j) in sims):
+                    g2 = group(i, i + 2, j, j + 1)
+                    if g2 is not None:
+                        cands.append((best[i + 2][j + 1] + g2, -1, ("pair", 2, 1)))
             if i < n:
                 cands.append((best[i + 1][j], -2, ("del", 1, 0)))
             if j < m:
                 cands.append((best[i][j + 1], -3, ("ins", 0, 1)))
-            score, _, mv = max(cands, key=lambda c: (c[0], c[1]))
+            score, _, mv = max(cands, key=lambda c: (round(c[0], 9), c[1]))
             best[i][j] = score
             move[i][j] = mv
     items: list[tuple[str, list[int], list[int]]] = []
@@ -337,21 +407,110 @@ def pair_paragraphs(old_toks: list[list[str]], new_toks: list[list[str]],
 # ===================================================================
 
 
-_BOLD_RE = re.compile(r"\*\*(?=\S)([^*<>]+?)(?<=\S)\*\*")
-_ITAL_RE = re.compile(r"(?<![\w*])\*(?=\S)([^*<>]+?)(?<=\S)\*(?![\w*])")
 _HEADING_TOKEN_RE = re.compile(r"^#{1,6}$")
 _BREAK_RE = re.compile(r"^(?:(?:\*\s*){3,}|(?:-\s*){3,}|⁂|#)$")
+_STARS_RE = re.compile(r"(\*+)")
+_ONLY_STARS_RE = re.compile(r"^\*+$")
 
+EM, STRONG = 1, 2
+_STAR_STYLE = {1: EM, 2: STRONG, 3: EM | STRONG}
 
-def _inline_md(inner: str) -> str:
-    """Render ``**bold**`` / ``*italic*`` that sit inside one text run
-    (a span crossing an ins/del boundary is left as literal asterisks)."""
-    inner = _BOLD_RE.sub(r"<strong>\1</strong>", inner)
-    return _ITAL_RE.sub(r"<em>\1</em>", inner)
+Pieces = list[tuple[str, int]]
+"""One token as ``(text, style)`` runs, emphasis markers dropped."""
 
 
 def _esc(s: str) -> str:
     return _html.escape(s, quote=True)
+
+
+def _emphasis(tokens: list[str]) -> list[Pieces]:
+    """Markdown emphasis, token by token: each token becomes its
+    ``(text, style)`` pieces with the asterisks dropped (style bits `EM`,
+    `STRONG`; ``*`` toggles italic, ``**`` bold, ``***`` both).
+
+    Working on tokens, not on the rendered HTML, keeps an italic span
+    that an insertion cuts through italic on both sides of the cut.
+    Emphasis never runs past a paragraph or line break; a line whose
+    markers don't balance keeps its asterisks as text, and so does a
+    token that is only asterisks (a ``* * *`` break, a list bullet)."""
+    out: list[Pieces] = [[(t, 0)] for t in tokens]
+    start = 0
+    for end in range(len(tokens) + 1):
+        if end < len(tokens) and tokens[end] not in (PARA, LB):
+            continue
+        style = 0
+        line: list[Pieces] = []
+        for t in tokens[start:end]:
+            if "*" not in t or _ONLY_STARS_RE.match(t):
+                line.append([(t, style)])
+                continue
+            pieces: Pieces = []
+            for part in _STARS_RE.split(t):
+                if part.startswith("*") and len(part) in _STAR_STYLE:
+                    style ^= _STAR_STYLE[len(part)]
+                elif part:
+                    pieces.append((part, style))
+            line.append(pieces)
+        if not style:  # balanced: keep it; else the asterisks stay text
+            out[start:end] = line
+        start = end + 1
+    return out
+
+
+def _pieces_html(tokens: list[Pieces]) -> str:
+    """Escape a run of tokens (joined by spaces) and wrap each stretch of
+    one style in ``<em>`` / ``<strong>``; `LB` tokens become ``<br>``."""
+    chunks: list[tuple[str, int]] = []
+    for k, pieces in enumerate(tokens):
+        if k and pieces and chunks:
+            # The space between two italic words is italic too.
+            chunks.append((" ", chunks[-1][1] & pieces[0][1] if chunks[-1][1] >= 0 else 0))
+        for text, style in pieces:
+            chunks.append(("<br>", -1) if text == LB else (text, style))
+    out: list[str] = []
+    k = 0
+    while k < len(chunks):
+        style = chunks[k][1]
+        if style < 0:
+            out.append(chunks[k][0])
+            k += 1
+            continue
+        run: list[str] = []
+        while k < len(chunks) and chunks[k][1] == style:
+            run.append(chunks[k][0])
+            k += 1
+        text = _esc("".join(run))
+        if style & EM:
+            text = f"<em>{text}</em>"
+        if style & STRONG:
+            text = f"<strong>{text}</strong>"
+        out.append(text)
+    return "".join(out)
+
+
+def md_inline_html(text: str) -> str:
+    """One line of markdown (a note, a snippet) as escaped HTML with its
+    emphasis rendered."""
+    return _pieces_html(_emphasis(tokenize(" ".join(text.split()))))
+
+
+def _plain(pieces: Pieces) -> str:
+    return "".join(t for t, _ in pieces)
+
+
+def _styled(segs: list[Seg]) -> list[tuple[list[Pieces], list[Pieces]]]:
+    """Per segment, the emphasis pieces of its old and new tokens, worked
+    out over each side's whole text (an unchanged run takes the new
+    side's styling, as it reads in the new version)."""
+    old_side = _emphasis([t for s in segs for t in s.old])
+    new_side = _emphasis([t for s in segs for t in s.new])
+    out: list[tuple[list[Pieces], list[Pieces]]] = []
+    oi = ni = 0
+    for s in segs:
+        out.append((old_side[oi:oi + len(s.old)], new_side[ni:ni + len(s.new)]))
+        oi += len(s.old)
+        ni += len(s.new)
+    return out
 
 
 def render_segments(segs: list[Seg], *, para_class: str = "",
@@ -387,23 +546,22 @@ def render_segments(segs: list[Seg], *, para_class: str = "",
             classes.append("md-h")
         elif _BREAK_RE.match(text):
             classes.append("md-break")
-        inner = _inline_md(" ".join(parts))
-        out.append(f'<p class="{" ".join(classes)}">{tag_html}{inner}</p>')
+        out.append(f'<p class="{" ".join(classes)}">{tag_html}{" ".join(parts)}</p>')
         parts.clear()
         kinds.clear()
         plain.clear()
 
-    def run(tokens: list[str], tag: str) -> None:
-        buf: list[str] = []
+    def run(tokens: list[str], styled: list[Pieces], tag: str) -> None:
+        buf: list[Pieces] = []
 
         def emit() -> None:
             if buf:
-                inner = " ".join(buf)
+                inner = _pieces_html(buf)
                 parts.append(inner if tag == "eq" else f"<{tag}>{inner}</{tag}>")
                 kinds.add(tag)
                 buf.clear()
 
-        for t in tokens:
+        for t, pieces in zip(tokens, styled):
             if t == PARA:
                 emit()
                 if tag == "eq":
@@ -415,19 +573,18 @@ def render_segments(segs: list[Seg], *, para_class: str = "",
                     parts.append('<ins class="pilcrow" title="paragraph break added">¶</ins>')
                     kinds.add("ins")
                     flush()
-            elif t == LB:
-                buf.append("<br>")
             else:
-                buf.append(_esc(t))
-                plain.append(t)
+                buf.append(pieces)
+                if t != LB:
+                    plain.append(t)
         emit()
 
-    for s in segs:
+    for s, (old_styled, new_styled) in zip(segs, _styled(segs)):
         if s.tag == "eq":
-            run(s.old, "eq")
+            run(s.new, new_styled, "eq")
         else:
-            run(s.old, "del")
-            run(s.new, "ins")
+            run(s.old, old_styled, "del")
+            run(s.new, new_styled, "ins")
     flush()
     return out
 
@@ -436,6 +593,28 @@ def render_plain_paragraph(p: str, *, extra_class: str = "") -> str:
     """An unchanged paragraph as one ``<p class="p-eq ...">``."""
     toks = tokenize(p)
     return render_segments([Seg("eq", toks, toks)], para_class=extra_class)[0]
+
+
+def _split_at_para(tokens: list[str]) -> list[list[str]]:
+    groups: list[list[str]] = [[]]
+    for t in tokens:
+        if t == PARA:
+            groups.append([])
+        else:
+            groups[-1].append(t)
+    return [g for g in groups if g]
+
+
+def render_rewritten(old_tokens: list[str], new_tokens: list[str]) -> list[str]:
+    """A paragraph rewritten past inline marking (`is_rewritten`): its
+    new text, marked new, then the earlier draft in a closed fold."""
+    out: list[str] = []
+    for g in _split_at_para(new_tokens):
+        out += render_segments([Seg("chg", [], g)], para_class="p-rewritten")
+    old = "\n".join(render_segments([Seg("eq", old_tokens, old_tokens)], para_class="p-old"))
+    out.append('<details class="earlier"><summary>Rewritten — show the earlier '
+               f'draft</summary>{old}</details>')
+    return out
 
 
 # ===================================================================
@@ -461,13 +640,27 @@ class Hunk:
     context_after: str | None
     fp: str
     moved: int = 0             # paragraphs in this hunk that moved
+    rewritten: int = 0         # paired paragraphs shown as rewritten
     n: int = 0                 # 1-based ordinal across the whole report
+    # Annotations (`--why`): a plain note on what the change is, why it
+    # was made, and whether the author would want to read it (None =
+    # not annotated; `is_big` then falls back to its size).
+    what: str | None = None
     why: str | None = None
+    big: bool | None = None
     snippet: str = ""
+    snippet_html: str = ""
     # The changed runs only, in reading order, as [old, new] pairs
-    # ("" on one side for a pure deletion / insertion) -- what the
-    # annotation step reads instead of whole paragraphs.
+    # ("" on one side for a pure deletion / insertion; a rewritten
+    # paragraph is one whole [old, new] pair) -- what the annotation
+    # step reads instead of whole paragraphs.
     changes: list[list[str]] = field(default_factory=list)
+
+    @property
+    def is_big(self) -> bool:
+        if self.big is not None:
+            return self.big
+        return self.words_added + self.words_removed >= BIG_WORDS or self.moved > 0
 
     def to_dict(self) -> dict:
         return {
@@ -482,7 +675,9 @@ class Hunk:
             "words_removed": self.words_removed,
             "context_before": self.context_before,
             "context_after": self.context_after,
-            "moved": self.moved, "fp": self.fp, "why": self.why,
+            "moved": self.moved, "rewritten": self.rewritten, "fp": self.fp,
+            "what": self.what, "why": self.why,
+            "big": self.is_big, "big_source": "note" if self.big is not None else "size",
             "snippet": self.snippet,
         }
 
@@ -540,23 +735,52 @@ def _words(tokens: list[str]) -> list[str]:
     return [t for t in tokens if t not in (PARA, LB)]
 
 
-def _snippet(segs_or_text: list[Seg] | str, limit: int = 60) -> str:
-    """Plain-text locator for the sidebar: the first changed words with
-    two or three words of unchanged context either side."""
-    if isinstance(segs_or_text, str):
-        return _clip(" ".join(_words(tokenize(segs_or_text))), limit)
-    segs = segs_or_text
+def _word_pieces(tokens: list[str], styled: list[Pieces]) -> list[Pieces]:
+    return [p for t, p in zip(tokens, styled) if t not in (PARA, LB)]
+
+
+def _clip_pieces(toks: list[Pieces], limit: int, lead: str = "") -> tuple[str, str]:
+    """As many whole words as fit in ``limit`` characters, as
+    ``(text, html)``; "…" marks a cut."""
+    keep: list[Pieces] = []
+    size = len(lead)
+    for p in toks:
+        w = len(_plain(p)) + (1 if keep else 0)
+        if keep and size + w > limit:
+            break
+        keep.append(p)
+        size += w
+    text = lead + " ".join(_plain(p) for p in keep)
+    html = _esc(lead) + _pieces_html(keep)
+    if len(keep) < len(toks):
+        text, html = text + "…", html + "…"
+    return text, html
+
+
+def _snippet(segs: list[Seg], limit: int = 60) -> tuple[str, str]:
+    """Locator for the change list, as ``(text, html)``: the first changed
+    words with two or three words of unchanged context either side,
+    emphasis rendered in the html and dropped from the text."""
+    styled = _styled(segs)
     for k, s in enumerate(segs):
         if s.tag != "chg":
             continue
-        changed = _words(s.new) or _words(s.old)
+        changed = (_word_pieces(s.new, styled[k][1])
+                   or _word_pieces(s.old, styled[k][0]))
         if not changed:
             continue
-        before = _words(segs[k - 1].old)[-3:] if k > 0 else []
-        after = _words(segs[k + 1].old)[:2] if k + 1 < len(segs) else []
-        text = " ".join(before + changed[:8] + after)
-        return _clip(("… " if before else "") + text, limit)
-    return ""
+        before = _word_pieces(segs[k - 1].new, styled[k - 1][1])[-3:] if k > 0 else []
+        after = (_word_pieces(segs[k + 1].new, styled[k + 1][1])[:2]
+                 if k + 1 < len(segs) else [])
+        return _clip_pieces(before + changed[:8] + after, limit,
+                            lead="… " if before else "")
+    return "", ""
+
+
+def _lead(paragraph: str, limit: int) -> tuple[str, str]:
+    """The opening words of a paragraph, as ``(text, html)``."""
+    toks = tokenize(paragraph)
+    return _clip_pieces(_word_pieces(toks, _emphasis(toks)), limit)
 
 
 def diff_file(old_text: str | None, new_text: str | None, *, key: str,
@@ -605,51 +829,55 @@ def diff_file(old_text: str | None, new_text: str | None, *, key: str,
     for bi, b in enumerate(blocks):
         i1, i2, j1, j2 = b["i1"], b["i2"], b["j1"], b["j2"]
         html_parts: list[str] = []
-        added = removed = moved = 0
-        snippet = ""
+        added = removed = moved = rewritten = 0
+        snippet: tuple[str, str] = ("", "")
         changes: list[list[str]] = []
         for kind_, ii, jj in b["items"]:
             if kind_ == "pair":
-                segs = word_diff(
-                    _join_tokens([old_toks[i1 + i] for i in ii]),
-                    _join_tokens([new_toks[j1 + j] for j in jj]),
-                )
-                html_parts += render_segments(segs)
+                old_g = _join_tokens([old_toks[i1 + i] for i in ii])
+                new_g = _join_tokens([new_toks[j1 + j] for j in jj])
+                segs = word_diff(old_g, new_g)
                 a, r = _seg_counts(segs)
                 added += a
                 removed += r
-                snippet = snippet or _snippet(segs)
+                snippet = snippet if snippet[0] else _snippet(segs)
+                if is_rewritten(segs):
+                    html_parts += render_rewritten(old_g, new_g)
+                    rewritten += 1
+                    changes.append([" ".join(_words(old_g)), " ".join(_words(new_g))])
+                    continue
+                html_parts += render_segments(segs)
                 for s in segs:
                     if s.tag == "chg" and (_words(s.old) or _words(s.new)):
                         changes.append([" ".join(_words(s.old)), " ".join(_words(s.new))])
             elif kind_ == "del":
-                text = old_paras[i1 + ii[0]]
-                is_moved = text in moved_texts
+                toks = old_toks[i1 + ii[0]]
+                is_moved = old_paras[i1 + ii[0]] in moved_texts
                 html_parts += render_segments(
-                    [Seg("chg", old_toks[i1 + ii[0]], [])],
+                    [Seg("chg", toks, [])],
                     para_class="p-moved" if is_moved else "",
                     tag_html='<span class="tag">moved from here</span> ' if is_moved else "",
                 )
                 if is_moved:
                     moved += 1
                 else:
-                    removed += _word_count_tokens(old_toks[i1 + ii[0]])
-                    changes.append([" ".join(_words(old_toks[i1 + ii[0]])), ""])
-                snippet = snippet or _snippet(text)
+                    removed += _word_count_tokens(toks)
+                    changes.append([" ".join(_words(toks)), ""])
+                snippet = snippet if snippet[0] else _snippet([Seg("chg", toks, [])])
             else:
-                text = new_paras[j1 + jj[0]]
-                is_moved = text in moved_texts
+                toks = new_toks[j1 + jj[0]]
+                is_moved = new_paras[j1 + jj[0]] in moved_texts
                 html_parts += render_segments(
-                    [Seg("chg", [], new_toks[j1 + jj[0]])],
+                    [Seg("chg", [], toks)],
                     para_class="p-moved" if is_moved else "",
                     tag_html='<span class="tag">moved here</span> ' if is_moved else "",
                 )
                 if is_moved:
                     moved += 1
                 else:
-                    added += _word_count_tokens(new_toks[j1 + jj[0]])
-                    changes.append(["", " ".join(_words(new_toks[j1 + jj[0]]))])
-                snippet = snippet or _snippet(text)
+                    added += _word_count_tokens(toks)
+                    changes.append(["", " ".join(_words(toks))])
+                snippet = snippet if snippet[0] else _snippet([Seg("chg", [], toks)])
         hunks.append(Hunk(
             id=f"{key}-{bi + 1:03d}", key=key, file=file, chapter=chapter,
             kind=kind, index=j1, old_index=i1,
@@ -659,7 +887,8 @@ def diff_file(old_text: str | None, new_text: str | None, *, key: str,
             context_before=new_paras[j1 - 1] if j1 > 0 else None,
             context_after=new_paras[j2] if j2 < len(new_paras) else None,
             fp=_fingerprint(old_paras[i1:i2], new_paras[j1:j2]),
-            moved=moved, snippet=snippet,
+            moved=moved, rewritten=rewritten,
+            snippet=snippet[0], snippet_html=snippet[1],
             changes=changes,
         ))
 
@@ -747,6 +976,9 @@ class Snapshot:
         self.sha = sha
         self.note = note
         self.meta: dict = {}
+        # True when `last-read` resolved to the author's bookmark (not
+        # to its last-tag fallback).
+        self.from_bookmark = False
 
     def read(self, rel: str) -> str | None:  # pragma: no cover - abstract
         raise NotImplementedError
@@ -767,7 +999,8 @@ class Snapshot:
         return {
             "spec": self.spec, "kind": self.kind, "label": self.label,
             "description": self.description, "sha": self.sha,
-            "pinned": self.pinned, "note": self.note, **self.meta,
+            "pinned": self.pinned, "note": self.note,
+            "from_bookmark": self.from_bookmark, **self.meta,
         }
 
 
@@ -1072,14 +1305,17 @@ def resolve_snapshot(series_root: Path, book: str, spec: str, *,
                 snap = _checkpoint_snapshot(series_root, ref)
                 snap.label = f"last-read-{snap.label}"
                 snap.note = f"last read {when}"
+                snap.from_bookmark = True
                 return snap
             for cand in (sha, ref):
                 if cand and is_git_repo(series_root) and resolve_commit(series_root, str(cand)):
                     full = resolve_commit(series_root, str(cand)) or ""
-                    return _git_snapshot_for_ref(
+                    snap = _git_snapshot_for_ref(
                         series_root, full, spec=spec, label=f"last-read-{full[:7]}",
                         note=f"last read {when} at {ref or full[:7]}",
                     )
+                    snap.from_bookmark = True
+                    return snap
             prefix = "last-read bookmark no longer resolves; "
         else:
             prefix = "no last-read bookmark yet; "
@@ -1146,6 +1382,7 @@ class DiffReport:
         ch = self.chapters
         return {
             "hunks": len(self.all_hunks),
+            "big_hunks": sum(h.is_big for h in self.all_hunks),
             "chapter_hunks": sum(len(f.hunks) for f in ch),
             "foundation_hunks": sum(len(f.hunks) for f in self.foundation),
             "chapters_changed": len(self.changed_chapters),
@@ -1268,20 +1505,49 @@ def build_diff(series_root: Path, book: str, *, from_spec: str = "last-tag",
     return report
 
 
-def load_why(path: Path) -> dict[str, dict]:
-    """Load a why sidecar: ``{id: "why"}`` or ``{id: {"why": ..., "fp": ...}}``.
+def unread_reason(report: DiffReport, book: str) -> str | None:
+    """Why there is nothing to hand back to the author, or None (`--if-read`).
 
-    Keys are hunk ids (``ch05-002``) or chapter keys (``ch05``) for a
-    per-chapter change summary."""
+    The old side must be the author's own last-read bookmark, not its
+    last-tag fallback, and at least one chapter must have existed at
+    that version and changed since; a chapter new since then is read
+    whole, not as a diff."""
+    if not report.old.from_bookmark:
+        why = (report.old.note or "no last-read bookmark").split(";")[0]
+        return f"{why} (books/{book}/edit_logs/{BOOKMARK_NAME})"
+    if any(f.status in ("changed", "removed") for f in report.chapters):
+        return None
+    new = [f.chapter for f in report.chapters if f.status == "added" and f.chapter is not None]
+    if new:
+        return (f"chapter{'s' if len(new) > 1 else ''} {_ranges(new)} did not exist "
+                f"in the version last read")
+    return "no changes since the version last read"
+
+
+def load_why(path: Path) -> dict[str, dict]:
+    """Load an annotation sidecar.
+
+    Keys are hunk ids (``ch05-002``) or chapter keys (``ch05``, a
+    one-line summary of that chapter's changes). A value is a string
+    (the *why*, the original form) or an object with any of ``what``
+    (a plain note on what the change is), ``why``, ``big`` (true when the
+    author would want to read it) and ``fp`` (the hunk fingerprint it was
+    written against)."""
     data = json.loads(Path(path).read_text(encoding="utf-8"))
     if not isinstance(data, dict):
-        raise DiffError(f"{path}: expected a JSON object mapping hunk id -> why")
+        raise DiffError(f"{path}: expected a JSON object mapping hunk id -> annotation")
     out: dict[str, dict] = {}
     for k, v in data.items():
         if isinstance(v, str):
-            out[str(k)] = {"why": v}
-        elif isinstance(v, dict) and isinstance(v.get("why"), str):
-            out[str(k)] = {"why": v["why"], "fp": v.get("fp")}
+            v = {"why": v}
+        if not isinstance(v, dict):
+            continue
+        entry: dict = {f: v[f].strip() for f in ("what", "why")
+                       if isinstance(v.get(f), str) and v[f].strip()}
+        if isinstance(v.get("big"), bool):
+            entry["big"] = v["big"]
+        if entry:
+            out[str(k)] = {**entry, "fp": v.get("fp")}
     return out
 
 
@@ -1290,17 +1556,18 @@ def apply_why(report: DiffReport, why: dict[str, dict]) -> None:
     stale: list[str] = []
     for h in report.all_hunks:
         w = why.get(h.id)
-        if not w or not w["why"].strip():
+        if not w:
             continue
         if w.get("fp") and w["fp"] != h.fp:
             stale.append(h.id)
             continue
-        h.why = w["why"].strip()
+        h.what, h.why, h.big = w.get("what"), w.get("why"), w.get("big")
         applied += 1
     for f in report.chapters + report.foundation:
         w = why.get(f.key)
-        if w and w["why"].strip() and f.kind != "summary":
-            f.why = w["why"].strip()
+        line = (w.get("why") or w.get("what")) if w else None
+        if line and f.kind != "summary":
+            f.why = line
             applied += 1
     report.why_applied = applied
     report.why_stale = stale
@@ -1311,82 +1578,112 @@ def apply_why(report: DiffReport, why: dict[str, dict]) -> None:
 # ===================================================================
 
 
-_CSS = r"""
-:root {
+_LIGHT = """
   --bg: #fbfaf7; --fg: #1f1d1a; --muted: #6b665e; --rule: #e2ddd3;
-  --panel: #f2efe8; --link: #2f5d8a; --accent: #2f5d8a; --current: #d9a400;
-  --ins-bg: #d9f2dd; --ins-fg: #0d5520; --del-bg: #fadede; --del-fg: #8f1d1d;
-  --why-bg: #eaf1f8; --why-fg: #1d3b57; --badge: #e6e1d6;
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #15171a; --fg: #e5e2dc; --muted: #9b968d; --rule: #2d3136;
-    --panel: #1d2024; --link: #8fb9e6; --accent: #6f9fd3; --current: #e0b33a;
-    --ins-bg: #173b23; --ins-fg: #a9e6b8; --del-bg: #4a1e20; --del-fg: #f4b3b0;
-    --why-bg: #1b2a3a; --why-fg: #cfe0f2; --badge: #2a2e33;
-  }
-}
+  --panel: #f2efe8; --link: #2f5d8a; --accent: #2f5d8a; --on-accent: #ffffff;
+  --current: #b07d00; --flash: #f6e3a1;
+  --ins-bg: #d9f2dd; --ins-fg: #0d5520; --ins-bar: #4e9a5f; --new-bg: #eff7ef;
+  --del-bg: #fadede; --del-fg: #8f1d1d; --del-bar: #cf8f84;
+  --note-bg: #eeebe3; --note-fg: #26241f; --why-fg: #615c53; --badge: #e6e1d6;
+"""
+_DARK = """
+  --bg: #15171a; --fg: #e5e2dc; --muted: #9b968d; --rule: #2d3136;
+  --panel: #1d2024; --link: #8fb9e6; --accent: #6f9fd3; --on-accent: #10141a;
+  --current: #e0b33a; --flash: #4a3d12;
+  --ins-bg: #173b23; --ins-fg: #a9e6b8; --ins-bar: #5fae74; --new-bg: #16241a;
+  --del-bg: #4a1e20; --del-fg: #f4b3b0; --del-bar: #a8655c;
+  --note-bg: #20242a; --note-fg: #e5e2dc; --why-fg: #a59f95; --badge: #2a2e33;
+"""
+
+# Colours are custom properties: the OS dark mode switches them unless
+# the host page pins `data-theme="light"`, and `data-theme="dark"` (a
+# claude.ai artifact frame, say) switches them on any OS.
+_CSS = (
+    ":root { color-scheme: light; --bar-h: 3rem;" + _LIGHT + "}\n"
+    "@media (prefers-color-scheme: dark) {\n"
+    "  :root:not([data-theme=\"light\"]) { color-scheme: dark;" + _DARK + "}\n}\n"
+    ":root[data-theme=\"dark\"] { color-scheme: dark;" + _DARK + "}\n"
+) + r"""
 * { box-sizing: border-box; }
-html { scroll-padding-top: 4.25rem; -webkit-text-size-adjust: 100%; }
+/* The page keeps the reader's place across view switches itself (see the
+   script); the browser's own scroll anchoring would fight it. */
+html { scroll-padding-top: calc(var(--bar-h) + env(safe-area-inset-top, 0px) + .75rem);
+  -webkit-text-size-adjust: 100%; overflow-anchor: none; }
 body { margin: 0; background: var(--bg); color: var(--fg);
-  font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+/* Paint the notch strip above the sticky toolbar on a phone. */
+body::before { content: ""; position: fixed; inset: 0 0 auto; z-index: 21;
+  height: env(safe-area-inset-top, 0px); background: var(--panel); }
 a { color: var(--link); }
-.toolbar { position: sticky; top: 0; z-index: 20; display: flex; flex-wrap: wrap;
-  align-items: center; gap: .4rem .6rem; padding: .45rem 16px;
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.toolbar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; display: flex;
+  flex-wrap: wrap; align-items: center; gap: .4rem .6rem;
+  padding: .45rem max(16px, env(safe-area-inset-right, 0px)) .45rem max(16px, env(safe-area-inset-left, 0px));
   background: var(--panel); border-bottom: 1px solid var(--rule); }
-.toolbar .title { font-weight: 600; margin-right: auto; min-width: 0;
+.toolbar .title { font-weight: 600; margin-right: auto; min-width: 0; flex: 1 1 8rem;
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .toolbar button { font: inherit; padding: .3rem .7rem; border-radius: 6px;
   border: 1px solid var(--rule); background: var(--bg); color: var(--fg); cursor: pointer; }
 .toolbar button:hover { border-color: var(--accent); }
-.toolbar label { white-space: nowrap; color: var(--muted); }
 .toolbar .maplink { white-space: nowrap; font-weight: 600; }
-.counter { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.nav { display: inline-flex; align-items: center; gap: .35rem; }
+.counter { font-variant-numeric: tabular-nums; white-space: nowrap; min-width: 7.2em; text-align: center; }
+.views { display: inline-flex; border: 1px solid var(--rule); border-radius: 999px; overflow: hidden; }
+.toolbar .views button { border: 0; border-radius: 0; padding: .3rem .75rem; background: var(--bg); }
+.toolbar .views button + button { border-left: 1px solid var(--rule); }
+.toolbar .views button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); }
+.bigfilter { display: inline-flex; align-items: center; gap: .3rem; white-space: nowrap; color: var(--muted); }
+body:not(.view-changes) .bigfilter { display: none; }
 #navtoggle { display: none; }
 .layout { display: grid; grid-template-columns: 18rem minmax(0, 1fr); }
-aside { position: sticky; top: 2.9rem; align-self: start; height: calc(100vh - 2.9rem);
-  overflow: auto; border-right: 1px solid var(--rule); padding: .75rem 12px 2rem;
-  font-size: .82rem; background: var(--bg); }
-aside h3 { font-size: .8rem; margin: .9rem 0 .3rem; text-transform: none; }
+aside { position: sticky; top: calc(var(--bar-h) + env(safe-area-inset-top, 0px)); align-self: start;
+  height: calc(100vh - var(--bar-h)); overflow: auto; border-right: 1px solid var(--rule);
+  padding: .75rem 12px 2rem; font-size: .82rem; background: var(--bg); }
+aside h3 { font-size: .8rem; margin: .9rem 0 .3rem; }
 aside h3 a { color: var(--fg); text-decoration: none; }
 aside ol { list-style: none; margin: 0; padding: 0; }
-aside li a { display: block; padding: .15rem .35rem; border-radius: 4px;
-  color: var(--fg); text-decoration: none; overflow: hidden; text-overflow: ellipsis;
-  white-space: nowrap; }
+aside li a { display: block; padding: .15rem .35rem; border-radius: 4px; color: var(--fg);
+  text-decoration: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+aside li.noted a { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical; }
 aside li a:hover { background: var(--panel); }
-aside li a.active { background: var(--why-bg); outline: 1px solid var(--accent); }
-aside .n { display: inline-block; min-width: 2.2em; color: var(--muted);
-  font-variant-numeric: tabular-nums; }
+aside li a.active { background: var(--note-bg); outline: 1px solid var(--accent); }
+aside .n { display: inline-block; min-width: 2.2em; color: var(--muted); font-variant-numeric: tabular-nums; }
 .plus { color: var(--ins-fg); } .minus { color: var(--del-fg); }
-main { padding: 1rem 16px 5rem; min-width: 0; }
+main { min-width: 0;
+  padding: 1rem max(16px, env(safe-area-inset-right, 0px)) 5rem max(16px, env(safe-area-inset-left, 0px)); }
 .wrap { max-width: 44rem; margin: 0 auto; }
 header.report h1 { font-size: 1.35rem; margin: .2rem 0 .4rem; }
 .meta { color: var(--muted); margin: .15rem 0; overflow-wrap: anywhere; }
 .note { color: var(--muted); font-style: italic; }
 .legend { margin: .6rem 0 1rem; color: var(--muted); }
 .tablewrap { overflow-x: auto; margin: .8rem 0 1.2rem; }
-table { border-collapse: collapse; width: 100%; font-size: .9rem;
-  font-variant-numeric: tabular-nums; }
-th, td { padding: .3rem .5rem; border-bottom: 1px solid var(--rule); text-align: right;
-  white-space: nowrap; }
+table { border-collapse: collapse; width: 100%; font-size: .9rem; font-variant-numeric: tabular-nums; }
+th, td { padding: .3rem .5rem; border-bottom: 1px solid var(--rule); text-align: right; white-space: nowrap; }
 th:nth-child(1), td:nth-child(1), th:nth-child(2), td:nth-child(2) { text-align: left; }
 td:nth-child(2) { white-space: normal; min-width: 8rem; }
 tr.total td { font-weight: 600; border-top: 2px solid var(--rule); }
-.badge { display: inline-block; font: 600 .7rem/1.6 system-ui, sans-serif;
-  padding: 0 .45rem; border-radius: 999px; background: var(--badge); color: var(--muted);
-  vertical-align: middle; text-transform: uppercase; letter-spacing: .03em; }
+.badge { display: inline-block; font: 600 .7rem/1.6 system-ui, sans-serif; padding: 0 .45rem;
+  border-radius: 999px; background: var(--badge); color: var(--muted); vertical-align: middle;
+  text-transform: uppercase; letter-spacing: .03em; }
 .badge.added { background: var(--ins-bg); color: var(--ins-fg); }
 .badge.removed { background: var(--del-bg); color: var(--del-fg); }
 section.file { margin: 2.2rem 0 0; }
-section.file > h2 { font-size: 1.15rem; margin: 0 0 .25rem; padding-top: .3rem;
-  border-top: 1px solid var(--rule); }
+section.file > h2 { font-size: 1.15rem; margin: 0 0 .25rem; padding-top: .3rem; border-top: 1px solid var(--rule); }
 section.group > h2 { font-size: 1.2rem; margin: 3rem 0 0; }
 section.file.doc > h2 { font-size: 1rem; }
-.file-why, .why { background: var(--why-bg); color: var(--why-fg); border-radius: 6px;
-  padding: .35rem .6rem; margin: .4rem 0 .6rem; font-size: .9rem; }
+.file-why, .what { background: var(--note-bg); color: var(--note-fg); border-radius: 6px;
+  padding: .4rem .65rem; margin: .35rem 0 .5rem; font-size: .95rem; line-height: 1.45; }
+.why { color: var(--why-fg); font-size: .85rem; line-height: 1.4; margin: 0 0 .6rem; padding: 0 .65rem; }
 .why b, .file-why b { font-weight: 600; }
+.bigs { background: var(--note-bg); border-radius: 6px; padding: .6rem .8rem; margin: .5rem 0 1.1rem;
+  font-size: .92rem; line-height: 1.45; }
+.bigs p { margin: 0 0 .3rem; font-weight: 600; }
+.bigs ol { margin: 0; padding-left: 1.5rem; }
+.bigs li { margin: .2rem 0; }
+.bigs a { color: var(--fg); text-decoration-color: var(--accent); }
 .fm { color: var(--muted); font-size: .85rem; margin: .2rem 0 .6rem; padding-left: 1.1rem; }
-.prose p { font-family: Georgia, "Iowan Old Style", "Palatino Linotype", "Book Antiqua", serif;
+.prose p { font-family: Georgia, "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino, serif;
   font-size: 1.06rem; line-height: 1.62; margin: 0 0 .75em; overflow-wrap: break-word; }
 .doc .prose p { font-family: inherit; font-size: .95rem; line-height: 1.5; }
 .prose p.p-eq { opacity: .82; }
@@ -1397,151 +1694,293 @@ ins { background: var(--ins-bg); color: var(--ins-fg); text-decoration: none;
 del { background: var(--del-bg); color: var(--del-fg); text-decoration: line-through;
   border-radius: 2px; padding: 0 1px; }
 .pilcrow { font-family: system-ui, sans-serif; font-weight: 700; }
-/* A wholly added / removed file reads as plain text under a coloured rule,
-   not as a wall of highlight. */
+/* A wholly new paragraph (or a rewritten one) reads as text under a green
+   rule, not as a wall of highlight; a cut one under a red rule. */
+.prose p.p-ins, .prose p.p-rewritten { background: var(--new-bg); box-shadow: inset 3px 0 0 var(--ins-bar);
+  padding: .1rem .5rem .1rem .75rem; border-radius: 0 4px 4px 0; }
+.prose p.p-ins ins, .prose p.p-rewritten ins { background: none; border-bottom: 0; color: inherit; padding: 0; }
+.prose p.p-del { box-shadow: inset 3px 0 0 var(--del-bar); padding-left: .75rem; }
+details.earlier { margin: -.35rem 0 .9rem; color: var(--muted); }
+details.earlier summary { font: .8rem/1.6 system-ui, sans-serif; cursor: pointer; padding: .15rem 0; }
+details.earlier p.p-old { opacity: 1; font-size: .97rem; box-shadow: inset 3px 0 0 var(--del-bar);
+  padding-left: .75rem; margin-top: .4rem; }
+/* A wholly added / removed file reads as plain text under a coloured rule. */
 .st-added .hunk { border-left-color: var(--ins-fg); }
 .st-removed .hunk { border-left-color: var(--del-fg); }
-.st-added .hunk ins { background: none; border-bottom: 0; color: inherit; padding: 0; }
+.st-added .prose p.p-ins { background: none; box-shadow: none; padding-left: 0; }
 .st-removed .hunk del { background: none; color: var(--del-fg); text-decoration: none; padding: 0; }
-.p-moved { outline: 1px dashed var(--muted); outline-offset: 2px; }
-.tag { font: 600 .68rem/1 system-ui, sans-serif; text-transform: uppercase;
-  color: var(--muted); letter-spacing: .04em; }
-.hunk { position: relative; border-left: 3px solid var(--accent);
-  padding: .3rem 0 .1rem .8rem; margin: .9rem 0 1rem -.95rem; }
+.prose p.p-moved { background: none; box-shadow: none; outline: 1px dashed var(--muted); outline-offset: 2px; }
+.tag { font: 600 .68rem/1 system-ui, sans-serif; text-transform: uppercase; color: var(--muted); letter-spacing: .04em; }
+/* No scroll-margin here: html's scroll-padding-top already clears the
+   sticky toolbar for scrollIntoView and anchor jumps (both would add up). */
+.hunk { position: relative; border-left: 3px solid var(--accent); padding: .3rem 0 .1rem .8rem;
+  margin: .9rem 0 1rem -.95rem; }
 .hunk.current { border-left-color: var(--current); background:
   linear-gradient(to right, color-mix(in srgb, var(--current) 10%, transparent), transparent 60%); }
-.hunk-head { font-size: .8rem; color: var(--muted); margin-bottom: .35rem;
-  font-variant-numeric: tabular-nums; }
+@keyframes hunk-flash { from { background-color: var(--flash); } to { background-color: transparent; } }
+.hunk.flash { animation: hunk-flash 1.4s ease-out; }
+@media (prefers-reduced-motion: reduce) {
+  .hunk.flash { animation: none; outline: 2px solid var(--current); outline-offset: 2px; }
+}
+.hunk-head { font-size: .8rem; color: var(--muted); margin-bottom: .35rem; font-variant-numeric: tabular-nums; }
 .hunk-head a { color: var(--muted); text-decoration: none; font-weight: 600; }
 .hunk-head a:hover { color: var(--link); }
+.hunk-head .big-tag { font-weight: 600; color: var(--current); }
 .fold { margin: .2rem 0 .7rem; }
-.fold-toggle { font: .82rem/1.4 system-ui, sans-serif; color: var(--muted); width: 100%;
-  text-align: left; background: none; border: 1px dashed var(--rule); border-radius: 6px;
-  padding: .3rem .6rem; cursor: pointer; overflow: hidden; text-overflow: ellipsis;
-  white-space: nowrap; }
+.fold-toggle { font: .82rem/1.4 system-ui, sans-serif; color: var(--muted); width: 100%; text-align: left;
+  background: none; border: 1px dashed var(--rule); border-radius: 6px; padding: .3rem .6rem;
+  cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .fold-toggle:hover { border-color: var(--accent); color: var(--fg); }
 .fold-body { display: none; padding-top: .6rem; }
-.fold.open .fold-body, body.show-all .fold-body { display: block; }
-.fold.open .fold-toggle .peek, body.show-all .fold-toggle .peek { display: none; }
+.fold.open .fold-body { display: block; }
+.fold.open .fold-toggle .peek { display: none; }
+/* Views. Changes (default): unchanged runs folded. Whole chapter: every
+   paragraph, changes marked. Clean text: the new version only. */
+body.view-whole .fold-body, body.view-clean .fold-body { display: block; }
+body.view-whole .fold-toggle, body.view-clean .fold-toggle { display: none; }
+body.view-changes.filter-big .is-minor { display: none; }
+body.view-clean del, body.view-clean .p-del, body.view-clean .pilcrow, body.view-clean .tag,
+body.view-clean .hunk-head, body.view-clean .what, body.view-clean .why, body.view-clean .file-why,
+body.view-clean .bigs, body.view-clean details.earlier, body.view-clean .fm, body.view-clean .legend,
+body.view-clean .stats, body.view-clean aside, body.view-clean .nav, body.view-clean #navtoggle,
+body.view-clean section.st-removed, body.view-clean section.doc, body.view-clean section.group {
+  display: none !important; }
+body.view-clean .layout { display: block; }
+body.view-clean ins { background: none; border: 0; color: inherit; padding: 0; }
+body.view-clean .prose p { background: none; box-shadow: none; outline: 0; padding-left: 0; opacity: 1; }
+body.view-clean .hunk { border: 0; margin: 0; padding: 0; background: none; animation: none; }
 .empty { padding: 2rem 0; color: var(--muted); }
 footer { color: var(--muted); font-size: .8rem; margin-top: 3rem; }
-kbd { font: .75rem ui-monospace, monospace; border: 1px solid var(--rule);
+kbd { font: .75rem ui-monospace, Menlo, Consolas, monospace; border: 1px solid var(--rule);
   border-bottom-width: 2px; border-radius: 4px; padding: 0 .3rem; background: var(--panel); }
 @media (max-width: 900px) {
   #navtoggle { display: inline-block; }
   .layout { display: block; }
-  aside { display: none; position: fixed; z-index: 30; top: 2.9rem; left: 0;
-    width: min(88vw, 22rem); height: calc(100vh - 2.9rem);
+  aside { display: none; position: fixed; z-index: 30; top: calc(var(--bar-h) + env(safe-area-inset-top, 0px));
+    left: 0; width: min(88vw, 22rem); height: calc(100vh - var(--bar-h));
     box-shadow: 0 0 0 100vmax rgba(0,0,0,.35); }
   body.nav-open aside { display: block; }
   .hunk { margin-left: -.6rem; padding-left: .55rem; }
-  .toolbar label .long { display: none; }
 }
 th .s { display: none; }
 @media (max-width: 600px) {
+  .toolbar .title, .toolbar .long { display: none; }
+  .toolbar button, .toolbar .views button { padding: .3rem .55rem; }
   th:nth-child(3), td:nth-child(3), th:nth-child(7), td:nth-child(7) { display: none; }
   th, td { padding: .3rem .3rem; }
   td:nth-child(2) { min-width: 0; }
   th .l { display: none; } th .s { display: inline; }
 }
+@supports (height: 100dvh) {
+  aside { height: calc(100dvh - var(--bar-h)); }
+}
 @media print {
-  .toolbar, aside, .fold-toggle { display: none !important; }
+  .toolbar, aside, .fold-toggle, details.earlier { display: none !important; }
   .layout { display: block; } .fold-body { display: block !important; }
 }
 """
 
+# Restores the remembered view before the first paint.
+_VIEW_KEY = "autonovel-diff-view"
+_HEAD_JS = (
+    "try{var v=localStorage.getItem('" + _VIEW_KEY + "');"
+    "if(v==='whole'||v==='clean'){document.body.className='view-'+v;}}catch(e){}"
+)
+
 _JS = r"""
 (function () {
+  var KEY = '""" + _VIEW_KEY + r"""', VIEWS = ['changes', 'whole', 'clean'];
+  var body = document.body, root = document.documentElement;
   var hunks = Array.prototype.slice.call(document.querySelectorAll('.hunk'));
-  var total = hunks.length, cur = -1, lockUntil = 0;
-  var curEl = document.getElementById('cur');
-  var bar = document.querySelector('.toolbar');
-  function link(h) { return document.querySelector('aside a[href="#' + h.id + '"]'); }
-  function setCurrent(i, jump) {
-    if (!total) return;
-    i = Math.max(0, Math.min(total - 1, i));
-    if (cur >= 0) {
-      hunks[cur].classList.remove('current');
-      var old = link(hunks[cur]); if (old) old.classList.remove('active');
-    }
-    cur = i;
-    var h = hunks[cur];
-    h.classList.add('current');
-    curEl.textContent = String(cur + 1);
-    var a = link(h);
-    if (a) { a.classList.add('active'); a.scrollIntoView({block: 'nearest'}); }
-    if (jump) {
-      lockUntil = Date.now() + 600;
-      h.scrollIntoView({block: 'start'});
-      if (history.replaceState) history.replaceState(null, '', '#' + h.id);
-    }
+  hunks.forEach(function (h, k) { h._k = k; });
+  var curEl = document.getElementById('cur'), totalEl = document.getElementById('total');
+  var bar = document.querySelector('.toolbar'), aside = document.querySelector('aside');
+  var bigBox = document.getElementById('bigonly');
+  var viewBtns = Array.prototype.slice.call(document.querySelectorAll('[data-view]'));
+  var reduce = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  var links = {};
+  if (aside) Array.prototype.forEach.call(aside.querySelectorAll('a[href^="#"]'), function (a) {
+    links[a.getAttribute('href').slice(1)] = a;
+  });
+  // Stepping is by index, not by scroll position: the page may sit in a
+  // frame, and the first changes can be a few lines apart. `cur` indexes
+  // `hunks`; a half step (2.5) means "between changes 3 and 4", after the
+  // reader scrolled there by hand. An IntersectionObserver resyncs it.
+  var cur = -1, quietUntil = 0, seen = {}, marked = null;
+
+  function view() {
+    for (var i = 0; i < VIEWS.length; i++) if (body.classList.contains('view-' + VIEWS[i])) return VIEWS[i];
+    return 'changes';
   }
-  function next() { setCurrent(cur + 1, true); }
-  function prev() { setCurrent(cur <= 0 ? 0 : cur - 1, true); }
-  var nb = document.getElementById('next'), pb = document.getElementById('prev');
-  if (nb) nb.addEventListener('click', next);
-  if (pb) pb.addEventListener('click', prev);
-  var all = document.getElementById('showall');
-  function setAll(v) { document.body.classList.toggle('show-all', v); if (all) all.checked = v; }
-  if (all) all.addEventListener('change', function () { setAll(all.checked); });
+  function measure() {
+    if (bar) root.style.setProperty('--bar-h', Math.ceil(bar.getBoundingClientRect().height) + 'px');
+  }
+  function visible() {
+    if (view() === 'clean') return [];
+    return hunks.filter(function (h) { return h.getClientRects().length > 0; });
+  }
+  function keepInView(a) {
+    if (!aside || aside.scrollHeight <= aside.clientHeight) return;
+    var top = a.offsetTop, st = aside.scrollTop;
+    if (top < st + 24 || top > st + aside.clientHeight - 48) aside.scrollTop = Math.max(0, top - aside.clientHeight / 3);
+  }
+  function mark() {
+    var h = cur % 1 === 0 ? hunks[cur] || null : null;
+    if (marked && marked !== h) {
+      marked.classList.remove('current');
+      if (links[marked.id]) links[marked.id].classList.remove('active');
+    }
+    marked = h;
+    if (!h) return;
+    h.classList.add('current');
+    if (links[h.id]) { links[h.id].classList.add('active'); keepInView(links[h.id]); }
+  }
+  function label() {
+    var vs = visible(), i = cur % 1 === 0 ? vs.indexOf(hunks[cur]) : -1;
+    curEl.textContent = i < 0 ? '–' : String(i + 1);
+    totalEl.textContent = String(vs.length);
+  }
+  function resync() {
+    // The current change was hidden by a view or the filter: stand just
+    // before it, so "next" lands on the next one still shown.
+    if (cur >= 0 && cur % 1 === 0 && hunks[cur] && !hunks[cur].getClientRects().length) cur -= 0.5;
+    mark(); label();
+  }
+  function flash(h) {
+    h.classList.remove('flash'); void h.offsetWidth; h.classList.add('flash');
+    clearTimeout(h._flashT);
+    h._flashT = setTimeout(function () { h.classList.remove('flash'); }, 1600);
+  }
+  function land(h, smooth) {
+    cur = h._k; quietUntil = Date.now() + 1200;
+    mark(); label();
+    h.scrollIntoView({block: 'start', behavior: smooth && !reduce ? 'smooth' : 'auto'});
+    flash(h);
+    try { if (history.replaceState) history.replaceState(null, '', '#' + h.id); } catch (e) {}
+  }
+  function go(dir) {
+    var vs = visible(), t = null, i;
+    if (!vs.length) return;
+    if (dir > 0) {
+      for (i = 0; i < vs.length; i++) if (vs[i]._k > cur) { t = vs[i]; break; }
+      t = t || vs[vs.length - 1];
+    } else {
+      for (i = vs.length - 1; i >= 0; i--) if (vs[i]._k < cur) { t = vs[i]; break; }
+      t = t || vs[0];
+    }
+    land(t, true);
+  }
+  // A view or filter switch reflows the page; keep what the reader was
+  // looking at (the element just under the toolbar) where it was.
+  function anchor() {
+    var wrap = document.querySelector('main .wrap');
+    if (!wrap || !document.elementFromPoint) return null;
+    var x = wrap.getBoundingClientRect().left + 40, y = (bar ? bar.getBoundingClientRect().bottom : 0) + 4;
+    // Step down past the gaps between paragraphs to the first block.
+    for (var dy = 0; dy < 240; dy += 12) {
+      var el = document.elementFromPoint(x, y + dy);
+      el = el && el.closest ? el.closest('p, h2, .hunk-head, .what, .why, .fold, details, .bigs, header') : null;
+      if (el) return {el: el, top: el.getBoundingClientRect().top};
+    }
+    return null;
+  }
+  function restore(a) {
+    if (!a) return;
+    var el = a.el;
+    while (el && !el.getClientRects().length) el = el.parentElement && el.parentElement.closest('.fold, .hunk, section');
+    if (el) { quietUntil = Date.now() + 600; window.scrollBy(0, el.getBoundingClientRect().top - a.top); }
+  }
+  function setView(v, remember) {
+    if (VIEWS.indexOf(v) < 0) v = 'changes';
+    var a = remember ? anchor() : null;
+    VIEWS.forEach(function (x) { body.classList.toggle('view-' + x, x === v); });
+    viewBtns.forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-view') === v ? 'true' : 'false'); });
+    if (remember) { try { localStorage.setItem(KEY, v); } catch (e) {} }
+    measure(); restore(a); resync();
+  }
+  function setFilter(on) {
+    var a = anchor();
+    body.classList.toggle('filter-big', on);
+    if (bigBox) bigBox.checked = on;
+    restore(a); resync();
+  }
+  function firstFrom(el) {
+    for (var i = 0; i < hunks.length; i++) {
+      if (el.contains(hunks[i]) || (el.compareDocumentPosition(hunks[i]) & 4)) return i;
+    }
+    return -1;
+  }
+  document.getElementById('next').addEventListener('click', function () { go(1); });
+  document.getElementById('prev').addEventListener('click', function () { go(-1); });
+  if (bigBox) bigBox.addEventListener('change', function () { setFilter(bigBox.checked); });
   var nt = document.getElementById('navtoggle');
-  if (nt) nt.addEventListener('click', function () { document.body.classList.toggle('nav-open'); });
+  if (nt) nt.addEventListener('click', function () { body.classList.toggle('nav-open'); });
   document.addEventListener('keydown', function (e) {
     var t = e.target;
     if (e.metaKey || e.ctrlKey || e.altKey) return;
-    if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
-    if (e.key === 'j' || e.key === 'n') { next(); e.preventDefault(); }
-    else if (e.key === 'k' || e.key === 'p') { prev(); e.preventDefault(); }
-    else if (e.key === 'e') { setAll(!document.body.classList.contains('show-all')); }
-    else if (e.key === 'Escape') { document.body.classList.remove('nav-open'); }
+    if (t && (t.isContentEditable || /^(TEXTAREA|SELECT)$/.test(t.tagName)
+        || (t.tagName === 'INPUT' && !/^(checkbox|radio|button)$/i.test(t.type)))) return;
+    if (e.key === 'j' || e.key === 'n') { go(1); e.preventDefault(); }
+    else if (e.key === 'k' || e.key === 'p') { go(-1); e.preventDefault(); }
+    else if (e.key === 'e') { setView(view() === 'whole' ? 'changes' : 'whole', true); }
+    else if (e.key === 'Escape') { body.classList.remove('nav-open'); }
   });
   document.addEventListener('click', function (e) {
-    var b = e.target.closest ? e.target.closest('.fold-toggle') : null;
+    if (!e.target.closest) return;
+    var b = e.target.closest('.fold-toggle');
     if (b) {
       var f = b.parentNode, open = !f.classList.contains('open');
       f.classList.toggle('open', open);
       b.setAttribute('aria-expanded', open ? 'true' : 'false');
       return;
     }
-    var a = e.target.closest ? e.target.closest('a[href^="#"]') : null;
-    if (a) {
-      var target = document.getElementById(a.getAttribute('href').slice(1));
-      var k = hunks.indexOf(target);
-      if (k >= 0) { e.preventDefault(); setCurrent(k, true); }
-      else if (target) { k = firstHunkFrom(target); if (k >= 0) { lockUntil = Date.now() + 600; setCurrent(k, false); } }
-      document.body.classList.remove('nav-open');
+    var vb = e.target.closest('[data-view]');
+    if (vb) { setView(vb.getAttribute('data-view'), true); return; }
+    var a = e.target.closest('a[href^="#"]');
+    if (!a) return;
+    var el = document.getElementById(decodeURIComponent(a.getAttribute('href').slice(1)));
+    body.classList.remove('nav-open');
+    if (!el) return;
+    if (el.classList.contains('hunk')) {
+      e.preventDefault();
+      if (!el.getClientRects().length) { if (view() === 'clean') setView('changes', false); setFilter(false); }
+      land(el, true);
+      return;
     }
+    // A chapter or section heading: the browser jumps there; the next
+    // change is the first one in it.
+    var k = firstFrom(el);
+    if (k >= 0) { cur = k - 0.5; quietUntil = Date.now() + 1200; mark(); label(); }
   });
-  // First change inside or after a section heading / anchor.
-  function firstHunkFrom(el) {
-    for (var i = 0; i < total; i++) {
-      if (el.contains(hunks[i]) || (el.compareDocumentPosition(hunks[i]) & 4)) return i;
-    }
-    return -1;
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) { if (en.isIntersecting) seen[en.target._k] = 1; else delete seen[en.target._k]; });
+      if (Date.now() < quietUntil) return;
+      if (cur >= 0 && cur % 1 === 0 && seen[cur]) return;   // the current change is still on screen
+      var vs = visible(), first = null;
+      for (var i = 0; i < vs.length; i++) if (seen[vs[i]._k]) { first = vs[i]; break; }
+      if (!first) return;
+      // A change that has not yet reached the top third is the next one.
+      cur = first.getBoundingClientRect().top > window.innerHeight / 3 ? first._k - 0.5 : first._k;
+      mark(); label();
+    });
+    hunks.forEach(function (h) { io.observe(h); });
   }
-  function spy() {
-    if (!total || Date.now() < lockUntil) return;
-    var top = (bar ? bar.getBoundingClientRect().bottom : 0) + 24, idx = -1;
-    if (cur >= 0) {
-      var r = hunks[cur].getBoundingClientRect();
-      if (r.top >= top - 24 && r.bottom <= window.innerHeight) return;
-    }
-    for (var i = 0; i < total; i++) {
-      if (hunks[i].getBoundingClientRect().top <= top) idx = i; else break;
-    }
-    if (idx >= 0 && idx !== cur) setCurrent(idx, false);
-  }
-  var ticking = false;
-  window.addEventListener('scroll', function () {
-    if (ticking) return;
-    ticking = true;
-    window.requestAnimationFrame(function () { ticking = false; spy(); });
-  }, {passive: true});
+  if (window.ResizeObserver && bar) new ResizeObserver(measure).observe(bar);
+  window.addEventListener('resize', measure);
+  window.addEventListener('load', measure);
+  setView(view(), false);
   if (location.hash) {
-    var el = document.getElementById(location.hash.slice(1));
-    var k = hunks.indexOf(el);
-    if (k >= 0) setCurrent(k, true);
-    else if (el) { k = firstHunkFrom(el); if (k >= 0) { lockUntil = Date.now() + 600; setCurrent(k, false); } }
+    var el0 = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+    if (el0 && el0.classList.contains('hunk')) {
+      // Clean text stays clean (the remembered view wins): just go there.
+      requestAnimationFrame(function () {
+        if (view() === 'clean') { cur = el0._k - 0.5; el0.scrollIntoView({block: 'start'}); }
+        else land(el0, false);
+      });
+    } else if (el0) {
+      var k0 = firstFrom(el0); if (k0 >= 0) { cur = k0 - 0.5; quietUntil = Date.now() + 1200; label(); }
+    }
   }
 })();
 """
@@ -1593,40 +2032,61 @@ def _snap_line(s: Snapshot) -> str:
     return " · ".join(bits)
 
 
+def md_inline_text(text: str) -> str:
+    """One line of markdown as plain text, emphasis markers dropped."""
+    return " ".join(_plain(p) for p in _emphasis(tokenize(" ".join(text.split()))))
+
+
+def _hunk_html(h: Hunk, total: int) -> str:
+    stats = (f'<span class="plus">+{h.words_added}</span> '
+             f'<span class="minus">−{h.words_removed}</span> words')
+    bits = [f'<a href="#{_esc(h.id)}">Change {h.n} of {total}</a>', f"¶{h.index + 1}", stats]
+    if h.moved:
+        bits.append(f"{h.moved} moved")
+    if h.rewritten:
+        bits.append("rewritten" if h.rewritten == 1 else f"{h.rewritten} rewritten")
+    if h.is_big:
+        bits.append('<span class="big-tag">big</span>')
+    what = f'<div class="what">{md_inline_html(h.what)}</div>' if h.what else ""
+    why = f'<div class="why"><b>Why:</b> {md_inline_html(h.why)}</div>' if h.why else ""
+    return (f'<div class="hunk {"is-big" if h.is_big else "is-minor"}" id="{_esc(h.id)}" '
+            f'data-n="{h.n}"><div class="hunk-head">{" · ".join(bits)}</div>'
+            f'{what}{why}{h.inline_html}</div>')
+
+
+def _minor(h: Hunk | None) -> bool:
+    return h is None or not h.is_big
+
+
 def _render_flow(f: FileDiff, *, context: int, total: int) -> str:
     out: list[str] = []
     flow = f.flow
     for idx, (kind, val) in enumerate(flow):
         if kind == "hunk":
-            h: Hunk = val
-            stats = (f'<span class="plus">+{h.words_added}</span> '
-                     f'<span class="minus">−{h.words_removed}</span>')
-            moved = f" · {h.moved} moved" if h.moved else ""
-            why = (f'<div class="why"><b>Why:</b> {_esc(h.why)}</div>' if h.why else "")
-            out.append(
-                f'<div class="hunk" id="{_esc(h.id)}" data-n="{h.n}">'
-                f'<div class="hunk-head"><a href="#{_esc(h.id)}">Change {h.n} of {total}</a>'
-                f' · ¶{h.index + 1} · {stats} words{moved}</div>{why}'
-                f'{h.inline_html}</div>'
-            )
+            out.append(_hunk_html(val, total))
             continue
         paras: list[str] = val
-        has_prev = idx > 0
-        has_next = idx < len(flow) - 1
-        head = paras[:context] if has_prev else []
-        tail = paras[len(paras) - context:] if has_next and context else []
+        prev = flow[idx - 1][1] if idx > 0 else None
+        nxt = flow[idx + 1][1] if idx < len(flow) - 1 else None
+        # Context paragraphs belong to the change beside them and hide
+        # with it under the big-changes filter.
+        after_prev = "ctx is-minor" if _minor(prev) else "ctx"
+        before_next = "ctx is-minor" if _minor(nxt) else "ctx"
+        shared = "ctx is-minor" if _minor(prev) and _minor(nxt) else "ctx"
+        head = paras[:context] if prev is not None else []
+        tail = paras[len(paras) - context:] if nxt is not None and context else []
         if len(head) + len(tail) >= len(paras):
             for p in paras:
-                out.append(render_plain_paragraph(p, extra_class="ctx"))
+                out.append(render_plain_paragraph(p, extra_class=shared))
             continue
         middle = paras[len(head):len(paras) - len(tail)]
         for p in head:
-            out.append(render_plain_paragraph(p, extra_class="ctx"))
+            out.append(render_plain_paragraph(p, extra_class=after_prev))
         if len(middle) == 1:
-            out.append(render_plain_paragraph(middle[0], extra_class="ctx"))
+            out.append(render_plain_paragraph(middle[0], extra_class=shared))
         elif middle:
             words = _word_count_paras(middle)
-            peek = _esc(_snippet(middle[0], 70))
+            peek = _lead(middle[0], 70)[1]
             body = "\n".join(render_plain_paragraph(p) for p in middle)
             out.append(
                 f'<div class="fold"><button type="button" class="fold-toggle" '
@@ -1635,8 +2095,28 @@ def _render_flow(f: FileDiff, *, context: int, total: int) -> str:
                 f'<div class="fold-body">{body}</div></div>'
             )
         for p in tail:
-            out.append(render_plain_paragraph(p, extra_class="ctx"))
+            out.append(render_plain_paragraph(p, extra_class=before_next))
     return "\n".join(out)
+
+
+def _big_list(f: FileDiff) -> str:
+    """The chapter's big changes, as links, for its heading: the notes
+    when annotated, else the changes the size rule calls big."""
+    if f.kind != "chapter" or f.status in ("added", "removed"):
+        return ""
+    bigs = [h for h in f.hunks if h.is_big]
+    if not bigs:
+        return ""
+    if any(h.big is not None for h in f.hunks):
+        head = f"The big changes ({len(bigs)} of {len(f.hunks)})"
+    else:
+        head = (f"The biggest changes ({len(bigs)} of {len(f.hunks)}: "
+                f"{BIG_WORDS}+ words, or a paragraph moved)")
+    items = "".join(
+        f'<li><a href="#{_esc(h.id)}">{md_inline_html(h.what) if h.what else h.snippet_html}</a></li>'
+        for h in bigs)
+    return (f'<nav class="bigs" aria-label="Big changes in {_esc(f.label)}">'
+            f'<p>{_esc(head)}</p><ol>{items}</ol></nav>')
 
 
 def _file_section(f: FileDiff, *, context: int, total: int,
@@ -1652,13 +2132,14 @@ def _file_section(f: FileDiff, *, context: int, total: int,
         f'<section class="file st-{f.status}{" doc" if f.kind != "chapter" else ""}" '
         f'id="file-{_esc(f.key)}">',
         f'<h2>{_esc(title)}{badge}</h2>',
-        f'<p class="meta">{_esc(f.file)} · {stats}'
+        f'<p class="meta stats">{_esc(f.file)} · {stats}'
         + (f' · <a href="{_esc(story_map_href)}#ch-{f.chapter}">this chapter in the '
            f'story map</a>' if story_map_href and f.kind == "chapter" and f.chapter else "")
         + '</p>',
     ]
     if f.why:
-        parts.append(f'<div class="file-why"><b>What changed:</b> {_esc(f.why)}</div>')
+        parts.append(f'<div class="file-why"><b>What changed:</b> {md_inline_html(f.why)}</div>')
+    parts.append(_big_list(f))
     if f.frontmatter_changes:
         items = "".join(
             f"<li>{_esc(k)}: <del>{_esc(str(o))}</del> → <ins>{_esc(str(n))}</ins></li>"
@@ -1667,7 +2148,7 @@ def _file_section(f: FileDiff, *, context: int, total: int,
         parts.append(f'<ul class="fm">{items}</ul>')
     parts.append(f'<div class="prose">{_render_flow(f, context=context, total=total)}</div>')
     parts.append("</section>")
-    return "\n".join(parts)
+    return "\n".join(p for p in parts if p)
 
 
 def _sidebar(report: DiffReport) -> str:
@@ -1679,12 +2160,15 @@ def _sidebar(report: DiffReport) -> str:
         out.append(f'<h3><a href="#file-{_esc(f.key)}">{_esc(label)}</a> '
                    f'<span class="n">({len(f.hunks)})</span></h3><ol>')
         for h in f.hunks:
+            cls = ("is-big" if h.is_big else "is-minor") + (" noted" if h.what else "")
+            text = md_inline_html(h.what) if h.what else h.snippet_html
+            tip = md_inline_text(h.what) if h.what else h.snippet
             out.append(
-                f'<li><a href="#{_esc(h.id)}" title="{_esc(h.snippet)}">'
+                f'<li class="{cls}"><a href="#{_esc(h.id)}" title="{_esc(tip)}">'
                 f'<span class="n">{h.n}</span>'
                 f'<span class="plus">+{h.words_added}</span> '
                 f'<span class="minus">−{h.words_removed}</span> '
-                f'{_esc(h.snippet)}</a></li>'
+                f'{text}</a></li>'
             )
         out.append("</ol>")
     return "\n".join(out) or '<p class="note">No changes.</p>'
@@ -1693,8 +2177,10 @@ def _sidebar(report: DiffReport) -> str:
 def render_html(report: DiffReport, *, context: int = 1,
                 story_map_href: str | None = None) -> str:
     """One self-contained page: inline CSS + JS, no external requests.
-    `story_map_href` (the story map written beside it) adds a Story map
-    link to the toolbar and to every chapter's heading line."""
+    Three views of the same text (Changes / Whole chapter / Clean text)
+    and a big-changes filter. `story_map_href` (the story map written
+    beside it) adds a Story map link to the toolbar and to every
+    chapter's heading line."""
     t = report.totals()
     total = t["hunks"]
     title = f"{report.book}: {report.old.label} → {report.new.label}"
@@ -1752,26 +2238,37 @@ def render_html(report: DiffReport, *, context: int = 1,
     if not total and not report.changed_chapters:
         body.append(f'<p class="empty">No differences between {_esc(report.old.description)} '
                     f'and {_esc(report.new.description)}.</p>')
+    maplink = (f'<a class="maplink" href="{_esc(story_map_href)}" title="Synopsis, threads, '
+               f'characters, timeline and places">Story map</a>' if story_map_href else "")
+    big_note = f" · {t['big_hunks']} big" if total else ""
 
     return f"""<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
 <meta name="generator" content="autonovel mechanical diff-chapters">
 <title>{_esc(title)}</title>
 <style>{_CSS}</style>
 </head>
-<body>
-<div class="toolbar" role="toolbar" aria-label="Change navigation">
-  <button type="button" id="navtoggle" aria-label="List of changes">☰ Changes</button>
+<body class="view-changes">
+<script>{_HEAD_JS}</script>
+<div class="toolbar" role="toolbar" aria-label="Changes and views">
+  <button type="button" id="navtoggle" aria-label="List of changes">☰ List</button>
   <span class="title">{_esc(title)}</span>
-  <button type="button" id="prev" title="Previous change (k or p)">◀ Prev</button>
-  <span class="counter">change <b id="cur">–</b> of <b id="total">{total}</b></span>
-  <button type="button" id="next" title="Next change (j or n)">Next ▶</button>
-  {f'<a class="maplink" href="{_esc(story_map_href)}" title="Synopsis, threads, characters, timeline and places">Story map</a>' if story_map_href else ''}
-  <label title="Expand every unchanged paragraph (e)"><input type="checkbox" id="showall"> <span class="long">show all </span>context</label>
+  <span class="nav">
+    <button type="button" id="prev" title="Previous change (k or p)" aria-label="Previous change">◀<span class="long"> Prev</span></button>
+    <span class="counter" aria-live="polite">change <b id="cur">–</b> of <b id="total">{total}</b></span>
+    <button type="button" id="next" title="Next change (j or n)" aria-label="Next change"><span class="long">Next </span>▶</button>
+  </span>
+  {maplink}
+  <span class="views" role="group" aria-label="View">
+    <button type="button" data-view="changes" aria-pressed="true" title="The changes, unchanged paragraphs folded">Changes</button>
+    <button type="button" data-view="whole" aria-pressed="false" title="Every paragraph, the changes marked (e)">Whole<span class="long"> chapter</span></button>
+    <button type="button" data-view="clean" aria-pressed="false" title="The new version as a straight read">Clean<span class="long"> text</span></button>
+  </span>
+  <label class="bigfilter" title="Hide wording trims; keep new scenes, new lines and changed facts"><input type="checkbox" id="bigonly"> Big<span class="long"> changes</span> only</label>
 </div>
 <div class="layout">
 <aside aria-label="Changes by chapter">{_sidebar(report)}</aside>
@@ -1780,10 +2277,10 @@ def render_html(report: DiffReport, *, context: int = 1,
 <h1>{_esc(report.book)}: what changed</h1>
 <p class="meta">From {_snap_line(report.old)}</p>
 <p class="meta">To {_snap_line(report.new)}</p>
-<p class="meta">{total} change{"s" if total != 1 else ""} · generated {_esc(report.generated)}</p>
+<p class="meta">{total} change{"s" if total != 1 else ""}{big_note} · generated {_esc(report.generated)}</p>
 {table}
 {"".join(f'<p class="meta">{n}</p>' for n in notes)}
-<p class="legend"><ins>inserted</ins> <del>deleted</del> · <ins class="pilcrow">¶</ins> paragraph split, <del class="pilcrow">¶</del> paragraphs joined · <kbd>j</kbd>/<kbd>k</kbd> or <kbd>n</kbd>/<kbd>p</kbd> next/previous change · <kbd>e</kbd> show all context</p>
+<p class="legend"><ins>inserted</ins> <del>deleted</del> · a new paragraph sits under a green rule · a rewritten paragraph shows its new text, with “show the earlier draft” under it · <ins class="pilcrow">¶</ins> paragraph split, <del class="pilcrow">¶</del> paragraphs joined · <b>Changes</b> folds the unchanged text, <b>Whole chapter</b> shows it all (<kbd>e</kbd>), <b>Clean text</b> is the new version to read straight through · <kbd>j</kbd>/<kbd>k</kbd> or <kbd>n</kbd>/<kbd>p</kbd> next/previous change</p>
 </header>
 {"".join(body)}
 <footer>autonovel mechanical diff-chapters · pairing threshold {report.threshold:g}</footer>
@@ -1798,16 +2295,18 @@ def render_html(report: DiffReport, *, context: int = 1,
 def render_hunk_list(report: DiffReport, *, clip: int = 400) -> str:
     """Compact markdown listing of every hunk -- id, fingerprint, the
     deleted and inserted runs only -- for the `/autonovel:diff
-    --annotate` step, which writes one `why` per hunk id. Keeps the
-    annotator's context small (the JSON sidecar carries whole
-    paragraphs and rendered HTML)."""
+    --annotate` step, which writes a `what` note, a `why` and a `big`
+    flag per hunk id. Keeps the annotator's context small (the JSON
+    sidecar carries whole paragraphs and rendered HTML)."""
     t = report.totals()
     out = [
         f"# Changes in {report.book}: {report.old.description} → "
         f"{report.new.description} ({t['hunks']})",
         "",
-        "Annotate with a JSON object keyed by hunk id (and optionally by "
-        "chapter key, e.g. `ch05`, for a one-line chapter summary).",
+        "Annotate with a JSON object keyed by hunk id -- "
+        '`{"what": "...", "why": "...", "big": true, "fp": "<fp>"}` -- and '
+        "optionally by chapter key, e.g. `ch05`, for a one-line chapter summary. "
+        "A `(rewritten)` change lists the whole old and new paragraph.",
     ]
     for f in report.chapters + report.foundation:
         if not f.hunks:
@@ -1818,7 +2317,8 @@ def render_hunk_list(report: DiffReport, *, clip: int = 400) -> str:
         for h in f.hunks:
             out.append(f"- {h.id} (fp {h.fp}) ¶{h.index + 1} "
                        f"+{h.words_added} −{h.words_removed}"
-                       + (f", {h.moved} moved" if h.moved else ""))
+                       + (f", {h.moved} moved" if h.moved else "")
+                       + (" (rewritten)" if h.rewritten else ""))
             if f.status in ("added", "removed"):
                 out.append(f"  {'+' if f.status == 'added' else '−'} whole file "
                            f"({f.words_new or f.words_old} words), opening "
@@ -1839,8 +2339,19 @@ def render_hunk_list(report: DiffReport, *, clip: int = 400) -> str:
 # ===================================================================
 
 
+def _chapters_slug(nums: list[int]) -> str:
+    """``[1, 2, 5, 9, 10, 11]`` -> ``ch01-02_05_09-11``."""
+    return "ch" + "_".join("-".join(f"{int(x):02d}" for x in part.split("–"))
+                           for part in _ranges(nums).split(", "))
+
+
 def default_paths(series_root: Path, book: str, report: DiffReport) -> tuple[Path, Path]:
+    """``edit_logs/diff_<from>_<to>[_chNN-MM]``: a page limited to some
+    chapters has its own name, so one chapter's page (a revise hand-back)
+    never overwrites another chapter's or the whole book's."""
     stem = f"diff_{sanitize_ref(report.old.label)}_{sanitize_ref(report.new.label)}"
+    if report.chapter_filter:
+        stem += "_" + sanitize_ref(_chapters_slug(report.chapter_filter))
     d = series_root / "books" / book / "edit_logs"
     return d / f"{stem}.html", d / f"{stem}.json"
 
@@ -1897,10 +2408,17 @@ def add_arguments(p: argparse.ArgumentParser) -> None:
                    help="Output path (.html, or .json for the data file). Default "
                         "books/<book>/edit_logs/diff_<from>_<to>.html.")
     p.add_argument("--why", default=None,
-                   help="Annotation sidecar {hunk_id|chapter_key: why} rendered into the page.")
+                   help="Annotation sidecar rendered into the page: {hunk_id: why} or "
+                        "{hunk_id: {what, why, big, fp}}, plus {chapter_key: summary}.")
     p.add_argument("--mark-read", action="store_true",
                    help="After writing the diff, record --to as the last-read bookmark "
                         "(books/<book>/edit_logs/last_read.json).")
+    p.add_argument("--if-read", action="store_true",
+                   help="With --from last-read: write the page only when the author has "
+                        "read these chapters -- the bookmark resolves and a selected "
+                        "chapter existed at that version and has changed since. Otherwise "
+                        "write nothing and print {\"skipped\": reason}. For revise / draft "
+                        "handing a rewritten chapter back.")
     p.add_argument("--foundation", action=argparse.BooleanOptionalAction, default=None,
                    help="Include voice/outline/canon diffs (default: on unless --chapters).")
     p.add_argument("--context", type=int, default=1,
@@ -1944,6 +2462,8 @@ def cli(args: argparse.Namespace) -> int:
                 series_root = Path.cwd().resolve()
         book = args.book or _infer_book(series_root)
         chapters = parse_chapter_spec(args.chapters)
+        if getattr(args, "if_read", False) and args.from_spec != "last-read":
+            raise DiffError("--if-read needs --from last-read")
         report = build_diff(
             series_root, book, from_spec=args.from_spec, to_spec=args.to_spec,
             chapters=chapters, foundation=args.foundation,
@@ -1954,6 +2474,13 @@ def cli(args: argparse.Namespace) -> int:
     except (DiffError, ValueError, OSError, json.JSONDecodeError) as e:
         print(f"diff-chapters: {e}", file=sys.stderr)
         return 2
+
+    skipped = unread_reason(report, book) if getattr(args, "if_read", False) else None
+    if skipped:
+        json.dump({"skipped": skipped, "html": None, "from": report.old.to_dict(),
+                   "to": report.new.to_dict()}, sys.stdout, indent=2, ensure_ascii=False)
+        sys.stdout.write("\n")
+        return 0
 
     if args.format == "hunks":
         sys.stdout.write(render_hunk_list(report))
@@ -1989,7 +2516,7 @@ def cli(args: argparse.Namespace) -> int:
         "why_path": str(why_path_for(html_path).resolve()),
         "from": report.old.to_dict(),
         "to": report.new.to_dict(),
-        **{k: t[k] for k in ("hunks", "chapter_hunks", "foundation_hunks",
+        **{k: t[k] for k in ("hunks", "big_hunks", "chapter_hunks", "foundation_hunks",
                               "chapters_changed", "chapters_compared",
                               "words_added", "words_removed", "net_words")},
         "why_applied": report.why_applied,

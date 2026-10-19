@@ -26,7 +26,12 @@ reads:
   - books/{book}/edit_logs/reader_panel.json
   - books/{book}/eval_logs/ch{chapter:02d}_eval.json
   - books/{book}/briefs/conversation.md
+  - books/{book}/edit_logs/last_read.json
 writes:
+  - books/{book}/edit_logs/diff_*.html
+  - books/{book}/edit_logs/diff_*.json
+  - books/{book}/edit_logs/story_map.html
+  - books/{book}/edit_logs/story_map.json
   - books/{book}/canon.md
   - books/{book}/edit_logs/ch{chapter:02d}_anachronism.md
   - books/{book}/briefs/ch{chapter:02d}.md
@@ -227,7 +232,9 @@ the whole sweep on a single missing input.
       `kind: structural` brief lets the rewrite restructure chapter N
       from the inside (`/autonovel:revise` step 7a); it never edits
       another chapter and never runs a cross-chapter command — return
-      those commands verbatim to the parent instead.
+      those commands verbatim to the parent instead. Skip revise's
+      step 12 (the hand-back diff): the parent hands the whole range
+      back once, at step 4.
 
    d. **evaluate** *(skippable via --skip-eval)*: Reproduce the
       body of `/autonovel:evaluate --chapter N` — score the revised
@@ -340,6 +347,24 @@ the whole sweep on a single missing input.
    `/autonovel:reader-panel` next"). A negative delta on any
    chapter is a real concern and should not be buried in the
    table.
+
+   **Hand the revised chapters back as one diff.** Use `bash` to run,
+   with the chapter numbers actually swept as the range (`3-7`,
+   `2,5,9`; never the words `all` or `structural`):
+
+   ```
+   autonovel mechanical diff-chapters --book {book} --from last-read --chapters <range> --if-read
+   ```
+
+   It compares each chapter as the author last read it (the version
+   `books/{book}/edit_logs/last_read.json` records) with the revision,
+   writes one page `books/{book}/edit_logs/diff_*.html` (with its
+   `diff_*.json`, and `story_map.html` / `story_map.json` rebuilt beside
+   it), and prints `"skipped": "<reason>"` — say nothing about it — when
+   the author has no bookmark or had read none of these chapters.
+   Otherwise add one line after the table: "What changed since you last
+   read: <open> (<html>) — <hunks> changes, <big_hunks> big." Do not pass
+   `--mark-read`. Best-effort: on a helper failure, say so in one line.
 
    When any chapter had a structural brief, add a block "Cross-chapter
    operations the structure review asked for — run these yourself"

@@ -381,7 +381,13 @@ def test_html_has_hunk_list_counter_and_is_self_contained(tagged_series: Path) -
     assert "prefers-color-scheme: dark" in html
     assert 'name="viewport"' in html
     assert "fold-toggle" in html                      # unchanged runs collapse
-    assert 'id="showall"' in html
+    # Three views on one page, a big-changes filter, the view remembered.
+    for view in ("changes", "whole", "clean"):
+        assert f'data-view="{view}"' in html
+    assert '<body class="view-changes">' in html
+    assert 'id="bigonly"' in html
+    assert "try{var v=localStorage.getItem(" in html
+    assert "try { localStorage.setItem(KEY, v); } catch (e) {}" in html
     # Self-contained: no external scripts, styles, fonts or images.
     for needle in ('src="http', "src='http", 'href="http', "@import", "url(http"):
         assert needle not in html
@@ -620,3 +626,297 @@ def test_cli_bad_ref_exits_2(tagged_series: Path) -> None:
     proc = _cli("--book", BOOK, "--from", "nope", cwd=tagged_series)
     assert proc.returncode == 2
     assert "unknown version" in proc.stderr
+
+
+# ------------------------------------------------------------ the author's read (2026-10-18)
+#
+# The author reviewed revised kingmaker2 chapters on a page built by hand
+# because this one lacked: a plain what-changed note per change, Changes /
+# Whole chapter / Clean text views, a big-changes filter, rewritten
+# paragraphs shown as new text with the earlier draft folded, italics
+# rendered, a next-change button that visibly works, and dark mode.
+
+LONG = ("Sibylla came down the stairs behind him with a candle and a fur over her "
+        "nightdress; she was thirty-nine, twenty years younger than he was, and they "
+        "had been married for twenty-one years, long enough for her to know what a "
+        "rider at that hour meant and not to ask it in front of the porter.")
+
+
+@pytest.fixture
+def two_change_series(tmp_path: Path) -> Path:
+    """ch1 tagged v1, then a one-word edit in P1 (small) and a 50-word
+    paragraph added after P5 (big)."""
+    root = _series(tmp_path)
+    _write(root, 1, [P1, P2, P3, P4, P5])
+    _commit(root, "v1")
+    _git(root, "tag", "v1")
+    _write(root, 1, [P1.replace("dawn", "first light"), P2, P3, P4, P5, LONG])
+    return root
+
+
+def test_big_falls_back_to_the_size_rule(two_change_series: Path) -> None:
+    rep = build_diff(two_change_series, BOOK, from_spec="v1", chapters={1})
+    small, big = rep.chapters[0].hunks
+    assert (small.is_big, big.is_big) == (False, True)
+    assert big.words_added >= bookdiff.BIG_WORDS
+    html = render_html(rep)
+    assert f'<div class="hunk is-minor" id="{small.id}"' in html
+    assert f'<div class="hunk is-big" id="{big.id}"' in html
+    # The big ones listed, as links, at the head of the chapter.
+    assert "The biggest changes (1 of 2: 40+ words, or a paragraph moved)" in html
+    assert f'<li><a href="#{big.id}">' in html
+    # Context paragraphs hide with the change they belong to.
+    assert f'<p class="p-eq ctx is-minor">{P2}</p>' in html
+    assert f'<p class="p-eq ctx">{P5}</p>' in html
+    assert rep.totals()["big_hunks"] == 1
+
+
+def _esc(s: str) -> str:
+    import html as _h
+    return _h.escape(s, quote=True)
+
+
+def test_what_why_big_annotations_render(two_change_series: Path, tmp_path: Path) -> None:
+    rep = build_diff(two_change_series, BOOK, from_spec="v1", chapters={1})
+    small, big = rep.chapters[0].hunks
+    why = tmp_path / "why.json"
+    why.write_text(json.dumps({
+        small.id: {"what": "Dawn becomes *first light*.", "why": "brief ch01 — the time of day",
+                   "big": True, "fp": small.fp},
+        big.id: {"what": "Sibylla introduced: thirty-nine, married twenty-one years.",
+                 "why": "brief ch01 — Sibylla's Must line", "big": False, "fp": big.fp},
+    }), encoding="utf-8")
+    apply_why(rep, load_why(why))
+    assert rep.why_applied == 2
+    assert (small.is_big, big.is_big) == (True, False)       # the note's flag wins
+    html = render_html(rep)
+    # The what note heads the change, the why sits under it, quieter.
+    head = html.index(f'id="{big.id}"')
+    what_at = html.index('<div class="what">Sibylla introduced', head)
+    why_at = html.index("<div class=\"why\"><b>Why:</b> brief ch01 — Sibylla", head)
+    assert what_at < why_at
+    assert "Dawn becomes <em>first light</em>." in html      # emphasis in notes
+    # Notes in the change list; the big list uses the notes.
+    assert f'<li class="is-big noted"><a href="#{small.id}" title="Dawn becomes first light.">' in html
+    assert "The big changes (1 of 2)" in html
+    assert f'<li><a href="#{small.id}">Dawn becomes <em>first light</em>.</a></li>' in html
+    data = rep.to_dict()["hunks_detail"]
+    assert data[0]["what"] == "Dawn becomes *first light*." and data[0]["big"] is True
+    assert data[0]["big_source"] == "note" and data[1]["big"] is False
+
+
+def test_old_why_sidecars_still_load(tmp_path: Path) -> None:
+    p = tmp_path / "why.json"
+    p.write_text(json.dumps({
+        "ch01-001": "Brief ch01 asked for it.",
+        "ch01-002": {"why": "talk turn 4", "fp": "abc"},
+        "ch01-003": {"what": "Wording."},
+        "ch01-004": {"big": True},
+        "ch01-005": {"fp": "only a fingerprint"},
+        "ch01": "One number added.",
+    }), encoding="utf-8")
+    w = load_why(p)
+    assert w["ch01-001"] == {"why": "Brief ch01 asked for it.", "fp": None}
+    assert w["ch01-002"] == {"why": "talk turn 4", "fp": "abc"}
+    assert w["ch01-003"] == {"what": "Wording.", "fp": None}
+    assert w["ch01-004"] == {"big": True, "fp": None}
+    assert "ch01-005" not in w
+    assert w["ch01"]["why"] == "One number added."
+
+
+# Four phrases replaced, three long islands kept: 12 of 28 words survive.
+RW_OLD = ("red fox ran by across the wide meadow old dog lay low beneath the tall oak "
+          "six men sat on beside the stone wall rain fell all day")
+RW_NEW = ("a cat woke up across the wide meadow two owls flew in beneath the tall oak "
+          "ten boys ate it beside the stone wall snow came at dusk")
+
+
+def test_rewritten_paragraph_shows_new_text_and_the_earlier_draft() -> None:
+    fd = diff_file(_chapter(1, [P1, RW_OLD, P2]), _chapter(1, [P1, RW_NEW, P2]),
+                   key="ch01", file="ch_01.md", kind="chapter", label="Chapter 1", chapter=1)
+    (h,) = fd.hunks
+    assert h.rewritten == 1
+    new_part, fold = h.inline_html.split('<details class="earlier">')
+    assert 'class="p-ins p-rewritten"' in new_part and "snow came at dusk" in new_part
+    assert "<del>" not in new_part                       # no interleaved fragments
+    assert "Rewritten — show the earlier draft</summary>" in fold
+    assert "rain fell all day" in fold and 'class="p-eq p-old"' in fold
+    assert h.changes == [[RW_OLD, RW_NEW]]               # one whole pair for the annotator
+    assert (h.words_added, h.words_removed) == (16, 16)
+    assert "(rewritten)" in bookdiff.render_hunk_list(_report_of(fd))
+
+
+def _report_of(fd) -> bookdiff.DiffReport:
+    snap = bookdiff.Snapshot(spec="a", label="a", description="a")
+    rep = bookdiff.DiffReport(book=BOOK, series_root=".", old=snap, new=snap, chapters=[fd],
+                              foundation=[], threshold=0.4, chapter_filter=None, generated="now")
+    for k, h in enumerate(rep.all_hunks, 1):
+        h.n = k
+    return rep
+
+
+def test_is_rewritten_thresholds() -> None:
+    Seg = bookdiff.Seg
+
+    def segs(kept: int, replacements: int, per: int) -> list:
+        """`kept` unchanged words, then `replacements` runs of `per` words
+        replaced (each counts as two runs: deleted and inserted)."""
+        return ([Seg("eq", ["k"] * kept, ["k"] * kept)]
+                + [Seg("chg", ["o"] * per, ["n"] * per) for _ in range(replacements)])
+
+    # kept 9/19 = 0.47 with 4 runs: rewritten
+    assert bookdiff.is_rewritten(segs(9, 2, 5))
+    # kept 11/20 = 0.55 with 6 runs: not yet ...
+    assert not bookdiff.is_rewritten(segs(11, 3, 3))
+    # ... but with 10 runs (kept 11/21 = 0.52) it is
+    assert bookdiff.is_rewritten(segs(11, 5, 2))
+    # a one-word edit never is
+    assert not bookdiff.is_rewritten([Seg("eq", ["k"] * 19, ["k"] * 19), Seg("chg", ["a"], ["b"])])
+
+
+def test_tiny_unchanged_islands_fold_into_the_edit() -> None:
+    segs = word_diff(tokenize("Then the old man walked home."),
+                     tokenize("Then an old woman walked home."))
+    assert [s.tag for s in segs] == ["eq", "chg", "eq"]
+    assert segs[1].old == ["the", "old", "man"] and segs[1].new == ["an", "old", "woman"]
+    # A three-word island is shared text and stays.
+    segs = word_diff(tokenize("He saw the red fox run under the gate at dusk."),
+                     tokenize("He saw the grey fox run under the gate at dawn."))
+    assert "".join(s.tag[0] for s in segs) == "ecec"
+
+
+def test_pairing_finds_a_paragraph_pushed_down_past_new_ones() -> None:
+    a_new = P1.replace("dawn", "first light")
+    glue = "The boatman crossed the lagoon too, at dawn, and his ducats were counted."
+    old = [tokenize(P1), tokenize(P4)]
+    new = [tokenize("Snow fell on the Weinmarkt all night."),
+           tokenize("Nobody moved in the street below."),
+           tokenize(glue), tokenize(a_new), tokenize(P4 + " Again.")]
+    items = pair_paragraphs(old, new)
+    # A neighbour sharing a few words is not glued on as a "split".
+    assert ("pair", [0], [3]) in items and ("ins", [], [2]) in items
+    assert ("pair", [1], [4]) in items
+
+
+def test_pairing_reaches_far_off_the_diagonal_in_a_big_hunk() -> None:
+    old_p = [P1, P2, P3, P4, P5]
+    filler = [f"Filler {k}: the wagons stood in the snow and the drivers waited for word."
+              for k in range(85)]
+    new_p = filler + [p.replace(" the ", " that ", 1) if " the " in p else p + " Then."
+                      for p in old_p]
+    items = pair_paragraphs([tokenize(p) for p in old_p], [tokenize(p) for p in new_p])
+    pairs = {tuple(o): tuple(n) for k, o, n in items if k == "pair"}
+    assert pairs == {(i,): (85 + i,) for i in range(5)}
+
+
+def test_markdown_emphasis_is_rendered_at_token_level() -> None:
+    old = "*He crossed the lagoon at dawn,* Jakob wrote."
+    new = "*He crossed the wide lagoon at dawn,* Jakob wrote."
+    fd = diff_file(_chapter(1, [old]), _chapter(1, [new]), key="ch01", file="ch_01.md",
+                   kind="chapter", label="Chapter 1", chapter=1)
+    (h,) = fd.hunks
+    assert ("<em>He crossed the</em> <ins><em>wide</em></ins> "
+            "<em>lagoon at dawn,</em> Jakob wrote.") in h.inline_html
+    assert "*" not in h.inline_html
+    assert h.snippet == "… He crossed the wide lagoon at"
+    assert h.snippet_html == "… <em>He crossed the wide lagoon at</em>"
+    plain = bookdiff.render_plain_paragraph
+    assert plain("**Plot:** Jakob arrives.") == \
+        '<p class="p-eq"><strong>Plot:</strong> Jakob arrives.</p>'
+    assert "*there" in plain("A lone * mark and *there it stops.")   # unbalanced: literal
+    assert plain("* * *") == '<p class="p-eq md-break">* * *</p>'
+    assert bookdiff.md_inline_html("Konrad *Mair* <b>") == "Konrad <em>Mair</em> &lt;b&gt;"
+
+
+def test_page_has_three_views_and_a_filter_with_distinct_state_classes(
+        two_change_series: Path) -> None:
+    import re
+    html = render_html(build_diff(two_change_series, BOOK, from_spec="v1"))
+    css = html[html.index("<style>"):html.index("</style>")]
+    # Changes folds; Whole chapter opens every fold; Clean text shows the
+    # new version only (no deletions, cut paragraphs, notes or earlier drafts).
+    assert "body.view-whole .fold-body, body.view-clean .fold-body { display: block; }" in css
+    for hidden in ("body.view-clean del", "body.view-clean .p-del", "body.view-clean .what",
+                   "body.view-clean .why", "body.view-clean details.earlier",
+                   "body.view-clean .hunk-head", "body.view-clean section.st-removed"):
+        assert hidden in css
+    assert "body.view-clean ins { background: none;" in css
+    # The filter's state class lives on <body>, set by script only, and is
+    # never a component's class (the hand-built page broke on that).
+    assert "body.view-changes.filter-big .is-minor { display: none; }" in css
+    assert "body.classList.toggle('filter-big', on)" in html
+    assert 'class="bigfilter"' in html
+    classes = " ".join(re.findall(r'class="([^"]*)"', html)).split()
+    assert "filter-big" not in classes and "bigonly" not in classes
+
+
+def test_page_shell_fits_an_artifact_frame_and_a_phone(tagged_series: Path) -> None:
+    html = render_html(build_diff(tagged_series, BOOK))
+    assert ('@media (prefers-color-scheme: dark) {\n  :root:not([data-theme="light"]) '
+            '{ color-scheme: dark;') in html
+    assert ':root[data-theme="dark"] { color-scheme: dark;' in html
+    assert "body { margin: 0; background: var(--bg); color: var(--fg);" in html
+    assert "position: sticky; top: env(safe-area-inset-top, 0px)" in html
+    assert "max(16px, env(safe-area-inset-left, 0px))" in html
+    assert "max(16px, env(safe-area-inset-right, 0px))" in html
+    assert "viewport-fit=cover" in html
+    assert "--ins-bg: #173b23" in html                   # dark tokens present
+
+
+def test_change_navigation_steps_by_index_and_resyncs(tagged_series: Path) -> None:
+    html = render_html(build_diff(tagged_series, BOOK))
+    js = html[html.rindex("<script>"):]
+    assert 'class="counter" aria-live="polite"' in html
+    assert "new IntersectionObserver(" in js             # resync after manual scrolling
+    assert "vs[i]._k > cur" in js and "vs[i]._k < cur" in js   # index, not position
+    assert "h.getClientRects().length > 0" in js         # only changes the view/filter shows
+    assert "prefers-reduced-motion: reduce" in js and "prefers-reduced-motion: reduce" in html
+    assert "h.classList.add('flash')" in js
+    assert "root.style.setProperty('--bar-h'" in js       # toolbar height measured
+    assert "scroll-padding-top: calc(var(--bar-h)" in html
+    assert "/^(TEXTAREA|SELECT)$/" in js and "t.isContentEditable" in js
+    assert "e.key === 'n'" in js and "e.key === 'k'" in js
+
+
+def test_default_paths_name_the_chapters(tagged_series: Path) -> None:
+    rep = build_diff(tagged_series, BOOK, chapters={1, 2})
+    html_path, _ = bookdiff.default_paths(tagged_series, BOOK, rep)
+    assert html_path.name == "diff_draft_1_worktree_ch01-02.html"
+    assert bookdiff._chapters_slug([1, 5, 9, 10, 11]) == "ch01_05_09-11"
+    whole, _ = bookdiff.default_paths(tagged_series, BOOK, build_diff(tagged_series, BOOK))
+    assert whole.name == "diff_draft_1_worktree.html"
+
+
+def test_if_read_skips_without_a_bookmark(tagged_series: Path) -> None:
+    proc = _cli("--book", BOOK, "--from", "last-read", "--chapters", "1", "--if-read",
+                cwd=tagged_series)
+    assert proc.returncode == 0, proc.stderr
+    out = json.loads(proc.stdout)
+    assert out["html"] is None and out["skipped"].startswith("no last-read bookmark")
+    assert not list((tagged_series / "books" / BOOK / "edit_logs").glob("diff_*"))
+
+
+def test_if_read_hands_back_only_chapters_the_author_read(tagged_series: Path) -> None:
+    head = _commit(tagged_series, "revise")              # ch1 + ch2 now in HEAD
+    _git(tagged_series, "checkout", "-q", "draft_1")     # bookmark the version without ch2
+    write_bookmark(tagged_series, BOOK, resolve_snapshot(tagged_series, BOOK, "draft_1"))
+    _git(tagged_series, "checkout", "-q", head)
+    proc = _cli("--book", BOOK, "--from", "last-read", "--chapters", "2", "--if-read",
+                cwd=tagged_series)
+    assert json.loads(proc.stdout)["skipped"] == "chapter 2 did not exist in the version last read"
+    proc = _cli("--book", BOOK, "--from", "last-read", "--chapters", "1", "--if-read",
+                cwd=tagged_series)
+    out = json.loads(proc.stdout)
+    assert "skipped" not in out and out["from"]["from_bookmark"] is True
+    assert Path(out["html"]).name.endswith("_worktree_ch01.html")
+    assert out["big_hunks"] == 0 and out["hunks"] == 2   # the edit + its summary
+
+
+def test_if_read_needs_last_read(tagged_series: Path) -> None:
+    proc = _cli("--book", BOOK, "--from", "draft_1", "--if-read", cwd=tagged_series)
+    assert proc.returncode == 2 and "--if-read needs --from last-read" in proc.stderr
+
+
+def test_hunk_list_asks_for_what_why_and_big(tagged_series: Path) -> None:
+    listing = bookdiff.render_hunk_list(build_diff(tagged_series, BOOK))
+    assert '`{"what": "...", "why": "...", "big": true, "fp": "<fp>"}`' in listing
