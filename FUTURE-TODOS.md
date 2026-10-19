@@ -2845,6 +2845,29 @@ prose ≈ 8 / 10, with investigation-heavy plots).
   your last read → `/autonovel:diff --from last-read`"), and let
   `/autonovel:talk` answer "what changed in ch 21 since draft_1?" from the
   diff JSON.
+- **Revised samples go back to the author as a diff, every time
+  (2026-10-18).** The author re-read the third-draft kingmaker2 ch 1–2 in
+  full because the page showed only the clean text: "it is taking me too long
+  to read the same text again without the diff view." `draft`/`revise`,
+  when they hand revised chapters back for the author's read, should run
+  `diff-chapters` against the version the author last read (`last-read`)
+  and point to the page. The page built by hand that day (54 changes, two
+  chapters) showed what the helper's page lacks:
+  - a plain **what-changed note** on each change ("Sibylla introduced: her
+    age, married twenty-one years"), in addition to `--annotate`'s *why*;
+    the author skims the notes and opens only the changes they care about;
+  - **Changes / Whole chapter / Clean text** views on one page, so the
+    same link serves the diff and the straight read;
+  - a **big changes only** filter (notes flag the big ones), with the big
+    ones listed at the head of each chapter;
+  - a **heavily rewritten paragraph** shown as its new text with a
+    "show the earlier draft" fold, not as interleaved strike/insert
+    fragments (rule used: under half the old words kept with 4+ changes,
+    or under 60% kept with 10+ changes);
+  - **markdown italics rendered**: the helper shows `*Brandenburg: …*`
+    with its asterisks, in the change list and in the text;
+  - dark mode via the page tokens, and the sticky toolbar's height used as
+    the jump offset on a phone.
 
 ## Story-map follow-ups (story-map shipped 2026-10-17)
 
