@@ -3008,3 +3008,13 @@ whole-book commands where it means nothing — `next_step` should not emit
 a chapter-advance line for book-scope commands; (2) a `--stage` dry-run
 test fixture, so the staging format is pinned by a test.
 
+
+## CI: the Tier 1+2 workflow is disabled (2026-10-18)
+
+The author disabled `.github/workflows/test.yml` on GitHub after months of
+failure emails. It had failed on every push since 2026-06-06 only because
+the workflow installs `.[test]` and not Pillow, which 18 teaser tests need
+(locally `.[test,export]` is installed and the suite is green). Fix before
+re-enabling: install `-e '.[test,export]'` in the workflow (or skip the
+Pillow-dependent tests with `pytest.importorskip("PIL")`), then re-enable it
+from the Actions tab.
