@@ -2347,7 +2347,17 @@ light and dark, in an iframe, and with reduced motion; two browser tests
 skip where Playwright is absent. Lesson: a tool's page is the product —
 what the author reads on it decides whether the work gets read at all.
 
+### 2026-10-18 — diff pages for the author leave out the chapter summaries
+
+Building the kingmaker2 samples page with `diff-chapters --chapters 1-3`,
+the page counted 58 changes: the 56 in the prose plus the three chapter
+summaries' rewrites, which the author never reads. Summaries now follow
+`--foundation` (off by default with `--chapters`, so hand-backs from
+revise/draft no longer list them); `--foundation` brings them back with
+voice/outline/canon. Two tests updated to the new default.
+
 ## Tests last known green
+- Tier 1 + Tier 2 (deterministic + contracts): 2026-10-18 (summaries follow --foundation) — **2178 passing, 1 skipped**.
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-18 (merge: diff features + draft-pass template) — **2178 passing, 1 skipped**.
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-18 (diff hand-back + page) — **2178 passing, 1 skipped** (+17 bookdiff, +2 browser (skip without Playwright), +6 hand-back contracts).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-18 (draft-pass template) — **2153 passing, 1 skipped** (no new tests; contract test covers the new first-read write).

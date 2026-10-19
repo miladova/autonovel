@@ -105,7 +105,9 @@ go back to the author as this page.
 1. Parse `$ARGUMENTS`. `--book <short-name>` defaults via `_begin`.
    `--from` defaults to `last-tag`, `--to` to `worktree`.
    `--chapters` takes `5`, `3-7` or `2,5,9-11`; with `--chapters` the
-   foundation files are skipped (chapter summaries are kept).
+   foundation files and the chapter summaries are skipped (pass
+   `--foundation` to include them: summaries are pipeline notes the
+   author doesn't read, so they would only pad the change count).
    `--mark-read` and `--annotate` are flags.
 
 2. **Mechanical diff.** Use `bash` to run, from the series root:

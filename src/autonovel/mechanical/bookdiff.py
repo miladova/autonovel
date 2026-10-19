@@ -1447,7 +1447,9 @@ def build_diff(series_root: Path, book: str, *, from_spec: str = "last-tag",
     for n in nums:
         o, w = by_num[n]
         for rel in {o, w} - {None}:
-            wanted += [rel, rel[:-3] + ".summary.md"]  # type: ignore[index]
+            wanted.append(rel)  # type: ignore[arg-type]
+            if foundation:  # summaries are pipeline notes, shown with the foundation files
+                wanted.append(rel[:-3] + ".summary.md")  # type: ignore[index]
     if foundation:
         wanted += [rel for _, rel, _ in _foundation_targets(book)]
     wanted = sorted(set(wanted))
@@ -1466,8 +1468,8 @@ def build_diff(series_root: Path, book: str, *, from_spec: str = "last-tag",
             old_t, new_t, key=key, file=rel, kind="chapter",
             label=f"Chapter {n}", chapter=n, threshold=threshold,
         ))
-        s_old = old_texts.get(o[:-3] + ".summary.md") if o else None
-        s_new = new_texts.get(w[:-3] + ".summary.md") if w else None
+        s_old = old_texts.get(o[:-3] + ".summary.md") if o and foundation else None
+        s_new = new_texts.get(w[:-3] + ".summary.md") if w and foundation else None
         if s_old is not None or s_new is not None:
             sd = diff_file(
                 s_old, s_new, key=f"{key}-summary", file=rel[:-3] + ".summary.md",
@@ -2420,7 +2422,7 @@ def add_arguments(p: argparse.ArgumentParser) -> None:
                         "write nothing and print {\"skipped\": reason}. For revise / draft "
                         "handing a rewritten chapter back.")
     p.add_argument("--foundation", action=argparse.BooleanOptionalAction, default=None,
-                   help="Include voice/outline/canon diffs (default: on unless --chapters).")
+                   help="Include the chapter summaries and the voice/outline/canon diffs (default: on unless --chapters).")
     p.add_argument("--context", type=int, default=1,
                    help="Unchanged paragraphs shown around each change (default 1).")
     p.add_argument("--story-map", action=argparse.BooleanOptionalAction, default=True,

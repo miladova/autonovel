@@ -287,9 +287,10 @@ def test_summaries_and_foundation_in_their_own_section(tagged_series: Path) -> N
 def test_chapters_filter_drops_foundation_by_default(tagged_series: Path) -> None:
     rep = build_diff(tagged_series, BOOK, chapters={1})
     assert [f.chapter for f in rep.chapters] == [1]
-    assert [f.key for f in rep.foundation] == ["ch01-summary"]
+    assert rep.foundation == []   # summaries are pipeline notes; they follow --foundation
     rep2 = build_diff(tagged_series, BOOK, chapters={1}, foundation=True)
     assert "voice" in [f.key for f in rep2.foundation]
+    assert "ch01-summary" in [f.key for f in rep2.foundation]
 
 
 def test_git_ref_to_git_ref(tagged_series: Path) -> None:
@@ -909,7 +910,7 @@ def test_if_read_hands_back_only_chapters_the_author_read(tagged_series: Path) -
     out = json.loads(proc.stdout)
     assert "skipped" not in out and out["from"]["from_bookmark"] is True
     assert Path(out["html"]).name.endswith("_worktree_ch01.html")
-    assert out["big_hunks"] == 0 and out["hunks"] == 2   # the edit + its summary
+    assert out["big_hunks"] == 0 and out["hunks"] == 1   # the edit; its summary is left out with --chapters
 
 
 def test_if_read_needs_last_read(tagged_series: Path) -> None:
