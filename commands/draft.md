@@ -7,6 +7,7 @@ allowed-tools:
   - file_read
   - file_write
   - task
+  - bash
 reads:
   - project.yaml
   - shared/world.md
@@ -23,11 +24,16 @@ reads:
   - books/{book}/glossary.md
   - books/{book}/chapters/ch_{prev}.md
   - books/{book}/chapters/ch_*.summary.md
+  - books/{book}/edit_logs/last_read.json
 writes:
   - books/{book}/edit_logs/first_read_ch{chapter}.md
   - books/{book}/chapters/ch_{chapter}.md
   - books/{book}/chapters/ch_{chapter}.summary.md
   - books/{book}/pending_canon.md
+  - books/{book}/edit_logs/diff_*.html
+  - books/{book}/edit_logs/diff_*.json
+  - books/{book}/edit_logs/story_map.html
+  - books/{book}/edit_logs/story_map.json
 context_mode: book
 ---
 
@@ -429,6 +435,26 @@ required reads — surface the error and stop, don't retry.
     If none are new, append a single line
     noting that no new facts were discovered in this chapter. Never edit
     `shared/canon.md` directly — that is what `autonovel promote-canon` is for.
+
+15. **A redraft goes back to the author as a diff.** Only when step 12
+    wrote over a chapter file that was already there (a redraft — a new
+    chapter is read whole): use `bash` to run, from the series root,
+
+    ```
+    autonovel mechanical diff-chapters --book {book} --from last-read --chapters {chapter} --if-read
+    ```
+
+    exactly as `/autonovel:revise` step 12 does. It compares the
+    chapter as the author last read it (the version
+    `books/{book}/edit_logs/last_read.json` records) with the redraft,
+    writes the page `books/{book}/edit_logs/diff_*.html` with its
+    `diff_*.json` and the story map `story_map.html` / `story_map.json`
+    rebuilt beside it, and prints `"skipped": "<reason>"` (write nothing
+    about it) when the author has no bookmark or had not read this
+    chapter. Otherwise end the report with "What changed in chapter
+    {chapter} since you last read it: <open> (<html>) — <hunks> changes,
+    <big_hunks> big". Never pass `--mark-read`. Best-effort: on a helper
+    failure, say so in one line and finish.
 </workflow>
 
 <acceptance>
@@ -441,4 +467,6 @@ required reads — surface the error and stop, don't retry.
   a candidate fact or an explicit no-new-facts marker).
 - No case-insensitive word-boundary match of any word from
   `shared/period_bans.txt` appears anywhere in the chapter body.
+- A redraft of a chapter the author had read ends with the diff page
+  from step 15.
 </acceptance>

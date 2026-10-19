@@ -55,7 +55,8 @@ workflow. Topics:
   revising     — revise / revision-pass / brief / evaluate /
                  adversarial-edit / apply-cuts / lengthen /
                  shorten. Iterative quality work. diff shows
-                 what changed since a tag / your last read.
+                 what changed since a tag / your last read;
+                 revise hands a chapter you've read back as one.
   structure    — structure-review: one story building to a climax,
                  or a string of episodes? Causal chain, stakes
                  ladder, removable chapters, structural briefs; the
@@ -346,13 +347,20 @@ Checking what a revision actually changed (without re-reading):
   /autonovel:diff --book <name> --from checkpoint:latest   (no git needed)
 
 Writes books/<name>/edit_logs/diff_<from>_<to>.html — open it in a
-browser: word-level changes inside their paragraphs, unchanged text
-folded, j/k jumps change to change ("change N of M"), word deltas
-per chapter. Add --annotate for a one-line "why" per change traced
-to the brief / talk turn / review item that asked for it. The same
-run rebuilds story_map.html (synopsis, threads, characters, timeline,
-places) beside it: a Story map button in the diff toolbar, and each
-changed chapter in the map links back to its changes.
+browser (or a phone; light and dark): word-level changes inside their
+paragraphs, a paragraph rewritten whole shown as its new text with
+"show the earlier draft" under it, j/k steps change to change
+("change N of M"), word deltas per chapter. Three views on one page:
+Changes (unchanged text folded), Whole chapter (all of it, changes
+marked), Clean text (the new version to read straight through); and
+a "Big changes only" filter. Add --annotate for a plain note on what
+each change is, a "why" traced to the brief / talk turn / review item
+that asked for it, and which changes are big (listed under each
+chapter's heading). The same run rebuilds story_map.html (synopsis,
+threads, characters, timeline, places) beside it: a Story map button
+in the diff toolbar, and each changed chapter in the map links back
+to its changes. revise / revision-pass / a redraft hand a chapter
+you have already read back as this page, against your last read.
 
 Book-level (after a full draft or a sweep — every chapter can score
 well while the book is a string of episodes):

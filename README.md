@@ -385,12 +385,17 @@ chapters now disagree with canon.
 After a revision pass, run `/autonovel:diff --book <name> --from
 last-read --mark-read` to check what actually changed since you last
 read: it writes one HTML page (path printed) with the word-level
-edits shown inside their paragraphs, unchanged text folded, and
-`j`/`k` jumping from change to change — no re-reading the book and
-no `git diff`. `--annotate` adds a one-line *why* per change, traced
-to the brief, talk turn or review item that asked for it. The same
-run rebuilds the story map (synopsis, plot threads, characters,
-timeline, places) beside it, and the two pages link each other.
+edits shown inside their paragraphs and `j`/`k` stepping from change
+to change — no re-reading the book and no `git diff`. One page, three
+views: **Changes** (unchanged text folded), **Whole chapter**, and
+**Clean text** (the new version to read straight through), plus a
+"big changes only" filter. `--annotate` adds a plain note on what each
+change is, a *why* traced to the brief, talk turn or review item that
+asked for it, and which changes are big. `revise`, `revision-pass` and
+a redraft hand a chapter you have already read back as this page
+without being asked. The same run rebuilds the story map (synopsis,
+plot threads, characters, timeline, places) beside it, and the two
+pages link each other.
 
 Want a long-running window on the series state instead of one-shot
 commands? `autonovel tui` (in a separate terminal from the series

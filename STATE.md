@@ -2287,7 +2287,50 @@ updated); `/autonovel:next` suggests `cast` when a design exists without
 one. Lesson: a reader who skims a narrator's lecture still wants to see
 the place — the fix is the place seen through a person, not less of it.
 
+### 2026-10-18 — revised chapters go back to the author as a diff; the diff page learns from the hand-built one
+
+The author re-read the third-draft kingmaker2 ch 1–2 whole ("it is taking
+me too long to read the same text again without the diff view") and then
+reviewed them on a page built by hand, which had what `diff-chapters`
+lacked. All of it is now in the helper's page: (1) `--annotate` writes a
+plain **what** note per change (people and terms introduced, no jargon)
+and a **big** flag beside the **why**; the note heads each change, the
+sidebar shows the notes, each chapter lists its big changes as links;
+old why-only sidecars still load. (2) **Changes / Whole chapter / Clean
+text** views on one page, remembered in localStorage (try/catch), and the
+reader's place kept across switches (`overflow-anchor: none`; the page
+anchors on the block under the toolbar). (3) A **big changes only**
+filter (size fallback: 40+ words added+removed, or a moved paragraph);
+the state class `filter-big` lives on `<body>`, never on a component (the
+hand-built page broke on that collision). (4) **Rewritten paragraphs**
+(under 50% kept with 4+ runs, or under 60% with 10+) show as new text
+with a "show the earlier draft" fold; unchanged islands of one or two
+words fold into the edit. (5) **Pairing** inside a hunk now maximises
+summed similarity ratios over the whole hunk (no diagonal band; 0.46 s
+for a 377×377 worst case): the old matched-token gain glued any
+neighbour sharing a few words on as a "split", and the band lost a
+paragraph pushed far down past new ones. (6) **Emphasis** renders at the
+token level, so an italic span an insertion cuts stays italic on both
+sides; the change list too. (7) Next/prev steps **by index** among the
+changes the view and filter show, resynced by an IntersectionObserver,
+with an aria-live counter, a brief highlight (reduced-motion: an
+outline), and the measured toolbar height as the scroll offset (the
+hunks' scroll-margin was dropped: with html's scroll-padding it doubled
+the offset). (8) Shell: `data-theme`-aware dark tokens, safe-area
+toolbar and gutters, no horizontal scroll at 390 px. (9) `revise` step
+12, `draft` step 15 (redrafts only) and `revision-pass` (once per sweep)
+run `diff-chapters --from last-read --chapters N --if-read` and name the
+page; `--if-read` writes nothing unless the bookmark resolves and the
+chapter existed in that version. A `--chapters` page is now named
+`diff_<from>_<to>_chNN-MM.html` so hand-backs never overwrite each other
+or the whole-book page. `revise` and `draft` now declare the `bash` they
+already used. Checked in Chromium (Playwright) at 1280×900 and 390×844,
+light and dark, in an iframe, and with reduced motion; two browser tests
+skip where Playwright is absent. Lesson: a tool's page is the product —
+what the author reads on it decides whether the work gets read at all.
+
 ## Tests last known green
+- Tier 1 + Tier 2 (deterministic + contracts): 2026-10-18 (diff hand-back + page) — **2178 passing, 1 skipped** (+17 bookdiff, +2 browser (skip without Playwright), +6 hand-back contracts).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-18 (cast + CHARACTER.md) — **2153 passing, 1 skipped** (+1 newcomers returning, +1 cast next-action, +5 cast command contracts).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-18 (first-read) — **2145 passing, 1 skipped** (+3 newcomers, +6 first-read command tests).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-18 (reader's map) — **2136 passing, 1 skipped** (+6: datelines, landscape plates, Terms warnings).

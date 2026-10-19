@@ -2845,29 +2845,39 @@ prose ≈ 8 / 10, with investigation-heavy plots).
   your last read → `/autonovel:diff --from last-read`"), and let
   `/autonovel:talk` answer "what changed in ch 21 since draft_1?" from the
   diff JSON.
-- **Revised samples go back to the author as a diff, every time
-  (2026-10-18).** The author re-read the third-draft kingmaker2 ch 1–2 in
-  full because the page showed only the clean text: "it is taking me too long
-  to read the same text again without the diff view." `draft`/`revise`,
-  when they hand revised chapters back for the author's read, should run
-  `diff-chapters` against the version the author last read (`last-read`)
-  and point to the page. The page built by hand that day (54 changes, two
-  chapters) showed what the helper's page lacks:
-  - a plain **what-changed note** on each change ("Sibylla introduced: her
-    age, married twenty-one years"), in addition to `--annotate`'s *why*;
-    the author skims the notes and opens only the changes they care about;
-  - **Changes / Whole chapter / Clean text** views on one page, so the
-    same link serves the diff and the straight read;
-  - a **big changes only** filter (notes flag the big ones), with the big
-    ones listed at the head of each chapter;
-  - a **heavily rewritten paragraph** shown as its new text with a
-    "show the earlier draft" fold, not as interleaved strike/insert
-    fragments (rule used: under half the old words kept with 4+ changes,
-    or under 60% kept with 10+ changes);
-  - **markdown italics rendered**: the helper shows `*Brandenburg: …*`
-    with its asterisks, in the change list and in the text;
-  - dark mode via the page tokens, and the sticky toolbar's height used as
-    the jump offset on a phone.
+- ~~**Revised samples go back to the author as a diff, every time
+  (2026-10-18).**~~ **Done 2026-10-18.** The author re-read the
+  third-draft kingmaker2 ch 1–2 in full because the page showed only the
+  clean text. Now `revise` (step 12), `draft` on a redraft (step 15) and
+  `revision-pass` (once per sweep) run `diff-chapters --from last-read
+  --if-read` and name the page; `--if-read` writes nothing unless the
+  author's bookmark resolves and the chapter was in that version. Every
+  feature of the page built by hand that day is in the helper's page: a
+  plain **what** note per change (with the *why* under it) and a **big**
+  flag from `--annotate`; **Changes / Whole chapter / Clean text** views,
+  remembered; a **big changes only** filter (size fallback: 40+ words or
+  a moved paragraph) with the big ones listed under each chapter heading;
+  **rewritten paragraphs** as new text with a "show the earlier draft"
+  fold (the same 50%/4 and 60%/10 rule); **italics** rendered at the token
+  level; dark mode through `data-theme`-aware tokens; next/prev stepping
+  by index with an IntersectionObserver resync, a measured toolbar offset
+  and a brief highlight. Also: pairing inside a hunk now sums similarity
+  ratios over the whole hunk (no diagonal band), so a paragraph pushed
+  down past new ones pairs with itself and a neighbour sharing a few
+  words is no longer glued on as a "split"; a `--chapters` page is named
+  `diff_<from>_<to>_chNN-MM.html`.
+- **The hand-back page could carry its notes (2026-10-18).** `revise` has
+  the brief in context when it hands the chapter back, so it could write
+  the `what` / `why` / `big` sidecar for its own page (the notes are the
+  part the author skims) instead of leaving `--annotate` as a second run.
+  Cost: a few hundred output tokens per revise; decide whether
+  `revision-pass` subagents should each return their notes for the
+  sweep's one page.
+- **Diff page, small leftovers.** Under the big-changes filter the hunk
+  head still reads "Change 10 of 56" while the toolbar counter reads "2 of
+  27" (the head is the change's identity; consider showing both). When
+  only some changes of a chapter are annotated, the chapter's big list
+  mixes note-flagged and size-flagged changes under one heading.
 
 ## Story-map follow-ups (story-map shipped 2026-10-17)
 

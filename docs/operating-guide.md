@@ -65,7 +65,7 @@ Every editing command falls into one of four roles:
 | `/autonovel:import-book` | Setup | Import an externally-written manuscript. Splits a directory of `*.md` files or a single combined manuscript into autonovel-shape `ch_NN.md` files; flips `project.yaml :: books[].mode` to `edit-imported` so `/autonovel:draft` refuses to overwrite. The rest of the pipeline (evaluate / brief / revise / panel / review / typeset) treats imported chapters identically to drafted ones. |
 | `/autonovel:series-arc` | Mechanical helper | Cross-book scoreboard for series with ≥2 books — per-book completion, cross-book cast, story-time discipline, unresolved threads, composite arc score. Pure mechanical, no LLM call. **Does NOT modify chapters.** |
 | `/autonovel:show-dont-tell` | Mechanical helper | Per-chapter pre-flight scanner for tell-candidate lines (emotion-state, interiority verbs, perception filters, narrator labels). Wider net than the existing slop regex; surfaces line-level review targets. **Does NOT modify chapters.** |
-| `/autonovel:diff` | Mechanical helper | What changed between two versions of the book (a tag, your `last-read` bookmark, a checkpoint, the working tree) as one HTML page: word-level edits inside their paragraphs, unchanged text folded, next/prev jumping, word deltas per chapter, and a link to the story map (synopsis, threads, characters, timeline, places), which it rebuilds beside it. The check after a `revise` / `revision-pass` that the brief's asks actually landed. Zero-LLM unless `--annotate` (one-line *why* per change). **Does NOT modify chapters.** |
+| `/autonovel:diff` | Mechanical helper | What changed between two versions of the book (a tag, your `last-read` bookmark, a checkpoint, the working tree) as one HTML page: word-level edits inside their paragraphs, next/prev stepping, Changes / Whole chapter / Clean text views, a big-changes filter, word deltas per chapter, and a link to the story map (synopsis, threads, characters, timeline, places), which it rebuilds beside it. The check after a `revise` / `revision-pass` that the brief's asks actually landed — and those commands hand a chapter you have already read back as this page themselves. Zero-LLM unless `--annotate` (a plain *what* note, a *why* and a big flag per change). **Does NOT modify chapters.** |
 
 ### The crucial insight: `brief` is the synthesiser
 
@@ -448,14 +448,19 @@ sequence that catches the things a sweep can silently break:
      anything *still* in `pending_canon.md` is a conflict that
      needs human resolution — see §2c below.
 
-   To see the rewrites themselves rather than their scores, run
+   To see the rewrites themselves rather than their scores, open the
+   page the sweep's summary names (it hands back the chapters you had
+   already read, against your last read), or run
    `/autonovel:diff --book <book> --from last-read --mark-read`
    (or `--from <tag>`). It writes one HTML page — path printed —
-   with every word-level edit shown inside its paragraph, unchanged
-   text folded, and `j`/`k` jumping change to change, so you can
-   confirm the brief's asks landed (and spot edits nobody asked
-   for) without re-reading the chapters. `--annotate` labels each
-   change with the brief / talk turn / review item behind it.
+   with every word-level edit shown inside its paragraph and `j`/`k`
+   stepping change to change, so you can confirm the brief's asks
+   landed (and spot edits nobody asked for) without re-reading the
+   chapters; "Big changes only" hides the wording trims, and "Clean
+   text" is the new version to read straight through. `--annotate`
+   gives each change a plain note on what it is, the brief / talk turn
+   / review item behind it, and a big/small flag. `--mark-read` once
+   you have read it, so the next hand-back starts there.
 
 2. **Check `books/<book>/pending_canon.md`** *(2 min if any conflicts)*.
    If the file says `no new facts`, you're done with canon. If

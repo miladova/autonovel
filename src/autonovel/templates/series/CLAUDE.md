@@ -265,11 +265,16 @@ each of these and the workaround is in the codebase:
   ("what did the last revise do to ch 14?", "show me the edits since
   draft_1"). It writes one self-contained HTML page under
   `books/<name>/edit_logs/` — word-level changes in context, next/prev
-  jumping — and prints its path; hand the user that path rather than
-  pasting `git diff` output. `--annotate` adds a one-line *why* per
-  change from the brief / talk turn / review item. The same run
-  rebuilds `story_map.html` (synopsis, threads, characters, timeline,
-  places) beside it, and the two pages link each other.
+  stepping, Changes / Whole chapter / Clean text views and a big-changes
+  filter — and prints its path; hand the user that path rather than
+  pasting `git diff` output. `--annotate` adds a plain *what* note per
+  change (for an author who is not a writer: people and terms
+  introduced, no jargon), a *why* from the brief / talk turn / review
+  item, and a big/small flag. `/autonovel:revise`, `revision-pass` and a
+  redraft end by handing a chapter the user has already read back as
+  this page; pass its path on. The same run rebuilds `story_map.html`
+  (synopsis, threads, characters, timeline, places) beside it, and the
+  two pages link each other.
 - Run `/autonovel:dialogue --book <name>` for the dialogue-
   mechanics linter (adverb tags, said-bookisms, stutters).
 - Run `/autonovel:period-register --book <name>` for a roll-up
