@@ -19,12 +19,16 @@ reads:
   - shared/research/notes/*.md
   - books/{book}/voice.md
   - books/{book}/outline.md
+  - books/{book}/design.md
+  - books/{book}/cast.md
+  - shared/craft/*.md
   - books/{book}/chapters/ch_{chapter}.md
   - books/{book}/chapters/ch_*.summary.md
   - books/{book}/eval_logs/ch{chapter:02d}_eval.json
   - books/{book}/edit_logs/ch{chapter:02d}_anachronism.md
 writes:
   - books/{book}/canon.md
+  - books/{book}/edit_logs/first_read_ch{chapter}.md
   - books/{book}/chapters/ch_{chapter}.md
   - books/{book}/chapters/ch_{chapter}.summary.md
   - books/{book}/eval_logs/ch{chapter:02d}_eval.json
@@ -50,8 +54,11 @@ explicitly flagged as below), and continuity summaries are fresh.
 
 Per chapter, in ascending chapter-number order, sequentially:
 
-  1. `draft N`              — full /autonovel:draft workflow
+  1. `draft N`              — full /autonovel:draft workflow,
+                              cold first reader included
                               (writes ch_NN.md, ch_NN.summary.md,
+                              the reader's report
+                              `first_read_ch{chapter}.md`,
                               appends pending_canon)
   2. `check-anachronism N`  — period-vocabulary + LLM semantic check
                               (skip via --no-anachronism)
@@ -193,9 +200,10 @@ that stalled long sweeps around chapter 8-10.
 
    a. Use the `task` tool to spawn a subagent. Description:
       `Draft chapter N of book {book} (autonovel pipeline)`. Allowed
-      tools: Read, Write, Bash, WebSearch (for research-note
-      fallbacks). Model: standard tier (sonnet 4.6 for draft;
-      heavier sub-steps run their own).
+      tools: Read, Write, Bash, `task` (the draft's cold first reader
+      is a fresh subagent), WebSearch (for research-note fallbacks).
+      Model: standard tier (sonnet 4.6 for draft; heavier sub-steps
+      run their own).
 
       Prompt for the subagent (substitute {book}, N, threshold,
       and the active flags into this template; keep structure
@@ -213,24 +221,34 @@ that stalled long sweeps around chapter 8-10.
       Run these steps in order, each one inline (do not invoke
       slash-commands):
 
-      1. DRAFT (full /autonovel:draft body — see the canonical
-         workflow at ~/.claude/commands/autonovel/draft.md if you
-         need to refer back). Read project.yaml, shared/world.md,
-         shared/characters.md, shared/canon.md, books/{book}/canon.md
-         (this book's own canon), shared/events.md,
-         books/{book}/voice.md, books/{book}/outline.md (locate
-         chapter N's beats, AND — unless `no-spine` is in flags —
-         the `## Spine` question, chapter N's act row in `## Stakes
-         ladder`, and the `## Causal spine` lines `- N because M:`
-         and `- N+1 because N:`), books/{book}/chapters/ch_*.summary.md
-         (rolling continuity), and run
-         `autonovel _tail-chapter --book {book} --chapter {N-1}
-         --words 1000` for prior tail (best-effort, no retry).
-         Hold the chapter to the spine exactly as /autonovel:draft
-         step 3a says: open on the earlier event the causal line
-         names, make the chapter's stake its act's rung on the
-         through-line question (not a new self-contained bet), end
-         with the hand-off fact the next chapter acts on.
+      1. DRAFT — the full /autonovel:draft workflow. Read the
+         command file first, in full (the canonical workflow at
+         ~/.claude/commands/autonovel/draft.md), and follow every
+         step from 1a to the end, skipping only its preamble and
+         postamble. Its reads are the inputs: project.yaml,
+         shared/world.md, shared/characters.md, shared/canon.md,
+         books/{book}/canon.md (this book's own canon),
+         shared/events.md, books/{book}/voice.md,
+         books/{book}/outline.md (chapter N's beats, AND — unless
+         `no-spine` is in flags — the `## Spine` question, chapter
+         N's act row in `## Stakes ladder`, and the `## Causal spine`
+         lines `- N because M:` and `- N+1 because N:`),
+         books/{book}/design.md and books/{book}/cast.md when they
+         exist, the shared/craft/*.md docs it names,
+         books/{book}/chapters/ch_*.summary.md (rolling continuity),
+         and `autonovel _tail-chapter --book {book} --chapter {N-1}
+         --words 1000` for the prior tail (best-effort, no retry).
+         Do not skip the steps added since this template was first
+         written: 3a (hold the chapter to the spine: open on the
+         earlier event the causal line names, make the stake its
+         act's rung on the through-line question, end with the
+         hand-off fact the next chapter acts on), 3b (the design),
+         3c (the reader's map), 3d (people with depth, from
+         cast.md), and step 10's first reader: spawn one fresh cold
+         reader with `task` per shared/craft/FIRST-READER.md, save
+         its report at books/{book}/edit_logs/first_read_ch{N:02d}.md,
+         fix what it finds, and a second fresh reader only if the
+         first found serious items.
          Write books/{book}/chapters/ch_{N:02d}.md with YAML
          frontmatter + the 150-250 word
          books/{book}/chapters/ch_{N:02d}.summary.md. Append
@@ -275,7 +293,10 @@ that stalled long sweeps around chapter 8-10.
             link — which earlier event the opening must act on, which
             hand-off the ending must leave — as scene instructions.
          b. Revise: rewrite books/{book}/chapters/ch_{N:02d}.md
-            per the brief. Regenerate
+            per the brief, following the /autonovel:revise workflow
+            (~/.claude/commands/autonovel/revise.md: it holds the
+            cast to draft step 3d and answers the first reader's
+            report). Regenerate
             books/{book}/chapters/ch_{N:02d}.summary.md.
          c. Re-evaluate. score_v2.
          d. Keep whichever version scored higher; the other

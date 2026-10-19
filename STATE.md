@@ -2287,7 +2287,26 @@ updated); `/autonovel:next` suggests `cast` when a design exists without
 one. Lesson: a reader who skims a narrator's lecture still wants to see
 the place — the fix is the place seen through a person, not less of it.
 
+### 2026-10-18 — draft-pass's per-chapter template caught up with draft
+
+Before drafting kingmaker2 ch 3–19 with `/autonovel:draft-pass`, its
+per-chapter subagent template still listed draft's inputs as of the
+first rewrite: no design.md, no cast.md, no craft docs, and no first
+reader (the subagent wasn't even allowed `task`), so a sweep would have
+silently skipped steps 3b–3d and the cold first reader that `draft`
+now requires. The template now tells the subagent to read draft.md in
+full and follow every step except the preamble/postamble, names the
+steps added since (3a spine, 3b design, 3c reader's map, 3d people with
+depth, step 10's first reader with its report at
+`edit_logs/first_read_chNN.md`), allows `task`, and points the revise
+loop at the revise workflow. Frontmatter reads design/cast/craft and
+writes the first-read report. Docs (README, docs/commands.md,
+operating guide) say the draft step includes the first reader.
+Lesson: a sweep that restates a command's inputs drifts from it;
+restating should be a pointer plus the list of steps not to skip.
+
 ## Tests last known green
+- Tier 1 + Tier 2 (deterministic + contracts): 2026-10-18 (draft-pass template) — **2153 passing, 1 skipped** (no new tests; contract test covers the new first-read write).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-18 (cast + CHARACTER.md) — **2153 passing, 1 skipped** (+1 newcomers returning, +1 cast next-action, +5 cast command contracts).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-18 (first-read) — **2145 passing, 1 skipped** (+3 newcomers, +6 first-read command tests).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-18 (reader's map) — **2136 passing, 1 skipped** (+6: datelines, landscape plates, Terms warnings).

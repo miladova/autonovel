@@ -43,7 +43,7 @@ Every editing command falls into one of four roles:
 | `/autonovel:adversarial-edit N` | Atomic helper | Find 10–20 cut/rewrite candidates in chapter N. Writes `edit_logs/chNN_cuts.json`. |
 | `/autonovel:apply-cuts N` | Atomic helper | Deterministically remove flagged passages (no LLM). |
 | `/autonovel:check-anachronism N` | Atomic helper | Period-vocabulary + LLM semantic anachronism scan. Writes `edit_logs/chNN_anachronism.md`. |
-| `/autonovel:draft-pass` | Sweep | "Write the rest of the book." Per chapter: draft → anachronism → evaluate → if low, brief + revise + re-eval → promote-canon. With `--deep`: also runs reader-panel + review at end. |
+| `/autonovel:draft-pass` | Sweep | "Write the rest of the book." Per chapter: draft (with its cold first reader) → anachronism → evaluate → if low, brief + revise + re-eval → promote-canon. With `--deep`: also runs reader-panel + review at end. |
 | `/autonovel:revision-pass` | Sweep | "Improve these chapters." Per chapter: anachronism → brief → revise → evaluate → promote-canon. |
 | `/autonovel:reader-panel` | Whole-book reviewer | Four-persona panel (Editor / Genre Reader / Writer / First Reader). Writes `edit_logs/reader_panel.json`. **Does NOT modify chapters.** |
 | `/autonovel:review` | Whole-book reviewer | Opus dual-persona deep review (literary critic + professor of fiction). Writes `edit_logs/review.md` + `review.json`. Its stop-revising verdict is gated on `structure-review`. **Does NOT modify chapters.** |
