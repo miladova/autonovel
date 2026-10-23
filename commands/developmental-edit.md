@@ -20,6 +20,8 @@ reads:
   - books/{book}/edit_logs/structure_review.md
   - books/{book}/edit_logs/review.md
   - books/{book}/edit_logs/reader_panel.json
+  - shared/craft/genres/*.md
+  - shared/genres/*.md
 writes:
   - books/{book}/edit_logs/editor_read_notes.md
   - books/{book}/edit_logs/editor_letter.md
@@ -145,7 +147,17 @@ Re-read these before writing the letter.
    manuscript, the diagnostic questions by level, the failure patterns
    with their fixes, and the sections on historical fiction and the
    commercial thriller when the book is one. Then read
-   `shared/craft/CRAFT.md` §1 (plot structure). If `EDITING.md` is
+   `shared/craft/CRAFT.md` §1 (plot structure). Then read, in full,
+   the book's genre guide: the file `_begin`'s `genre:` line names
+   (`autonovel genre show --book {book}` prints it when no preamble ran;
+   it is `shared/craft/genres/<genre>.md`, or the series' own
+   `shared/genres/<genre>.md`). Its `## The promise` is what the book
+   owes this reader; its
+   `## Editing` adds questions to EDITING.md's (for historical fiction,
+   H9–H11: does the book deliver the period, is skimmed history placed
+   and delivered well, do the people live inside their time). A
+   recommendation that cuts the genre's payload is out of scope; one
+   that gives the reader more of it, better placed, is in. If `EDITING.md` is
    missing, stop and tell the author to run
    `autonovel refresh-templates` (or `autonovel doctor` to see why).
 
@@ -289,7 +301,11 @@ Re-read these before writing the letter.
    missed, what it got wrong and why (which part of its rubric is
    blind), and any of its proposed fixes that would damage the book.
    If there was a previous letter, add what has changed since it and
-   whether the revision did what it recommended. Do not change your
+   whether the revision did what it recommended. For each instrument
+   that is missing or older than the chapters, say so in one line with
+   the command that runs it (`/autonovel:structure-review --book {book}`
+   first: it is the next step of the whole-book order whenever it is
+   missing or stale). Do not change your
    diagnosis to match an instrument; change it only if the instrument
    points you to a passage that proves you wrong, and say so.
 
@@ -325,10 +341,16 @@ Re-read these before writing the letter.
     3. Queue the in-chapter fixes, if you agree with them:
          /autonovel:developmental-edit --book {book} --stage
        <OR "Staged: <n> turns in briefs/conversation.md." when --stage ran>
-    4. Revise:
+    4. <when structure_review.json is missing or older than a chapter>
+       The structure review, before the revision, so its candidates
+       join the same pass:
+         /autonovel:structure-review --book {book}
+    5. Revise:
          /autonovel:revision-pass --chapters <chapters> --book {book}
-    5. Re-read: /autonovel:developmental-edit --book {book}
-       then /autonovel:structure-review --book {book}
+    6. Re-read: /autonovel:structure-review --book {book}
+       then /autonovel:developmental-edit --book {book}
+       (then the reader panel and the dual-persona review, once the
+       structure gate passes and the letter has nothing open)
     ```
 </workflow>
 

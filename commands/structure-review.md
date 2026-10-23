@@ -19,6 +19,8 @@ reads:
   - books/{book}/edit_logs/structure_review.json
   - books/{book}/edit_logs/review.json
   - books/{book}/edit_logs/reader_panel.json
+  - shared/craft/genres/*.md
+  - shared/genres/*.md
 writes:
   - books/{book}/edit_logs/structure_review.json
   - books/{book}/edit_logs/structure_review.md
@@ -143,6 +145,14 @@ first is the failure this command was built to catch.
 1. Parse `$ARGUMENTS`. Expect `--book <short-name>`. Missing is a usage
    error — print `usage: /autonovel:structure-review --book <short-name>`
    and stop.
+
+1a. When the book has a genre guide (the book's genre guide: the file
+`_begin`'s `genre:` line names (`autonovel genre show --book {book}`
+prints it when no preamble ran; it is `shared/craft/genres/<genre>.md`,
+or the series' own `shared/genres/<genre>.md`)), read its `## Subgenres`
+   entries for the book's subgenres: their "must deliver" lists are the
+   genre's obligatory scenes, which the climax build and the act ladder
+   are checked against. History is still not causation (rule 4).
 
 2. Use `file_read` on `project.yaml`: the book's title, `genre`, and
    `period` (a set `period.start`, or a genre naming historical fiction,
@@ -412,9 +422,21 @@ first is the failure this command was built to catch.
        is gated on this file (score ≥ 4, no removable chapter).
     ```
 
-    When the gate already passes, write instead: "Structure gate passes
-    (N/5, no removable chapter). Run /autonovel:review --book {book} for
-    the prose-level verdict."
+    When the gate already passes, write instead the next step of the
+    whole-book order: `/autonovel:developmental-edit --book {book}` when
+    there is no editor's letter or a chapter changed since it;
+    `/autonovel:revision-pass --chapters <the letter's open chapters>`
+    when the letter has open recommendations; otherwise
+    `/autonovel:reader-panel`, then `/autonovel:review` for the
+    prose-level verdict. (`autonovel next` prints the same step.)
+
+   After the last chapter the whole-book work has one order (`/autonovel:next`
+   and every `_end` footer walk it): the editor's letter
+   (`/autonovel:developmental-edit`) → the structure review → a
+   revision pass on the letter's open recommendations and the structure
+   candidates → the re-read (structure review again, then the editor's
+   second letter) → the reader panel and the dual-persona review once the
+   structure gate passes and the letter has nothing open → typeset.
 </workflow>
 
 <scoring>

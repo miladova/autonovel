@@ -67,7 +67,8 @@ def _copy_tree(src: Path, dst: Path, created: list[Path]) -> None:
         created.append(target)
 
 
-def new_series(root: Path, *, series_name: str, genre: str = "general") -> NewSeriesResult:
+def new_series(root: Path, *, series_name: str, genre: str = "general",
+               subgenres: list[str] | None = None) -> NewSeriesResult:
     _validate_name(series_name, "series")
     if root.exists() and any(root.iterdir()):
         raise ScaffoldError(f"{root} already exists and is not empty")
@@ -77,7 +78,12 @@ def new_series(root: Path, *, series_name: str, genre: str = "general") -> NewSe
     tmpl = _template_root("series")
     _copy_tree(tmpl, root, created)
 
-    cfg = ProjectConfig.default(series_name=series_name, genre=genre)
+    from .. import genres as genres_mod
+    g = genres_mod.find(genre)
+    cfg = ProjectConfig.default(series_name=series_name, genre=g.id if g else genre)
+    for x in subgenres or []:
+        sg = g.subgenre(x) if g else None
+        cfg.subgenres.append(sg.id if sg else x)
     project_mod.dump(cfg, root / "project.yaml")
 
     series = SeriesLayout(root=root)
@@ -179,6 +185,11 @@ DEFAULT_REFRESH_SUBTREES: tuple[str, ...] = ("typeset", "shared/craft")
 #: files of the same names are symlinks to it.
 CRAFT_DOCS: tuple[str, ...] = ("CRAFT.md", "PROSE.md", "ANTI-SLOP.md", "ANTI-PATTERNS.md", "EDITING.md",
                                "DESIGN.md", "FIRST-READER.md", "CHARACTER.md")
+
+#: The genre guides shipped at `shared/craft/genres/` (what each genre's
+#: reader comes for; `genres.py` is the registry). Checked by doctor with
+#: the craft docs; no repo-root symlink.
+GENRE_GUIDES: tuple[str, ...] = ("genres/README.md", "genres/historical.md")
 
 
 def craft_template_dir() -> Path:

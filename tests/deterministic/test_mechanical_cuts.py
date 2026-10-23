@@ -140,3 +140,33 @@ def test_cli_apply_cuts_round_trip(tmp_path) -> None:
     data = json.loads(result.stdout)
     assert data["applied"] == 1
     assert "slated for removal" not in chapter.read_text(encoding="utf-8")
+
+
+def test_misplaced_and_move_are_never_applied(tmp_path) -> None:
+    """Period content delivered badly is moved or dramatised by the revise,
+    never removed (genre guide `## Cutting`), whatever --types says."""
+    ch = tmp_path / "ch.md"
+    body = ("The Fondaco was a warehouse the German merchants had to live in by law. "
+            "He went home and slept until the bells woke him at dawn.")
+    ch.write_text(body, encoding="utf-8")
+    cuts = [
+        {"quote": "The Fondaco was a warehouse the German merchants had to live in by law.",
+         "type": "MISPLACED", "action": "MOVE", "reason": "give it to the factor at the gate"},
+        {"quote": "He went home and slept until the bells woke him at dawn.",
+         "type": "OVER-EXPLAIN", "action": "MOVE", "reason": "x"},
+    ]
+    stats = apply_cuts(ch, cuts, types={"MISPLACED", "OVER-EXPLAIN"})
+    assert stats.applied == 0 and len(stats.held) == 2
+    assert ch.read_text(encoding="utf-8") == body
+
+
+def test_rewrite_replaces_instead_of_removing(tmp_path) -> None:
+    ch = tmp_path / "ch.md"
+    ch.write_text("She felt very sad about the whole thing and the loss of it all.\n\nNext.",
+                  encoding="utf-8")
+    cuts = [{"quote": "She felt very sad about the whole thing and the loss of it all.",
+             "type": "TELL", "action": "REWRITE", "rewrite": "She put the cup down unfinished."}]
+    stats = apply_cuts(ch, cuts)
+    assert stats.applied == 1 and stats.rewritten == 1
+    assert ch.read_text(encoding="utf-8").startswith("She put the cup down unfinished.")
+    assert stats.words_removed == 14 - 6

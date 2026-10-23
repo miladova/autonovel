@@ -8,10 +8,11 @@ specific adapter and writes them into the runtime's expected location.
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 from pathlib import Path
 
-from . import __version__
+from . import __version__, project
 from .adapters import detect as detect_mod
 from .adapters import installer as installer_mod
 from .housekeeping import doctor, lifecycle, plates as plates_mod, rollback, scaffold, status, statusline as statusline_mod, statusline_setup, test_fixture
@@ -35,7 +36,10 @@ def _build_parser() -> argparse.ArgumentParser:
 
     new_series = sub.add_parser("new-series", help="Create a new series folder.")
     new_series.add_argument("name")
-    new_series.add_argument("--genre", default="general")
+    new_series.add_argument("--genre", default="general",
+                            help="Genre id or alias (autonovel genre list).")
+    new_series.add_argument("--subgenres", default="",
+                            help="Comma-separated subgenre ids (autonovel genre list).")
     new_series.add_argument("--dest", default=None, help="Parent directory (default: cwd)")
     new_series.set_defaults(func=_cmd_new_series)
 
@@ -189,7 +193,9 @@ def _build_parser() -> argparse.ArgumentParser:
             "page-header fixes live) and `shared/craft/` (the craft "
             "reference documents the design / draft / revise / evaluate / edit "
             "commands read: CRAFT.md, PROSE.md, ANTI-SLOP.md, "
-            "ANTI-PATTERNS.md, EDITING.md, DESIGN.md, FIRST-READER.md, CHARACTER.md). "
+            "ANTI-PATTERNS.md, EDITING.md, DESIGN.md, FIRST-READER.md, CHARACTER.md, "
+            "and the genre guides in genres/; a series' own guides in "
+            "shared/genres/ are never touched). "
             "Neither is meant to be hand-edited; register choices go in "
             "books/<book>/voice.md. Pass `--only` to refresh a different "
             "set of subtrees."
@@ -268,6 +274,25 @@ def _build_parser() -> argparse.ArgumentParser:
     sl_setup.add_argument("--force", action="store_true",
                           help="Overwrite an existing statusLine config and skip the malformed-file guard.")
     sl_setup.set_defaults(func=_cmd_statusline_setup)
+
+    gn = sub.add_parser("genre", help="A book's genre and subgenres, and the guide each command reads.")
+    gn_sub = gn.add_subparsers(dest="action", required=True)
+    gn_list = gn_sub.add_parser("list", help="Every genre and subgenre in the registry, with its promise.")
+    gn_list.add_argument("--format", choices=("markdown", "json"), default="markdown")
+    gn_list.set_defaults(func=_cmd_genre_list)
+    gn_show = gn_sub.add_parser("show", help="The active genre, subgenres and guide for a book (or the series).")
+    gn_show.add_argument("--book", default=None)
+    gn_show.add_argument("--series", default=None)
+    gn_show.add_argument("--format", choices=("markdown", "json"), default="markdown")
+    gn_show.set_defaults(func=_cmd_genre_show)
+    gn_set = gn_sub.add_parser("set", help="Set the genre and/or subgenres in project.yaml.")
+    gn_set.add_argument("--genre", default=None, help="Genre id or alias (autonovel genre list).")
+    gn_set.add_argument("--subgenres", default=None,
+                        help="Comma-separated subgenre ids, or 'other: <words>'; empty string clears.")
+    gn_set.add_argument("--book", default=None,
+                        help="Set on this book's entry instead of the series.")
+    gn_set.add_argument("--series", default=None)
+    gn_set.set_defaults(func=_cmd_genre_set)
 
     tf = sub.add_parser("test-fixture", help="Manage genre-fixture series under tests/fixtures/.")
     tf_sub = tf.add_subparsers(dest="action", required=True)
@@ -418,7 +443,9 @@ def _cmd_new_series(args: argparse.Namespace) -> int:
     parent = Path(args.dest).resolve() if args.dest else Path.cwd()
     root = parent / args.name
     try:
-        result = scaffold.new_series(root, series_name=args.name, genre=args.genre)
+        result = scaffold.new_series(
+            root, series_name=args.name, genre=args.genre,
+            subgenres=[x.strip() for x in (args.subgenres or "").split(",") if x.strip()])
     except scaffold.ScaffoldError as e:
         print(f"error: {e}", file=sys.stderr)
         return 2
@@ -558,6 +585,97 @@ def _cmd_status(args: argparse.Namespace) -> int:
         return 2
     report = status.gather(series)
     print(status.render(report))
+    return 0
+
+
+def _print_genre_line(series, book: str | None) -> None:
+    """`_begin` names the book's genre and guide, so every command knows
+    which guide to read without another tool call. Best-effort."""
+    from . import genres
+    try:
+        cfg = project.load(series.project_file)
+        r = genres.resolve(cfg, book, series_root=series.root)
+    except Exception:  # noqa: BLE001 — never fail _begin over this
+        return
+    line = f"genre: {r.label()}"
+    if r.guide_path:
+        line += f" — guide: {r.guide_path}"
+        if r.dimensions:
+            line += f" (extra evaluate dimensions: {', '.join(r.dimensions)})"
+    print(line)
+
+
+def _cmd_genre_list(args: argparse.Namespace) -> int:
+    from . import genres
+    if args.format == "json":
+        print(json.dumps([{
+            "id": g.id, "name": g.name, "promise": g.promise, "aliases": list(g.aliases),
+            "guide": f"shared/craft/genres/{g.guide}" if g.guide else None,
+            "subgenres": [{"id": x.id, "name": x.name, "promise": x.promise,
+                           "aliases": list(x.aliases)} for x in g.subgenres],
+        } for g in genres.GENRES], indent=2))
+    else:
+        sys.stdout.write(genres.render_list())
+    return 0
+
+
+def _cmd_genre_show(args: argparse.Namespace) -> int:
+    from . import genres
+    try:
+        series = _resolve_series(args.series)
+    except SeriesNotFound as e:
+        print(f"error: {e}", file=sys.stderr)
+        return 2
+    cfg = project.load(series.project_file)
+    if args.book and cfg.book_by_name(args.book) is None:
+        print(f"error: no book `{args.book}` in project.yaml", file=sys.stderr)
+        return 2
+    r = genres.resolve(cfg, args.book, series_root=series.root)
+    if args.format == "json":
+        print(json.dumps(r.to_dict(), indent=2))
+    else:
+        sys.stdout.write(genres.render_show(r))
+    return 0
+
+
+def _cmd_genre_set(args: argparse.Namespace) -> int:
+    from . import genres
+    try:
+        series = _resolve_series(args.series)
+    except SeriesNotFound as e:
+        print(f"error: {e}", file=sys.stderr)
+        return 2
+    if args.genre is None and args.subgenres is None:
+        print("error: pass --genre and/or --subgenres", file=sys.stderr)
+        return 2
+    cfg = project.load(series.project_file)
+    entry = None
+    if args.book:
+        entry = cfg.book_by_name(args.book)
+        if entry is None:
+            print(f"error: no book `{args.book}` in project.yaml", file=sys.stderr)
+            return 2
+    if args.genre is not None:
+        g = genres.find(args.genre)
+        value = g.id if g else args.genre
+        if entry is not None:
+            entry.genre = value
+        else:
+            cfg.genre = value
+    if args.subgenres is not None:
+        subs = [x.strip() for x in args.subgenres.split(",") if x.strip()]
+        g = genres.find((entry.genre if entry and entry.genre else None) or cfg.genre)
+        resolved = []
+        for x in subs:
+            sg = g.subgenre(x) if g and not x.lower().startswith("other:") else None
+            resolved.append(sg.id if sg else x)
+        if entry is not None:
+            entry.subgenres = resolved or None
+        else:
+            cfg.subgenres = resolved
+    project.dump(cfg, series.project_file)
+    r = genres.resolve(cfg, args.book, series_root=series.root)
+    sys.stdout.write(genres.render_show(r))
     return 0
 
 
@@ -1052,6 +1170,7 @@ def _cmd_begin(args: argparse.Namespace) -> int:
     if result.resolved_book is not None:
         suffix = " (inferred from last-action / single-book project)" if result.book_inferred else ""
         print(f"book: {result.resolved_book}{suffix}")
+    _print_genre_line(series, result.resolved_book)
     if result.abandoned_lock is not None:
         ab = result.abandoned_lock
         print(

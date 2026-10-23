@@ -51,7 +51,7 @@ def test_new_series_creates_expected_tree(tmp_path: Path) -> None:
 
     cfg = project_mod.load(root / "project.yaml")
     assert cfg.series_name == "renaissance-europe"
-    assert cfg.genre == "historical-fiction"
+    assert cfg.genre == "historical"  # the alias is stored as its registry id
     assert cfg.books == []
     assert project_mod.validate(cfg) == []
 

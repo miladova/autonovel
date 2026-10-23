@@ -54,7 +54,11 @@ they are the *prompt material*, not project documentation):
   `CHARACTER.md` is how each member of the cast comes alive (the
   dossier, depth on the page, real people from the record, ensembles and
   return tags, the tests C1–C12), which `/autonovel:cast` reads every
-  run and `draft` step 3d applies.
+  run and `draft` step 3d applies. `genres/<genre>.md` (under the same
+  craft folder; `genres/README.md` lists its fixed sections and which
+  command reads each) is what a genre's reader comes for and what every
+  command does about it; `src/autonovel/genres.py` is the registry of
+  genres and subgenres, and `_begin` names the active guide.
 
 ## Layout
 

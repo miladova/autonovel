@@ -120,6 +120,18 @@ revision, evaluation and editing commands:
   inner life beyond the plot, relationships with a history), real people
   from the record, ensembles and return tags, and the tests C1–C12.
   `draft` step 3d and `evaluate`'s `character_depth` apply it.
+- `shared/craft/genres/` — one guide per genre (`historical.md` so
+  far; `README.md` lists the sections and which command reads which):
+  what that genre's reader comes for, with the evidence, its subgenres
+  (a book can be two, such as a biographical novel with a political
+  thriller's engine), and what each command does about it. `_begin`
+  prints the book's genre and guide on every command (`genre: …`);
+  `/autonovel:genre` shows or sets it. **In historical fiction the
+  period is part of the payload:** real events and people, daily life,
+  how people saw the world, places under the names they had then. A
+  history passage a reader skims is moved, given to a person or made a
+  scene or a clause, never cut; do not recommend cutting it, in a
+  letter, a brief or a reply to the author.
 - `shared/craft/DESIGN.md` — how a novel is designed before it is
   outlined: start from the climax, one action through a long span,
   suspense when the reader knows the outcome, the rival with a plan,
@@ -179,6 +191,14 @@ each of these and the workaround is in the codebase:
   one-line "💡 Maybe try:" hint in every command's postamble
   drawn from the same enumerator, so most of the time you don't
   need to call `/autonovel:next` separately.
+- **After the last chapter, the whole-book work has one order**, and
+  `/autonovel:next` and every footer walk it: the editor's letter
+  (`/autonovel:developmental-edit`), the structure review, a revision pass
+  on the letter's open recommendations and the structure candidates, the
+  re-read (structure review again, then the second letter), then the
+  reader panel and the dual-persona review once the structure gate passes
+  and the letter has nothing open, then typeset. The draft-pass that
+  drafts the outline's last chapter runs the first structure review.
 - Run `/autonovel:developmental-edit --book <name>` once a book is
   drafted, and after each big revision. It is the editor's read the
   scores can't give: one reader (you, not a fan-out of subagents)

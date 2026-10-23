@@ -27,6 +27,8 @@ reads:
   - books/{from_book}/edit_logs/review.md
   - books/{from_book}/chapters/ch_*.summary.md
   - books/{from_book}/briefs/conversation.md
+  - shared/craft/genres/*.md
+  - shared/genres/*.md
 writes:
   - books/{book}/design.md
   - books/{book}/seed.txt
@@ -92,6 +94,16 @@ wins over the seed and over any earlier direction.
    questions the design card cites: P1–P3, S1, S3, S8, S9, C1–C6,
    A1–A3, V1–V3, R1, E1–E2 and, for a historical book, Part III, for a
    thriller, Part IV. Read `shared/craft/CRAFT.md` §4 (foreshadowing).
+   Read the book's genre guide: the file `_begin`'s `genre:` line names
+   (`autonovel genre show --book {book}` prints it when no preamble ran;
+   it is `shared/craft/genres/<genre>.md`, or the series' own
+   `shared/genres/<genre>.md`): `## The promise`, the `## Subgenres`
+   entry for each of
+   the book's subgenres, and `## Design`. The subgenres' "must deliver"
+   lists join the `## Genre contract`; when `## Design` asks for a
+   ledger (historical fiction's `## What the reader comes to learn`),
+   write it, each item with its chapter and how it is delivered, spread
+   so no chapter carries none and the last act still teaches.
    The design is built to pass those questions; you will cite them in
    the tests.
 
@@ -245,6 +257,12 @@ wins over the seed and over any earlier direction.
 
    ## Genre contract
    - <convention or obligatory scene>: ch N
+
+   ## What the reader comes to learn      (when the genre guide's ## Design asks for it)
+   - events: <real event played on the page>: ch N — <as a scene, through whom>
+   - people: <real person>: ch N — <first met as a person, doing what>
+   - daily life: <work, money, travel, faith, food, law… in use>: ch N — <whose need>
+   - places: <place, name then>: ch N set piece — still standing: <today's name> | gone
 
    ## Keep ledger         (with --from-book)
    - <what worked in the drafted book>: kept as <…> in ch N | dropped: <why>

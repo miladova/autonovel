@@ -22,6 +22,8 @@ reads:
   - books/{book}/chapters/ch_*.md
   - books/{book}/edit_logs/first_read_ch*.md
   - books/{book}/cast.md
+  - shared/craft/genres/*.md
+  - shared/genres/*.md
 writes:
   - books/{book}/cast.md
 context_mode: book
@@ -54,6 +56,17 @@ command checks each principal against.
 2. Use `file_read` on `shared/craft/CHARACTER.md`, in full. If
    `shared/craft/` lacks it, run `autonovel refresh-templates` with
    `bash` first.
+
+2a. Use `file_read` on `## The promise` and the `## Subgenres` entries
+   for the book's subgenres in the book's genre guide: the file
+   `_begin`'s `genre:` line names (`autonovel genre show --book {book}`
+   prints it when no preamble ran; it is
+   `shared/craft/genres/<genre>.md`, or the series' own
+   `shared/genres/<genre>.md`), when the book has one. A
+   biographical novel's protagonist is a real person: the record comes
+   first (step 5), and the dossier says what the record fixes and what
+   the novel imagines. Every person's beliefs and fears belong to their
+   time (the guide's `## Drafting`).
 
 3. Use `file_read` on `project.yaml`, `books/{book}/seed.txt`,
    `books/{book}/design.md` (its `## Cast`, `## Opposition`, gatekeepers

@@ -15,6 +15,8 @@ reads:
   - shared/world.md
   - shared/research/notes/{topic}.md
   - books/{book}/seed.txt
+  - shared/craft/genres/*.md
+  - shared/genres/*.md
 writes:
   - shared/research/notes/{topic}.md
   - shared/sources.bib
@@ -149,6 +151,16 @@ Design rules:
    four additional candidate sources from the search results, then
    `web_fetch` the two or three most authoritative.
 
+7a. When the series has a genre guide (the book's genre guide: the file
+`_begin`'s `genre:` line names (`autonovel genre show --book {book}`
+prints it when no preamble ran; it is `shared/craft/genres/<genre>.md`,
+or the series' own `shared/genres/<genre>.md`)), read its `## Research`
+   section: it lists what this genre's reader comes to learn beyond the
+   events (for historical fiction: daily life, how people saw the
+   world, and each place then and now). Cover what applies to the
+   topic in `## Material detail` and, for places, `## Places then and
+   now`.
+
 8. Synthesize. Draft notes under the following section skeleton.
    Concrete over abstract. Every H2 section names its sources with
    bracketed shortnames that also exist in `shared/sources.bib`.
@@ -169,6 +181,11 @@ Design rules:
 
    ## People and institutions
    (Named offices, guilds, families. Dates where known.)
+
+   ## Places then and now
+   (When the topic has places: each one's name then, what it looked
+   like, and what survives today under what name, or "gone". Omit for
+   a topic with no places.)
 
    ## Uncertainties
    - Speculative: ...

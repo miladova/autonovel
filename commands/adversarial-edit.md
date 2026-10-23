@@ -10,6 +10,8 @@ reads:
   - project.yaml
   - books/{book}/voice.md
   - books/{book}/chapters/ch_{chapter}.md
+  - shared/craft/genres/*.md
+  - shared/genres/*.md
 writes:
   - books/{book}/edit_logs/ch{chapter:02d}_cuts.json
 context_mode: book
@@ -34,6 +36,18 @@ prioritised.
    defines what counts as "borrowed" versus "earned" in this book, so
    the judge needs it before grading.
 
+3a. Use `file_read` on the `## The promise` and `## Cutting` sections
+   of the book's genre guide: the file `_begin`'s `genre:` line names
+   (`autonovel genre show --book {book}` prints it when no preamble ran;
+   it is `shared/craft/genres/<genre>.md`, or the series' own
+   `shared/genres/<genre>.md`), when the book has one. They name what
+   this genre's reader
+   came for, which is never a cut (for historical fiction: real events
+   and people, daily life, how people saw the world, places and their
+   names). `OVER-EXPLAIN` is about the story (an emotion the scene
+   showed, a plot point the reader has), not about a period fact told
+   once.
+
 4. Use `file_read` on `books/{book}/chapters/ch_{chapter}.md`. If the
    file is missing or empty, stop and surface the gap.
 
@@ -43,9 +57,13 @@ prioritised.
    rewrite. Each cut must:
    - quote at least 25 characters of the original text verbatim so
      `/autonovel:apply-cuts` can find it unambiguously
-   - classify as one of `FAT | REDUNDANT | OVER-EXPLAIN | GENERIC | TELL | STRUCTURAL`
-   - give an action: `CUT` or `REWRITE`
-   - for REWRITE, supply a replacement
+   - classify as one of `FAT | REDUNDANT | OVER-EXPLAIN | GENERIC | TELL | STRUCTURAL | MISPLACED`
+     (`MISPLACED`: payload content from step 3a that is badly placed or
+     delivered: a lecture, a gloss stack, a guidebook paragraph)
+   - give an action: `CUT`, `REWRITE` or `MOVE` (`MISPLACED` takes only
+     `MOVE` or `REWRITE`, never `CUT`)
+   - for REWRITE, supply a replacement; for MOVE, say where it goes (the
+     scene where it is at stake, the person who would notice or say it)
    - include a one-line reason
 
 6. Compute totals: `total_cuttable_words`, `overall_fat_percentage`
@@ -75,8 +93,9 @@ prioritised.
 <acceptance>
 - `books/{book}/edit_logs/ch{chapter:02d}_cuts.json` exists and parses
   as a JSON object with a `cuts` array.
-- Every cut entry has `quote` (≥25 chars), `type` (one of the six
-  legal types), and `action` (one of `CUT` | `REWRITE`).
+- Every cut entry has `quote` (≥25 chars), `type` (one of the seven
+  legal types), and `action` (one of `CUT` | `REWRITE` | `MOVE`).
+- No `MISPLACED` entry has action `CUT`.
 - `overall_fat_percentage` is a number in [0, 100].
 - No cut quote is a fabrication — every `quote` is a substring of the
   chapter (case-sensitive, exact or whitespace-normalised).

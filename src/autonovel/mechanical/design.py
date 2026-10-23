@@ -520,7 +520,30 @@ def check(book_root: Path, *, outline: bool = False) -> Report:
     if outline:
         op = book_root / "outline.md"
         outline_text = op.read_text(encoding="utf-8") if op.is_file() else ""
-    return check_design(parse_design(path.read_text(encoding="utf-8")), outline_text=outline_text)
+    d = parse_design(path.read_text(encoding="utf-8"))
+    rep = check_design(d, outline_text=outline_text)
+    ledger = _genre_ledger_heading(book_root)
+    if ledger and (_canon(ledger) not in d.sections or not d.sections[_canon(ledger)].strip()):
+        rep.warnings.append(
+            f"## {ledger}: missing — the book's genre guide asks the design to list "
+            f"what its reader comes for, each item with its chapter (the guide's ## Design)")
+    return rep
+
+
+def _genre_ledger_heading(book_root: Path) -> str | None:
+    """The ledger section the book's genre guide asks the design for
+    (historical fiction: `What the reader comes to learn`), or None. The
+    series is two levels above `books/<book>`."""
+    try:
+        from .. import genres, project
+        series_root = book_root.resolve().parent.parent
+        cfg = project.load(series_root / "project.yaml")
+        r = genres.resolve(cfg, book_root.name, series_root=series_root)
+    except Exception:  # noqa: BLE001 — a validator never fails on this
+        return None
+    if not r.guide_path:
+        return None
+    return genres.guide_ledger_heading(series_root / r.guide_path)
 
 
 def render_markdown(rep: Report, path: Path) -> str:

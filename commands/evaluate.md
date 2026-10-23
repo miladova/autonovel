@@ -30,6 +30,8 @@ reads:
   - books/{book}/edit_logs/structure_review.json
   - books/{book}/edit_logs/first_read_ch{chapter}.md
   - books/{book}/edit_logs/first_read_ch{chapter}_2.md
+  - shared/craft/genres/*.md
+  - shared/genres/*.md
 writes:
   - books/{book}/eval_logs/*.json
   - .autonovel/eval_logs/*.json
@@ -284,6 +286,22 @@ or `.autonovel/eval_logs/<timestamp>_series.json` for `--phase series`.
    as it stands: for each serious item of the last report, is the
    quoted passage gone, explained or clear now? True only when every
    one is. Omit the block when no report exists.
+
+   **The genre's dimensions.** When `_begin`'s `genre:` line lists
+   extra evaluate dimensions (historical fiction: `history`), use
+   `file_read` on the `## Judging` section of the book's genre guide:
+   the file `_begin`'s `genre:` line names (`autonovel genre show --book
+   {book}` prints it when no preamble ran; it is
+   `shared/craft/genres/<genre>.md`, or the series' own
+   `shared/genres/<genre>.md`) and score each
+   one like the dimensions above, `{score, weakest_moment, fix, note}`
+   to its rubric there. They count toward `weakest_dimension`, the
+   floor and `dimension_mean` like any other. Read the section's list
+   of what the other dimensions must not mark down before scoring
+   `prose_quality`, `register` and `concreteness`: in historical fiction
+   a gloss is not weak prose for being a gloss, and a period passage is
+   quoted in `three_weakest_sentences` only when it is badly delivered,
+   with a fix that moves or rewrites it, never one that removes it.
 
    **Judge `voice_adherence` and `prose_quality` against the register
    voice.md Part 2 asks for, not against a general idea of good
@@ -549,6 +567,13 @@ or `.autonovel/eval_logs/<timestamp>_series.json` for `--phase series`.
    structure block yourself from the summaries and prose, and set
    `top_suggestion` to "run /autonovel:structure-review --book {book}"
    unless something more urgent applies.
+
+   **The genre.** Read the `## Judging` section of the book's genre
+   guide (step 6); its whole-book notes say what to record (for
+   historical fiction, under `theme_coherence` or `world_consistency`,
+   whether the design's `## What the reader comes to learn` ledger was
+   delivered across the book and whether the period thins in the last
+   act).
 
    **Dimensions and weights** (each `{score, weakest_moment, fix,
    note}`, 0–10; record the weights as `dimension_weights`):

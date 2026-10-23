@@ -83,6 +83,7 @@ def test_full_run_with_all_answers(tmp_path: Path) -> None:
         "1550",   # period end
         "Venice", # period region
         "historical fiction",  # genre
+        "mystery, other: apothecary",  # subgenres (historical fiction has them)
         "The Apothecary's Mortar",  # working title
         "Renata Calvi",  # human author
         "1",  # attribution style → seed-by-human
@@ -115,13 +116,15 @@ def test_full_run_with_all_answers(tmp_path: Path) -> None:
     assert "Autonovel" in (entry.author or "")
     assert cfg.period == {"start": "1480", "end": "1550", "region": "Venice"}
     assert cfg.genre == "historical fiction"
+    assert entry.subgenres == ["mystery", "other: apothecary"]
+    assert "Subgenres: mystery, other: apothecary" in text
 
 
 def test_run_with_all_skipped(tmp_path: Path) -> None:
     """Every prompt skipped — wizard still completes and seed.txt
     has placeholder text + an Onboarding TODO block."""
     series, book = _make_book(tmp_path)
-    answers = [""] * 8  # all empty
+    answers = [""] * 9  # all empty
     result = onboard.run_wizard(
         series, book,
         prompt_fn=_scripted_prompts(answers),

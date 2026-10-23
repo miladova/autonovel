@@ -1,7 +1,7 @@
 ---
 name: autonovel:draft-pass
 description: Draft a range of chapters end-to-end with per-chapter eval + revise-on-low-score + canon promotion. Single-button "write the rest of the book."
-argument-hint: "--chapters <range> [--book <name>] [--retry-below <score>] [--no-revise-low] [--no-anachronism] [--no-promote] [--skip-eval] [--deep]"
+argument-hint: "--chapters <range> [--book <name>] [--retry-below <score>] [--no-revise-low] [--no-anachronism] [--no-promote] [--skip-eval] [--floor <score>] [--deep] [--no-structure]"
 model_tier: heavy
 allowed-tools:
   - file_read
@@ -9,6 +9,8 @@ allowed-tools:
   - bash
   - task
 reads:
+  - shared/craft/genres/*.md
+  - shared/genres/*.md
   - project.yaml
   - shared/world.md
   - shared/characters.md
@@ -146,6 +148,8 @@ that stalled long sweeps around chapter 8-10.
      - `--no-anachronism` (skip step 2)
      - `--no-promote` (skip step 5)
      - `--skip-eval` (skip steps 3 and 4 entirely; pure drafting)
+     - `--no-structure` (don't run the structure review at the end
+       of a sweep that drafts the outline's last chapter; see step 5)
      - `--deep` (after promote-canon, also run the whole-book
        reviewers: the book-level structure review, the reader-panel
        and the Opus dual-persona review; produces reports at
@@ -158,7 +162,9 @@ that stalled long sweeps around chapter 8-10.
        minutes of compute on a 70k-word book.)
    Missing `--chapters` → stop with usage hint.
 
-2. Use `file_read` on `project.yaml`. Resolve the book entry, `pov`,
+2. Use `file_read` on `project.yaml`. Keep `_begin`'s `genre:` line
+   (the book's genre, subgenres and guide) for the subagent prompt in
+   step 3. Resolve the book entry, `pov`,
    `defaults.chapter_target_words`, `defaults.chapter_threshold`,
    `defaults.dimension_floor` (the threshold when unset).
    Read `books/{book}/outline.md` to identify chapter numbers
@@ -224,6 +230,10 @@ that stalled long sweeps around chapter 8-10.
 
       Threshold for the revise loop: {threshold}.
       Dimension floor: {floor}.
+      Genre: {genre line from _begin, e.g. "Historical fiction
+      (Biographical novel, Historical thriller (political)) — guide:
+      shared/craft/genres/historical.md (extra evaluate dimensions:
+      history)", or "none"}.
       Skip flags in effect: {flags}.
 
       Run these steps in order, each one inline (do not invoke
@@ -244,6 +254,9 @@ that stalled long sweeps around chapter 8-10.
          books/{book}/design.md and books/{book}/cast.md when they
          exist, the shared/craft/*.md docs it names,
          books/{book}/chapters/ch_*.summary.md (rolling continuity),
+         the genre guide named above (draft step 3e: its promise,
+         the book's subgenres, `## Drafting` and `## The first
+         reader`; evaluate scores its extra dimensions),
          and `autonovel _tail-chapter --book {book} --chapter {N-1}
          --words 1000` for the prior tail (best-effort, no retry).
          Do not skip the steps added since this template was first
@@ -386,7 +399,11 @@ that stalled long sweeps around chapter 8-10.
    promotes already consumed everything, the call is a no-op
    summary line.
 
-5. **Deep whole-book review** (only if `--deep`):
+5. **Whole-book review.** When this sweep drafted the outline's last
+   chapter, run 5a (the structure review) even without `--deep`, unless
+   `--no-structure`: the editor's letter that comes next compares itself
+   with it, and no later step should find the book unreviewed. With
+   `--deep`, run all three:
 
    a. Reproduce `/autonovel:structure-review --book {book}`'s workflow
       inline, first: the book-level structural pass (through-line,
@@ -476,17 +493,16 @@ that stalled long sweeps around chapter 8-10.
       <OR "Structure gate passes; reader-panel + review flagged
        nothing." when empty>
 
-   4. <only when --deep did NOT run:> Whole-book reviewers
-      haven't run yet on this draft. When this sweep drafted the
-      outline's last chapter, the editor's read comes first (its
-      letter says what to revise, and in what order):
+   4. <only when this sweep drafted the outline's last chapter
+      and --deep did NOT run:> The structure review ran (step 5):
+      <score>/5, gate <PASS|BLOCK>. Next, the editor's whole-book
+      read:
         /autonovel:developmental-edit --book {book}
-      Then the reviewers, structure first:
-        /autonovel:structure-review --book {book}
-        /autonovel:reader-panel --book {book}
-        /autonovel:review --book {book}
-      Or re-run /autonovel:draft-pass --deep to do all three at
-      once next time.
+      then a revision pass on its letter, the re-read, and the
+      reader panel and dual-persona review once the structure gate
+      passes (`/autonovel:next` walks the order).
+      <for a sweep that did not reach the last chapter: "Draft the
+      remaining chapters: /autonovel:draft-pass --chapters <rest>">
 
    5. Backup the substantive change:
         cd ~/<series-root>

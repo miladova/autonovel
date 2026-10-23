@@ -46,11 +46,13 @@ workflow. Topics:
   art          — covers / chapter ornaments / book images.
                  Three free paths (typographic / pollinations /
                  wikimedia) + paid (fal / replicate / openai).
-  foundation   — gen-world → gen-characters → voice-discovery →
-                 gen-canon → design → gen-outline. The
-                 before-drafting sequence. design makes the
-                 book-level decisions (climax, question, opponent,
-                 plants, sequences) the outline then carries.
+  foundation   — genre → gen-world → gen-characters →
+                 voice-discovery → gen-canon → design → gen-outline.
+                 The before-drafting sequence. genre says what the
+                 book's reader comes for (historical fiction: the
+                 period itself); design makes the book-level
+                 decisions (climax, question, opponent, plants,
+                 sequences) the outline then carries.
   drafting     — draft / draft-pass / sidequest. Writing prose.
   revising     — revise / revision-pass / brief / evaluate /
                  adversarial-edit / apply-cuts / lengthen /
@@ -246,10 +248,25 @@ Onboarding (BEFORE foundation):
   autonovel new-book <book>
   autonovel onboard <book>      # interactive wizard
 
-Wizard captures pitch / period / genre / working title / human
-author / attribution style into seed.txt + project.yaml. Every
-prompt has a (skip) option that lands a `## Onboarding TODO`
-block in seed.txt for /autonovel:next to surface later.
+Wizard captures pitch / period / genre and subgenres / working
+title / human author / attribution style into seed.txt +
+project.yaml. Every prompt has a (skip) option that lands a
+`## Onboarding TODO` block in seed.txt for /autonovel:next to
+surface later.
+
+Genre (what the reader comes for):
+
+  /autonovel:genre --book <name>                 show genre, subgenres, guide
+  /autonovel:genre --list                        every genre and subgenre
+  /autonovel:genre --set historical --subgenres biographical,political-thriller --book <name>
+  /autonovel:genre --add science-fiction         research + write a guide
+
+A genre guide (shared/craft/genres/<genre>.md) says what its
+reader comes for and what each command does about it: the design's
+ledger, how the drafter delivers it, who the cold first reader is,
+the extra evaluate dimension (historical fiction: `history`), what
+the cut list may never cut. Historical fiction has a full guide;
+the other genres have one-line promises until --add writes theirs.
 ```
 
 ============================== TOPIC: drafting ====================
@@ -289,6 +306,19 @@ Dispatcher menu for non-standard operations.
 
 ```
 # Revising — iterative quality work
+
+After the last chapter, the whole-book order (/autonovel:next and every
+footer walk it; draft-pass runs the structure review at the end of the
+sweep that drafts the last chapter):
+
+  1. /autonovel:developmental-edit --book <name>   the editor's letter
+  2. /autonovel:structure-review --book <name>     the book-level gate
+  3. /autonovel:revision-pass --chapters <the letter's + structure's> --book <name>
+  4. re-read: structure-review again, then developmental-edit
+     (the second letter)
+  5. /autonovel:reader-panel, then /autonovel:review, once the
+     structure gate passes and the letter has nothing open
+  6. /autonovel:typeset
 
 Single-chapter quality cycle:
 

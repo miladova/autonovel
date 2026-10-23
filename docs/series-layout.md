@@ -5,7 +5,7 @@ tree is:
 
 ```
 demo/
-  project.yaml                    # series config; see REWRITE-PLAN.md §6
+  project.yaml                    # series config (genre, subgenres, period, books…); see REWRITE-PLAN.md §6
   .gitignore
   .autonovel/                     # pipeline working directory (checked in)
     state.json
@@ -22,6 +22,11 @@ demo/
     MYSTERY.md
     period_bans.txt
     sources.bib
+    craft/                        # package-owned craft docs (refresh-templates)
+      genres/                     # one guide per genre: what its reader comes for
+        README.md                 # the fixed sections and which command reads each
+        historical.md
+    genres/                       # (optional) this series' own guides, from /autonovel:genre --add
     research/
       seed/
       notes/

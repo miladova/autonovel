@@ -103,3 +103,13 @@ def test_prose_commands_read_craft_docs_from_the_series() -> None:
                 assert f"shared/craft/{name}" in text, (
                     f"{stem}.md mentions {name} but never gives its shared/craft/ path"
                 )
+
+
+def test_genre_guides_ship_and_doctor_checks_them(fresh_series) -> None:
+    for name in scaffold.GENRE_GUIDES:
+        assert (scaffold.craft_template_dir() / name).is_file(), name
+        assert (fresh_series.shared / "craft" / name).is_file(), name
+    (fresh_series.shared / "craft" / "genres" / "historical.md").write_text("old\n", encoding="utf-8")
+    report = doctor.run(fresh_series.root, export_tools=False)
+    hits = [w for w in report.warnings if "craft docs stale" in w]
+    assert hits and "genres/historical.md" in hits[0]

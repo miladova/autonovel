@@ -30,6 +30,10 @@ def test_draft_chapter_one(tmp_runtime_series) -> None:
         command="/autonovel:draft 1 --book tiny-inquisitor",
         cwd=series.path,
         allowed_tools=["Read", "Write", "Bash", "Task"],
+        # A draft now spawns a cold first reader (and a second when the
+        # first finds serious items) and reads the design, cast and genre
+        # guide; it no longer fits the 600 s default set in April.
+        timeout=1800,
     )
     assert result.returncode == 0, (
         f"claude returned {result.returncode}\nstdout:\n{result.stdout}\n"

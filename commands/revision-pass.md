@@ -9,6 +9,8 @@ allowed-tools:
   - bash
   - task
 reads:
+  - shared/craft/genres/*.md
+  - shared/genres/*.md
   - project.yaml
   - shared/world.md
   - shared/characters.md
@@ -169,7 +171,9 @@ the whole sweep on a single missing input.
      within the run. Re-run revision-pass once more to propagate.
 
    For each chapter N, the subagent's prompt template (substitute
-   {book}, N, and the active flags):
+   {book}, N, the active flags, and `_begin`'s `genre:` line, which
+   names the book's genre, subgenres and guide; the subagent runs no
+   preamble of its own and needs it for steps b–d):
 
    **0. Capture the pre-revision score** (always; cheap):
       Use `file_read` on `books/{book}/eval_logs/ch{N:02d}_eval.json`
@@ -208,7 +212,11 @@ the whole sweep on a single missing input.
       structure-review candidate names chapter N, the brief is
       `kind: structural` (frontmatter) with the `## Structural brief`
       and `## Cross-chapter operations — run these yourself` sections
-      `/autonovel:brief` step 5 defines; otherwise `kind: prose`.
+      `/autonovel:brief` step 5 defines; otherwise `kind: prose`. The
+      brief follows the genre guide (brief step 4a): the genre's
+      payload (for historical fiction, the period) is never a
+      `## Specific cuts` item; badly placed payload is a `## Move,
+      don't cut` item.
 
       **When this sweep was invoked with `--enrich-with <path>`,
       pass that flag through to the per-chapter brief.** Each
@@ -225,7 +233,8 @@ the whole sweep on a single missing input.
       the brief, the current chapter, the prior chapter's last
       ~2000 words via `autonovel _tail-chapter --book {book}
       --chapter {N-1} --words 2000` (best-effort, no retry),
-      voice, and rewrite the chapter. Overwrite
+      voice, the genre guide's `## Drafting` (revise step 5b), and
+      rewrite the chapter. Overwrite
       `books/{book}/chapters/ch_{N:02d}.md`. **Regenerate the
       summary** at `books/{book}/chapters/ch_{N:02d}.summary.md`
       so chapter N+1's revise reads the updated version. A
@@ -238,7 +247,8 @@ the whole sweep on a single missing input.
 
    d. **evaluate** *(skippable via --skip-eval)*: Reproduce the
       body of `/autonovel:evaluate --chapter N` — score the revised
-      chapter against the standard chapter dimensions, write
+      chapter against the standard chapter dimensions and the genre
+      guide's extra dimensions (historical fiction: `history`), write
       `books/{book}/eval_logs/ch{N:02d}_eval.json` (with
       `weakest_dimension`, `weakest_score` and the `first_reader`
       block, evaluate step 6). Read the new `overall_score` from the
@@ -417,12 +427,16 @@ the whole sweep on a single missing input.
       Open it and follow the HOW TO RESOLVE block at the top.
       <OR "No conflicts; pending_canon.md is clean." when K=0>
 
-   3. Re-run whole-book reviewers (prior reports are now stale —
-      <N> chapters changed), structure first because review's
-      stop-revising verdict is gated on it:
+   3. The re-read (<N> chapters changed, so every whole-book
+      report is stale), in order:
         /autonovel:structure-review --book {book}
-        /autonovel:reader-panel --book {book}
-        /autonovel:review --book {book}
+        /autonovel:developmental-edit --book {book}
+      The structure review first, so the editor's second letter can
+      compare against it and say whether this pass did what the
+      first letter asked. The reader panel and the dual-persona
+      review come after, once the structure gate passes and the
+      letter has nothing left open (`/autonovel:next` walks the
+      order).
       <when structural briefs ran: list the cross-chapter commands
        collected in step 4, to run before the structure review>
 

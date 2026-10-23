@@ -19,6 +19,8 @@ reads:
   - books/{book}/voice.md
   - books/{book}/outline.md
   - books/{book}/chapters/ch_*.summary.md
+  - shared/craft/genres/*.md
+  - shared/genres/*.md
 writes:
   - books/{book}/outline.md
   - books/{book}/typeset/plates.yaml
@@ -115,7 +117,12 @@ before these sections were required.
       chapter it names;
     - a sequence's last chapter ends on its `hands on:` result; an act's
       last chapter ends on the act's line in `## Reader questions`.
-    Read `shared/craft/DESIGN.md` §8–§10 before writing the beats. When
+    Read `shared/craft/DESIGN.md` §8–§10 before writing the beats.
+    When design.md has a `## What the reader comes to learn` ledger
+    (the `## Design` section of the book's genre guide in
+    `shared/craft/genres/`, or the series' own `shared/genres/`), every item appears in its
+    chapter's beats as something that happens to someone (the rider
+    turned back at the shut gate, not "gates shut at dusk"). When
     there is no design.md, outline from the seed as below, and say in
     the report: "no design.md — `/autonovel:design --book {book}`
     makes the book-level decisions first; recommended before drafting."

@@ -13,6 +13,8 @@ reads:
   - books/{book}/chapters/ch_{chapter}.md
   - books/{book}/chapters/ch_*.md
   - books/{book}/chapters/ch_*.summary.md
+  - shared/craft/genres/*.md
+  - shared/genres/*.md
 writes:
   - books/{book}/edit_logs/first_read_ch{chapter}.md
 context_mode: book
@@ -40,7 +42,15 @@ file. `shared/craft/FIRST-READER.md` is its brief.
 
 2. Use `file_read` on `shared/craft/FIRST-READER.md` and on
    `books/{book}/voice.md` (Part 1's **Reader** line, if present, names
-   the reader; otherwise use the brief's default reader).
+   the reader; otherwise use the brief's default reader). Then read the
+   `## The first reader` section of the book's genre guide: the file
+   `_begin`'s `genre:` line names (`autonovel genre show --book {book}`
+   prints it when no preamble ran; it is
+   `shared/craft/genres/<genre>.md`, or the series' own
+   `shared/genres/<genre>.md`), when the book has one: it
+   says who this genre's reader is (a reader of historical fiction reads
+   partly to learn the period) and adds report sections. The voice
+   file's Reader line still wins.
 
 3. Gather what the reader may see: `books/{book}/chapters/ch_{chapter}.md`
    and the chapters before it. If the earlier chapters together run
@@ -51,7 +61,8 @@ file. `shared/craft/FIRST-READER.md` is its brief.
 
 4. Use `task` to spawn **one** fresh heavy-tier reader. Its prompt is
    the brief's "Who the reader is", "What the reader reports" sections
-   (verbatim), the reader line from voice.md if any, then the earlier
+   (verbatim), the genre guide's `## The first reader` section
+   (verbatim) when there is one, the reader line from voice.md if any, then the earlier
    chapters and the chapter. It must not be given anything else, and
    it must answer in the brief's ten sections, quoting the text.
 
@@ -59,12 +70,14 @@ file. `shared/craft/FIRST-READER.md` is its brief.
    `books/{book}/edit_logs/first_read_ch{chapter}.md`, headed with the
    date and one count line: `lost N · didn't know N · read twice N ·
    too many N · forgot N · couldn't picture N · types N · skimmed N ·
-   turn the page: yes|no` (types = the people it read as a type).
+   turn the page: yes|no` (types = the people it read as a type), plus
+   `learned N` when the genre guide added "What I learned".
 
 6. Report the count line, the three most serious items (quoted), and
    **Next:** when there are items under Lost, Didn't know, Read twice,
-   Too many at once, Forgot who, Couldn't picture or Who felt real, or a
-   "no" to the page turn,
+   Too many at once, Forgot who, Couldn't picture or Who felt real, a
+   "no" to the page turn, or an empty "What I learned" in a genre that
+   adds it,
    `/autonovel:revise {chapter} --book {book}` with the report as the
    brief (or fix them by hand); otherwise "the chapter reads clean to a
    first reader". Do not edit the chapter here.

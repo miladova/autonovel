@@ -11,9 +11,60 @@ to start.
 
 ## Near-term — pull into the next PR
 
-- **Historical fiction is not defined as a genre: what the reader comes
+- ~~**The whole-book reviewers aren't routine, and the step chain after the
+  last chapter loops (opened 2026-10-23, author).**~~ **Shipped the same
+  day, all five items:** `housekeeping/whole_book.py` (state from the
+  letter's ledger, the structure gate, the panel's and review's
+  freshness) drives `next_step` after the last chapter; the draft-pass
+  that drafts the last chapter runs the structure review (`--no-structure`
+  to skip); revision-pass, structure-review and developmental-edit closers
+  name the next step of the order; developmental-edit names missing
+  instruments with their commands; help `revising` and the walkthrough show
+  the order. Original note: The author, reading the
+  editor's letter ("This book has no structure review, dual-persona review
+  or reader panel yet"): the dual-persona review is routine, "but what about
+  the structure review, where is that and how? is it routine?" It exists
+  (`/autonovel:structure-review`, the book-level gate: through-line, causal
+  chain N→N+1, stakes ladder per act, removable chapters, climax build,
+  scored 1–5, `edit_logs/structure_review.json` + `.md`; `/autonovel:review`
+  won't say "stop revising" until it passes), but nothing runs it by
+  default. kingmaker (the first telling) has structure-review, reader-panel
+  and review; kingmaker2 has none. They are reached only by `draft-pass
+  --deep`, by `/autonovel:next`'s MEDIUM item, or by hand; kingmaker2's
+  draft-pass ran without `--deep` and its `_end` offered "draft 20" (fixed
+  2026-10-23), so the closer that names them was never seen. Worse, the
+  canonical chain shipped today goes drafted → developmental-edit →
+  `revision-pass --chapters all`, and after a revision-pass the drafting
+  branch still sees the letter and offers `revision-pass all` again: a loop
+  with no structure review, re-read or review in it. Proposed:
+  1. One defined order after the last chapter: developmental-edit (the
+     letter) → structure-review (the gate, compared in the letter) →
+     revision-pass on the letter's chapters → re-read (structure-review
+     again, then developmental-edit's second letter) → reader-panel and
+     review once the structure gate passes → typeset.
+  2. Encode it in `next_step` (PipelineState gains structure-review
+     present / fresh / passing, letter older than chapters, review done),
+     so `_end`'s Next line walks it, and the draft-pass and revision-pass
+     closers name the next reviewer, not a generic list.
+  3. Make the sweep that drafts the outline's last chapter default to
+     `--deep` (or run structure-review alone), so the first editor's read
+     has an instrument to compare against.
+  4. `developmental-edit` step 10: when an instrument is missing, say so
+     and give the command, instead of only noting the absence.
+  5. `/autonovel:help revising` and `docs/writing-a-historical-series.md`
+     show the order.
+
+- ~~**Historical fiction is not defined as a genre: what the reader comes
   for is missing, so the feedback loop pushes to cut it (opened
-  2026-10-23, author).** The author: "some of the interest of historical
+  2026-10-23, author).**~~ **Shipped 2026-10-23** as the first genre guide,
+  `shared/craft/genres/historical.md` (sourced: HNS definition, Tod's
+  reader surveys 2012/2013/2015, AHA 2021, Lackey on the biographical
+  novel, Mantel, Harris, Darwin, Penman, literary-tourism figures): items
+  1–6 below all landed (the promise; design's `## What the reader comes to
+  learn` ledger with a design-validate warning; the historical first
+  reader with "What I learned" and the split Skimmed; evaluate's `history`
+  dimension and what prose judges must not mark down; `MISPLACED` cuts that
+  apply-cuts never applies; appendix `places`). Original note: The author: "some of the interest of historical
   fiction is learning a bit of history, so some real events and people,
   also what life was like during the past, how people worked, lived, saw
   the world. I also delight in seeing places today (Venice) that still
@@ -56,7 +107,19 @@ to start.
   not as a one-off.
 
 - **Genres and subgenres as a first-class choice, each with its own
-  guidelines (opened 2026-10-23, author).** The author: "historical fiction
+  guidelines (opened 2026-10-23, author).** **Mostly shipped 2026-10-23:**
+  items 1–4 (`genre:` + `subgenres:` in project.yaml, book overrides,
+  `other: <words>`; the registry `genres.py` with a one-line promise per
+  subgenre for historical, science fiction, fantasy, mystery, thriller,
+  romance, horror, literary; guides in fixed sections under
+  `shared/craft/genres/`, historical written; every shaping and judging
+  command reads its sections and `_begin` names the guide;
+  `autonovel genre list|show|set`, `/autonovel:genre --set/--add`,
+  onboard and new-series ask for subgenres). **Still open:** guides for the
+  other seven genres (run `/autonovel:genre --add <genre>` per genre, then
+  review and promote the result into the package), and item 5 (a smoke
+  fixture per guide; today only the historical fixture exercises one, and
+  the fixtures carry no `shared/craft/`). Original note: The author: "historical fiction
   is just one genre. I expect there will be other genres, perhaps my next
   book will be science fiction - but even within that genre there are sub
   genres, like hard sf, or space opera or post apocalyptic or first alien

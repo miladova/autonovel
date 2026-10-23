@@ -55,7 +55,14 @@ dominate cuts; default to those two types unless the user says otherwise.
    run. The subprocess writes the chapter file back in place unless
    `--dry-run`. Parse its JSON output on stdout.
 
-5. Print a one-screen summary: words removed, cuts applied, cuts skipped
+   A `REWRITE` with a replacement is applied as a replacement. A
+   `MISPLACED` cut or a `MOVE` action is never applied, whatever
+   `--types` says: the helper lists it under `held`. It is content the
+   book's genre guide protects (in historical fiction, the period),
+   badly placed; `/autonovel:brief` carries it as a move.
+
+5. Print a one-screen summary: words removed, cuts applied (and how many
+   were rewrites), held for the brief (`held`, quoted), cuts skipped
    (with reasons), and any cuts that failed to match (these are the
    ones the adversarial-editor's quote was imprecise about — flag them
    so the user can hand-apply or re-run the edit).

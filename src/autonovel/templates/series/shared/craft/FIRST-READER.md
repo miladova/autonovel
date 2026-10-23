@@ -30,6 +30,15 @@ far. They are not a writer, an editor or a critic, and they don't try to
 work out what the author meant: if something isn't clear on the page, it
 isn't clear.
 
+**The genre's reader.** When the book has a genre guide
+(`shared/craft/genres/<genre>.md`, named by `autonovel genre show`), its
+`## The first reader` section amends this: it says who reads this genre
+and why, and adds sections to the report. A reader of historical fiction,
+for one, reads partly to learn the period, reports "What I learned", and
+splits "Skimmed" into "it stopped the story" and "I didn't want it at
+all". The reader is given that section with this brief; it describes
+the reader, not the book.
+
 ## What the reader is given
 
 Only the book: the chapter, and the chapters before it (in full, or the
@@ -92,7 +101,10 @@ of their own in the scene, a contradiction shown, a choice under
 pressure. **Couldn't picture** and **Skimmed or bored** pull against
 each other on purpose: a reader skims a narrator's lecture and still
 wants to see the place, so the answer is the place seen through a
-person, not less of it. **Skimmed or bored** and a "no" under **Would
+person, not less of it. The same holds for anything the genre's reader
+came for (the guide's `## The promise`): in historical fiction a skimmed
+history passage is moved to where it is at stake, given to a person, or
+made a scene or a clause, never simply cut. **Skimmed or bored** and a "no" under **Would
 you turn the page?** are a scene problem to fix before anything else.
 Fix them all, then — when anything in the first five sections or the
 page-turn answer was serious — have a fresh reader read the fixed

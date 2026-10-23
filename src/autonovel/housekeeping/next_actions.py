@@ -89,6 +89,7 @@ def _actions_for_book(series: SeriesLayout, cfg: project_mod.ProjectConfig,
     out.extend(_summary_stale_actions(book_root, book))
     out.extend(_panel_staleness_actions(book_root, book))
     out.extend(_review_staleness_actions(book_root, book))
+    out.extend(_genre_actions(series, cfg, book))
     out.extend(_design_actions(book_root, book))
     out.extend(_cast_actions(book_root, book))
     out.extend(_developmental_edit_actions(book_root, book))
@@ -549,6 +550,47 @@ def _review_staleness_actions(book_root: Path, book: str) -> list[NextAction]:
         rerun_command=f"/autonovel:review --book {book}",
         priority="MEDIUM",
     )
+
+
+def _genre_actions(series: SeriesLayout, cfg: project_mod.ProjectConfig,
+                   book: str) -> list[NextAction]:
+    """What the book's reader comes for (`/autonovel:genre`): LOW when the
+    genre's guide is missing from the series (refresh-templates), when the
+    genre has subgenres but the book names none, or when the genre has no
+    guide yet. Every writing and judging command reads the guide; without
+    the right one they judge by general craft alone."""
+    from .. import genres as genres_mod
+    r = genres_mod.resolve(cfg, book, series_root=series.root)
+    g = r.genre
+    if g is None or g.id == "general":
+        return []
+    if g.guide and r.guide_path is None:
+        return [NextAction(
+            priority="MEDIUM",
+            title=f"The {g.name} guide is missing from this series",
+            command="autonovel refresh-templates",
+            rationale=(f"{r.guide_expected} tells every command what a {g.name} reader "
+                       f"comes for; refresh-templates copies it in."),
+            book=book)]
+    if g.subgenres and not r.subgenres and not r.other_subgenres:
+        return [NextAction(
+            priority="LOW",
+            title=f"Name {book}'s subgenre ({g.name})",
+            command=f"/autonovel:genre --book {book} --list",
+            rationale=("Each subgenre promises its reader something different (a "
+                       "biographical novel, a political thriller, a mystery…) and the "
+                       "guide's subgenre entry says what the design, the draft and the "
+                       "judges owe it. A book can be two."),
+            book=book)]
+    if r.guide_path is None:
+        return [NextAction(
+            priority="LOW",
+            title=f"No guide yet for {g.name}",
+            command=f"/autonovel:genre --add {g.id}",
+            rationale=("Commands judge by general craft alone until the genre has a "
+                       "guide saying what its reader comes for."),
+            book=book)]
+    return []
 
 
 def _design_actions(book_root: Path, book: str) -> list[NextAction]:

@@ -19,6 +19,8 @@ reads:
   - books/{book}/edit_logs/first_read_ch{chapter}.md
   - books/{book}/edit_logs/first_read_ch{chapter}_2.md
   - shared/research/notes/*.md
+  - shared/craft/genres/*.md
+  - shared/genres/*.md
 writes:
   - books/{book}/briefs/ch{chapter:02d}.md
 context_mode: book
@@ -72,7 +74,9 @@ of the file:
 4. Load source artifacts per `--from`:
    - `cuts`: read
      `books/{book}/edit_logs/ch{chapter:02d}_cuts.json` (run
-     `/autonovel:adversarial-edit` first if missing).
+     `/autonovel:adversarial-edit` first if missing). Candidates of type
+     `MISPLACED`, or with action `MOVE`, are not cuts: they go under
+     `## Move, don't cut`.
    - `eval`: read the most recent
      `books/{book}/eval_logs/ch{chapter:02d}_*.json` file: every
      dimension's score, `weakest_moment` and `fix`, and its
@@ -116,6 +120,20 @@ of the file:
      only sources that see across chapters; when any of them names
      this chapter, the brief carries it even if the chapter's own eval
      score is high.
+
+4a. **The genre's payload.** Use `file_read` on the book's genre guide:
+the file `_begin`'s `genre:` line names (`autonovel genre show --book
+{book}` prints it when no preamble ran; it is
+`shared/craft/genres/<genre>.md`, or the series' own
+`shared/genres/<genre>.md`): `## The
+    promise`, `## Drafting` and `## Cutting`. Nothing the promise names
+    goes under `## Specific cuts` (for historical fiction: real events
+    and people, daily life, how people saw the world, places and their
+    names); a source that asks to cut it becomes a `## Move, don't cut`
+    item. When the eval log scores a genre dimension (historical
+    fiction's `history`) under the floor, it leads `## Weakest first`,
+    with the items the design's `## What the reader comes to learn`
+    ledger assigns to this chapter.
 
 5a. **Load enrichment research** (only when `--enrich-with <path>`
     was supplied). Use `file_read` on the named file. Treat the
@@ -188,7 +206,13 @@ of the file:
    - `## What works` (two or three sentences from the source material)
    - `## What drags` (concrete, quote-level, ordered by impact)
    - `## Specific cuts` (quoted passages to remove, carried over from
-     the cuts JSON if present)
+     the cuts JSON if present; never the genre's payload, step 4a)
+   - `## Move, don't cut` *(when any source flags payload content that
+     is badly placed or delivered: `MISPLACED` / `MOVE` cuts, a first
+     reader's "skimmed: it stopped the story", a review's "lecture")* —
+     for each, the passage quoted, where it goes (the scene where it is
+     at stake, the person who would notice or say it) or how it becomes
+     a scene or a clause. The revise keeps it.
    - `## Specific rewrites` (before → after snippets where the source
      suggested them)
    - `## Structural findings` *(only when the panel or the review

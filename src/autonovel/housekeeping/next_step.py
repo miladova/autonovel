@@ -24,6 +24,10 @@ class PipelineState:
     chapters_drafted: int = 0
     chapters_total: int = 0  # chapters the outline declares
     editor_letter_done: bool = False  # edit_logs/editor_letter.md exists
+    # The whole-book reviewers' state (`whole_book.gather`). When set, the
+    # step after the last chapter walks their order; None keeps the
+    # letter-only decision (callers that don't read the book's files).
+    whole_book: object | None = None
     last_chapter_score: float | None = None
     last_chapter_number: int | None = None
     # The last chapter's lowest-scoring dimension, `(name, score)`. A mean
@@ -104,9 +108,14 @@ def next_step(state: PipelineState) -> NextStep:
             )
         if s.last_chapter_score >= s.chapter_threshold:
             if s.chapters_total and n >= s.chapters_total:
-                # The book is drafted. Its first whole-book step is an
-                # editor's read, not a line-level cut pass: the letter
-                # says what to revise, and in what order.
+                # The book is drafted. Its whole-book steps have one
+                # order (whole_book.py): the editor's letter, the
+                # structure review, the revision, the re-read, then the
+                # panel and the review.
+                if s.whole_book is not None:
+                    from .whole_book import next_whole_book_step
+                    step = next_whole_book_step(b, s.whole_book)  # type: ignore[arg-type]
+                    return NextStep(command=step.command, rationale=step.rationale)
                 if not s.editor_letter_done:
                     return NextStep(
                         command=f"/autonovel:developmental-edit --book {b}",

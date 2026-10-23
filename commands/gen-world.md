@@ -11,6 +11,8 @@ reads:
   - books/*/seed.txt
   - shared/world.md
   - shared/research/notes/*.md
+  - shared/craft/genres/*.md
+  - shared/genres/*.md
 writes:
   - shared/world.md
 context_mode: series
@@ -50,6 +52,14 @@ sparingly through canon promotion rather than wholesale rewrites.
    user is consciously skipping research. Cite the research-
    note slugs in the world bible's Sources section so the
    provenance trail is visible to gen-canon.
+
+3b. When the series has a genre guide (the book's genre guide: the file
+`_begin`'s `genre:` line names (`autonovel genre show --book {book}`
+prints it when no preamble ran; it is `shared/craft/genres/<genre>.md`,
+or the series' own `shared/genres/<genre>.md`)), read its `## The
+   promise` and `## Research`: the world bible carries what this genre's
+   reader comes for (for historical fiction: daily life, how people saw
+   the world, and the places with their names then and what survives).
 
 4. Use `file_read` on `shared/world.md`. If it contains more than the
    template placeholder comment and `--force` was not supplied, stop; this

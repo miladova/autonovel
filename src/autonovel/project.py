@@ -43,6 +43,10 @@ class BookEntry:
     #     the new draft. Shared lore (world, characters, shared canon,
     #     events, research) is still read.
     context: str = "series"
+    # Genre overrides for this book (`genres.py`); None inherits the
+    # series' `genre` / `subgenres`.
+    genre: str | None = None
+    subgenres: list[str] | None = None
 
     @property
     def is_isolated(self) -> bool:
@@ -65,6 +69,10 @@ class BookEntry:
             d["mode"] = self.mode
         if self.context != "series":
             d["context"] = self.context
+        if self.genre is not None:
+            d["genre"] = self.genre
+        if self.subgenres is not None:
+            d["subgenres"] = list(self.subgenres)
         return d
 
     def display_title(self, fallback: str | None = None) -> str:
@@ -93,6 +101,10 @@ class BookEntry:
 class ProjectConfig:
     series_name: str
     genre: str = "general"
+    # Subgenre ids from the genre registry (`autonovel genre list`), or
+    # "other: <words>". A book can be two: a biographical novel with a
+    # political thriller's engine.
+    subgenres: list[str] = field(default_factory=list)
     period: dict[str, Any] = field(default_factory=dict)
     llm: dict[str, Any] = field(default_factory=dict)
     books: list[BookEntry] = field(default_factory=list)
@@ -144,6 +156,14 @@ class ProjectConfig:
             d["video"] = dict(self.video)
         if self.author is not None:
             d["author"] = self.author
+        if self.subgenres:
+            # Keep `subgenres` beside `genre` in the written YAML.
+            ordered: dict[str, Any] = {}
+            for k, v in d.items():
+                ordered[k] = v
+                if k == "genre":
+                    ordered["subgenres"] = list(self.subgenres)
+            d = ordered
         return d
 
     def book_by_name(self, name: str) -> BookEntry | None:
@@ -224,6 +244,8 @@ def _from_dict(raw: dict[str, Any]) -> ProjectConfig:
                 author=b.get("author"),
                 mode=b.get("mode", "draft"),
                 context=b.get("context", "series"),
+                genre=b.get("genre"),
+                subgenres=_str_list(b.get("subgenres"), f"books[{i}].subgenres"),
             )
         )
 
@@ -234,6 +256,7 @@ def _from_dict(raw: dict[str, Any]) -> ProjectConfig:
     return ProjectConfig(
         series_name=raw["series_name"],
         genre=raw.get("genre", "general"),
+        subgenres=_str_list(raw.get("subgenres"), "subgenres") or [],
         period=raw.get("period") or {},
         llm=llm,
         books=books,
@@ -244,6 +267,17 @@ def _from_dict(raw: dict[str, Any]) -> ProjectConfig:
         video=raw.get("video") or {},
         author=raw.get("author"),
     )
+
+
+def _str_list(value: Any, where: str) -> list[str] | None:
+    """A YAML list of strings (or one string) → list[str]; None when absent."""
+    if value is None:
+        return None
+    if isinstance(value, str):
+        return [value]
+    if not isinstance(value, list) or not all(isinstance(x, str) for x in value):
+        raise ProjectValidationError(f"project.yaml: `{where}` must be a list of strings")
+    return list(value)
 
 
 def validate(cfg: ProjectConfig) -> list[str]:

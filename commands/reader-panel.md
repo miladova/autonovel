@@ -12,6 +12,8 @@ reads:
   - books/{book}/outline.md
   - books/{book}/chapters/*.md
   - books/{book}/chapters/ch_*.summary.md
+  - shared/craft/genres/*.md
+  - shared/genres/*.md
 writes:
   - books/{book}/edit_logs/reader_panel.json
 context_mode: book
@@ -67,7 +69,18 @@ signal; the scored structural judgement is `/autonovel:structure-review`.
      metaphor. Not cruel but precise.
    - **The Genre Reader** — 50+ novels a year in this genre. Pacing,
      mystery, worldbuilding payoff, wanting-to-turn-the-page. Bored by
-     beautiful prose that doesn't go anywhere.
+     beautiful prose that doesn't go anywhere. When the book has a genre
+     guide (the book's genre guide: the file `_begin`'s `genre:` line
+     names (`autonovel genre show --book {book}` prints it when no
+     preamble ran; it is `shared/craft/genres/<genre>.md`, or the
+     series' own `shared/genres/<genre>.md`)), this persona is the
+     reader its `## The promise` and
+     `## The first reader` describe, judging by what they came for: a
+     reader of historical fiction also answers what they learned about
+     the period and enjoyed, where the history stopped the story, and
+     whether anyone acted out of their time. No persona recommends
+     cutting the genre's payload; a skimmed passage is reported with
+     where it would have been wanted.
    - **The Writer** — published author. Structure, beat placement,
      foreshadowing payoff, the gap between what a novel attempts and
      achieves. Highest compliment: "I forgot I was reading." Worst

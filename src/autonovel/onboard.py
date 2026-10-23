@@ -43,6 +43,7 @@ class WizardAnswers:
     period_end: str = ""            # year, e.g. "1550"
     period_region: str = ""         # e.g. "Venice"
     genre: str = ""                 # e.g. "historical fiction"
+    subgenres: list[str] = field(default_factory=list)  # registry ids or "other: …"
     working_title: str = ""         # user-typed working title; empty → defer to /autonovel:title
     human_author: str = ""          # the writer's name
     attribution_style: str = "seed-by-human"  # see ATTRIBUTION_STYLES below
@@ -55,6 +56,7 @@ class WizardAnswers:
             "period_end": self.period_end,
             "period_region": self.period_region,
             "genre": self.genre,
+            "subgenres": list(self.subgenres),
             "working_title": self.working_title,
             "human_author": self.human_author,
             "attribution_style": self.attribution_style,
@@ -188,6 +190,22 @@ def run_wizard(series: SeriesLayout, book_name: str, *,
         help_text="e.g. historical fiction, sci-fi, literary, mystery — or any combination",
         default="literary",
     )
+    # Subgenres, when the genre is in the registry and has them: each
+    # genre's guide says what its reader comes for (`genres.py`).
+    from . import genres as genres_mod
+    g = genres_mod.find(answers.genre)
+    if g is not None and g.subgenres:
+        menu = "; ".join(f"{x.id} ({x.name})" for x in g.subgenres)
+        raw = _ask(
+            prompt_fn, "🎭 Subgenre(s):",
+            help_text=(f"comma-separated, a book can be two. {g.name}: {menu}. "
+                       f"Anything else as 'other: <words>'"),
+        )
+        for part in [x.strip() for x in raw.split(",") if x.strip()]:
+            sg = None if part.lower().startswith("other:") else g.subgenre(part)
+            answers.subgenres.append(sg.id if sg else
+                                     (part if part.lower().startswith("other:")
+                                      else f"other: {part}"))
 
     # Working title.
     answers.working_title = _ask(
@@ -333,6 +351,8 @@ def write_seed(book_root: Path, answers: WizardAnswers) -> Path:
     parts.append("## Genre")
     parts.append("")
     parts.append(answers.genre or "[Replace with: historical fiction / sci-fi / literary / mystery / etc.]")
+    if answers.subgenres:
+        parts.append(f"Subgenres: {', '.join(answers.subgenres)}")
     parts.append("")
 
     parts.append("## Working title")
@@ -408,6 +428,9 @@ def apply_to_project_yaml(project_path: Path, book_name: str,
             changed = True
     if answers.genre and answers.genre != cfg.genre:
         cfg.genre = answers.genre
+        changed = True
+    if answers.subgenres and entry.subgenres != answers.subgenres:
+        entry.subgenres = list(answers.subgenres)
         changed = True
 
     if changed:

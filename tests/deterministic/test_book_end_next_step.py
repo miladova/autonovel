@@ -41,7 +41,8 @@ def test_last_outlined_chapter_leads_to_developmental_edit(
     (book_root / "edit_logs").mkdir(exist_ok=True)
     (book_root / "edit_logs" / "editor_letter.md").write_text("# Editor's letter\n", encoding="utf-8")
     ns = lifecycle._next_step_for(SeriesLayout(root=series), book)
-    assert ns.command == f"/autonovel:revision-pass --chapters all --book {book}"
+    # The letter is written; the structure review is next (whole_book.py).
+    assert ns.command == f"/autonovel:structure-review --book {book}"
 
 
 def test_mid_book_still_advances(review_phase_book: tuple[Path, str]) -> None:

@@ -231,7 +231,7 @@ def check_craft_docs(series_root: Path) -> list[str]:
         return out
     missing: list[str] = []
     stale: list[str] = []
-    for name in scaffold.CRAFT_DOCS:
+    for name in scaffold.CRAFT_DOCS + scaffold.GENRE_GUIDES:
         src = tmpl / name
         if not src.is_file():
             continue

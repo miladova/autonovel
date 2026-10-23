@@ -21,6 +21,8 @@ reads:
   - books/{book}/chapters/ch_{chapter}.md
   - books/{book}/chapters/ch_{prev}.md
   - books/{book}/edit_logs/last_read.json
+  - shared/craft/genres/*.md
+  - shared/genres/*.md
 writes:
   - books/{book}/chapters/ch_{chapter}.md
   - books/{book}/chapters/ch_{chapter}.summary.md
@@ -111,6 +113,20 @@ file blocked a full revision-pass.
    reader's "Who felt real" or "Couldn't picture" is answered from the
    dossier and from the places notes (draft step 3c's set piece), not by
    adding adjectives.
+
+5b. **What this genre's reader comes for.** Use `file_read` on
+    the book's genre guide: the file `_begin`'s `genre:` line names
+    (`autonovel genre show --book {book}` prints it when no preamble
+    ran; it is `shared/craft/genres/<genre>.md`, or the series' own
+    `shared/genres/<genre>.md`): `## The promise`, the `## Subgenres`
+    entries for the book's
+    subgenres, and `## Drafting`. The rewrite keeps every piece of the
+    payload the chapter carries (for historical fiction, the period:
+    real people and events, daily life, how people saw the world,
+    places), and delivers it better. A brief's `## Move, don't cut`
+    items are carried out as moves or dramatisations, never as deletions;
+    if a brief asks to cut period content outright, move it instead and
+    say so in the summary.
 
 6. Use `file_read` on `books/{book}/chapters/ch_{chapter}.md` (the
    current draft — the raw material the rewrite carves from). This

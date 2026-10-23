@@ -578,6 +578,12 @@ Three categories. Full reference: [`docs/commands.md`](docs/commands.md).
   `books/{book}/motifs.md`); `talk` — a conversational
   query+suggest layer where you ask the book questions or queue
   edits that the next `revise` picks up automatically;
+  `genre` — what the book's reader comes for: the genre and
+  subgenres (a book can be two), each with a sourced guide every
+  writing, reading and judging command follows (historical fiction's
+  says the period is part of the payload, so cold readers and cut lists
+  move badly placed history instead of cutting it; `--add` researches a
+  guide for a genre that has none);
   `dashboard` — score and each chapter's lowest dimension, the ten
   lowest scores in the book ("Needs attention first"), cold-reader
   items, tension, aggregates and sparklines, re-rendered from existing

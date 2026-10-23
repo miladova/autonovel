@@ -1,7 +1,7 @@
 ---
 name: autonovel:appendix
-description: Generate or scaffold a back-matter appendix (timeline of real events, real-character bios, sources, maps).
-argument-hint: "--book <short-name> [--sections timeline,bios,sources,notes] [--from auto|user|both] [--story-only|--include-context] [--force]"
+description: Generate or scaffold a back-matter appendix (timeline of real events, real-character bios, places you can still see, sources, the historical note).
+argument-hint: "--book <short-name> [--sections timeline,bios,places,sources,notes] [--from auto|user|both] [--story-only|--include-context] [--force]"
 model_tier: heavy
 allowed-tools:
   - file_read
@@ -14,8 +14,11 @@ reads:
   - shared/research/notes/*.md
   - shared/sources.bib
   - books/{book}/outline.md
+  - books/{book}/design.md
   - books/{book}/appendix.md
   - books/{book}/chapters/ch_*.md
+  - shared/craft/genres/*.md
+  - shared/genres/*.md
 writes:
   - books/{book}/appendix.md
 context_mode: book
@@ -58,8 +61,15 @@ Three modes selected by `--from`, paralleling
 
 <workflow>
 1. Parse `$ARGUMENTS`. Required: `--book <short-name>`. Optional:
-   `--sections <comma-list>` (default `timeline,bios`; allowed
-   values `timeline / bios / sources / notes`), `--from
+   `--sections <comma-list>` (default `timeline,bios`, plus `places`
+   and `notes` when the book's genre guide has a `## Back matter`
+   section that asks for them; allowed values `timeline / bios / places
+   / sources / notes`). Read that section of the book's genre guide: the
+   file `_begin`'s `genre:` line names (`autonovel genre show --book
+   {book}` prints it when no preamble ran; it is
+   `shared/craft/genres/<genre>.md`, or the series' own
+   `shared/genres/<genre>.md`): it says what this
+   genre's reader expects after the last chapter. `--from
    <auto|user|both>` (default `auto`), `--force`.
 
 2. **Refusal-on-overwrite check.** If `books/{book}/appendix.md`
@@ -169,6 +179,14 @@ Three modes selected by `--from`, paralleling
    to identify which entries are flagged real-vs-invented; if
    ambiguous, only include figures the research notes corroborate).
 
+   **(b2) Places you can still see.** For each place in the book that
+   survives: its name then and its name now, what a visitor can still
+   see (the building, the street, the room), and the chapters it
+   appears in; then, briefly, the places that do not survive. Draw on
+   the research notes' `## Places then and now` and the design's
+   `## What the reader comes to learn` places. Only what the research
+   corroborates; never invent a surviving building.
+
    **(c) Sources.** Group into "Primary" and "Secondary" sub-blocks.
    For each: `<author>, *<title>* (<year>). <one-line gloss of
    what the novel drew from it>.` Pull from
@@ -176,8 +194,11 @@ Three modes selected by `--from`, paralleling
    shortnames against `shared/sources.bib` for full citations.
 
    **(d) Notes.** Hand-authored short essay (200-500 words):
-   what's documented vs invented; deliberate anachronisms; thanks
-   for source-material guidance. The AI in `--from auto` writes a
+   what's documented vs invented, compressed or moved, and why;
+   deliberate anachronisms; thanks for source-material guidance. Draw
+   the invention list from the design (`books/{book}/design.md`'s
+   historical note or invention list, when present). Explain the
+   choices; do not apologise for them (the guide's `## Back matter`). The AI in `--from auto` writes a
    stub; the human is expected to refine.
 
 5. Format the output as `books/{book}/appendix.md`:
@@ -190,6 +211,10 @@ Three modes selected by `--from`, paralleling
    <entries>
 
    ## Bios
+
+   <entries>
+
+   ## Places you can still see
 
    <entries>
 

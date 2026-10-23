@@ -2402,7 +2402,76 @@ never beat a plain `chNN_eval.json` (the sort compared `mtime_…` with
 `2026…` as strings), and the TUI read `dash.metrics`, which never existed.
 The dashboard also falls back to per-chapter `tension`. +12 tests.
 
+### 2026-10-23 — genres and subgenres; historical fiction's guide (the history is the payload)
+
+The author: historical fiction was never defined, and the reader comments
+"seem to want to cut some of the historical location/gloss information
+… this doesn't seem right", because part of why people read it is to
+learn the period, its people, daily life and places that still stand;
+and their next book may be science fiction, with its own subgenres. Built
+as a framework with historical fiction as the first guide. `genres.py`
+is the registry (genre and subgenre ids, aliases, a one-line promise
+each; historical's subgenres follow Johnson's taxonomy plus the
+biographical novel); `project.yaml` gains `subgenres:` and per-book
+`genre` / `subgenres` (a book can be two; `other: <words>` escape).
+`shared/craft/genres/historical.md` is written to the README's fixed
+sections (The promise, Subgenres, Research, Design, Drafting, The first
+reader, Judging, Cutting, Editing, Back matter, Sources), every claim
+sourced and the key quotes checked against the fetched pages: HNS's
+definition; Tod's surveys (top reasons "to bring the past to life" and
+"to understand and learn… without reading non-fiction"; inaccuracy
+complaints outnumber too-much-detail three to one); AHA 2021; Lackey on
+the biographical novel; Mantel ("don't lie"; "relocate it in a body");
+Harris on known endings; Darwin, Barker, Walton's Tiffany problem;
+Rosslyn Chapel's visitor figures. `_begin` prints `genre: … — guide: …
+(extra evaluate dimensions: history)`; the guide's `### The \`x\`
+dimension` headings define extra dimensions and its "ledger: `## …`"
+line the design section design-validate checks. Wired into design,
+gen-outline, cast, draft (3e), revise (5b), brief (4a, `## Move, don't
+cut`), first-read and FIRST-READER (the genre's reader), evaluate,
+adversarial-edit (`MISPLACED`, action `MOVE`), apply-cuts (held, never
+applied; and a `REWRITE` is now a replacement, where it used to delete
+the passage and drop the rewrite), reader-panel, review,
+developmental-edit, structure-review, research (`## Places then and
+now`), gen-world, appendix (`places`), draft-pass and revision-pass
+subagent prompts; `/autonovel:next` asks for a missing subgenre or guide;
+doctor checks the guides. New `/autonovel:genre` (show / set / `--add`
+researches a guide into `shared/genres/`, which wins over the package's)
+and `autonovel genre list|show|set`; onboard and new-series ask for
+subgenres; new-series stores the registry id (`historical`). +42 tests.
+
+### 2026-10-23 — the whole-book reviewers in one order
+
+The author, reading the letter's "this book has no structure review": is
+the structure review routine? It wasn't: it ran only under `draft-pass
+--deep`, from `/autonovel:next`'s list, or by hand, so kingmaker2 reached
+its revision pass with no structure review, reader panel or dual-persona
+review; and the chain shipped that morning (last chapter →
+developmental-edit → revision-pass) offered the revision pass again after
+it, forever. `housekeeping/whole_book.py` gathers the book's whole-book
+state (the letter fresh or stale and its ledger's open in-chapter
+chapters; the structure gate missing / stale / invalid / blocks / passes
+and its candidates' chapters; the panel's and the review's freshness) and
+`next_whole_book_step` walks one order: letter → structure review →
+revision pass on the letter's open chapters plus a blocking gate's
+candidates → structure review again → second letter → reader panel →
+review → typeset. `next_step` uses it after the last chapter (so every
+`_end` footer and `/autonovel:next` follow it); the draft-pass that drafts
+the outline's last chapter runs the structure review (`--no-structure`);
+the revision-pass, structure-review and developmental-edit closers name
+the next step; developmental-edit's comparison names a missing
+instrument's command; help `revising`, the walkthrough and the series
+CLAUDE.md show the order. For kingmaker2 the next step is now the
+structure review, before the revision pass, so its candidates join the
+same pass. Also: the draft smoke test's 600 s limit dated from April and
+a draft with a cold first reader no longer fits; raised to 1800 s. +6
+tests.
+
 ## Tests last known green
+- Tier 1 + Tier 2 (deterministic + contracts): 2026-10-23 (whole-book order) — **2247 passing, 1 skipped** (+6).
+- Tier 3 (revision smoke: evaluate, adversarial-edit, apply-cuts, brief, revise, shorten): 2026-10-23 — **6/6 green** (40 min, subscription auth).
+- Tier 3 (draft smoke, cold first reader included): 2026-10-23 — **1/1 green (19m40s)** after raising its limit to 1800 s; it timed out twice at the April 600 s limit.
+- Tier 1 + Tier 2 (deterministic + contracts): 2026-10-23 (genres; historical fiction's guide) — **2241 passing, 1 skipped** (+42).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-23 (worst item, not only the mean) — **2197 passing, 1 skipped** (+12).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-23 (step after the last chapter) — **2185 passing, 1 skipped** (+6).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-18 (summaries follow --foundation; --title/--intro) — **2179 passing, 1 skipped** (+1 title/intro).

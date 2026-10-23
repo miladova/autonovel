@@ -23,13 +23,29 @@ period:
   start: 1450
   end: 1550
   region: italy   # also: france, england, spain, holy-roman-empire, ottoman
-genre: historical-fiction
+genre: historical          # `historical-fiction` is accepted as an alias
+subgenres: [traditional]   # a book can override, e.g. [biographical, political-thriller]
 ```
+
+**Decide the subgenre too.** `autonovel genre list` shows historical
+fiction's subgenres, each with what its reader comes for: biographical
+(a real person's life from inside), political thriller (a contest for
+power against a deadline whose outcome the reader may know), mystery,
+saga, adventure, alternate history and others. A book can be two.
+The genre guide `shared/craft/genres/historical.md` is the point: it
+records, with reader surveys, that people read historical fiction
+partly to learn the period (real events and people, how people lived
+and saw the world, places that still stand), so every command treats the
+period as payload. The cold first reader is a reader of historical
+fiction and reports "What I learned"; `evaluate` scores a `history`
+dimension; the cut list marks badly placed history `MISPLACED` (moved,
+never cut); the design lists what the reader comes to learn, chapter by
+chapter; the appendix can list the places a reader can still visit.
 
 ## 2. Scaffold the series
 
 ```bash
-autonovel new-series renaissance-europe --genre historical-fiction
+autonovel new-series renaissance-europe --genre historical --subgenres traditional
 cd renaissance-europe
 autonovel new-book the-coiner       --pov Anselmo --story-time-range 1456-1465
 autonovel new-book the-cartographer --pov Lucia   --story-time-range 1492-1502
@@ -183,19 +199,23 @@ optional one-shot retry per chapter if the eval scores below
 `chapter_threshold`. Same per-chapter quality as
 `/autonovel:draft N`, just one rollback point for the whole sweep.
 
-**Per book (after all chapters drafted):**
+**Per book (after all chapters drafted), in this order:**
 
 ```text
-/autonovel:developmental-edit --book the-inquisitor
-/autonovel:structure-review --book the-inquisitor
-/autonovel:reader-panel --book the-inquisitor
-/autonovel:review --book the-inquisitor
+/autonovel:developmental-edit --book the-inquisitor     # the editor's letter
+/autonovel:structure-review --book the-inquisitor       # the book-level gate
+/autonovel:revision-pass --chapters <the letter's + the structure review's> --book the-inquisitor
+/autonovel:structure-review --book the-inquisitor       # re-read: the gate again
+/autonovel:developmental-edit --book the-inquisitor     # the second letter
+/autonovel:reader-panel --book the-inquisitor           # once the gate passes
+/autonovel:review --book the-inquisitor                 #   and the letter has nothing open
 ```
 
-The editor's read comes first: `_end` offers it as the next step once
-the outline's last chapter is drafted. Its letter says what to revise and
-in what order; the reviewers below are instruments it compares itself
-against. Then structure. Historical fiction is the genre most exposed to the
+`_end` and `/autonovel:next` walk this order, so the Next line after each
+step names the following one; the draft-pass that drafts the outline's
+last chapter runs the first structure review itself. The editor's read
+comes first: its letter says what to revise and in what order; the
+reviewers are instruments it compares itself against. Then structure. Historical fiction is the genre most exposed to the
 anecdote chain: the record is episodic by nature (deals, deaths,
 elections, wars arrive on their dates), so a book that follows it
 chapter by chapter reads as a chronicle however good each chapter

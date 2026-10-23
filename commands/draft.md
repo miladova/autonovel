@@ -25,6 +25,8 @@ reads:
   - books/{book}/chapters/ch_{prev}.md
   - books/{book}/chapters/ch_*.summary.md
   - books/{book}/edit_logs/last_read.json
+  - shared/craft/genres/*.md
+  - shared/genres/*.md
 writes:
   - books/{book}/edit_logs/first_read_ch{chapter}.md
   - books/{book}/edit_logs/first_read_ch{chapter}_2.md
@@ -232,6 +234,22 @@ required reads — surface the error and stop, don't retry.
     Use the dossier's `on the page` line for this chapter: show the thing
     about each person that no earlier chapter has.
 
+3e. **What this genre's reader comes for** (every book with a genre
+    guide). Use `file_read` on the book's genre guide: the file
+    `_begin`'s `genre:` line names (`autonovel genre show --book {book}`
+    prints it when no preamble ran; it is
+    `shared/craft/genres/<genre>.md`, or the series' own
+    `shared/genres/<genre>.md`): its `## The promise`, the `###`
+    entry under `## Subgenres` for each of the book's subgenres, and its
+    `## Drafting` section. The promise names the payload this reader
+    came for (for historical fiction: real events and people met on the
+    page, daily life, how people saw the world, places under the names
+    they had then); `## Drafting` is how it reaches the page. When
+    `books/{book}/design.md` has a `## What the reader comes to learn`
+    ledger, deliver every item it assigns to this chapter, through a
+    person, at a moment of pressure. Never thin the payload to gain
+    pace: move it, give it to someone, make it a scene or a clause.
+
 4. Use `file_read` on `shared/world.md`, `shared/characters.md`,
    `shared/canon.md`, `books/{book}/canon.md` (this book's OWN canon —
    facts its earlier chapters established; a sibling book's canon.md is
@@ -350,8 +368,11 @@ required reads — surface the error and stop, don't retry.
    absence is re-anchored (step 3c); fix the draft where it doesn't.
 
    **First reader** (always, before the summary). Use `file_read` on
-   `shared/craft/FIRST-READER.md` and spawn, with `task`, one fresh
-   heavy-tier reader exactly as that brief says: it is given only this
+   `shared/craft/FIRST-READER.md` and on the genre guide's `## The first
+   reader` section (step 3e), and spawn, with `task`, one fresh
+   heavy-tier reader exactly as that brief says, amended by the guide's
+   section (it says who this genre's reader is and adds report sections,
+   such as historical fiction's "What I learned"): it is given only this
    chapter and the earlier chapters (the last three in full and the
    rest as summaries when the book is long) — never the outline,
    design, research, voice file or your notes — and it reports in the
@@ -365,7 +386,9 @@ required reads — surface the error and stop, don't retry.
    had serious items, spawn a second fresh reader on the fixed chapter,
    save its report at
    `books/{book}/edit_logs/first_read_ch{chapter}_2.md`, and fix what it
-   finds. (`/autonovel:evaluate` records both readers' serious items and
+   finds. A history or other payload passage a reader skimmed is moved,
+   given to a person or dramatised, never cut (the guide's `## The first
+   reader`). (`/autonovel:evaluate` records both readers' serious items and
    whether the chapter as it stands fixes them; the dashboard shows a
    chapter whose items were never re-read.) Your own checks can't see what you already
    know; this reader can. The author must never be the first person to

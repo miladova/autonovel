@@ -12,6 +12,8 @@ reads:
   - books/{book}/outline.md
   - books/{book}/chapters/*.md
   - books/{book}/edit_logs/structure_review.json
+  - shared/craft/genres/*.md
+  - shared/genres/*.md
 writes:
   - books/{book}/edit_logs/review.json
   - books/{book}/edit_logs/review.md
@@ -70,6 +72,16 @@ Stop revising only when BOTH hold:
    specific, actionable craft suggestions. Be fair but honest; you
    don't have to find defects." Use a heavy-tier model (Opus-class);
    Claude Code's runtime picks this via `model_tier: heavy`.
+
+   When the book has a genre guide (the book's genre guide: the file
+   `_begin`'s `genre:` line names (`autonovel genre show --book {book}`
+   prints it when no preamble ran; it is
+   `shared/craft/genres/<genre>.md`, or the series' own
+   `shared/genres/<genre>.md`)), give both personas its
+   `## The promise`, `## Judging` and `## Editing` sections: they judge
+   the book against what its reader came for, report where the payload
+   is badly placed or delivered, and recommend moving or dramatising
+   it, never cutting it.
 
    Add these instructions to the professor stage, verbatim in spirit:
    - "Strong prose is not evidence of structure. If you say the book
