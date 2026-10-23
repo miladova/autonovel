@@ -52,6 +52,70 @@ to start.
   6. `appendix --sections places`: "Places you can still see", the
      buildings and streets in the book that stand today.
   Doc-sync: commands, docs, README, templates/series/CLAUDE.md, help.
+  Build it as the first instance of the genre framework in the next item,
+  not as a one-off.
+
+- **Genres and subgenres as a first-class choice, each with its own
+  guidelines (opened 2026-10-23, author).** The author: "historical fiction
+  is just one genre. I expect there will be other genres, perhaps my next
+  book will be science fiction - but even within that genre there are sub
+  genres, like hard sf, or space opera or post apocalyptic or first alien
+  encounters or ... we need a way to specify the genre and develop
+  guidelines for each in autonovel." Today `project.yaml` has a free
+  `genre:` string (the fixtures use historical-fiction, scifi, fantasy,
+  mystery, thriller, romance, horror, literary) that steers research and
+  smoke tests but no craft: DESIGN §14 lists one genre contract (the
+  historical thriller), EDITING has Parts III (historical) and IV
+  (thriller), and nothing else knows what a space-opera or hard-SF reader
+  comes for. Proposed:
+  1. `genre:` plus `subgenres: [...]` (a book can be two: a historical
+     thriller, post-apocalyptic first contact), validated against a
+     registry with an "other: <text>" escape.
+  2. One sourced guide per genre under `shared/craft/genres/<genre>.md`,
+     with a section per subgenre: the reader's promise (what this reader
+     comes for: history and places; plausible science and its
+     consequences; scale and wonder; survival and what is rebuilt; the
+     alien made truly other), its conventions and obligatory scenes, the
+     worldbuilding/exposition contract (how much explanation this reader
+     wants and where), its typical failures, and comparable books. Written
+     the way EDITING.md and DESIGN.md were: research first, every claim
+     sourced.
+  3. Every command that judges or shapes a book reads the active genre and
+     subgenre guides: design (the genre contract and the "what the reader
+     comes for" ledger), cast, gen-outline, draft, the first reader (a
+     reader of that genre), evaluate (genre-specific dimensions, such as
+     `history` for historical, `science` for hard SF), adversarial-edit
+     (what never counts as over-explaining), developmental-edit, reader-panel
+     (personas drawn from the genre's readers).
+  4. `autonovel new-series` / `onboard` asks for genre and subgenre and
+     shows each one's promise in a line; `/autonovel:genre --add <name>`
+     researches and drafts a guide for one not yet in the registry.
+  5. A fixture per guide (the eight genre fixtures already exist) so
+     contract tests check each command reads it.
+
+- **Scores average away the problem: show the worst item, not only the
+  mean (opened 2026-10-23, author).** The author: "most of the scoring
+  seems to mention average scores, but the worst scored items should be
+  the ones that get the attention. so as well as showing average score for
+  a chapter, should call out the worst item too." On kingmaker2 the
+  per-chapter `overall_score` is set "a little below the dimension mean"
+  (7.3–7.8 across ch 3–19), so a 6.9 for sense of place (ch 7) or 7.0 for
+  pull and character depth (ch 3) disappears inside a 7.8. The eval JSON
+  already has `weakest_dimension` and `three_weakest_sentences`, and the
+  first reader's serious items, but no surface leads with them. Proposed:
+  1. Everywhere a chapter score is shown (evaluate's summary, dashboard,
+     chapter-summary, story-map, the TUI, `_end` footers), show the lowest
+     dimension and its score beside the mean, e.g. `7.7 (low: place 6.9)`,
+     plus the count of open serious first-reader items.
+  2. The revise gate fires on the minimum as well as the mean: any
+     dimension under a floor (say 7.0), or any open serious first-reader
+     item, sends the chapter to revise even when the mean passes.
+  3. Book level: for each dimension, the worst chapter; and a "worst ten"
+     list across the book (lowest dimension scores, open serious items,
+     the judge's weakest sentences), ranked, which `brief --auto` and
+     revision-pass work from first.
+  4. `dashboard --dimensions` (filed under Story-map follow-ups) sorts by
+     the minimum by default.
 
 - **Structural layer: scene ledger and cross-chapter checks (opened
   2026-10-14).** The kingmaker panel + review found faults no per-chapter
