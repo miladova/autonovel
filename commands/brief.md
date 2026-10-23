@@ -16,6 +16,8 @@ reads:
   - books/{book}/edit_logs/review.json
   - books/{book}/edit_logs/structure_review.json
   - books/{book}/eval_logs/*.json
+  - books/{book}/edit_logs/first_read_ch{chapter}.md
+  - books/{book}/edit_logs/first_read_ch{chapter}_2.md
   - shared/research/notes/*.md
 writes:
   - books/{book}/briefs/ch{chapter:02d}.md
@@ -72,7 +74,13 @@ of the file:
      `books/{book}/edit_logs/ch{chapter:02d}_cuts.json` (run
      `/autonovel:adversarial-edit` first if missing).
    - `eval`: read the most recent
-     `books/{book}/eval_logs/ch{chapter:02d}_*.json` file.
+     `books/{book}/eval_logs/ch{chapter:02d}_*.json` file: every
+     dimension's score, `weakest_moment` and `fix`, and its
+     `first_reader` block. Read `defaults.dimension_floor` from
+     `project.yaml` (the chapter threshold when unset). When the
+     `first_reader` block lists items not fixed, read the report it
+     came from, `books/{book}/edit_logs/first_read_ch{chapter}_2.md`
+     when it exists, else `first_read_ch{chapter}.md`.
    - `panel`: read `books/{book}/edit_logs/reader_panel.json` and
      isolate the entries that name this chapter number (the ten
      answers per reader, the `disagreements` list and the
@@ -165,7 +173,18 @@ of the file:
      run them before or after this brief's revise (a merge or cut
      runs first; then re-run `/autonovel:structure-review` because the
      numbering changes).
-   - `## Chapter {chapter} — revision target` (one-line goal)
+   - `## Chapter {chapter} — revision target` (one-line goal; when a
+     dimension is under the floor, the goal names it)
+   - `## Weakest first` *(whenever an eval log exists)* — the worst
+     items, not the mean. Every dimension under the floor, lowest
+     first; when none is, the single lowest. For each: the dimension
+     and score, the judge's `weakest_moment` quoted, and its `fix`
+     sharpened into an instruction on the page (which passage, what
+     changes). Then every serious cold-reader item the `first_reader`
+     block lists as not fixed, quoted from the report, each with the
+     fix (`shared/craft/FIRST-READER.md` "What the writer does with
+     it"). This section leads the prose sections: the revise is judged
+     on whether the weakest dimension rose, not whether the mean did.
    - `## What works` (two or three sentences from the source material)
    - `## What drags` (concrete, quote-level, ordered by impact)
    - `## Specific cuts` (quoted passages to remove, carried over from

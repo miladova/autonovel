@@ -84,6 +84,7 @@ def _actions_for_book(series: SeriesLayout, cfg: project_mod.ProjectConfig,
     out: list[NextAction] = []
     out.extend(_pending_canon_conflict_actions(book_root, book))
     out.extend(_chapter_regression_actions(book_root, book))
+    out.extend(_weakest_item_actions(book_root, book, cfg))
     out.extend(_brief_newer_than_chapter_actions(book_root, book))
     out.extend(_summary_stale_actions(book_root, book))
     out.extend(_panel_staleness_actions(book_root, book))
@@ -267,6 +268,60 @@ def _pending_canon_conflict_actions(book_root: Path, book: str) -> list[NextActi
         ),
         book=book,
     )]
+
+
+def _weakest_item_actions(book_root: Path, book: str,
+                          cfg: project_mod.ProjectConfig) -> list[NextAction]:
+    """The worst item, not the mean (2026-10-23). Two signals a passing
+    chapter score hides:
+
+      - a dimension under `defaults.dimension_floor` (the chapter
+        threshold when unset) → MEDIUM, revision-pass on those chapters;
+      - serious items from a chapter's cold first reader that no second
+        reader confirmed fixed → LOW, re-read them with first-read.
+    """
+    from ..mechanical.chapter_summary import chapter_score_details, format_low
+    details = chapter_score_details(book_root / "eval_logs")
+    if not details:
+        return []
+    threshold = float(cfg.defaults.get("chapter_threshold", 7.0))
+    floor = cfg.defaults.get("dimension_floor")
+    floor = float(floor) if floor is not None else threshold
+    out: list[NextAction] = []
+    weak = sorted((d for d in details.values()
+                   if d.low_score is not None and d.low_score < floor),
+                  key=lambda d: (d.low_score, d.chapter))
+    if weak:
+        chapters = ",".join(str(d.chapter) for d in sorted(weak, key=lambda d: d.chapter))
+        listing = "; ".join(f"ch {d.chapter} {format_low(d.low_dim, d.low_score)}"
+                            for d in weak)
+        out.append(NextAction(
+            priority="MEDIUM",
+            title=f"Dimension under the {floor:.1f} floor: {listing}",
+            command=f"/autonovel:revision-pass --chapters {chapters} --book {book}",
+            rationale=(
+                f"A chapter's mean can pass while one dimension fails. These "
+                f"chapters' weakest dimensions are under the floor; the brief "
+                f"leads with them. `/autonovel:dashboard --book {book}` ranks "
+                f"the book's lowest scores under \"Needs attention first\"."),
+            book=book,
+        ))
+    unchecked = sorted((d for d in details.values()
+                        if d.reader_open and d.reader_second is None),
+                       key=lambda d: d.chapter)
+    if unchecked:
+        listing = ", ".join(f"ch {d.chapter} ({d.reader_open})" for d in unchecked)
+        out.append(NextAction(
+            priority="LOW",
+            title=f"Cold-reader items never re-read: {listing}",
+            command=f"/autonovel:first-read {unchecked[0].chapter} --book {book}",
+            rationale=(
+                "The first reader found serious items in these chapters and the "
+                "draft fixed them, but no second reader confirmed the fixes. "
+                "Re-read each with /autonovel:first-read <N>."),
+            book=book,
+        ))
+    return out
 
 
 def _chapter_regression_actions(book_root: Path, book: str) -> list[NextAction]:

@@ -242,9 +242,15 @@ each of these and the workaround is in the codebase:
 - Run `/autonovel:chapter-summary --book <name>` for the
   one-line-per-chapter overview.
 - Run `/autonovel:dashboard --book <name>` for the at-a-glance
-  shape — score / tension sparklines, aggregates, and tension-
-  drop alarms re-rendered from the latest eval log without
-  firing another evaluate.
+  shape — each chapter's score with its **lowest dimension** beside
+  it, the ten lowest scores in the book ("Needs attention first"),
+  the cold readers' open items, score / tension sparklines,
+  aggregates and tension-drop alarms, re-rendered from the latest
+  eval logs without firing another evaluate. `--dimensions` prints
+  every dimension for every chapter. When you report scores to the
+  author, lead with the worst item, not the mean: a chapter's mean
+  hides the one dimension that fails, and a dimension under
+  `defaults.dimension_floor` sends the chapter to revise.
 - Run `/autonovel:story-map --book <name>` to *see* how the plot
   develops: it writes one HTML page
   (`books/<name>/edit_logs/story_map.html`) with the synopsis in

@@ -169,6 +169,9 @@ class ProjectConfig:
                 "chapter_target_words": 3200,
                 "foundation_threshold": 7.5,
                 "chapter_threshold": 7.0,
+                # Any one dimension under this sends a chapter to revise
+                # even when its mean passes (the worst item, not the mean).
+                "dimension_floor": 7.0,
             },
         )
 

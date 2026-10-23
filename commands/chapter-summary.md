@@ -1,6 +1,6 @@
 ---
 name: autonovel:chapter-summary
-description: Print a one-line-per-chapter overview — date, POV, score, cast, plot — for the active book.
+description: Print a one-line-per-chapter overview — date, POV, score and lowest dimension, cast, plot — for the active book.
 argument-hint: "[--book <short-name>] [--format markdown|json]"
 model_tier: light
 allowed-tools:
@@ -20,8 +20,9 @@ chapters has Lucia in them?" or "which chapter dropped to a 6.5
 again?". Pulls already-structured fields from chapter frontmatter
 (`pov`, `story_time`, `word_count`), the per-chapter summary file
 (`Plot`, `Cast on stage`, `Story time`), and the latest eval log
-(`overall_score`) and renders one row per drafted chapter as a
-markdown table.
+(`overall_score`, and the lowest-scoring dimension beside it, so a
+dimension that fails is not hidden by the chapter's mean) and renders
+one row per drafted chapter as a markdown table.
 
 Pure mechanical. No LLM. Light tier — runs in seconds, costs
 nothing, safe to call repeatedly.
@@ -30,7 +31,8 @@ Use cases:
 - "Which chapters fall in 1521-12 to 1522-02?" → scan the Date
   column.
 - "Where does Niccolò appear?" → scan the Cast column.
-- "Which chapter scored lowest?" → scan the Score column.
+- "Which chapter scored lowest?" → scan the Score column; "what
+  is weakest in each chapter?" → the Low column (`place 6.9`).
 - "Plain overview before I start a revision pass" → just read
   the table top to bottom.
 
@@ -54,7 +56,8 @@ structured output.
    The helper reads every `ch_NN.md` under
    `books/{book}/chapters/`, parses its frontmatter and the
    sibling `ch_NN.summary.md` (when present), looks up the
-   latest `overall_score` from `books/{book}/eval_logs/`, and
+   latest `overall_score` and lowest dimension from
+   `books/{book}/eval_logs/`, and
    emits the table (or JSON when `--format json`).
 
 3. Print the helper's stdout verbatim. Do not editorialise.
@@ -81,5 +84,5 @@ structured output.
   table (with `—` in cast / plot columns) — never silently
   excluded.
 - Chapters without an eval log still appear (with `—` in the
-  Score column).
+  Score and Low columns).
 </acceptance>

@@ -477,7 +477,7 @@ same command N times:
 
 | Command | What it batches |
 |---|---|
-| `/autonovel:draft-pass --chapters 1-10` | "Write the rest of the book." Per chapter: draft (with its cold first reader) → anachronism check → evaluate → if score < threshold (default 7.0; tunable via `project.yaml::defaults.chapter_threshold` or per-call `--retry-below`), brief + revise + re-eval (keep best). At sweep end: promote pending canon (chapter-derived facts → the book's own `canon.md`; research-cited → `shared/canon.md`). Add `--deep` to also run structure-review + reader-panel + Opus review at the end and surface the resulting flagged-chapter list. A per-chapter spine check holds each chapter to the outline's `## Causal spine`. Sequential. |
+| `/autonovel:draft-pass --chapters 1-10` | "Write the rest of the book." Per chapter: draft (with its cold first reader) → anachronism check → evaluate → if score < threshold (default 7.0; tunable via `project.yaml::defaults.chapter_threshold` or per-call `--retry-below`), or any one dimension is under the floor (`defaults.dimension_floor`, default 7.0, or `--floor`), or the second cold reader's items are not fixed, brief + revise + re-eval (keep best). At sweep end: promote pending canon (chapter-derived facts → the book's own `canon.md`; research-cited → `shared/canon.md`). Add `--deep` to also run structure-review + reader-panel + Opus review at the end and surface the resulting flagged-chapter list. A per-chapter spine check holds each chapter to the outline's `## Causal spine`. Sequential. |
 | `/autonovel:revision-pass --chapters 1-10` | The deeper revision pass. Sweeps `check-anachronism → brief → revise → evaluate` across the range; add `--parallel [N]` (default 3) for speed. Use after `draft-pass` (or after any change that needs deepening). `--chapters structural` sweeps every chapter `/autonovel:structure-review` named, with structural briefs. |
 | `/autonovel:compare-models --chapter 5 --models claude-opus-4-7,claude-sonnet-4-6` | A/B-draft the same chapter with two models in parallel, judge head-to-head, write verdict to `eval_logs/`. |
 
@@ -578,9 +578,11 @@ Three categories. Full reference: [`docs/commands.md`](docs/commands.md).
   `books/{book}/motifs.md`); `talk` — a conversational
   query+suggest layer where you ask the book questions or queue
   edits that the next `revise` picks up automatically;
-  `dashboard` — score / tension / pacing curve / aggregates with
-  sparklines, re-rendered from existing eval logs without firing
-  another evaluate; `summaries --where '<expr>'` for a
+  `dashboard` — score and each chapter's lowest dimension, the ten
+  lowest scores in the book ("Needs attention first"), cold-reader
+  items, tension, aggregates and sparklines, re-rendered from existing
+  eval logs without firing another evaluate (`--dimensions` prints
+  every dimension for every chapter); `summaries --where '<expr>'` for a
   pure-mechanical query DSL over the chapter-summary index;
   `story-map` — one HTML page you open in a browser to see the
   book's shape without re-reading it: the synopsis in reading

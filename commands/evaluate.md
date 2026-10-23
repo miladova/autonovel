@@ -28,6 +28,8 @@ reads:
   - books/*/voice.md
   - books/*/chapters/ch_*.summary.md
   - books/{book}/edit_logs/structure_review.json
+  - books/{book}/edit_logs/first_read_ch{chapter}.md
+  - books/{book}/edit_logs/first_read_ch{chapter}_2.md
 writes:
   - books/{book}/eval_logs/*.json
   - .autonovel/eval_logs/*.json
@@ -61,8 +63,9 @@ or `.autonovel/eval_logs/<timestamp>_series.json` for `--phase series`.
    else is a usage error — print a one-line reminder and stop.
 
 2. Use `file_read` on `project.yaml` to resolve the book entry, its `pov`,
-   and `defaults.chapter_target_words` / `defaults.chapter_threshold`. The
-   defaults drive two calibration rules that follow. When
+   and `defaults.chapter_target_words` / `defaults.chapter_threshold` /
+   `defaults.dimension_floor` (the threshold when unset). The defaults
+   drive the calibration rules that follow. When
    `books/{book}/design.md` exists, the chapter length target is its
    `## Shape` `target_words` divided by `chapters` instead, as
    `/autonovel:draft` uses.
@@ -255,7 +258,32 @@ or `.autonovel/eval_logs/<timestamp>_series.json` for `--phase series`.
    `{score, weakest_moment, fix, note}`. Include
    `three_weakest_sentences`, `three_strongest_sentences`,
    `ai_patterns_detected`, `overall_score`, `weakest_dimension`,
-   `top_3_revisions`, `new_canon_entries`.
+   `weakest_score`, `top_3_revisions`, `new_canon_entries`, and the
+   `first_reader` block below.
+
+   **The worst item, not only the mean.** A chapter's mean hides its
+   weakest dimension: a 6.9 for sense of place disappears inside a 7.8.
+   `weakest_dimension` is the name of the lowest-scoring dimension (on a
+   tie, the one that costs the reader most) and `weakest_score` its
+   score. When `weakest_score` is under `defaults.dimension_floor`, put
+   that dimension's `fix` first in `top_3_revisions`: the chapter goes
+   back to revise for it even when `overall_score` passes
+   (`/autonovel:draft-pass` and `/autonovel:revision-pass` gate on it;
+   `/autonovel:dashboard` ranks the book's lowest scores).
+
+   **`first_reader` (the cold reader's serious items).** Use
+   `file_read` on `books/{book}/edit_logs/first_read_ch{chapter}.md` (the
+   first cold reader's report) and, when it exists,
+   `books/{book}/edit_logs/first_read_ch{chapter}_2.md` (the second
+   reader's, on the fixed chapter). A serious item is one under Lost,
+   Didn't know, Read twice, Too many at once or Forgot who, or a "no"
+   to the page turn (`shared/craft/FIRST-READER.md`). Record
+   `first_reader: {serious_items_first: [one short line each],
+   serious_items_second: [...] or null when no second reader ran,
+   all_fixed: true|false}`. `all_fixed` is your check of the chapter
+   as it stands: for each serious item of the last report, is the
+   quoted passage gone, explained or clear now? True only when every
+   one is. Omit the block when no report exists.
 
    **Judge `voice_adherence` and `prose_quality` against the register
    voice.md Part 2 asks for, not against a general idea of good
@@ -763,7 +791,8 @@ or `.autonovel/eval_logs/<timestamp>_series.json` for `--phase series`.
     | internal_consistency | 8.0 | — |
 
     **Overall:** 7.1 (raw 7.4 − slop 0.3)
-    **Weakest:** beat_coverage (6.5)
+    **Lowest:** beat_coverage 6.5 — under the 7.0 floor: revise for it
+    **Cold reader:** 3 serious items; 2 fixed in the chapter as it stands
     **Top fixes:** … (one bullet each)
     ```
 
@@ -775,8 +804,10 @@ or `.autonovel/eval_logs/<timestamp>_series.json` for `--phase series`.
     `**Novel:** N (structure X.X; weighted mean Y.Y; cap applied:
     yes/no; − slop Z)`).
 
-    Render every dimension on its own row. Missing values get an
-    em-dash, never a blank cell. Do not skip the table because the
+    Lead the `**Lowest:**` line with the dimension's name and score
+    whatever the mean, and say "under the <floor> floor: revise for it"
+    when it is. Render every dimension on its own row. Missing values
+    get an em-dash, never a blank cell. Do not skip the table because the
     text list "felt enough"; per author testing 2026-04-25 the
     table is what makes the score block scannable.
 
@@ -786,16 +817,17 @@ or `.autonovel/eval_logs/<timestamp>_series.json` for `--phase series`.
     consistent rise into the climax engage. The shape:
 
     ```markdown
-    | Ch | Words | Score | Tension | Dialogue % | Scenes | Beats hit |
-    |---|---|---|---|---|---|---|
-    |  1 | 3100  | 7.4 | 6.5 | 22% | 2 | 4/4 |
-    |  2 | 2950  | 6.8 | 7.0 | 35% | 3 | 3/4 |
-    |  3 | 3200  | 7.1 | 7.5 | 18% | 2 | 4/4 |
-    | …  | …     | …   | …   | …   | … | …   |
+    | Ch | Words | Score | Lowest | Tension | Dialogue % | Scenes | Beats hit |
+    |---|---|---|---|---|---|---|---|
+    |  1 | 3100  | 7.4 | place 6.9 | 6.5 | 22% | 2 | 4/4 |
+    |  2 | 2950  | 6.8 | pull 6.1 | 7.0 | 35% | 3 | 3/4 |
+    |  3 | 3200  | 7.1 | prose 7.0 | 7.5 | 18% | 2 | 4/4 |
+    | …  | …     | …   | …   | …   | …   | … | …   |
     ```
 
     Pull `Words` from each chapter's frontmatter or recompute,
-    `Score` from the latest eval log, `Tension` from the per-chapter
+    `Score` from the latest eval log, `Lowest` from the same log's
+    `weakest_dimension` and `weakest_score`, `Tension` from the per-chapter
     judge pass (1-10 scale; how taut the chapter feels), `Dialogue %`
     by counting lines between paragraph breaks that begin with `"`,
     `Scenes` by `***` or scene-break markers, `Beats hit` against
@@ -868,6 +900,9 @@ or `.autonovel/eval_logs/<timestamp>_series.json` for `--phase series`.
 - A JSON eval log is written under `books/{book}/eval_logs/`.
 - The log contains a numeric top-line score
   (`overall_score` / `novel_score` / `winner`).
+- For chapter mode the log contains `weakest_dimension` and
+  `weakest_score`, equal to the lowest score in `dimensions`, and a
+  `first_reader` block whenever `first_read_ch{chapter}.md` exists.
 - For chapter and full modes the log contains a `slop` block with
   numeric `slop_penalty`, and `overall_score` equals
   `raw_judge_score - slop_penalty` rounded to 2dp.

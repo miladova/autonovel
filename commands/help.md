@@ -484,7 +484,8 @@ Terminal views of the same data:
 
   /autonovel:chapter-summary --book <name>    one row per chapter
   /autonovel:summaries --book <name> --where 'cast contains X'
-  /autonovel:dashboard --book <name>          score/tension sparklines
+  /autonovel:dashboard --book <name>          scores, each chapter's lowest, the 10 worst
+  /autonovel:dashboard --book <name> --dimensions   every dimension, every chapter
   /autonovel:talk --book <name> "<question>"  ask the book (LLM)
 ```
 

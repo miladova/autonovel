@@ -83,6 +83,7 @@ from .front_matter import build_front_matter_tex
 from .latex import build_chapters_tex
 from .dashboard import (
     build_dashboard,
+    render_dimensions as render_dashboard_dimensions,
     render_markdown as render_dashboard_md,
 )
 from .dialogue import (
@@ -574,14 +575,35 @@ def _cmd_research_index(args: argparse.Namespace) -> int:
     return 0
 
 
+def _score_defaults(book_root: Path) -> tuple[float, float | None]:
+    """(chapter_threshold, dimension_floor) from the series' project.yaml
+    (two levels above `books/<book>`), or (7.0, None) when it can't be read.
+    A floor of None means "same as the threshold"."""
+    try:
+        from ..project import load as _load_project
+        cfg = _load_project(book_root.resolve().parent.parent / "project.yaml")
+    except Exception:  # noqa: BLE001
+        return 7.0, None
+    threshold = float(cfg.defaults.get("chapter_threshold", 7.0))
+    floor = cfg.defaults.get("dimension_floor")
+    return threshold, (float(floor) if floor is not None else None)
+
+
 def _cmd_dashboard(args: argparse.Namespace) -> int:
     book_root = Path(args.book_root)
-    report = build_dashboard(book_root, threshold=args.threshold)
+    threshold, floor = _score_defaults(book_root)
+    if args.threshold is not None:
+        threshold = args.threshold
+    if args.floor is not None:
+        floor = args.floor
+    report = build_dashboard(book_root, threshold=threshold, floor=floor)
     if args.format == "json":
         json.dump(report.to_dict(), sys.stdout, indent=2)
         sys.stdout.write("\n")
+    elif args.dimensions:
+        sys.stdout.write(render_dashboard_dimensions(report))
     else:
-        sys.stdout.write(render_dashboard_md(report, threshold=args.threshold))
+        sys.stdout.write(render_dashboard_md(report, threshold=threshold))
     return 0
 
 
@@ -2298,8 +2320,15 @@ def main(argv: list[str] | None = None) -> int:
     db = sub.add_parser("dashboard",
                         help="Per-book dashboard re-renders eval log + augments mechanical dimensions; no LLM call.")
     db.add_argument("book_root", help="Path to the book dir (parent of chapters/).")
-    db.add_argument("--threshold", type=float, default=7.0,
-                    help="Chapter score threshold for sub-threshold streak (default 7.0).")
+    db.add_argument("--threshold", type=float, default=None,
+                    help="Chapter score threshold (default: project.yaml "
+                         "defaults.chapter_threshold, else 7.0).")
+    db.add_argument("--floor", type=float, default=None,
+                    help="Dimension floor: any dimension under it is marked ⚠ "
+                         "(default: project.yaml defaults.dimension_floor, else the threshold).")
+    db.add_argument("--dimensions", action="store_true",
+                    help="Every dimension for every chapter, in groups, with mean and "
+                         "lowest rows and the cold readers' counts.")
     db.add_argument("--format", choices=("markdown", "json"), default="markdown",
                     help="Output format (default: markdown).")
     db.set_defaults(func=_cmd_dashboard)

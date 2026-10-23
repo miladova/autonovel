@@ -14,6 +14,8 @@ Supported predicates:
   pov != "Niccolò"
   score < 7.0
   score >= 7.5
+  low_score < 7.0          (the chapter's lowest dimension)
+  low_dim == "sense_of_place"
   story_time >= "1521-11"
   story_time <= "1522-02"
   word_count > 3000
@@ -38,7 +40,7 @@ import re
 from dataclasses import dataclass
 from typing import Any
 
-from .chapter_summary import ChapterRow
+from .chapter_summary import ChapterRow, format_low
 
 
 # ---------------------------------------------------------- public entry
@@ -125,7 +127,8 @@ class Node:
 
 
 _FIELDS = {"pov", "score", "story_time", "word_count",
-            "cast", "plot", "location", "chapter", "status"}
+            "cast", "plot", "location", "chapter", "status",
+            "low_score", "low_dim"}
 
 
 class _Parser:
@@ -390,14 +393,15 @@ def render_markdown(rows: list[ChapterRow], *, expr: str | None = None,
     if not rows:
         parts.append(f"_No matching chapters._")
         return "\n".join(parts) + "\n"
-    parts.append("| Ch | Date | POV | Score | Words | Location | Plot |")
-    parts.append("|---|---|---|---|---|---|---|")
+    parts.append("| Ch | Date | POV | Score | Lowest | Words | Location | Plot |")
+    parts.append("|---|---|---|---|---|---|---|---|")
     for r in rows:
         parts.append("| " + " | ".join([
             str(r.chapter),
             r.story_time or "—",
             r.pov or "—",
             f"{r.score:.1f}" if r.score is not None else "—",
+            format_low(r.low_dim, r.low_score),
             str(r.word_count) if r.word_count is not None else "—",
             (r.location or "—").replace("|", "\\|"),
             (r.plot or "—").replace("|", "\\|"),

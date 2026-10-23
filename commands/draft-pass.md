@@ -29,6 +29,7 @@ reads:
 writes:
   - books/{book}/canon.md
   - books/{book}/edit_logs/first_read_ch{chapter}.md
+  - books/{book}/edit_logs/first_read_ch{chapter}_2.md
   - books/{book}/chapters/ch_{chapter}.md
   - books/{book}/chapters/ch_{chapter}.summary.md
   - books/{book}/eval_logs/ch{chapter:02d}_eval.json
@@ -63,7 +64,9 @@ Per chapter, in ascending chapter-number order, sequentially:
   2. `check-anachronism N`  — period-vocabulary + LLM semantic check
                               (skip via --no-anachronism)
   3. `evaluate N`           — score the new draft (skip via --skip-eval)
-  4. **If score < threshold** AND --no-revise-low NOT set:
+  4. **If score < threshold, or its lowest dimension is under the
+     dimension floor, or the second cold reader's serious items are
+     not all fixed** AND --no-revise-low NOT set:
      a. `brief N --from auto`   — synthesize revision brief
      b. `revise N`              — rewrite per the brief; regenerates
                                   the chapter summary
@@ -135,6 +138,9 @@ that stalled long sweeps around chapter 8-10.
      - `--book` (defaults via `_begin`)
      - `--retry-below <score>` (default project.yaml::defaults
        .chapter_threshold; below this, the revise loop fires)
+     - `--floor <score>` (default project.yaml::defaults
+       .dimension_floor, else the threshold; any one dimension below
+       this fires the revise loop even when the mean passes)
      - `--no-revise-low` (skip step 4; just redraft once on low
        score)
      - `--no-anachronism` (skip step 2)
@@ -153,7 +159,8 @@ that stalled long sweeps around chapter 8-10.
    Missing `--chapters` → stop with usage hint.
 
 2. Use `file_read` on `project.yaml`. Resolve the book entry, `pov`,
-   `defaults.chapter_target_words`, `defaults.chapter_threshold`.
+   `defaults.chapter_target_words`, `defaults.chapter_threshold`,
+   `defaults.dimension_floor` (the threshold when unset).
    Read `books/{book}/outline.md` to identify chapter numbers
    defined; resolve `all` to outlined chapters that lack a chapter
    file.
@@ -216,6 +223,7 @@ that stalled long sweeps around chapter 8-10.
       or `autonovel _end` inside this task.
 
       Threshold for the revise loop: {threshold}.
+      Dimension floor: {floor}.
       Skip flags in effect: {flags}.
 
       Run these steps in order, each one inline (do not invoke
@@ -248,7 +256,8 @@ that stalled long sweeps around chapter 8-10.
          reader with `task` per shared/craft/FIRST-READER.md, save
          its report at books/{book}/edit_logs/first_read_ch{N:02d}.md,
          fix what it finds, and a second fresh reader only if the
-         first found serious items.
+         first found serious items (its report at
+         books/{book}/edit_logs/first_read_ch{N:02d}_2.md).
          Write books/{book}/chapters/ch_{N:02d}.md with YAML
          frontmatter + the 150-250 word
          books/{book}/chapters/ch_{N:02d}.summary.md. Append
@@ -269,8 +278,10 @@ that stalled long sweeps around chapter 8-10.
          run `autonovel mechanical slop`,
          `autonovel mechanical cliches`,
          `autonovel mechanical sensory` for mechanical penalties.
-         Write books/{book}/eval_logs/ch{N:02d}_eval.json.
-         Capture overall_score as score_v1.
+         Write books/{book}/eval_logs/ch{N:02d}_eval.json, with
+         `weakest_dimension`, `weakest_score` and the `first_reader`
+         block (evaluate step 6). Capture overall_score as score_v1,
+         and weakest_dimension / weakest_score as low_v1.
 
       3b. SPINE CHECK (skip if `no-spine` is in flags): reread the
          chapter's first scene and last scene against the outline's
@@ -284,7 +295,11 @@ that stalled long sweeps around chapter 8-10.
          loop even when score_v1 ≥ threshold.
 
       4. REVISE LOOP (skip if --skip-eval or --no-revise-low, or if
-         score_v1 ≥ threshold AND spine_ok is yes or skipped):
+         score_v1 ≥ threshold AND weakest_score ≥ floor AND
+         first_reader.all_fixed is not false AND spine_ok is yes or
+         skipped). A chapter whose mean passes but whose lowest
+         dimension is under the floor is revised for that dimension:
+         the brief leads with it.
          a. Brief from eval+anachronism: write
             books/{book}/briefs/ch{N:02d}.md with named-passage
             prescriptions. When spine_ok is no, the brief is
@@ -299,9 +314,10 @@ that stalled long sweeps around chapter 8-10.
             report). Regenerate
             books/{book}/chapters/ch_{N:02d}.summary.md.
          c. Re-evaluate. score_v2.
-         d. Keep whichever version scored higher; the other
-            version is in the preamble checkpoint and recoverable
-            via autonovel rollback.
+         d. Keep whichever version scored higher (on a tie of
+            the mean, the one with the higher weakest_score); the
+            other version is in the preamble checkpoint and
+            recoverable via autonovel rollback.
 
       5. PROMOTE CANON (skip if --no-promote):
          **invoke the safe in-sweep helper via Bash:**
@@ -327,10 +343,12 @@ that stalled long sweeps around chapter 8-10.
       Return EXACTLY this single line as your final message
       (nothing else):
 
-      [ch N] draft Xw · anach Y · eval s1 · spine K [→ revise → eval s2] · final s · canon +P
+      [ch N] draft Xw · anach Y · eval s1 (low D d) · spine K [→ revise → eval s2 (low D d)] · final s · canon +P
 
       Where: X = final word count, Y = anachronism hit count or
-      "—" if skipped, s1 = score_v1, K = ✓ or ✗ from the SPINE
+      "—" if skipped, s1 = score_v1, D d = the weakest dimension
+      and its score (⚠ after it when under the floor), K = ✓ or ✗
+      from the SPINE
       CHECK ("—" if skipped), s2 = score_v2 (only if
       revise ran; otherwise "—"), s = the kept score, P = count
       of canon entries promoted (or "—" if --no-promote).
@@ -397,12 +415,16 @@ that stalled long sweeps around chapter 8-10.
 6. **Print a summary table** in the postamble footer:
 
    ```
-   chapter | draft (words) | anach | eval v1 | eval v2 | final | revised?
-   --------|---------------|-------|---------|---------|-------|----------
-        4  | 3100          | 0     | 7.4     | —       | 7.4   | no
-        5  | 2950          | 2     | 5.9     | 6.7     | 6.7   | yes
-        6  | 3200          | 1     | 6.8     | —       | 6.8   | no
+   chapter | draft (words) | anach | eval v1 | eval v2 | final | lowest       | revised?
+   --------|---------------|-------|---------|---------|-------|--------------|----------
+        4  | 3100          | 0     | 7.4     | —       | 7.4   | prose 7.2    | no
+        5  | 2950          | 2     | 5.9     | 6.7     | 6.7   | pull 6.3 ⚠   | yes
+        6  | 3200          | 1     | 7.6     | 7.7     | 7.7   | place 7.1    | yes (place 6.8)
    ```
+
+   The lowest column is the kept version's weakest dimension, ⚠ under
+   the floor; a chapter revised for a dimension shows the v1 low in
+   brackets.
 
    Plus a one-paragraph headline ("Drafted 3 chapters; 1 revised
    on low score; 4 candidate canon entries promoted; 0 conflicts.").
@@ -434,7 +456,9 @@ that stalled long sweeps around chapter 8-10.
 
    ```
    1. Verify per-chapter scores: <N> chapter(s) ended below
-      threshold despite the inline retry-revise: <list>.
+      threshold, or with a dimension under the floor, despite the
+      inline retry-revise: <list, each with its lowest, e.g.
+      "7 (place 6.9)">.
       Run /autonovel:revision-pass --chapters <list> --book {book}
       to deepen them.
       <OR "All chapters ≥ threshold." when N=0>
@@ -525,6 +549,8 @@ Writes (per chapter in range, plus the end-of-sweep promote):
 - `books/{book}/chapters/ch_{chapter}.md`
 - `books/{book}/chapters/ch_{chapter}.summary.md`
 - `books/{book}/eval_logs/ch{chapter:02d}_eval.json`
+- `books/{book}/edit_logs/first_read_ch{chapter}.md` and, when the first
+  reader found serious items, `first_read_ch{chapter}_2.md`
 - `books/{book}/edit_logs/ch{chapter:02d}_anachronism.md`
 - `books/{book}/briefs/ch{chapter:02d}.md` (only if revise loop fires)
 - `books/{book}/pending_canon.md`

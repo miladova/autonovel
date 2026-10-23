@@ -25,6 +25,7 @@ Example queries:
 ```
 /autonovel:summaries --where 'pov == "Lucia"'
 /autonovel:summaries --where 'score < 7.0 and word_count > 3000'
+/autonovel:summaries --where 'low_score < 7.0'   # a dimension fails, whatever the mean
 /autonovel:summaries --where 'story_time >= "1521-11" and story_time <= "1522-02"'
 /autonovel:summaries --where 'cast contains Niccolò'
 /autonovel:summaries --where 'plot contains "book of accounts"'
@@ -37,7 +38,9 @@ Free, scriptable, stable semantics, no LLM drift.
 The DSL supports:
 
 - Fields: `pov`, `score`, `story_time`, `word_count`, `cast`,
-  `plot`, `location`, `chapter`, `status`.
+  `plot`, `location`, `chapter`, `status`, `low_score` and
+  `low_dim` (the chapter's lowest-scoring dimension in its latest
+  eval, e.g. `low_dim == "sense_of_place"`).
 - Comparison: `==`, `!=`, `<`, `<=`, `>`, `>=`. Numeric on
   `score`, `word_count`, `chapter`; lexicographic on the rest
   (works for ISO dates on `story_time`).

@@ -27,6 +27,7 @@ reads:
   - books/{book}/edit_logs/last_read.json
 writes:
   - books/{book}/edit_logs/first_read_ch{chapter}.md
+  - books/{book}/edit_logs/first_read_ch{chapter}_2.md
   - books/{book}/chapters/ch_{chapter}.md
   - books/{book}/chapters/ch_{chapter}.summary.md
   - books/{book}/pending_canon.md
@@ -361,8 +362,12 @@ required reads — surface the error and stop, don't retry.
    set piece); deepen each person under Who felt real who read as a
    type (step 3d); and treat a Skimmed-or-bored stall or a "no" to the
    page turn as a scene to rework before anything else. When the report
-   had serious items, spawn a second fresh reader on the fixed chapter
-   and fix what it finds. Your own checks can't see what you already
+   had serious items, spawn a second fresh reader on the fixed chapter,
+   save its report at
+   `books/{book}/edit_logs/first_read_ch{chapter}_2.md`, and fix what it
+   finds. (`/autonovel:evaluate` records both readers' serious items and
+   whether the chapter as it stands fixes them; the dashboard shows a
+   chapter whose items were never re-read.) Your own checks can't see what you already
    know; this reader can. The author must never be the first person to
    find an unexplained word or a sentence that has to be read twice.
 

@@ -73,6 +73,7 @@ from pathlib import Path
 
 from .chapter_summary import (
     _index_latest_per_chapter_eval,
+    format_low,
     _parse_cast,
     _parse_frontmatter,
     parse_summary_sections,
@@ -243,6 +244,7 @@ class MapChapter:
     story_time: str = ""
     pov: str = ""
     score: float | None = None
+    low: str = ""                        # lowest dimension, e.g. "place 6.9"
     word_count: int | None = None
     plot: str = ""
     plot_line: str = ""
@@ -266,7 +268,7 @@ class MapChapter:
         return {
             "chapter": self.chapter, "title": self.title,
             "story_time": self.story_time, "pov": self.pov,
-            "score": self.score, "word_count": self.word_count,
+            "score": self.score, "low": self.low, "word_count": self.word_count,
             "plot": self.plot, "pov_state": self.pov_state,
             "location": self.location,
             "cast": [c.raw for c in self.cast],
@@ -892,6 +894,8 @@ def build_story_map(book_root: Path, *, series_root: Path | None = None) -> Stor
         mc.cast = _split_cast(sections.get("cast on stage", ""))
         if row is not None:
             mc.score = row.score
+            if row.low_dim is not None:
+                mc.low = format_low(row.low_dim, row.low_score)
             mc.word_count = row.word_count
             mc.plot_line = row.plot or ""
             mc.summary_stale = row.summary_stale
@@ -1628,7 +1632,8 @@ def render_html(sm: StoryMap, *, out_dir: Path | None = None,
         meta = [x for x in (
             c.story_time,
             f"POV {c.pov}" if c.pov else "",
-            f"score {c.score:.1f}" if c.score is not None else "",
+            (f"score {c.score:.1f}" + (f" (lowest: {c.low})" if c.low else ""))
+            if c.score is not None else "",
             f"{c.word_count:,} words" if c.word_count else "",
         ) if x]
         link = _rel_link(c.path, out_dir)

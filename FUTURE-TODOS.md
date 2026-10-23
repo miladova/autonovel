@@ -93,8 +93,16 @@ to start.
   5. A fixture per guide (the eight genre fixtures already exist) so
      contract tests check each command reads it.
 
-- **Scores average away the problem: show the worst item, not only the
-  mean (opened 2026-10-23, author).** The author: "most of the scoring
+- ~~**Scores average away the problem: show the worst item, not only the
+  mean (opened 2026-10-23, author).**~~ **Shipped 2026-10-23:** every
+  chapter score surface (dashboard, chapter-summary, summaries DSL
+  `low_score`/`low_dim`, story-map, TUI, `_end`'s next-step rationale,
+  evaluate's `**Lowest:**` line) shows the lowest dimension; a dimension
+  under `defaults.dimension_floor` (default 7.0) sends a chapter to revise
+  in next_step, draft-pass and revision-pass; the dashboard's "Needs
+  attention first" ranks the ten lowest scores; brief's `## Weakest
+  first` leads with them; `/autonovel:next` flags chapters under the floor
+  and cold-reader items never re-read. Original note: The author: "most of the scoring
   seems to mention average scores, but the worst scored items should be
   the ones that get the attention. so as well as showing average score for
   a chapter, should call out the worst item too." On kingmaker2 the
@@ -3003,12 +3011,18 @@ prose ≈ 8 / 10, with investigation-heavy plots).
 
 ## Story-map follow-ups (story-map shipped 2026-10-17)
 
-- `/autonovel:dashboard` (and the TUI sparkline) read `tension` only from a
+- ~~`/autonovel:dashboard` (and the TUI sparkline) read `tension` only from a
   `--full` eval log; kingmaker's per-chapter logs carry `tension` for ch 1–9
   but the dashboard shows none. story-map already falls back to the
   per-chapter field (`_index_latest_per_chapter_eval(key="tension")`); the
-  dashboard could do the same.
-- `/autonovel:dashboard` shows only `overall_score` per chapter. The author
+  dashboard could do the same.~~ **Shipped 2026-10-23** (and the TUI read
+  `dash.metrics`, which never existed, so its tension column was always
+  empty; fixed).
+- ~~`/autonovel:dashboard` shows only `overall_score` per chapter.~~
+  **Shipped 2026-10-23 as `dashboard --dimensions`** (three groups plus a
+  genre group, mean and lowest rows, the chapter's lowest in bold, the
+  cold readers' counts; tables in chapter order, with the ranked worst
+  list in the default view). Original note: The author
   asked (2026-10-22, kingmaker2 ch 3–18) for "a table of the current scores
   across several metrics", and the answer took a script over
   `eval_logs/ch*_eval.json`: the 15 `dimensions.*.score` values, the

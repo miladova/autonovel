@@ -239,9 +239,11 @@ the whole sweep on a single missing input.
    d. **evaluate** *(skippable via --skip-eval)*: Reproduce the
       body of `/autonovel:evaluate --chapter N` — score the revised
       chapter against the standard chapter dimensions, write
-      `books/{book}/eval_logs/ch{N:02d}_eval.json`. Read the new
-      `overall_score` from the file you just wrote and remember it
-      as `new_score`. The eval file is what the next sweep
+      `books/{book}/eval_logs/ch{N:02d}_eval.json` (with
+      `weakest_dimension`, `weakest_score` and the `first_reader`
+      block, evaluate step 6). Read the new `overall_score` from the
+      file you just wrote and remember it as `new_score`, and the
+      weakest dimension and score as `new_low`. The eval file is what the next sweep
       iteration's brief will pull from.
 
    e. **Compute the delta**: `delta = new_score - prev_score`
@@ -294,7 +296,7 @@ the whole sweep on a single missing input.
    After each chapter finishes, print one line:
 
    ```
-   [ch N] anachronism: <count> hits | brief: <words>w [structural S2,S5] | revise: <words>w (delta <±N>w) | eval: <prev_score> → <new_score> (Δ <±X.X>) | canon: +<P>
+   [ch N] anachronism: <count> hits | brief: <words>w [structural S2,S5] | revise: <words>w (delta <±N>w) | eval: <prev_score> → <new_score> (Δ <±X.X>) low <prev_low> → <new_low> | canon: +<P>
    ```
 
    (`[structural …]` appears only for a `kind: structural` brief and
@@ -329,19 +331,25 @@ the whole sweep on a single missing input.
    the revise lifted, which it left flat, and which it regressed:
 
    ```
-   chapter | anachronism | revise (words) | prev → new (Δ)
-   --------|-------------|----------------|----------------
-        1  | 2 hits      | 2900 (-150)    | 7.5 → 7.9 (+0.4)
-        2  | 0 hits      | 3200 (+50)     | 6.5 → 6.8 (+0.3)
-        3  | 1 hit       | 2750 (-300)    | 7.4 → 7.1 (-0.3)
+   chapter | anachronism | revise (words) | prev → new (Δ)    | lowest, prev → new
+   --------|-------------|----------------|-------------------|----------------------------
+        1  | 2 hits      | 2900 (-150)    | 7.5 → 7.9 (+0.4)  | place 6.9 ⚠ → place 7.6
+        2  | 0 hits      | 3200 (+50)     | 6.5 → 6.8 (+0.3)  | pull 6.0 ⚠ → pull 6.6 ⚠
+        3  | 1 hit       | 2750 (-300)    | 7.4 → 7.1 (-0.3)  | prose 7.2 → depth 6.8 ⚠
    ```
+
+   The lowest column is the chapter's weakest dimension before and
+   after (⚠ under `defaults.dimension_floor`, the threshold when
+   unset): a revise that lifts the mean and leaves the worst
+   dimension under the floor has not done its job.
 
    Render `—` in the prev cell when no prior eval existed
    (typically chapter just drafted and never evaluated, or the
    very first revision pass). Render `—` in the Δ cell whenever
    either side is `—`.
 
-   Append a one-paragraph headline assessment that calls out any
+   Append a one-paragraph headline assessment that names every
+   chapter still with a dimension under the floor, and calls out any
    *regressions* explicitly ("3/3 chapters above threshold;
    chapter 3 regressed -0.3 — review before next pass; recommend
    `/autonovel:reader-panel` next"). A negative delta on any

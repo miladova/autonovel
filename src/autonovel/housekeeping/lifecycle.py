@@ -586,6 +586,7 @@ def _next_step_for(series: SeriesLayout, book: str) -> object:
         editor_letter_done=(book_root / "edit_logs" / "editor_letter.md").is_file(),
         foundation_threshold=cfg.defaults.get("foundation_threshold", 7.5),
         chapter_threshold=cfg.defaults.get("chapter_threshold", 7.0),
+        dimension_floor=cfg.defaults.get("dimension_floor"),
     )
 
     # Read the latest chapter's eval score from eval_logs/ if any
@@ -598,6 +599,10 @@ def _next_step_for(series: SeriesLayout, book: str) -> object:
         score = _last_eval_score(book_root, last_n)
         state.last_chapter_number = last_n
         state.last_chapter_score = score
+        from ..mechanical.chapter_summary import chapter_score_details
+        detail = chapter_score_details(book_root / "eval_logs").get(last_n)
+        if detail is not None and detail.low_dim is not None and detail.low_score is not None:
+            state.last_chapter_low = (detail.low_dim, detail.low_score)
     elif phase == "foundation":
         # Same shape of bug for the foundation phase (hit 2026-10-13):
         # without the latest `--phase foundation` score, next_step's

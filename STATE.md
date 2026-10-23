@@ -2376,7 +2376,34 @@ the next step is `/autonovel:developmental-edit` (no letter yet) or
 `autonovel status` takes the total from the outline. draft-pass's closer
 and the historical walkthrough put the editor's read first. +6 tests.
 
+### 2026-10-23 — the worst item, not only the mean
+
+The author: "the worst scored items should be the ones that get the
+attention." kingmaker2's chapter scores ran 7.3–7.8, set a little below
+each chapter's dimension mean, so ch 7's 6.9 for sense of place sat inside
+a 7.8 and no surface showed it. `chapter_summary.chapter_score_details`
+reads each chapter's whole latest eval log into a `ScoreDetail` (every
+dimension with its weakest moment, the lowest, the cold readers' serious
+items and whether they were fixed), and every score surface leads with the
+lowest: the dashboard's Lowest and Reader columns, "Needs attention first"
+(the ten lowest chapter-dimension scores in the book) and `--dimensions`
+(every dimension for every chapter, grouped, with a genre group for
+`history` and the like); chapter-summary's Low column; the summaries DSL's
+`low_score` / `low_dim`; story-map's chapter line; the TUI. The gate:
+`defaults.dimension_floor` (new, 7.0; the threshold when unset) sends a
+chapter whose mean passes to revise in next_step, draft-pass and
+revision-pass; `/autonovel:next` lists chapters under the floor (MEDIUM)
+and cold-reader items no second reader confirmed (LOW). evaluate now
+specifies `weakest_score` and the `first_reader` block (it was written
+ad hoc by draft-pass subagents), draft saves the second reader's report
+as `first_read_chNN_2.md`, and brief's `## Weakest first` leads the prose
+sections. Two latent bugs fixed on the way: a timestamped eval log could
+never beat a plain `chNN_eval.json` (the sort compared `mtime_…` with
+`2026…` as strings), and the TUI read `dash.metrics`, which never existed.
+The dashboard also falls back to per-chapter `tension`. +12 tests.
+
 ## Tests last known green
+- Tier 1 + Tier 2 (deterministic + contracts): 2026-10-23 (worst item, not only the mean) — **2197 passing, 1 skipped** (+12).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-23 (step after the last chapter) — **2185 passing, 1 skipped** (+6).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-18 (summaries follow --foundation; --title/--intro) — **2179 passing, 1 skipped** (+1 title/intro).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-18 (merge: diff features + draft-pass template) — **2178 passing, 1 skipped**.

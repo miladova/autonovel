@@ -57,7 +57,7 @@ from .adapters.base import discover_commands
 from .adapters.installer import _commands_source_dir
 from .cost import build_report as build_cost_report
 from .housekeeping import next_actions, sweep_progress
-from .mechanical.chapter_summary import summarize_chapters
+from .mechanical.chapter_summary import format_low, summarize_chapters
 from .mechanical.dashboard import build_dashboard
 from .mechanical.research_index import build_index as build_research_index
 from .paths import SeriesLayout, load_series
@@ -106,7 +106,7 @@ def _load_state(series: SeriesLayout, book: str) -> dict:
         summary_rows = list(summarize_chapters(book_root))
         try:
             dash = build_dashboard(book_root)
-            tension_by_ch = {m.chapter: m.tension for m in dash.metrics}
+            tension_by_ch = {m.chapter: m.tension for m in dash.rows}
             tension_drops = [
                 {"start": td.start, "end": td.end,
                  "values": td.values}
@@ -121,6 +121,8 @@ def _load_state(series: SeriesLayout, book: str) -> dict:
                 "story_time": r.story_time or "",
                 "word_count": r.word_count or 0,
                 "score": r.score,
+                "low_dim": r.low_dim,
+                "low_score": r.low_score,
                 "tension": tension_by_ch.get(r.chapter),
                 "location": r.location or "",
                 "cast": ", ".join(r.cast) if r.cast else "",
@@ -446,7 +448,7 @@ if _TEXTUAL_AVAILABLE:
 
         def on_mount(self) -> None:
             table = self.query_one("#chapter_table", DataTable)
-            table.add_columns("ch", "words", "pov", "story_time", "score", "status")
+            table.add_columns("ch", "words", "pov", "story_time", "score", "lowest", "status")
             rt = self.query_one("#research_table", DataTable)
             rt.add_columns("slug", "title", "updated", "words", "sources", "cands")
             self.refresh_state()
@@ -569,6 +571,7 @@ if _TEXTUAL_AVAILABLE:
                     str(r.get("pov", ""))[:12],
                     str(r.get("story_time", ""))[:10],
                     f"{r['score']:.1f}" if r.get("score") is not None else "—",
+                    format_low(r.get("low_dim"), r.get("low_score"), floor=7.0),
                     status_cell,
                 )
             # Restore cursor row (clamped to new row count).
@@ -646,6 +649,10 @@ if _TEXTUAL_AVAILABLE:
             ch = row.get("chapter", "?")
             score = row.get("score")
             score_line = f"{score:.2f}" if score is not None else "—"
+            if row.get("low_dim") is not None:
+                score_line += (" (lowest: "
+                               + format_low(row.get("low_dim"), row.get("low_score"), floor=7.0)
+                               + ")")
             stale_banner = ""
             if row.get("summary_stale"):
                 stale_banner = (
@@ -886,8 +893,11 @@ if _TEXTUAL_AVAILABLE:
                 "the *shape* of the book at a glance:\n\n"
                 "- **Score** — overall_score from per-chapter "
                 "`/autonovel:evaluate`. 0–10 scale; 10 best; threshold "
-                "is 7.0. Anything below 7.0 is a `revise` candidate. "
-                "Stats line shows range / mean / count below threshold.\n"
+                "is 7.0. Anything below 7.0 is a `revise` candidate, and so "
+                "is a chapter whose **lowest** dimension (the table's "
+                "`lowest` column, ⚠ under 7.0) fails even when the mean "
+                "passes. Stats line shows range / mean / count below "
+                "threshold.\n"
                 "- **Tension** — `tension` dimension from "
                 "`/autonovel:evaluate --full`. 0–10 scale; higher = "
                 "more pull-through (the reader can't put it down). If "

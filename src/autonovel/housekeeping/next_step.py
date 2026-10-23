@@ -26,6 +26,10 @@ class PipelineState:
     editor_letter_done: bool = False  # edit_logs/editor_letter.md exists
     last_chapter_score: float | None = None
     last_chapter_number: int | None = None
+    # The last chapter's lowest-scoring dimension, `(name, score)`. A mean
+    # that passes can hide one dimension under the floor; that chapter
+    # goes back to revise too.
+    last_chapter_low: tuple[str, float] | None = None
     revision_cycles_run: int = 0
     score_deltas: list[float] | None = None  # deltas between consecutive revision cycles
     adversarial_done: bool = False
@@ -35,6 +39,7 @@ class PipelineState:
 
     foundation_threshold: float = DEFAULT_FOUNDATION_THRESHOLD
     chapter_threshold: float = DEFAULT_CHAPTER_THRESHOLD
+    dimension_floor: float | None = None  # None: same as chapter_threshold
     plateau_delta: float = 0.3
     min_revision_cycles: int = 2
     max_revision_cycles: int = 6
@@ -87,6 +92,16 @@ def next_step(state: PipelineState) -> NextStep:
                 command=f"/autonovel:evaluate --chapter {n} --book {b}",
                 rationale=f"chapter {n} drafted; evaluate before advancing",
             )
+        floor = s.dimension_floor if s.dimension_floor is not None else s.chapter_threshold
+        low = s.last_chapter_low
+        if (s.last_chapter_score >= s.chapter_threshold
+                and low is not None and low[1] < floor):
+            return NextStep(
+                command=f"/autonovel:revise {n} --book {b}",
+                rationale=(f"chapter {n} scores {s.last_chapter_score:.1f}, but its "
+                           f"lowest dimension, {low[0]} {low[1]:.1f}, is under the "
+                           f"{floor:.1f} floor; revise for it"),
+            )
         if s.last_chapter_score >= s.chapter_threshold:
             if s.chapters_total and n >= s.chapters_total:
                 # The book is drafted. Its first whole-book step is an
@@ -105,7 +120,8 @@ def next_step(state: PipelineState) -> NextStep:
                 )
             return NextStep(
                 command=f"/autonovel:draft {n + 1} --book {b}",
-                rationale="previous chapter met threshold; advance",
+                rationale=("previous chapter met threshold; advance"
+                           + (f" (its lowest: {low[0]} {low[1]:.1f})" if low else "")),
             )
         return NextStep(
             command=f"/autonovel:revise {n} --book {b}",

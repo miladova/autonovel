@@ -27,6 +27,7 @@ from __future__ import annotations
 import json
 import re
 from dataclasses import dataclass, field
+from datetime import datetime
 from pathlib import Path
 
 from .frontmatter import strip_yaml_frontmatter
@@ -48,6 +49,9 @@ class ChapterRow:
     threads_opened: str | None = None  # mysteries / promises future chapters owe
     threads_closed: str | None = None  # earlier setups this chapter resolved
     summary_stale: bool = False    # True when ch_NN.md mtime > ch_NN.summary.md
+    low_dim: str | None = None     # the latest eval's lowest-scoring dimension
+    low_score: float | None = None
+    reader_open: int | None = None  # serious first-reader items not confirmed fixed
 
     @property
     def display_status(self) -> str:
@@ -97,6 +101,9 @@ class ChapterRow:
             "threads_opened": self.threads_opened,
             "threads_closed": self.threads_closed,
             "summary_stale": self.summary_stale,
+            "low_dim": self.low_dim,
+            "low_score": self.low_score,
+            "reader_open": self.reader_open,
         }
 
 
@@ -112,6 +119,7 @@ def summarize_chapters(book_root: Path) -> list[ChapterRow]:
     eval_dir = book_root / "eval_logs"
     eval_index = _index_latest_per_chapter_eval(eval_dir)
     eval_counts = _count_evals_per_chapter(eval_dir)
+    details = chapter_score_details(eval_dir)
 
     rows: list[ChapterRow] = []
     for ch_path in chapter_files:
@@ -174,6 +182,10 @@ def summarize_chapters(book_root: Path) -> list[ChapterRow]:
                 pass
 
         row.score = eval_index.get(num)
+        detail = details.get(num)
+        if detail is not None:
+            row.low_dim, row.low_score = detail.low_dim, detail.low_score
+            row.reader_open = detail.reader_open
         # revision_count = post-draft eval count - 1 (the first eval
         # is the post-draft eval; subsequent ones are post-revise).
         # Imported chapters skip the count (they don't go through the
@@ -426,48 +438,176 @@ def _index_latest_per_chapter_eval(eval_dir: Path, *,
     `dimensions.irreversible_change`, or a top-level field such as
     `tension`). Tolerates a few historical naming conventions
     (`<ts>_ch01.json`, `<ts>_ch01_eval.json`, plain `chNN_eval.json`).
-    Picks the latest log carrying the field, by filename timestamp
-    prefix, or by mtime when no timestamp prefix is present. Skips
+    Picks the latest log carrying the field: by the filename's timestamp,
+    or by mtime when the name has none (the two compare as times, so a
+    later `evaluate` log beats an older plain draft-pass log). Skips
     files it can't parse.
     """
+    by_chapter: dict[int, tuple[float, float]] = {}
+    for chapter, when, data in _iter_chapter_eval_logs(eval_dir):
+        score_f = _eval_number(data, key)
+        if score_f is None:
+            continue
+        prior = by_chapter.get(chapter)
+        if prior is None or when > prior[0]:
+            by_chapter[chapter] = (when, score_f)
+    return {ch: score for ch, (_when, score) in by_chapter.items()}
+
+
+# ----------------------------------------------------- worst item, not only the mean
+
+# A chapter's mean hides its weakest dimension: a 6.9 for sense of place
+# disappears inside a 7.8 (kingmaker2 ch 7, 2026-10-23: "the worst scored
+# items should be the ones that get the attention"). These helpers read
+# the whole latest eval log per chapter so every surface can show the
+# lowest dimension beside the mean, and the open cold-reader items.
+
+# Short labels for tables. A dimension not listed here (a genre
+# dimension such as `history`, or a custom one) shows its own name.
+DIMENSION_LABELS: dict[str, str] = {
+    "beat_coverage": "beats",
+    "irreversible_change": "change",
+    "engagement": "pull",
+    "plants_seeded": "plants",
+    "continuity": "continuity",
+    "canon_compliance": "canon",
+    "character_depth": "depth",
+    "character_voice": "voices",
+    "sense_of_place": "place",
+    "lore_integration": "lore",
+    "voice_adherence": "voice",
+    "prose_quality": "prose",
+    "register": "register",
+    "show_dont_tell_ratio": "show",
+    "concreteness": "concrete",
+}
+
+
+def dimension_label(name: str) -> str:
+    return DIMENSION_LABELS.get(name, name.replace("_", " "))
+
+
+@dataclass
+class ScoreDetail:
+    """One chapter's latest eval, reduced to what a reader of the scores
+    needs: the mean, every dimension, the lowest one and why, and the
+    cold first reader's serious items that nobody has confirmed fixed."""
+    chapter: int
+    overall: float | None = None
+    dimensions: dict[str, float] = field(default_factory=dict)
+    low_dim: str | None = None
+    low_score: float | None = None
+    low_moment: str | None = None   # the judge's weakest_moment for low_dim
+    low_fix: str | None = None
+    moments: dict[str, str] = field(default_factory=dict)  # dimension → the judge's weakest_moment
+    reader_first: int | None = None   # serious items, first cold reader
+    reader_second: int | None = None  # serious items, second reader (None: none ran)
+    reader_all_fixed: bool | None = None
+    reader_open: int | None = None
+
+    def to_dict(self) -> dict:
+        return {
+            "chapter": self.chapter, "overall": self.overall,
+            "dimensions": dict(self.dimensions),
+            "low_dim": self.low_dim, "low_score": self.low_score,
+            "low_moment": self.low_moment, "low_fix": self.low_fix,
+            "reader_first": self.reader_first, "reader_second": self.reader_second,
+            "reader_all_fixed": self.reader_all_fixed, "reader_open": self.reader_open,
+        }
+
+
+def _iter_chapter_eval_logs(eval_dir: Path):
+    """Yield `(chapter, when, data)` for every per-chapter eval log in the
+    three naming shapes. `when` is seconds since the epoch: the filename's
+    `YYYYMMDD_HHMMSS` stamp, or the file's mtime when it has none."""
     if not eval_dir.is_dir():
-        return {}
-    by_chapter: dict[int, tuple[str, float]] = {}
+        return
     for path in eval_dir.iterdir():
         if not path.is_file() or path.suffix != ".json":
             continue
         m = _EVAL_FILENAME_RE.match(path.name) or _EVAL_CH_FILENAME_RE.match(path.name)
         if m:
-            ts = m.group("ts")
+            chapter = int(m.group("chapter"))
             try:
-                chapter = int(m.group("chapter"))
+                when = datetime.strptime(m.group("ts"), "%Y%m%d_%H%M%S").timestamp()
             except ValueError:
-                continue
+                when = path.stat().st_mtime
         else:
-            # Plain `chNN_eval.json` (no timestamp prefix) — use mtime.
             plain = re.match(r"^ch(\d+)_eval\.json$", path.name)
             if not plain:
                 continue
-            try:
-                chapter = int(plain.group(1))
-            except ValueError:
-                continue
-            ts = f"mtime_{path.stat().st_mtime:.0f}"
-
+            chapter, when = int(plain.group(1)), path.stat().st_mtime
         try:
             data = json.loads(path.read_text(encoding="utf-8"))
         except Exception:  # noqa: BLE001 — skip malformed eval logs
             continue
-        if not isinstance(data, dict):
-            continue
-        score_f = _eval_number(data, key)
-        if score_f is None:
-            continue
+        if isinstance(data, dict):
+            yield chapter, when, data
 
-        prior = by_chapter.get(chapter)
-        if prior is None or ts > prior[0]:
-            by_chapter[chapter] = (ts, score_f)
-    return {ch: score for ch, (_ts, score) in by_chapter.items()}
+
+def _count_items(value: object) -> int | None:
+    if isinstance(value, bool) or value is None:
+        return None
+    if isinstance(value, list):
+        return len(value)
+    if isinstance(value, (int, float)):
+        return int(value)
+    return None
+
+
+def score_detail(chapter: int, data: dict) -> ScoreDetail:
+    """Reduce one eval log to a ScoreDetail."""
+    d = ScoreDetail(chapter=chapter, overall=_eval_number(data, "overall_score"))
+    dims = data.get("dimensions")
+    if isinstance(dims, dict):
+        for name, value in dims.items():
+            v = _eval_number(dims, name)
+            if v is not None:
+                d.dimensions[name] = v
+                if isinstance(value, dict) and value.get("weakest_moment"):
+                    d.moments[name] = str(value["weakest_moment"])
+    if d.dimensions:
+        low = min(d.dimensions.values())
+        tied = [n for n, v in d.dimensions.items() if v == low]
+        judge = data.get("weakest_dimension")
+        d.low_dim = judge if judge in tied else tied[0]
+        d.low_score = low
+        entry = dims.get(d.low_dim) if isinstance(dims, dict) else None
+        if isinstance(entry, dict):
+            d.low_moment = entry.get("weakest_moment") or None
+            d.low_fix = entry.get("fix") or None
+    fr = data.get("first_reader")
+    if isinstance(fr, dict):
+        d.reader_first = _count_items(fr.get("serious_items_first"))
+        d.reader_second = _count_items(fr.get("serious_items_second"))
+        fixed = fr.get("all_fixed")
+        d.reader_all_fixed = fixed if isinstance(fixed, bool) else None
+        last = d.reader_second if d.reader_second is not None else d.reader_first
+        if last is not None:
+            d.reader_open = 0 if d.reader_all_fixed else last
+    return d
+
+
+def chapter_score_details(eval_dir: Path) -> dict[int, ScoreDetail]:
+    """{chapter: ScoreDetail} from each chapter's latest eval log that
+    carries an `overall_score` (same choice as the score columns)."""
+    latest: dict[int, tuple[float, dict]] = {}
+    for chapter, when, data in _iter_chapter_eval_logs(eval_dir):
+        if _eval_number(data, "overall_score") is None:
+            continue
+        prior = latest.get(chapter)
+        if prior is None or when > prior[0]:
+            latest[chapter] = (when, data)
+    return {ch: score_detail(ch, data) for ch, (_when, data) in latest.items()}
+
+
+def format_low(low_dim: str | None, low_score: float | None, *,
+               floor: float | None = None) -> str:
+    """`place 6.9` (with ` ⚠` under the floor), or `—`."""
+    if low_dim is None or low_score is None:
+        return "—"
+    mark = " ⚠" if floor is not None and low_score < floor else ""
+    return f"{dimension_label(low_dim)} {low_score:.1f}{mark}"
 
 
 # ----------------------------------------------------- table renderer
@@ -477,7 +617,9 @@ def render_markdown_table(rows: list[ChapterRow]) -> str:
     """Render the chapter summary as a markdown table the
     `/autonovel:chapter-summary` command prints to stdout.
 
-    Columns: Ch | Date | POV | Sco | Words | Cast | Plot.
+    Columns: Ch | Date | POV | Sco | Low | Words | Cast | Plot. Low is
+    the latest eval's lowest-scoring dimension (`place 6.9`), so a weak
+    dimension is not hidden by the chapter's mean.
 
     The Plot column is **prefixed with the chapter's Location** when
     the summary carries one (e.g.
@@ -493,8 +635,8 @@ def render_markdown_table(rows: list[ChapterRow]) -> str:
     if not rows:
         return "_No chapters drafted yet._\n"
 
-    header = "| Ch | Date       | POV       | Sco | Words | Cast                          | Plot |"
-    sep    = "|----|------------|-----------|-----|-------|-------------------------------|------|"
+    header = "| Ch | Date       | POV       | Sco | Low          | Words | Cast                          | Plot |"
+    sep    = "|----|------------|-----------|-----|--------------|-------|-------------------------------|------|"
     lines = [header, sep]
     for r in rows:
         ch = f"{r.chapter:>2}"
@@ -502,6 +644,7 @@ def render_markdown_table(rows: list[ChapterRow]) -> str:
         pov = (r.pov or "—")[:9].ljust(9)
         score = f"{r.score:.1f}" if r.score is not None else "—"
         score_col = score.rjust(3)
+        low_col = format_low(r.low_dim, r.low_score)[:12].ljust(12)
         words = f"{r.word_count}" if r.word_count is not None else "—"
         words_col = words.rjust(5)
         cast_str = ", ".join(r.cast) if r.cast else "—"
@@ -514,5 +657,5 @@ def render_markdown_table(rows: list[ChapterRow]) -> str:
             plot_with_location = f"**{location_text}** — {plot_text}"
         else:
             plot_with_location = plot_text
-        lines.append(f"| {ch} | {date} | {pov} | {score_col} | {words_col} | {cast_col} | {plot_with_location} |")
+        lines.append(f"| {ch} | {date} | {pov} | {score_col} | {low_col} | {words_col} | {cast_col} | {plot_with_location} |")
     return "\n".join(lines) + "\n"
