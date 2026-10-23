@@ -11,6 +11,48 @@ to start.
 
 ## Near-term — pull into the next PR
 
+- **Historical fiction is not defined as a genre: what the reader comes
+  for is missing, so the feedback loop pushes to cut it (opened
+  2026-10-23, author).** The author: "some of the interest of historical
+  fiction is learning a bit of history, so some real events and people,
+  also what life was like during the past, how people worked, lived, saw
+  the world. I also delight in seeing places today (Venice) that still
+  [have] buildings (St Mark's for example) and names and places that were
+  there in the 1500s." On kingmaker2 the cold first readers reported
+  history paragraphs as "skimmed" ("the Frankfurt guidebook paragraph",
+  "a lecture"), the judge listed glosses among the three weakest
+  sentences and marked prose down for them, and the editor's summary
+  echoed it as "fewer explanation paragraphs". What exists is scattered:
+  DESIGN §12 ("the answer is not less of the place but the place
+  walked"), §13a terms, §14's thriller list with one line "the period
+  made concrete", FIRST-READER's one sentence on skimming. Nothing
+  defines the genre's promise as a whole, and the reader and judge who
+  drive revision don't hold it. Proposed:
+  1. A craft section (DESIGN §14 or a new `HISTORICAL-FICTION.md`)
+     defining the promise: real events and people, met on the page; daily
+     life (work, money, travel, food, faith, medicine, law, how news
+     moved); how people saw the world; places, especially those still
+     standing, under their names of the time; the past's difference. How
+     it is delivered well (through a person, at pressure, a clause at
+     first use, set pieces), and the rule: a skimmed history passage is
+     moved or dramatized, never just cut.
+  2. `design` writes a `## What the reader comes to learn` ledger (events,
+     people, daily life, surviving places) with the chapter that delivers
+     each, checked like plants; the genre contract gains it.
+  3. FIRST-READER for a historical book: a reader of historical fiction
+     who knows nothing about this period and reads partly to learn it; the
+     report adds "What did you learn about the period that you enjoyed?"
+     and splits Skimmed into "stopped the story here" from "didn't want
+     this at all".
+  4. `evaluate` gains a `history` dimension (the period delivered: real
+     people and events on the page, daily life, places, accuracy), and the
+     prose judge stops counting a gloss as weak prose for being a gloss.
+  5. `adversarial-edit` / `apply-cuts`: OVER-EXPLAIN never cuts period
+     content; such candidates become "move or dramatize".
+  6. `appendix --sections places`: "Places you can still see", the
+     buildings and streets in the book that stand today.
+  Doc-sync: commands, docs, README, templates/series/CLAUDE.md, help.
+
 - **Structural layer: scene ledger and cross-chapter checks (opened
   2026-10-14).** The kingmaker panel + review found faults no per-chapter
   eval sees: a clock paid offstage, a pivot told in pluperfect, the same
