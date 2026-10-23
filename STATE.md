@@ -2359,7 +2359,25 @@ voice/outline/canon. Two tests updated to the new default. Also
 jargon to an author; a page meant for them can carry a plain heading
 and a line on how to read it (+1 test).
 
+### 2026-10-23 — the step after the last chapter: the editor's read, not "draft 20"
+
+kingmaker2 finished draft-pass at chapter 19 of a 19-chapter outline and
+`_end` offered `/autonovel:draft 20`. `_next_step_for` never set
+`chapters_total`, so the drafting branch's "all chapters drafted" case
+could not fire, and the book's `state.json` still read `phase: seed`,
+`chapters_total: 0` because nothing after `new-book` wrote it. Now
+`paths.outline_chapter_numbers` reads the outline's `## Chapter N` (or
+`### Chapter N` under an act) headings; `_next_step_for` takes the book's
+length from it, and once the last outlined chapter is drafted and passes,
+the next step is `/autonovel:developmental-edit` (no letter yet) or
+`/autonovel:revision-pass --chapters all` (letter written), not
+`adversarial-edit all`. `_end` refreshes `books/<book>/state.json`
+(`chapters_drafted`, `chapters_total`, `phase`, which only moves forward);
+`autonovel status` takes the total from the outline. draft-pass's closer
+and the historical walkthrough put the editor's read first. +6 tests.
+
 ## Tests last known green
+- Tier 1 + Tier 2 (deterministic + contracts): 2026-10-23 (step after the last chapter) — **2185 passing, 1 skipped** (+6).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-18 (summaries follow --foundation; --title/--intro) — **2179 passing, 1 skipped** (+1 title/intro).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-18 (merge: diff features + draft-pass template) — **2178 passing, 1 skipped**.
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-18 (diff hand-back + page) — **2178 passing, 1 skipped** (+17 bookdiff, +2 browser (skip without Playwright), +6 hand-back contracts).

@@ -453,7 +453,11 @@ that stalled long sweeps around chapter 8-10.
        nothing." when empty>
 
    4. <only when --deep did NOT run:> Whole-book reviewers
-      haven't run yet on this draft. Run them, structure first:
+      haven't run yet on this draft. When this sweep drafted the
+      outline's last chapter, the editor's read comes first (its
+      letter says what to revise, and in what order):
+        /autonovel:developmental-edit --book {book}
+      Then the reviewers, structure first:
         /autonovel:structure-review --book {book}
         /autonovel:reader-panel --book {book}
         /autonovel:review --book {book}

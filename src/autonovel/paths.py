@@ -41,6 +41,24 @@ def iter_chapter_files(chapters_dir: Path) -> list[Path]:
     )
 
 
+# `## Chapter N` (or `### Chapter N` nested under an `## Act …` heading)
+# in an outline. The outline is the only place a book's length is
+# declared; `state.json`'s `chapters_total` is a cache of it.
+_OUTLINE_CHAPTER_RE = re.compile(r"^#{2,3}\s+Chapter\s+(\d+)\b", re.MULTILINE | re.IGNORECASE)
+
+
+def outline_chapter_numbers(outline_path: Path) -> list[int]:
+    """Return the sorted chapter numbers an outline declares (empty when
+    the outline is missing or has no chapter headings)."""
+    if not outline_path.is_file():
+        return []
+    try:
+        text = outline_path.read_text(encoding="utf-8")
+    except OSError:
+        return []
+    return sorted({int(m) for m in _OUTLINE_CHAPTER_RE.findall(text)})
+
+
 @dataclass(frozen=True)
 class SeriesLayout:
     root: Path

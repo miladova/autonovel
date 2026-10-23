@@ -16,7 +16,7 @@ from pathlib import Path
 from .. import checkpoints, command_log, last_action, lock, project as project_mod
 from ..adapters.base import CommandDef, discover_commands
 from ..adapters.installer import _commands_source_dir
-from ..paths import SeriesLayout, load_series
+from ..paths import SeriesLayout, load_series, outline_chapter_numbers
 from . import next_actions
 from .next_step import PipelineState, next_step
 
@@ -132,6 +132,8 @@ def end(command_name: str, arg_string: str, *, status: str, wrote: list[str],
     verify = _verify_writes(series, command_name, wrote)
 
     lock.release(series.lock_file)
+    if book:
+        _sync_book_state(series, book)
 
     # Teaser-family commands chain among themselves; everything else uses
     # the chapter pipeline. This stops "draft chapter N+1" from showing as
@@ -576,6 +578,12 @@ def _next_step_for(series: SeriesLayout, book: str) -> object:
         book=book,
         phase=phase,
         chapters_drafted=chapters_drafted,
+        # The outline declares the book's length. Without it the drafting
+        # branch can't tell the last chapter from any other and offers to
+        # draft one past the end (kingmaker2, 2026-10-22: "draft 20" after
+        # a 19-chapter outline was finished).
+        chapters_total=len(outline_chapter_numbers(book_root / "outline.md")),
+        editor_letter_done=(book_root / "edit_logs" / "editor_letter.md").is_file(),
         foundation_threshold=cfg.defaults.get("foundation_threshold", 7.5),
         chapter_threshold=cfg.defaults.get("chapter_threshold", 7.0),
     )
@@ -602,6 +610,44 @@ def _next_step_for(series: SeriesLayout, book: str) -> object:
     if entry is not None and _phase_rank(entry.status) > _phase_rank(state.phase):
         state.phase = entry.status
     return next_step(state)
+
+
+def _sync_book_state(series: SeriesLayout, book: str) -> None:
+    """Refresh `books/<book>/state.json` from disk after every command:
+    `chapters_drafted` (chapter files), `chapters_total` (the outline's
+    chapters) and `phase`, which only moves forward (`drafting` once a
+    chapter exists, `revision` once every outlined chapter is drafted).
+    Before this, nothing after `new-book` wrote the file, so a finished
+    19-chapter book still read `phase: seed`, `chapters_total: 0`.
+    Best-effort: a missing or unreadable file is left alone."""
+    import json
+    from ..paths import iter_chapter_files
+    book_root = series.books / book
+    path = book_root / "state.json"
+    if not path.is_file():
+        return
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return
+    if not isinstance(data, dict):
+        return
+    drafted = {int(p.stem.split("_")[-1]) for p in iter_chapter_files(book_root / "chapters")
+               if p.stem.split("_")[-1].isdigit()}
+    outlined = outline_chapter_numbers(book_root / "outline.md")
+    phase = data.get("phase") or "seed"
+    if drafted:
+        inferred = "revision" if outlined and set(outlined) <= drafted else "drafting"
+        if _phase_rank(inferred) > _phase_rank(phase):
+            phase = inferred
+    updated = dict(data, chapters_drafted=len(drafted),
+                   chapters_total=len(outlined) or data.get("chapters_total", 0),
+                   phase=phase)
+    if updated != data:
+        try:
+            path.write_text(json.dumps(updated, indent=2) + "\n", encoding="utf-8")
+        except OSError:
+            pass
 
 
 def _last_eval_score(book_root: Path, chapter: int) -> float | None:

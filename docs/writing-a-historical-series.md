@@ -186,12 +186,16 @@ optional one-shot retry per chapter if the eval scores below
 **Per book (after all chapters drafted):**
 
 ```text
+/autonovel:developmental-edit --book the-inquisitor
 /autonovel:structure-review --book the-inquisitor
 /autonovel:reader-panel --book the-inquisitor
 /autonovel:review --book the-inquisitor
 ```
 
-Structure first. Historical fiction is the genre most exposed to the
+The editor's read comes first: `_end` offers it as the next step once
+the outline's last chapter is drafted. Its letter says what to revise and
+in what order; the reviewers below are instruments it compares itself
+against. Then structure. Historical fiction is the genre most exposed to the
 anecdote chain: the record is episodic by nature (deals, deaths,
 elections, wars arrive on their dates), so a book that follows it
 chapter by chapter reads as a chronicle however good each chapter

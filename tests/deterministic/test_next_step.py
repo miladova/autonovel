@@ -47,7 +47,7 @@ def test_drafting_bad_chapter_revises() -> None:
     assert next_step(s).command == "/autonovel:revise 3 --book a"
 
 
-def test_last_chapter_drafted_triggers_adversarial() -> None:
+def test_last_chapter_drafted_asks_for_the_editors_read() -> None:
     s = PipelineState(
         book="a",
         phase="drafting",
@@ -55,7 +55,30 @@ def test_last_chapter_drafted_triggers_adversarial() -> None:
         last_chapter_score=7.0,
         chapters_total=20,
     )
-    assert next_step(s).command.startswith("/autonovel:adversarial-edit all")
+    assert next_step(s).command == "/autonovel:developmental-edit --book a"
+
+
+def test_last_chapter_drafted_with_letter_acts_on_it() -> None:
+    s = PipelineState(
+        book="a",
+        phase="drafting",
+        last_chapter_number=20,
+        last_chapter_score=7.0,
+        chapters_total=20,
+        editor_letter_done=True,
+    )
+    assert next_step(s).command == "/autonovel:revision-pass --chapters all --book a"
+
+
+def test_last_chapter_below_threshold_still_revises() -> None:
+    s = PipelineState(
+        book="a",
+        phase="drafting",
+        last_chapter_number=20,
+        last_chapter_score=6.0,
+        chapters_total=20,
+    )
+    assert next_step(s).command == "/autonovel:revise 20 --book a"
 
 
 def test_revision_plateau_moves_to_review() -> None:

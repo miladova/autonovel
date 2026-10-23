@@ -22,7 +22,8 @@ class PipelineState:
     foundation_score: float = 0.0
     lore_score: float = 0.0
     chapters_drafted: int = 0
-    chapters_total: int = 0
+    chapters_total: int = 0  # chapters the outline declares
+    editor_letter_done: bool = False  # edit_logs/editor_letter.md exists
     last_chapter_score: float | None = None
     last_chapter_number: int | None = None
     revision_cycles_run: int = 0
@@ -88,9 +89,19 @@ def next_step(state: PipelineState) -> NextStep:
             )
         if s.last_chapter_score >= s.chapter_threshold:
             if s.chapters_total and n >= s.chapters_total:
+                # The book is drafted. Its first whole-book step is an
+                # editor's read, not a line-level cut pass: the letter
+                # says what to revise, and in what order.
+                if not s.editor_letter_done:
+                    return NextStep(
+                        command=f"/autonovel:developmental-edit --book {b}",
+                        rationale=(f"all {s.chapters_total} outlined chapters drafted; "
+                                   f"get the editor's whole-book read before revising"),
+                    )
                 return NextStep(
-                    command=f"/autonovel:adversarial-edit all --book {b}",
-                    rationale="all chapters drafted; begin revision",
+                    command=f"/autonovel:revision-pass --chapters all --book {b}",
+                    rationale=("the editor's letter is written; act on it "
+                               "(edit_logs/editor_letter.md names the chapters)"),
                 )
             return NextStep(
                 command=f"/autonovel:draft {n + 1} --book {b}",

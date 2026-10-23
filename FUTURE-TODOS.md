@@ -2713,8 +2713,11 @@ prose ≈ 8 / 10, with investigation-heavy plots).
 
 ## Maintenance
 
-- **`state.json` never leaves `seed`, so `_end` offers to draft a chapter
-  past the book's end (2026-10-22).** kingmaker2 finished draft-pass at
+- ~~**`state.json` never leaves `seed`, so `_end` offers to draft a chapter
+  past the book's end (2026-10-22).**~~ **Shipped 2026-10-23:** the
+  outline's chapter count drives the step after the last chapter
+  (developmental-edit, then revision-pass), and `_end` refreshes
+  `state.json`. Original note: kingmaker2 finished draft-pass at
   ch 19 of a 19-chapter outline, and `_end` printed **Next:**
   `/autonovel:draft 20`. Its `state.json` still read `phase: seed`,
   `chapters_drafted: 0`, `chapters_total: 0`: `scaffold.py` writes

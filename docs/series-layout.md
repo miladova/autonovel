@@ -33,7 +33,7 @@ demo/
       outline.md
       canon.md                      # book-scoped canon (this book's own facts)
       pending_canon.md
-      state.json
+      state.json                    # phase, chapters_drafted, chapters_total: refreshed by every command's _end
       results.tsv
       chapters/
       briefs/

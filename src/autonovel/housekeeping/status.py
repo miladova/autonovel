@@ -43,7 +43,7 @@ def gather(series: SeriesLayout) -> SeriesStatus:
             name=b.name,
             status=_effective_book_status(series, bl, b.status),
             chapters_drafted=_count_chapters(bl.chapters),
-            chapters_total=_chapters_total(bl.state_file),
+            chapters_total=_chapters_total(bl.state_file, bl.outline_file),
             pending_canon_count=_count_pending_canon(bl.pending_canon),
         ))
 
@@ -63,7 +63,14 @@ def _count_chapters(chapters_dir: Path) -> int:
     return len(iter_chapter_files(chapters_dir))
 
 
-def _chapters_total(state_file: Path) -> int:
+def _chapters_total(state_file: Path, outline_file: Path | None = None) -> int:
+    """The outline's chapter count; `state.json`'s cached value when the
+    outline declares none."""
+    if outline_file is not None:
+        from ..paths import outline_chapter_numbers
+        n = len(outline_chapter_numbers(outline_file))
+        if n:
+            return n
     if not state_file.exists():
         return 0
     try:
