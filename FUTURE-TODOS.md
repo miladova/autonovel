@@ -2607,6 +2607,19 @@ prose ≈ 8 / 10, with investigation-heavy plots).
 
 ## Maintenance
 
+- **`state.json` never leaves `seed`, so `_end` offers to draft a chapter
+  past the book's end (2026-10-22).** kingmaker2 finished draft-pass at
+  ch 19 of a 19-chapter outline, and `_end` printed **Next:**
+  `/autonovel:draft 20`. Its `state.json` still read `phase: seed`,
+  `chapters_drafted: 0`, `chapters_total: 0`: `scaffold.py` writes
+  `chapters_total: 0` and nothing (gen-outline, draft, draft-pass) updates
+  it, so `next_step`'s "all chapters drafted" branch
+  (`s.chapters_total and n >= s.chapters_total`) never fires. Fix: take
+  `chapters_total` from the outline's `## Chapter N` headings when the
+  state says 0 (gen-outline could also write it), and have draft-pass's
+  close set `phase: revision`. The whole-book step after the last chapter
+  is `/autonovel:developmental-edit`, not `adversarial-edit all`.
+
 - ~~**Token + cost tracking.**~~ **Shipped 2026-04-28.**
   `command_log.LogEntry` gains optional fields: `book`, `model`,
   `tier`, `input_tokens`, `output_tokens`, `cache_read_tokens`,
