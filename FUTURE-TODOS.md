@@ -2886,6 +2886,16 @@ prose ≈ 8 / 10, with investigation-heavy plots).
   but the dashboard shows none. story-map already falls back to the
   per-chapter field (`_index_latest_per_chapter_eval(key="tension")`); the
   dashboard could do the same.
+- `/autonovel:dashboard` shows only `overall_score` per chapter. The author
+  asked (2026-10-22, kingmaker2 ch 3–18) for "a table of the current scores
+  across several metrics", and the answer took a script over
+  `eval_logs/ch*_eval.json`: the 15 `dimensions.*.score` values, the
+  first reader's serious-item counts (`first_reader.serious_items_first` /
+  `_second`), and `weakest_dimension`. Add `--dimensions` (two tables,
+  story and writing, plus a mean row and a count of each chapter's weakest
+  dimension) so the author can get the table from autonovel. Older logs lack
+  `first_reader` and `dimension_mean`; compute the mean, show `—` for the
+  first reader.
 
 ## Book-level structure tier: leftovers (after `/autonovel:structure-review`, 2026-10-17)
 
