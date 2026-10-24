@@ -11,6 +11,50 @@ to start.
 
 ## Near-term — pull into the next PR
 
+- **The re-anchor rule re-introduces everyone in every chapter of a braided
+  book (opened 2026-10-24, from the kingmaker2 second editor's letter).**
+  `commands/draft.md` 3c re-anchors any person, place or term "the reader
+  last met more than a chapter ago", and in an ensemble "every time the
+  group comes on stage"; `CHARACTER.md` C11 and its re-anchor rule say the
+  same. In a book that alternates between two times, every chapter of one
+  strand follows a chapter of the other, so the rule fires for everyone on
+  every return; in the day-by-day final act, a revision rule that
+  introduced everyone "at its first appearance in this chapter" kept the
+  tags. Counted on the page: one elector's want restated 10 times in 8
+  chapters, the bookkeeper re-introduced in 8, the commissioner in 7; the
+  cold first readers flagged it in 5 chapters ("By halfway I was skipping
+  the first sentence of every paragraph"; "read like a roll call"), and
+  also said a reminder helped for people gone three chapters or more.
+  Proposed: (1) measure absence in reading distance, not chapter count: a
+  re-anchor only when the person was last on the page three or more
+  chapters ago, counting both strands, or about 20,000 words; never for
+  someone on stage in the previous chapter of the same strand; (2) an
+  ensemble member is re-anchored until shown about three times, then
+  stands alone; (3) a place or term is explained once per book (the seed
+  wording "when it first appears" means in the book); (4) the brief and
+  revise treat a first reader's "re-introduction" or "roll call" note as a
+  cut item, and `adversarial-edit` counts repeated tags under REDUNDANT;
+  (5) a mechanical counter (`autonovel mechanical reanchors`) that lists,
+  per person or term, every chapter where the narration re-glosses them,
+  as a candidate list for the judge. Tests: a two-strand fixture where a
+  person appears in ch 1, 3, 5 is not re-anchored in 3 or 5; one absent
+  from ch 1 to ch 6 is.
+
+- **A cast list for the reader, real and invented (opened 2026-10-24,
+  from the kingmaker2 letter).** `/autonovel:appendix --sections bios`
+  writes short lives of the real historical figures only; nothing makes a
+  front- or back-matter list of the book's people with the invented ones
+  (riders, clerks, a factor) marked as such, which historical novels with
+  large casts carry (a "Cast of characters" before chapter 1). It is also
+  what lets the narration stop re-introducing people (the item above).
+  Proposed: an appendix section `cast` built from `books/<book>/cast.md`
+  and `shared/characters.md`: name, one line of who they are, the chapter
+  of first appearance, "(invented)" where the cast marks it, grouped by
+  household or side; typeset puts it in the front matter when
+  `typeset.cast_list: front`. Test: a fixture with two real and two
+  invented people yields four entries, two marked invented, in
+  first-appearance order.
+
 - **Every revised chapter's summary reads as stale (opened 2026-10-23).**
   After the kingmaker2 revision pass, `_end` offered "regenerate stale
   chapter summaries" for 13 of the 15 revised chapters, although revise had
