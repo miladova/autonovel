@@ -11,6 +11,19 @@ to start.
 
 ## Near-term — pull into the next PR
 
+- **A long-lived series' CLAUDE.md goes stale, and nothing refreshes it
+  (opened 2026-10-24).** `refresh-templates` refreshes `typeset/` and
+  `shared/craft/` only, on purpose, because the user may hand-edit the
+  series `CLAUDE.md`. So medieval-king-maker's copy predates EDITING.md,
+  DESIGN.md, CHARACTER.md, the genre guides, the whole-book order and the
+  summary rules; a series session reads guidance months out of date.
+  Proposed: put the package-owned part of the series `CLAUDE.md` between
+  marker comments (`<!-- autonovel:begin -->` … `<!-- autonovel:end -->`);
+  `refresh-templates` replaces only that block (adding it, with the old
+  text kept below, the first time), and `doctor` warns when the block is
+  older than the installed template. Test: a series CLAUDE.md with user
+  text outside the markers keeps it byte-for-byte after a refresh.
+
 - **The re-anchor rule re-introduces everyone in every chapter of a braided
   book (opened 2026-10-24, from the kingmaker2 second editor's letter).**
   **(1)–(4) shipped 2026-10-24** (STATE.md, "introduce once; remind only
