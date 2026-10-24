@@ -57,6 +57,25 @@ to start.
   the third letter. Tests: a fixture book over budget is flagged, and one
   within it is not.
 
+  Learned the same day, when the author asked why the plan still had so
+  many unnamed people: a budget of names alone is the wrong measure. The
+  first v3 draft took names from about 50 people but left 23 of them on
+  stage with lines, and claimed "people you follow fall from 32 to 17"
+  when the people on stage hardly changed. Wrede: a walk-on with "a
+  couple of lines of dialog or a page of conversation" is a minor
+  character, named or not. Brody, Bala and Penguin Random House's author
+  guide: the cure is to cut and combine (list each side character's job,
+  cut the jobless, merge the overlapping), not to unname. So the budget
+  and the census also need:
+  6. People on stage with lines, named or not, as the count that is
+     budgeted; names are a second count.
+  7. A function test in `/autonovel:cast` (Brody's four steps): each
+     minor character's one job, and pairs whose jobs overlap proposed as
+     merges (for real people, a composite the historical note confesses).
+  8. A clash check: no two people in one chapter under the same role
+     label ("the treasurer", "the councillor"), which runs together like
+     two Ulrichs.
+
 - **A long-lived series' CLAUDE.md goes stale, and nothing refreshes it
   (opened 2026-10-24).** `refresh-templates` refreshes `typeset/` and
   `shared/craft/` only, on purpose, because the user may hand-edit the
