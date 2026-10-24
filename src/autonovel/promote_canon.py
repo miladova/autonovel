@@ -83,6 +83,7 @@ _RESEARCH_TAG_RE = re.compile(r"\[research:([a-zA-Z0-9_\-]+)\]")
 _PROVENANCE_RE = re.compile(r"\(from\s+([^)]+)\)")
 _SHORTNAME_RE = re.compile(r"\[([a-zA-Z][a-zA-Z0-9_:\-]*)\]")
 _NO_NEW_FACTS_RE = re.compile(r"^\s*no\s+new\s+facts\s*$", re.IGNORECASE)
+_NO_NEW_FACTS_ANYWHERE_RE = re.compile(r"\bno\s+new\s+facts\b", re.IGNORECASE)
 
 
 @dataclass
@@ -389,6 +390,11 @@ def _parse_pending(text: str) -> list[PendingEntry]:
         # Skip the labelled rows (Existing canon / Why they conflict /
         # Source) inside `## Conflict N` blocks.
         if body.startswith("**") and ":**" in body:
+            continue
+        # A worker's note that a chapter added nothing ("- ch 6 (revise):
+        # no new facts (…)") is the marker in a bullet, not a fact. A
+        # fact opens with its `[key]`; a note without one is skipped.
+        if _NO_NEW_FACTS_ANYWHERE_RE.search(body) and not body.startswith("["):
             continue
         research_slug_match = _RESEARCH_TAG_RE.search(body)
         research_slug = research_slug_match.group(1) if research_slug_match else None

@@ -481,8 +481,9 @@ required reads — surface the error and stop, don't retry.
 14. Use `file_write` to append any new candidate canon facts to
     `books/{book}/pending_canon.md` (promote-canon routes them into this
     book's `canon.md`; only research-cited facts reach `shared/canon.md`).
-    If none are new, append a single line
-    noting that no new facts were discovered in this chapter. Never edit
+    If none are new, append the single line `no new facts`, exactly
+    (promote-canon skips it; a decorated bullet is skipped too, but only
+    because it carries no `[key]`). Never edit
     `shared/canon.md` directly — that is what `autonovel promote-canon` is for.
 
 15. **A redraft goes back to the author as a diff.** Only when step 12

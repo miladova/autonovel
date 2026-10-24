@@ -2613,7 +2613,16 @@ as pending. Research notes and edit logs keep the old name and the
 report lists where. docs/commands.md, the operating guide and the
 historical-series walkthrough say so. +3 contract tests.
 
+### 2026-10-24 — a "no new facts" note in a bullet is not a fact
+
+In the kingmaker2 R6–R11 pass a revision worker wrote its marker as "- ch 6
+(revise …): no new facts (…)", and `_promote-canon` promoted it into the
+book's canon, because the parser skipped only a bare `no new facts` line.
+Now a bullet that says "no new facts" and doesn't open with a `[key]` is
+skipped; draft.md asks for the bare line. +1 test.
+
 ## Tests last known green
+- Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (no-new-facts bullet) — **2275 passing, 1 skipped** (+1).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (rename reaches cast, design, briefs) — **2274 passing, 1 skipped** (+4).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (brief fingerprints) — **2270 passing, 1 skipped** (+3).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (open_items) — **2267 passing, 1 skipped** (+1).

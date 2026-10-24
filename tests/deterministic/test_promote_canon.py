@@ -91,6 +91,17 @@ def test_parse_provenance() -> None:
     assert entries[0].provenance == "one ch_03"
 
 
+def test_parse_skips_a_no_new_facts_note_in_a_bullet() -> None:
+    """A revision worker wrote its marker as a bullet with a comment, and
+    the parser promoted it into canon as a fact (kingmaker2, 2026-10-24)."""
+    text = ("- ch 6 (revise 2026-10-24, R11 turn 39): no new facts "
+            "(two frames removed; no fact changed)\n"
+            "- [Real fact] No new facts were ever kept in this ledger (invented)\n")
+    entries = pc._parse_pending(text)
+    assert len(entries) == 1
+    assert "No new facts were ever kept" in entries[0].raw_line
+
+
 def test_parse_skips_no_new_facts() -> None:
     entries = pc._parse_pending("no new facts\n")
     assert entries == []
