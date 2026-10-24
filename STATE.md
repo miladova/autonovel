@@ -2648,7 +2648,9 @@ timeline ran together into one paragraph each; markdown bullets now become
 `itemize`, with an indented line continuing the item. And `make_drop_cap`
 put a whole first paragraph into lettrine's small-caps box when the first
 word was one letter ("A little before five…"), so chapter 1's first line ran
-off the page; a one-letter word now leaves the box empty. +2 tests.
+off the page; a one-letter word now leaves the box empty. The template also
+sets `\emergencystretch` to 2em: the kingmaker2 build went from 786 overfull
+lines (27pt at worst, a bold name in the people list) to one. +2 tests.
 
 ## Tests last known green
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (lists in the back matter; one-letter drop cap) — **2279 passing, 1 skipped** (+2).

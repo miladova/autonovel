@@ -190,3 +190,6 @@ def test_template_never_drops_letters_in_bold_or_the_timeline_markers() -> None:
     assert "BoldFeatures={FakeBold=1.5}" in tex
     for ch in ("◆", "◇", "○"):
         assert f"\\newunicodechar{{{ch}}}" in tex
+    # Lines loosen rather than run into the margin (786 overfull lines
+    # in the kingmaker2 build before, one after).
+    assert "\\setlength{\\emergencystretch}{2em}" in tex

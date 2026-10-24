@@ -80,6 +80,10 @@
 
 % === TYPOGRAPHY ===
 \usepackage{microtype}
+% Let TeX loosen a line a little rather than push it into the margin.
+% Without it a long bold name in the appendix's people list ran 27pt past
+% the edge, and chapter text had hundreds of lines a few points over.
+\setlength{\emergencystretch}{2em}
 \usepackage{setspace}
 \setstretch{1.12}
 \usepackage{parskip}
