@@ -295,12 +295,12 @@ def test_unpaired_chapter_writes_ignores_non_chapter_paths() -> None:
     assert unpaired == []
 
 
-def test_unpaired_chapter_writes_surface_in_lifecycle_banner(
-    series_root: Path,
-) -> None:
-    """End-to-end: a command claiming `--wrote ch_NN.md` without
-    `--wrote ch_NN.summary.md` produces a top-of-postamble banner
-    with the regenerate-summary command spelled out."""
+def test_chapter_changed_without_summary_is_held_by_the_summary_gate(series_root: Path) -> None:
+    """End-to-end: a command that changes a chapter's prose and leaves
+    its summary describing the old text can't close. `_end` refuses,
+    keeps the lock, and spells out the stamp command; once the summary
+    is rewritten and stamped, `_end` closes."""
+    from autonovel import lock, summaries
     from autonovel.paths import SeriesLayout
     series = SeriesLayout(root=series_root)
     book_root = series_root / "books" / "the-book"
@@ -308,30 +308,38 @@ def test_unpaired_chapter_writes_surface_in_lifecycle_banner(
     chapters.mkdir(parents=True, exist_ok=True)
     ch5 = chapters / "ch_05.md"
     ch5.write_text("---\nchapter: 5\n---\n\nProse.\n", encoding="utf-8")
+    (chapters / "ch_05.summary.md").write_text("**Plot:** " + "old events. " * 20 + "\n",
+                                               encoding="utf-8")
+    summaries.stamp(ch5)
     lifecycle.begin("autonovel:apply-cuts", "5 --book the-book", series=series)
-    # Modify the chapter (so verify-writes status is "modified" not
-    # "unchanged") but DON'T claim the summary in --wrote.
     ch5.write_text("---\nchapter: 5\n---\n\nNew prose.\n", encoding="utf-8")
     result = lifecycle.end(
         "autonovel:apply-cuts", "5 --book the-book", status="ok",
         wrote=["books/the-book/chapters/ch_05.md"],
         series=series,
     )
-    assert result.verify_report is not None
-    assert result.verify_report.unpaired_chapter_writes == [
-        "books/the-book/chapters/ch_05.md"
-    ]
-    footer = result.footer
-    assert "VERIFY-WRITES" in footer
-    assert "summarize-chapter 5" in footer
-    assert "--book the-book" in footer
-    # Banner leads the footer, not buried.
-    assert footer.find("VERIFY-WRITES") < footer.find("**Done:**")
+    assert result.summary_gate and result.summary_gate[0].chapter == 5
+    assert "SUMMARY GATE" in result.footer
+    assert "autonovel _stamp-summary --book the-book --chapter 5" in result.footer
+    assert lock.read(series.lock_file) is not None  # still held
+    (chapters / "ch_05.summary.md").write_text("**Plot:** " + "new events. " * 20 + "\n",
+                                               encoding="utf-8")
+    summaries.stamp(ch5)
+    result = lifecycle.end(
+        "autonovel:apply-cuts", "5 --book the-book", status="ok",
+        wrote=["books/the-book/chapters/ch_05.md",
+               "books/the-book/chapters/ch_05.summary.md"],
+        series=series,
+    )
+    assert not result.summary_gate
+    assert "**Done:**" in result.footer
+    assert lock.read(series.lock_file) is None
 
 
 def test_unpaired_silent_when_summary_also_claimed(series_root: Path) -> None:
-    """Commands that DO regenerate the summary (revise step 9 etc.)
-    don't trigger the guard."""
+    """Commands that DO regenerate and stamp the summary (revise step 9
+    etc.) pass the gate and don't trigger the unpaired guard."""
+    from autonovel import summaries
     from autonovel.paths import SeriesLayout
     series = SeriesLayout(root=series_root)
     book_root = series_root / "books" / "the-book"
@@ -343,7 +351,8 @@ def test_unpaired_silent_when_summary_also_claimed(series_root: Path) -> None:
     sm5.write_text("**Plot:** old.\n", encoding="utf-8")
     lifecycle.begin("autonovel:revise", "5 --book the-book", series=series)
     ch5.write_text("---\nchapter: 5\n---\n\nNew.\n", encoding="utf-8")
-    sm5.write_text("**Plot:** new.\n", encoding="utf-8")
+    sm5.write_text("**Plot:** " + "new events. " * 20 + "\n", encoding="utf-8")
+    summaries.stamp(ch5)
     result = lifecycle.end(
         "autonovel:revise", "5 --book the-book", status="ok",
         wrote=[
@@ -352,6 +361,7 @@ def test_unpaired_silent_when_summary_also_claimed(series_root: Path) -> None:
         ],
         series=series,
     )
+    assert not result.summary_gate
     assert result.verify_report is not None
     assert result.verify_report.unpaired_chapter_writes == []
 

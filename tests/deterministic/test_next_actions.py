@@ -297,7 +297,7 @@ def test_summary_stale_recommends_summarize_chapter_for_one(
     assert "--force" in (stale.command or "")
 
 
-def test_summary_stale_multi_chapter_uses_all_sweep(
+def test_summary_stale_multi_chapter_uses_stale_sweep(
     late_stage_book: tuple[Path, str],
 ) -> None:
     series, book = late_stage_book
@@ -319,8 +319,50 @@ def test_summary_stale_multi_chapter_uses_all_sweep(
     stale = next(a for a in actions if "stale" in a.title.lower()
                   and "summar" in a.title.lower())
     assert "2,3,4" in stale.title
-    # Multi-chapter case routes to --all sweep, not per-chapter.
-    assert "--all" in (stale.command or "")
+    # Multi-chapter case routes to the --stale sweep, not per-chapter.
+    assert "--stale" in (stale.command or "")
+
+
+def test_summary_stamped_survives_frontmatter_only_edit(
+    late_stage_book: tuple[Path, str],
+) -> None:
+    """The false alarm this signal used to raise after every revision:
+    the summary is written, then the chapter's frontmatter (word_count,
+    status) is rewritten, so the chapter's mtime is newer. A stamped
+    summary is judged by the chapter body, so it stays fresh."""
+    from autonovel import summaries
+    series, book = late_stage_book
+    book_root = series / "books" / book
+    chapter = book_root / "chapters" / "ch_03.md"
+    summary = book_root / "chapters" / "ch_03.summary.md"
+    summaries.stamp(chapter)
+    older = time.time() - 1000
+    os.utime(summary, (older, older))
+    text = chapter.read_text(encoding="utf-8")
+    assert text.startswith("---")
+    chapter.write_text(text.replace("---\n", "---\nstatus: revised\n", 1), encoding="utf-8")
+    actions = next_actions.enumerate_actions(_layout(series), book=book)
+    assert not any("stale" in a.title.lower() and "3" in a.title for a in actions)
+
+
+def test_summary_stamped_goes_stale_when_prose_changes(
+    late_stage_book: tuple[Path, str],
+) -> None:
+    """A summary touched after the prose changed (the old `touch`
+    workaround) used to read as fresh. The fingerprint catches it."""
+    from autonovel import summaries
+    series, book = late_stage_book
+    book_root = series / "books" / book
+    chapter = book_root / "chapters" / "ch_03.md"
+    summary = book_root / "chapters" / "ch_03.summary.md"
+    summaries.stamp(chapter)
+    chapter.write_text(chapter.read_text(encoding="utf-8") + "\nA new paragraph.\n",
+                       encoding="utf-8")
+    newer = time.time() + 100
+    os.utime(summary, (newer, newer))
+    actions = next_actions.enumerate_actions(_layout(series), book=book)
+    stale = [a for a in actions if "stale" in a.title.lower() and "summar" in a.title.lower()]
+    assert len(stale) == 1 and "3" in stale[0].title
 
 
 # --------------------------------------------------------- panel / review staleness

@@ -70,6 +70,11 @@ replacement occurs.
      - `books/{book}/pending_canon.md`
      - every `books/{book}/chapters/*.md`
 
+3a. Use `bash` to run `autonovel mechanical summary-check books/{book}`
+   for each book in the sweep and note which chapters' summaries are
+   `fresh`. The rename rewrites a chapter and its summary alike, so
+   those stay true after it; step 5a records that.
+
 4. Ambiguity scan. For every target, count word-boundary matches of
    `<old-name>` (case-insensitive). If any file also contains a
    substring that overlaps (e.g. renaming `Ana` when `Anatolia`
@@ -91,6 +96,12 @@ replacement occurs.
    (Title, lower, UPPER). Do not attempt to match every possible
    casing — that is a source of bugs; instead rely on the
    ambiguity scan above to catch mixed-case surprises.
+
+5a. For every chapter the rename changed whose summary step 3a found
+   `fresh`, use `bash` to run `autonovel _stamp-summary --book {book}
+   --chapter N` (the summary received the same rename, so it still
+   matches). Leave a summary that was already out of date unstamped:
+   the next command that reads it refreshes it.
 
 6. Use `file_write` to append an audit entry to
    `shared/canon.md` under a `## Renamed <UTC-date>` heading:

@@ -13,6 +13,7 @@ reads:
   - books/{book}/motifs.md
 writes: []
 context_mode: book
+summaries: report
 ---
 
 <purpose>

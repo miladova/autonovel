@@ -21,6 +21,7 @@ reads:
   - books/{book}/chapters/ch_*.md
 writes: []
 context_mode: none
+summaries: report
 ---
 
 <purpose>
@@ -55,13 +56,13 @@ repeatedly.
        `books/{book}/chapters/ch_*.md` mtimes — a brief newer than
        its chapter is the signal that the brief was written but
        revise hasn't run yet (HIGH)
-     - `books/{book}/chapters/ch_NN.summary.md` mtimes vs the
-       corresponding `ch_NN.md` mtimes — a summary older than its
-       chapter means the rolling-context surface every downstream
-       drafter / reviser reads has drifted from the prose (HIGH —
-       continuity is data-integrity, not polish; surfaces a
-       `/autonovel:summarize-chapter --force` recommendation per
-       chapter, or `--all` for multi-chapter sweeps)
+     - `books/{book}/chapters/ch_NN.summary.md` against the chapter
+       — a summary whose recorded fingerprint no longer matches the
+       chapter's text describes prose that is no longer on the page
+       (HIGH — continuity is data-integrity, not polish; surfaces a
+       `/autonovel:summarize-chapter --force` recommendation for one
+       chapter, or `--stale` for several). Commands can't leave one
+       behind (the summary gate), so this means a hand edit.
      - `books/{book}/edit_logs/reader_panel.json` and
        `review.md` (legacy name `opus_review.md`) mtimes vs
        `books/{book}/chapters/ch_*.md` mtimes (staleness)

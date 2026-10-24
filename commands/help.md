@@ -755,9 +755,13 @@ per chapter completed. /autonovel:resume reads it and offers
         Iterative quality pass over a range.
 
   /autonovel:summarize-chapter --stale --book <name>
-        Refresh stale per-chapter .summary.md files (chapters
-        whose .md is newer than the summary). Critical after a
-        sweep where revise step 9 may have silently no-op'd.
+        Refresh every .summary.md that no longer matches its
+        chapter (each summary carries a fingerprint of the chapter
+        text it was written from). You rarely need it: a command
+        that reads summaries refreshes the out-of-date ones first,
+        and a command that changes a chapter can't finish until
+        its summary matches. Use it after editing a chapter by
+        hand.
 
 The lifecycle's verify-writes guard fires a 🔴 banner at the TOP
 of the postamble when claims don't match disk:
@@ -811,9 +815,9 @@ Keyboard:
      copying text
   b  switch to next book in series
 
-⚠ next to the status column = chapter `.md` is newer than its
-.summary.md. Fix: /autonovel:summarize-chapter --stale --book
-<name>.
+⚠ next to the status column = the chapter's text changed after
+its .summary.md was written (usually a hand edit). Fix:
+/autonovel:summarize-chapter --stale --book <name>.
 
 Copy / paste: textual captures mouse events. Hold shift while
 dragging to bypass — most terminals (GNOME Terminal, iTerm2,

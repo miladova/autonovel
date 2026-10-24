@@ -451,68 +451,42 @@ def _brief_newer_than_chapter_actions(book_root: Path, book: str) -> list[NextAc
 def _summary_stale_actions(book_root: Path, book: str) -> list[NextAction]:
     """Per-chapter `.summary.md` files are the load-bearing
     continuity surface. The next chapter's drafter reads them as
-    rolling context; revise reads the prior chapter's summary to
-    pick up cast / threads / story-time. A summary older than its
-    chapter means the chapter has drifted from the summary that
-    downstream commands trust.
+    rolling context; evaluate, the sweeps and the reviewers read them for
+    cast, threads and story time. A summary that no longer matches its
+    chapter hands them a story that is no longer on the page.
 
-    Surfaced 2026-04-30 by author testing: revise step 9
-    (regenerate summary) was silently no-op'd alongside the
-    revise itself, so summaries stayed at v1 while chapters
-    advanced. The verify-writes top-line banner catches this in
-    the postamble; this signal catches it after the fact too —
-    `/autonovel:next` keeps surfacing it until the user runs
-    `/autonovel:summarize-chapter --chapter N` (or revises
-    again, which writes a fresh summary).
+    Freshness is the fingerprint `autonovel _stamp-summary` records
+    (`summaries.state`), not file mtimes, which flagged every revised
+    chapter and missed a summary touched after the prose changed.
+    `_end` refuses to close a command that leaves one behind, and every
+    command that reads summaries refreshes them first, so a stale one
+    here means the prose was edited outside a command (by hand).
+    Summaries from before fingerprints that are not older than their
+    chapter (`unverified`) are not listed: the next command that reads
+    them refreshes them.
 
     HIGH priority: continuity is data-integrity, not polish.
     """
-    chapters_dir = book_root / "chapters"
-    if not chapters_dir.is_dir():
-        return []
-    stale: list[int] = []
-    for ch_path in sorted(chapters_dir.glob("ch_*.md")):
-        if ch_path.name.endswith(".summary.md"):
-            continue
-        summary_path = chapters_dir / f"{ch_path.stem}.summary.md"
-        if not summary_path.is_file():
-            continue
-        try:
-            if ch_path.stat().st_mtime <= summary_path.stat().st_mtime:
-                continue
-        except OSError:  # pragma: no cover
-            continue
-        try:
-            ch_num = int(ch_path.stem.split("_")[-1])
-        except ValueError:
-            continue
-        stale.append(ch_num)
+    from .. import summaries
+    stale = [s.chapter for s in summaries.book_states(book_root) if s.status == "stale"]
     if not stale:
         return []
-    stale.sort()
     chapters_str = ",".join(str(c) for c in stale)
     if len(stale) == 1:
         command = f"/autonovel:summarize-chapter {stale[0]} --book {book} --force"
     else:
-        # summarize-chapter takes one chapter per invocation today;
-        # the user runs it per chapter or sweeps via the --all
-        # mode (which `summarize-chapter.md` documents).
-        command = f"/autonovel:summarize-chapter --all --book {book}"
+        command = f"/autonovel:summarize-chapter --stale --book {book}"
     return [NextAction(
         priority="HIGH",
-        title=f"Regenerate stale chapter summaries: {chapters_str}",
+        title=f"Stale chapter summaries: {chapters_str}",
         command=command,
         rationale=(
-            f"books/{book}/chapters/ has {len(stale)} chapter(s) "
-            f"whose `.summary.md` is older than the `.md` (ch "
-            f"{chapters_str}). Per-chapter summaries are the rolling-"
-            f"context surface every downstream drafter / reviser "
-            f"reads — when they drift from the prose, continuity "
-            f"breaks (the next chapter's drafter sees the old plot, "
-            f"old POV state, old open threads). Re-run "
-            f"`/autonovel:summarize-chapter` for each, or just run "
-            f"`/autonovel:revise --chapter N` again (revise step 9 "
-            f"regenerates the summary as part of the rewrite)."
+            f"The text of chapter(s) {chapters_str} changed after their "
+            f"continuity summaries were written, outside a command (a "
+            f"command can't close until its summaries match). Every "
+            f"command that reads summaries (draft, the sweeps, evaluate, "
+            f"the reviewers) refreshes these before reading them; run "
+            f"`/autonovel:summarize-chapter` to refresh them now."
         ),
         book=book,
     )]

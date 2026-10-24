@@ -190,16 +190,24 @@ get buried under a long sweep closer.
   `pending_canon.md` only grows when new facts surface) — review
   before re-running.
 - `chapter file(s) were modified WITHOUT regenerating their .summary.md` —
-  the new structural unpaired-chapter guard (2026-04-30 PM)
-  catches commands that mutate `chapters/ch_NN.md` without
-  regenerating `chapters/ch_NN.summary.md`. The summary is the
-  rolling-context surface every downstream drafter / reviser
-  reads — when prose drifts from the summary, continuity breaks
-  (the next chapter sees the OLD cast / threads / POV state).
-  The banner spells out the exact `summarize-chapter --force`
-  invocation per chapter; run that to refresh, or accept the
-  `/autonovel:next` nag which surfaces the same shape via the
-  stale-summary HIGH signal.
+  a chapter was claimed in `--wrote` and its summary doesn't match
+  it (stale or missing). Since the summary gate (below) holds any
+  command that changed a chapter's prose, this now only fires for a
+  summary from before fingerprints that is older than its chapter.
+  The banner spells out the `summarize-chapter --force` invocation.
+
+**`🔴 SUMMARY GATE: _end did not close this command`** (exit 3). The
+command changed a chapter's text and left its continuity summary
+describing the old text. Every summary carries a fingerprint of the
+chapter it was written from (`summary_of:` in its frontmatter, written
+by `autonovel _stamp-summary`); `_end` compares the chapters the run
+changed (against `_begin`'s checkpoint; frontmatter-only edits don't
+count) with their summaries and keeps the lock until each matches. The
+command's model rewrites each listed summary from the chapter, stamps
+it, and runs `_end` again; the postamble tells it to. If you hit it
+by hand, do the same, or run `_end --status error` to abandon the run.
+Frontmatter (`word_count`, `status`, `title`) never trips it, which is
+what used to make every revised chapter look stale.
 
 The banner is informational — the command exited `ok` and the
 lock has been released. Decide whether to re-run based on the

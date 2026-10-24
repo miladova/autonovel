@@ -12,6 +12,7 @@ reads:
   - books/*/eval_logs/*.json
 writes: []
 context_mode: none
+summaries: report
 ---
 
 <purpose>

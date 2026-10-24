@@ -2467,7 +2467,54 @@ same pass. Also: the draft smoke test's 600 s limit dated from April and
 a draft with a cold first reader no longer fits; raised to 1800 s. +6
 tests.
 
+### 2026-10-24 — chapter summaries always match their chapters
+
+The author, reading a letter that said fourteen kingmaker2 summaries were
+"stale": this must never happen, least of all when the summaries are what
+the next chapter is drafted from. It had been filed twice (2026-10-15 and
+2026-10-23) and never fixed. Three faults. Staleness was judged by file
+mtimes, so every revised chapter read as stale (revise writes the summary,
+then the chapter's `word_count` / `status`), the warning became noise, and
+the model treated it as the footer's optional "💡 Maybe try"; mtimes were
+also blind to a summary touched after the prose changed (the `touch`
+workaround) and are scrambled by a fresh clone. Nothing refreshed a summary
+before it was read: draft step 8 said "note the gap but do not regenerate
+it inline". And nothing stopped a command (or a hand edit) from changing a
+chapter after its summary was written.
+
+`summaries.py`: a summary records a fingerprint of the chapter body it was
+written from (`summary_of:` in its frontmatter; the body after the
+frontmatter and the `# Title` line, whitespace-normalised, sha256[:16]),
+written by the new `autonovel _stamp-summary --book B --chapter N`. States:
+fresh / stale / unverified (from before fingerprints, not older than its
+chapter) / missing. `autonovel mechanical summary-check <book>` lists them.
+Producers stamp: draft 13, revise 9, summarize-chapter 7, draft-pass and
+revision-pass per chapter (with a check after each chapter), add-subplot,
+deepen-character, foreshadow, lengthen, revoice, shorten, merge/split
+(renumber-only summaries keep their fingerprint), apply-cuts (re-read and
+stamp; cuts rarely change what the summary says), rename-character (stamps
+the ones that were fresh before the rename). Consumers refresh: a command
+whose `reads:` names a `.summary.md` gets, from `_begin`, a `summaries to
+refresh:` line naming every summary that isn't fresh (leaving out a chapter
+the command rewrites with its summary; the refreshed files join the
+checkpoint), and a shared preamble step (`adapters/base.py
+summary_refresh_step`, all three runtimes; Claude Code adds `Task`) has one
+subagent per chapter rewrite and stamp each before the workflow reads any.
+Display commands opt out with the new frontmatter key `summaries: report`
+(summarize-chapter, chapter-summary, summaries, dashboard, next, story-map,
+diff, series-arc; schema updated). The gate: `_end` compares the chapters
+this run changed (against its own checkpoint, found by the held lock's
+start; frontmatter-only edits don't count) with their summaries and, if any
+isn't fresh, exits 3 with a SUMMARY GATE banner, keeps the lock, and names
+the stamp command; the postamble tells the model to fix and re-run. A
+missing summary passes only for a command that writes none (import-book).
+The claim-based unpaired-chapter warning now fires only when the summary
+really doesn't match. `chapter_summary`, `structure_dossier`, `next` and
+the TUI use the fingerprint. Legacy unstamped summaries are refreshed once,
+the first time a summary-reading command runs. +19 tests (2 rewritten).
+
 ## Tests last known green
+- Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (summaries always match their chapters) — **2266 passing, 1 skipped** (+19).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-23 (whole-book order) — **2247 passing, 1 skipped** (+6).
 - Tier 3 (revision smoke: evaluate, adversarial-edit, apply-cuts, brief, revise, shorten): 2026-10-23 — **6/6 green** (40 min, subscription auth).
 - Tier 3 (draft smoke, cold first reader included): 2026-10-23 — **1/1 green (19m40s)** after raising its limit to 1800 s; it timed out twice at the April 600 s limit.

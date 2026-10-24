@@ -62,14 +62,17 @@ what the user asks for. The sweet spot for compressed chapters is
    prose. Use `file_write` to overwrite
    `books/{book}/chapters/ch_{chapter}.summary.md` following the
    canonical 7-section template defined in `commands/draft.md`
-   step 12 (Location, Plot, POV state, Cast on stage, Threads
+   step 13 (Location, Plot, POV state, Cast on stage, Threads
    opened, Threads closed, Story time). 150–250 words total. The
    per-chapter summary is the rolling-context surface every
    downstream drafter / reviser reads — skipping this regeneration
    leaves the summary stale and continuity drifts (the next
    chapter's drafter sees the OLD cast / threads / POV state).
-   The lifecycle's verify-writes guard catches the unpaired-chapter
-   case and prints a 🔴 banner if you skip; don't skip.
+   Then use `bash` to run `autonovel _stamp-summary --book {book} --chapter {chapter}`,
+   which records that the summary matches the chapter as it now stands.
+   Write the summary after your last change to the chapter's prose: `_end`
+   will not close the command while the summary describes older text (the
+   summary gate).
 </workflow>
 
 <acceptance>

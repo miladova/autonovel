@@ -273,7 +273,9 @@ that stalled long sweeps around chapter 8-10.
          books/{book}/edit_logs/first_read_ch{N:02d}_2.md).
          Write books/{book}/chapters/ch_{N:02d}.md with YAML
          frontmatter + the 150-250 word
-         books/{book}/chapters/ch_{N:02d}.summary.md. Append
+         books/{book}/chapters/ch_{N:02d}.summary.md, then run
+         `autonovel _stamp-summary --book {book} --chapter {N}`
+         (draft step 13). Append
          candidate canon facts to
          books/{book}/pending_canon.md.
 
@@ -325,12 +327,21 @@ that stalled long sweeps around chapter 8-10.
             (~/.claude/commands/autonovel/revise.md: it holds the
             cast to draft step 3d and answers the first reader's
             report). Regenerate
-            books/{book}/chapters/ch_{N:02d}.summary.md.
+            books/{book}/chapters/ch_{N:02d}.summary.md and stamp
+            it (`autonovel _stamp-summary --book {book} --chapter {N}`).
          c. Re-evaluate. score_v2.
          d. Keep whichever version scored higher (on a tie of
             the mean, the one with the higher weakest_score); the
             other version is in the preamble checkpoint and
-            recoverable via autonovel rollback.
+            recoverable via autonovel rollback. Restore the kept
+            version's summary with it.
+         e. Last, run `autonovel mechanical summary-check
+            books/{book} --chapters {N}`. If chapter N is not
+            `fresh` (its prose changed after the summary, or the
+            kept version's summary was lost), rewrite the summary
+            from the chapter as it now stands and stamp it. Chapter
+            N+1's drafter reads this summary as its memory of
+            chapter N.
 
       5. PROMOTE CANON (skip if --no-promote):
          **invoke the safe in-sweep helper via Bash:**

@@ -55,7 +55,11 @@ to start.
   invented people yields four entries, two marked invented, in
   first-appearance order.
 
-- **Every revised chapter's summary reads as stale (opened 2026-10-23).**
+- ~~**Every revised chapter's summary reads as stale (opened 2026-10-23).**~~
+  **Shipped 2026-10-24** (STATE.md, "chapter summaries always match their
+  chapters"): summaries carry a fingerprint of the chapter body, commands
+  that read summaries refresh the ones that don't match, and `_end` holds a
+  command that leaves one behind.
   After the kingmaker2 revision pass, `_end` offered "regenerate stale
   chapter summaries" for 13 of the 15 revised chapters, although revise had
   regenerated each one. The summary is written at revise step 9, and the
@@ -285,8 +289,8 @@ to start.
   consumed so the user can see the editorial letter being worked through;
   (6) the review parser keys items to chapters by "Ch N" text — fine for
   now, brittle if a reviewer writes "chapter five".
-  (7) **False stale-summary hints after every sweep (seen 3× on
-  2026-10-15).** The per-chapter worker writes `ch_NN.summary.md`, then the
+  (7) ~~**False stale-summary hints after every sweep (seen 3× on
+  2026-10-15).**~~ Shipped 2026-10-24 with the fingerprint (entry above). The per-chapter worker writes `ch_NN.summary.md`, then the
   evaluate step rewrites the chapter's frontmatter (`word_count`, `status`),
   so the chapter's mtime ends up newer than its summary and `next` /
   the postamble hint say "regenerate stale chapter summaries" for every

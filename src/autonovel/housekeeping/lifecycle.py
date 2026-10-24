@@ -13,7 +13,7 @@ import shlex
 from dataclasses import dataclass
 from pathlib import Path
 
-from .. import checkpoints, command_log, last_action, lock, project as project_mod
+from .. import checkpoints, command_log, last_action, lock, project as project_mod, summaries
 from ..adapters.base import CommandDef, discover_commands
 from ..adapters.installer import _commands_source_dir
 from ..paths import SeriesLayout, load_series, outline_chapter_numbers
@@ -29,6 +29,9 @@ class BeginResult:
     resolved_book: str | None = None
     book_inferred: bool = False  # True if `--book` was missing and we filled it in
     abandoned_lock: lock.LockInfo | None = None  # set when we took over a stale lock
+    # Chapters whose continuity summary no longer matches the chapter, for
+    # a command that reads summaries; the preamble refreshes them first.
+    summaries_to_refresh: list[summaries.SummaryState] | None = None
 
 
 class BeginError(RuntimeError):
@@ -51,6 +54,25 @@ def begin(command_name: str, arg_string: str, *, runtime: str = "claude",
     resolved_book = ctx.get("book")
 
     resolved = _resolve_writes(cmd, ctx, series.root)
+
+    # A command that reads chapter summaries gets the list of those that
+    # no longer match their chapter, and the preamble refreshes them
+    # before the workflow reads any. A chapter this command rewrites
+    # together with its summary is left out (it is about to be replaced),
+    # and the refreshed summaries join the checkpoint so rollback covers
+    # them.
+    to_refresh: list[summaries.SummaryState] = []
+    if resolved_book and cmd.refreshes_summaries:
+        book_root = series.books / resolved_book
+        rewritten = {p.resolve() for p in resolved}
+        for st in summaries.book_states(book_root):
+            if not st.needs_refresh:
+                continue
+            if st.chapter_path.resolve() in rewritten and st.summary_path.resolve() in rewritten:
+                continue
+            to_refresh.append(st)
+        resolved = resolved + [st.summary_path for st in to_refresh
+                               if st.summary_path.resolve() not in rewritten]
 
     lock_info, abandoned = lock.acquire_with_takeover(
         series.lock_file,
@@ -76,6 +98,7 @@ def begin(command_name: str, arg_string: str, *, runtime: str = "claude",
         resolved_book=resolved_book,
         book_inferred=book_inferred,
         abandoned_lock=abandoned,
+        summaries_to_refresh=to_refresh,
     )
 
 
@@ -84,6 +107,9 @@ class EndResult:
     last_action: last_action.LastAction | None
     footer: str
     verify_report: checkpoints.WriteVerificationReport | None = None
+    # Set when `_end` refused to close: chapters this command changed
+    # whose summary no longer matches them. The lock stays held.
+    summary_gate: list[summaries.SummaryState] | None = None
 
 
 def end(command_name: str, arg_string: str, *, status: str, wrote: list[str],
@@ -124,6 +150,15 @@ def end(command_name: str, arg_string: str, *, status: str, wrote: list[str],
             **_usage_kwargs(usage),
         )
         return EndResult(last_action=None, footer="")
+
+    # The summary gate: a command that changed a chapter's prose may not
+    # close while that chapter's continuity summary still describes the
+    # old text, because the next drafter reads it as the book's memory.
+    # Refuse, keep the lock, and say exactly what to do.
+    gate = _summary_gate(series, cmd)
+    if gate:
+        return EndResult(last_action=None, footer=_render_summary_gate(gate, series),
+                         summary_gate=gate)
 
     # Verify the LLM's `--wrote` claims against the checkpoint
     # snapshot. The LLM can pass `--wrote books/x/y.md` without
@@ -234,7 +269,122 @@ def _verify_writes(series: SeriesLayout, command_name: str,
     # from earlier commands (e.g. nested sub-agent invocations).
     matching = [cp for cp in reversed(cps) if cp.command == command_name]
     cp = matching[0] if matching else cps[-1]
-    return checkpoints.verify_writes(cp, series.root, claimed)
+    report = checkpoints.verify_writes(cp, series.root, claimed)
+    # A chapter claimed without its summary is only a problem when the
+    # summary doesn't match the chapter (the summary gate has already
+    # held the command for any it changed); a frontmatter-only write or
+    # a summary left out of the claim list is not.
+    report.unpaired_chapter_writes = [
+        p for p in report.unpaired_chapter_writes
+        if (series.root / p).is_file()
+        and summaries.state(series.root / p).status in ("stale", "missing")
+    ]
+    return report
+
+
+_CHAPTER_REL_RE = re.compile(r"^books/[^/]+/chapters/ch_\d+\.md$")
+
+
+def _run_checkpoint(series: SeriesLayout, command_name: str) -> checkpoints.Checkpoint | None:
+    """The checkpoint `_begin` took for the run now closing: the newest
+    one for this command taken no earlier than the held lock's start.
+    None when there is no lock or no such checkpoint (nothing to gate)."""
+    from datetime import datetime, timezone
+    info = lock.read(series.lock_file)
+    if info is None or info.command != command_name:
+        return None
+    try:
+        started = datetime.fromisoformat(info.started_at)
+    except ValueError:
+        return None
+    if started.tzinfo is None:
+        started = started.replace(tzinfo=timezone.utc)
+    started = started.replace(microsecond=0)
+    for cp in reversed(checkpoints.list_checkpoints(series.checkpoints)):
+        if cp.command != command_name:
+            continue
+        try:
+            taken = datetime.strptime(cp.timestamp[:19], "%Y-%m-%dT%H-%M-%S").replace(
+                tzinfo=timezone.utc)
+        except ValueError:
+            continue
+        if taken >= started:
+            return cp
+        break
+    return None
+
+
+def _summary_gate(series: SeriesLayout, cmd: CommandDef) -> list[summaries.SummaryState]:
+    """Chapters whose prose this run changed (against `_begin`'s
+    checkpoint; frontmatter-only edits don't count) and whose summary no
+    longer matches them. A chapter left without any summary is let
+    through only when the command writes no summaries at all (an import:
+    the next command that reads summaries writes them)."""
+    cp = _run_checkpoint(series, cmd.name)
+    if cp is None:
+        return []
+    writes_summaries = any(w.endswith(".summary.md") for w in cmd.writes)
+    out: list[summaries.SummaryState] = []
+    for rel in cp.files:
+        if not _CHAPTER_REL_RE.match(rel):
+            continue
+        live = series.root / rel
+        if not live.is_file():
+            continue
+        bak = cp.directory / (rel + ".bak")
+        try:
+            new_fp = summaries.body_hash(live.read_text(encoding="utf-8"))
+            if bak.is_file() and summaries.body_hash(bak.read_text(encoding="utf-8")) == new_fp:
+                continue  # prose unchanged
+        except OSError:  # pragma: no cover
+            continue
+        st = summaries.state(live)
+        if st.status == "fresh":
+            continue
+        if st.status == "missing" and not writes_summaries:
+            continue
+        out.append(st)
+    return sorted(out, key=lambda s: s.chapter)
+
+
+def _render_summary_gate(gate: list[summaries.SummaryState], series: SeriesLayout) -> str:
+    def rel(p: Path) -> str:
+        try:
+            return str(p.resolve().relative_to(series.root.resolve()))
+        except ValueError:
+            return str(p)
+    book = rel(gate[0].chapter_path).split("/")[1]
+    nums = ", ".join(str(s.chapter) for s in gate)
+    lines = [
+        "=" * 60,
+        "🔴 SUMMARY GATE: _end did not close this command",
+        "=" * 60,
+        "",
+        f"This command changed the text of chapter(s) {nums}, and their continuity",
+        "summaries still describe the text as it was. The next drafter and reviser",
+        "read these summaries as their memory of the book, so the command cannot",
+        "finish until each one matches its chapter again. The lock is still held.",
+        "",
+    ]
+    for s in gate:
+        lines.append(f"  chapter {s.chapter}: {rel(s.summary_path)} ({s.reason})")
+    lines += [
+        "",
+        "For each chapter: read the chapter as it now stands, rewrite its summary",
+        "(150-250 words in the seven sections Location, Plot, POV state, Cast on",
+        "stage, Threads opened, Threads closed, Story time), then run",
+        "",
+        "    autonovel _stamp-summary --book " + book + " " +
+        " ".join(f"--chapter {s.chapter}" for s in gate),
+        "",
+        "If the change could not have altered the summary (a spelling fix, a",
+        "renamed name the summary also received), re-read the summary against",
+        "the chapter and stamp it without rewriting.",
+        "",
+        "Then run the same `autonovel _end` again with the same flags.",
+        "=" * 60,
+    ]
+    return "\n".join(lines)
 
 
 def _render_verify_warning(report: "checkpoints.WriteVerificationReport") -> str:

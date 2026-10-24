@@ -1,11 +1,13 @@
 ---
 name: autonovel:summarize-chapter
-description: Backfill a 150-250 word continuity summary for a chapter that was drafted before summaries were standard.
+description: Write or refresh a chapter's 150-250 word continuity summary and stamp it with the chapter's fingerprint — one chapter, every chapter, or only those whose summary no longer matches.
 argument-hint: "<chapter-number> | --all | --stale [--book <short-name>] [--force]"
 model_tier: standard
 allowed-tools:
   - file_read
   - file_write
+  - bash
+  - task
 reads:
   - project.yaml
   - books/{book}/voice.md
@@ -15,14 +17,18 @@ reads:
 writes:
   - books/{book}/chapters/ch_{chapter}.summary.md
 context_mode: book
+summaries: report
 ---
 
 <purpose>
 Produce a 150-250 word continuity summary at
 `books/{book}/chapters/ch_{chapter}.summary.md` for an already-drafted
-chapter. `/autonovel:draft` and `/autonovel:revise` write summaries
-themselves; this command exists to backfill chapters drafted on an
-earlier autonovel version that didn't yet ship the summary step.
+chapter, and stamp it with the fingerprint of the chapter it summarises
+(`autonovel _stamp-summary`). `/autonovel:draft` and `/autonovel:revise`
+write and stamp summaries themselves, and every command that reads
+summaries refreshes the out-of-date ones before it reads them; this
+command backfills chapters drafted before summaries existed, and
+refreshes a summary on demand after a chapter was edited by hand.
 
 Future drafts read every prior summary as continuity context. Without
 summaries, chapter N+5 only has chapter N+4's last 1000 words to lean
@@ -36,40 +42,39 @@ stage, what threads opened, what threads closed, where in story time.
 <workflow>
 1. Parse `$ARGUMENTS`. Three modes:
 
-   - **`<chapter-number>`** — backfill or refresh the summary for
-     one chapter (the original mode).
-   - **`--all`** — sweep every chapter under
-     `books/{book}/chapters/ch_*.md` that lacks a summary OR whose
-     summary is older than the chapter file. Implies `--force` for
-     stale ones; preserves up-to-date ones unless explicit
-     `--force` is also passed.
-   - **`--stale`** — same as `--all` but only refreshes summaries
-     that are mtime-stale (chapter newer than summary), skipping
-     chapters whose summary is current. The right shape after a
-     long revise sweep that may have silently no-op'd revise step
-     9 on some chapters.
+   - **`<chapter-number>`** — write or refresh the summary for one
+     chapter.
+   - **`--stale`** — every chapter whose summary no longer matches the
+     chapter as it now stands, or has none. Use `bash` to run
+     `autonovel mechanical summary-check books/{book}` and take its
+     `needs_refresh` list: `stale` (the chapter's text changed after
+     the summary was written), `unverified` (written before summaries
+     carried a fingerprint) and `missing`. The right shape after a
+     chapter was edited by hand.
+   - **`--all`** — every drafted chapter under
+     `books/{book}/chapters/ch_*.md`, whatever its state. Implies
+     `--force`.
 
    `--book` defaults via `_begin`. `--force` (in single-chapter
-   mode) overwrites an existing summary (default: refuse if a
-   non-trivial summary already exists). Missing chapter number AND
+   mode) overwrites an existing summary that is still `fresh`
+   (default: refuse, naming the file). Missing chapter number AND
    no `--all`/`--stale` → stop with usage hint.
 
-   For `--all` / `--stale`, run steps 2-7 once per target chapter,
-   in ascending chapter order. Print a one-line per-chapter
-   progress marker so the user can see the sweep advancing. Skip
-   chapters whose summary is up-to-date (in `--stale` mode) or
-   whose summary is non-trivial without `--force` (in `--all`
-   mode). At the end, emit a single summary line: `Refreshed N of
-   M chapter(s); skipped <list>` so the user can confirm coverage.
+   For `--all` / `--stale` with more than one target, spawn one `task`
+   subagent per chapter, up to three at a time, each running steps 2–7
+   for its chapter, so the chapters don't fill this conversation. Print
+   a one-line per-chapter progress marker as each returns. At the end,
+   run `autonovel mechanical summary-check books/{book}` again and emit
+   a single line: `Refreshed N of M chapter(s); all summaries match
+   their chapters` (or name any that still don't).
 
 2. Use `file_read` on `project.yaml` to resolve the book entry,
    `pov`, and `defaults.chapter_target_words`.
 
-3. Use `file_read` on
-   `books/{book}/chapters/ch_{chapter}.summary.md` if it exists. If
-   the file already contains a populated summary (>100 chars, not
-   the template stub) and `--force` was not supplied, stop with a
-   one-line message naming the existing file. Do not overwrite.
+3. In single-chapter mode without `--force`, use `bash` to run
+   `autonovel mechanical summary-check books/{book} --chapters
+   {chapter}`. If the chapter's summary is `fresh`, stop with a
+   one-line message naming the file: it already matches the chapter.
 
 4. Use `file_read` on `books/{book}/chapters/ch_{chapter}.md`. If
    the chapter does not exist, stop with a one-line message —
@@ -108,7 +113,12 @@ stage, what threads opened, what threads closed, where in story time.
 
 7. Use `file_write` to save the summary at
    `books/{book}/chapters/ch_{chapter}.summary.md`. Plain markdown,
-   no frontmatter, no `# Heading` — just the seven labelled sections.
+   no `# Heading`, no frontmatter of your own — just the seven
+   labelled sections. Then use `bash` to run
+   `autonovel _stamp-summary --book {book} --chapter {chapter}`; it
+   adds a two-line frontmatter (`summary_of:` and the chapter's
+   fingerprint) that marks the summary as matching the chapter as it
+   now stands.
 </workflow>
 
 <acceptance>
@@ -117,4 +127,6 @@ stage, what threads opened, what threads closed, where in story time.
 - The summary names the chapter's POV character, contains the
   chapter's `story_time`, and lists at least one thread (opened or
   closed) — these are the load-bearing fields future drafts read.
+- `autonovel mechanical summary-check books/{book}` reports the
+  chapter's summary `fresh`.
 </acceptance>

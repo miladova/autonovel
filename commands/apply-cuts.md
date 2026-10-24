@@ -67,23 +67,16 @@ dominate cuts; default to those two types unless the user says otherwise.
    ones the adversarial-editor's quote was imprecise about — flag them
    so the user can hand-apply or re-run the edit).
 
-6. **The chapter summary is now stale** —
-   `books/{book}/chapters/ch_{chapter}.summary.md` references the
-   pre-cuts prose. apply-cuts is light-tier and doesn't run the
-   LLM, so we don't regenerate the summary inline (that would bump
-   the tier). Print a closing line directing the user to refresh
-   continuity:
-
-   ```
-   ⚠️  ch_NN.summary.md is now older than ch_NN.md. Run
-       /autonovel:summarize-chapter NN --book {book} --force
-   to regenerate (or accept the /autonovel:next nag, which will
-   surface this until you do).
-   ```
-
-   The lifecycle's verify-writes guard will also fire its 🔴 banner
-   in the postamble (chapter modified without paired summary write),
-   so this step is belt-and-suspenders — the user can't miss it.
+6. **Bring the chapter summary back in line.** The cuts changed the
+   chapter's prose, so `books/{book}/chapters/ch_{chapter}.summary.md`
+   no longer carries a matching fingerprint, and `_end` will not close
+   this command until it does (the summary gate). Use `file_read` on the
+   summary and set it against the cuts you applied: cuts remove
+   redundancy, so the summary almost always still holds. If nothing it
+   says depended on a removed passage, leave its text alone; if one
+   sentence did (a removed line it quotes or a beat it names), rewrite
+   that sentence with `file_write`. Then use `bash` to run
+   `autonovel _stamp-summary --book {book} --chapter {chapter}`.
 </workflow>
 
 <acceptance>

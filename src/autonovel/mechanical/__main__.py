@@ -11,6 +11,7 @@ Subcommands:
   scenes <path> [--full]           Split a chapter into scenes by *** / --- breaks.
   motifs <book> [--format]         Per-chapter motif density (reads books/<book>/motifs.md).
   chapter-summary <book> [--format] One-line-per-chapter overview (date/POV/score/cast/plot).
+  summary-check <book> [--chapters] Is each continuity summary still a summary of its chapter (fresh/stale/unverified/missing)?
   structure-dossier <book>         Pack outline + summaries + word counts + story_time + scores for structure-review.
   structure-validate <book|json>   Validate structure_review.json + compute the book-level stop-revising gate.
   design-validate <book> [--outline] Check design.md's shape (DESIGN.md Part II); --outline also checks outline.md carries it.
@@ -663,6 +664,60 @@ def _cmd_prolepsis(args: argparse.Namespace) -> int:
         json.dump(report, sys.stdout, indent=2, ensure_ascii=False)
         sys.stdout.write("\n")
     return 0
+
+
+def _cmd_summary_check(args: argparse.Namespace) -> int:
+    """Which chapters' continuity summaries no longer match the chapter
+    (the fingerprint `autonovel _stamp-summary` records). Data only:
+    the command that reads summaries refreshes the ones listed."""
+    from ..summaries import book_states
+    book_root = Path(args.book_root)
+    if not (book_root / "chapters").is_dir():
+        print(f"summary-check: no chapters/ under {book_root}", file=sys.stderr)
+        return 2
+    wanted = None
+    if args.chapters:
+        try:
+            wanted = set(_parse_chapter_spec(args.chapters))
+        except ValueError:
+            print(f"summary-check: bad --chapters {args.chapters!r} (use 3, 1-5 or 2,4,7)",
+                  file=sys.stderr)
+            return 2
+    states = book_states(book_root, wanted)
+    refresh = [s.chapter for s in states if s.needs_refresh]
+    if args.format == "markdown":
+        lines = ["| Chapter | Summary | Why |", "|---|---|---|"]
+        for s in states:
+            lines.append(f"| {s.chapter} | {s.status} | {s.reason} |")
+        lines.append("")
+        if refresh:
+            lines.append(f"{len(refresh)} of {len(states)} summaries need refreshing: "
+                         + ", ".join(map(str, refresh)) + ".")
+        else:
+            lines.append(f"All {len(states)} summaries match their chapters.")
+        sys.stdout.write("\n".join(lines) + "\n")
+    else:
+        json.dump({
+            "book": book_root.name,
+            "chapters": [s.to_dict(book_root.parent.parent) for s in states],
+            "needs_refresh": refresh,
+        }, sys.stdout, indent=2, ensure_ascii=False)
+        sys.stdout.write("\n")
+    return 0
+
+
+def _parse_chapter_spec(spec: str) -> list[int]:
+    out: set[int] = set()
+    for token in spec.split(","):
+        token = token.strip()
+        if not token:
+            continue
+        if "-" in token:
+            lo, hi = token.split("-", 1)
+            out.update(range(int(lo), int(hi) + 1))
+        else:
+            out.add(int(token))
+    return sorted(out)
 
 
 def _cmd_structure_dossier(args: argparse.Namespace) -> int:
@@ -2363,6 +2418,17 @@ def main(argv: list[str] | None = None) -> int:
     cs.add_argument("--format", choices=("markdown", "json"), default="markdown",
                     help="Output format (default: markdown table).")
     cs.set_defaults(func=_cmd_chapter_summary)
+
+    smc = sub.add_parser("summary-check",
+                         help="Is each chapter's continuity summary still a summary of the chapter "
+                              "as it now stands? fresh / stale / unverified / missing, from the "
+                              "fingerprint `autonovel _stamp-summary` records.")
+    smc.add_argument("book_root", help="Path to the book dir (parent of chapters/).")
+    smc.add_argument("--chapters", default=None,
+                     help="Only these chapters: 3, 1-5 or 2,4,7 (default: every drafted chapter).")
+    smc.add_argument("--format", choices=("json", "markdown"), default="json",
+                     help="Output format (default: json).")
+    smc.set_defaults(func=_cmd_summary_check)
 
     plp = sub.add_parser("prolepsis",
                          help="Candidate narrator flash-forwards per chapter (sentences that reach "

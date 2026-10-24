@@ -191,6 +191,16 @@ each of these and the workaround is in the codebase:
   one-line "💡 Maybe try:" hint in every command's postamble
   drawn from the same enumerator, so most of the time you don't
   need to call `/autonovel:next` separately.
+- **Chapter summaries always match their chapters.** Each
+  `ch_NN.summary.md` is the next drafter's memory of that chapter, and
+  carries a fingerprint of the chapter text it was written from. A
+  command that reads summaries (draft, the sweeps, evaluate, the
+  reviewers) refreshes any that no longer match before it reads them
+  (`_begin` prints `summaries to refresh:`), and a command that changes
+  a chapter can't finish until that chapter's summary matches again
+  (the summary gate). If you edit a chapter by hand, the next such
+  command refreshes its summary, or run
+  `/autonovel:summarize-chapter --stale --book <name>`.
 - **After the last chapter, the whole-book work has one order**, and
   `/autonovel:next` and every footer walk it: the editor's letter
   (`/autonovel:developmental-edit`), the structure review, a revision pass

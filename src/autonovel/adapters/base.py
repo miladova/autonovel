@@ -17,6 +17,13 @@ import yaml
 REQUIRED_FRONTMATTER = ("name", "description", "model_tier", "allowed-tools")
 VALID_MODEL_TIERS = {"heavy", "standard", "light"}
 VALID_CONTEXT_MODES = {"none", "book", "series"}
+# `summaries:` — what a command that reads chapter summaries needs of
+# them. `refresh` (the default when `reads:` names a `.summary.md`):
+# `_begin` lists every summary that no longer matches its chapter and the
+# preamble brings each up to date before the workflow reads any.
+# `report`: the command only displays summaries (a table, a map, a
+# status line) and marks the out-of-date ones instead.
+VALID_SUMMARY_MODES = {"refresh", "report"}
 GENERIC_TOOL_NAMES = {
     "file_read",
     "file_write",
@@ -53,6 +60,20 @@ class CommandDef:
     @property
     def stem(self) -> str:
         return self.name.split(":", 1)[1] if ":" in self.name else self.name
+
+    @property
+    def reads_summaries(self) -> bool:
+        return any(r.endswith(".summary.md") for r in self.reads)
+
+    @property
+    def refreshes_summaries(self) -> bool:
+        """True when `_begin` must list out-of-date chapter summaries
+        and the preamble must refresh them before the workflow reads
+        one (see VALID_SUMMARY_MODES)."""
+        mode = self.raw_frontmatter.get("summaries")
+        if mode is None:
+            return self.reads_summaries
+        return mode == "refresh"
 
 
 def parse_command(path: Path) -> CommandDef:
@@ -120,7 +141,57 @@ def validate_frontmatter(fm: dict[str, Any]) -> list[str]:
     for key in ("reads", "writes"):
         if key in fm and not isinstance(fm[key], list):
             problems.append(f"`{key}` must be a list")
+    mode = fm.get("summaries")
+    if mode is not None and mode not in VALID_SUMMARY_MODES:
+        problems.append(
+            f"`summaries` must be one of {sorted(VALID_SUMMARY_MODES)}; got {mode!r}"
+        )
     return problems
+
+
+def summary_refresh_step(cmd: "CommandDef", *, shell: str, task: str,
+                         book: str = "{book}") -> str:
+    """The preamble step that brings out-of-date chapter summaries up
+    to date before a command reads them. Empty for commands that don't
+    read summaries (or only display them). One text for every adapter;
+    each passes its own tool names."""
+    if not cmd.refreshes_summaries:
+        return ""
+    return f"""
+**Chapter summaries are checked before this command reads them.** If
+`_begin` printed a `summaries to refresh:` line, each chapter it names
+has a continuity summary that no longer matches the chapter as it now
+stands (or has none). Do not read those summaries. Bring each one up to
+date first, with one `{task}` subagent per chapter, up to three at a
+time, so the chapters don't fill this conversation. Each subagent reads
+`books/{book}/chapters/ch_NN.md` in full; overwrites
+`books/{book}/chapters/ch_NN.summary.md` with a 150–250-word continuity
+summary in seven labelled sections, `**Location:**`, `**Plot:**`,
+`**POV state:**`, `**Cast on stage:**`, `**Threads opened:**`,
+`**Threads closed:**` and `**Story time:**` (the format
+`/autonovel:summarize-chapter` defines); and then uses `{shell}` to run
+`autonovel _stamp-summary --book {book} --chapter N`, which records that
+the summary matches the chapter. When every subagent has finished, run
+`autonovel mechanical summary-check books/{book}` with `{shell}`, and
+continue only when its `needs_refresh` list holds none of the chapters
+`_begin` named. Never draft, revise, judge or answer from one of those
+summaries before it has been refreshed.
+"""
+
+
+def summary_gate_note(*, shell: str) -> str:
+    """The postamble paragraph that tells the model what to do when
+    `_end` refuses to close because a chapter this command changed has
+    a summary that no longer matches it."""
+    return f"""
+**The summary gate.** If `_end` exits 3 and prints `SUMMARY GATE`, this
+command changed a chapter's text and left its continuity summary
+describing the old text. Do what the banner says for each chapter it
+lists (rewrite the summary from the chapter as it now stands, then run
+`autonovel _stamp-summary`), then run the same `_end` again with the
+same flags. The lock stays held until `_end` exits 0. Do not end your
+turn while the gate is shut.
+"""
 
 
 def discover_commands(commands_dir: Path) -> list[CommandDef]:

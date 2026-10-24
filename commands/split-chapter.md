@@ -69,12 +69,12 @@ never ask the LLM to rename files one-by-one.
    affected `books/{book}/chapters/ch_NN.summary.md` following
    the canonical 7-section template (Location, Plot, POV state,
    Cast on stage, Threads opened, Threads closed, Story time;
-   150–250 words total per chapter). For renumber-only ops the
-   summary content is identical but the file path moved — re-write
-   to ensure mtime matches the chapter so the stale-summary signal
-   doesn't fire spuriously. The lifecycle's verify-writes guard
-   prints a 🔴 banner for any chapter file in --wrote without its
-   paired summary.
+   150–250 words total per chapter), then use `bash` to run
+   `autonovel _stamp-summary --book {book} --chapter NN` for each.
+   A chapter that was only renumbered keeps its summary: it moved
+   with the chapter and its fingerprint still matches, so leave it.
+   `_end` will not close the command while any chapter whose prose
+   changed has a summary describing older text (the summary gate).
 </workflow>
 
 <acceptance>

@@ -311,10 +311,12 @@ required reads — surface the error and stop, don't retry.
    the chapter's plot, character moves, threads opened, threads
    resolved. **These summaries are the load-bearing continuity
    context** that prevents chapter N from forgetting what chapter 1
-   set up — much more important than the step-7 quote. If a summary
-   is missing for a drafted chapter — likely a chapter drafted before
-   this step shipped — note the gap but do not regenerate it inline;
-   the user can backfill via `/autonovel:summarize-chapter`.
+   set up — much more important than the step-7 quote. The preamble
+   has already brought every summary up to date that no longer matched
+   its chapter, or was missing (`_begin`'s `summaries to refresh:`
+   line), so each one you read summarises the chapter as it now
+   stands. Never draft from a summary `_begin` named that the preamble
+   did not refresh.
 
 9. Sibling-book context. First check this book's entry in `project.yaml`:
    if it carries `context: isolated`, **skip this step entirely** — load no
@@ -455,7 +457,13 @@ required reads — surface the error and stop, don't retry.
       - **Story time:** the ISO date or date range covered.
     Future drafts read this file as continuity context (step 8). It
     is NOT a chapter summary for the reader — it is a continuity
-    handoff to the next drafter.
+    handoff to the next drafter. Then use `bash` to run
+    `autonovel _stamp-summary --book {book} --chapter {chapter}`, which
+    records that the summary matches the chapter as it now stands.
+    If you change the chapter's prose after this (a first-reader fix,
+    a register fix), rewrite the summary where it no longer holds and
+    stamp it again: `_end` will not close the command while the
+    summary describes older text (the summary gate).
 
 14. Use `file_write` to append any new candidate canon facts to
     `books/{book}/pending_canon.md` (promote-canon routes them into this

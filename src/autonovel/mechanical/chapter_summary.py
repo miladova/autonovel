@@ -30,6 +30,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 
+from ..summaries import state as summary_state
 from .frontmatter import strip_yaml_frontmatter
 
 
@@ -48,7 +49,8 @@ class ChapterRow:
     pov_state: str | None = None       # what POV knows / wants / fears at close
     threads_opened: str | None = None  # mysteries / promises future chapters owe
     threads_closed: str | None = None  # earlier setups this chapter resolved
-    summary_stale: bool = False    # True when ch_NN.md mtime > ch_NN.summary.md
+    summary_stale: bool = False    # True when the summary no longer matches the chapter
+    summary_state: str | None = None   # fresh | stale | unverified | missing (summaries.state)
     low_dim: str | None = None     # the latest eval's lowest-scoring dimension
     low_score: float | None = None
     reader_open: int | None = None  # serious first-reader items not confirmed fixed
@@ -101,6 +103,7 @@ class ChapterRow:
             "threads_opened": self.threads_opened,
             "threads_closed": self.threads_closed,
             "summary_stale": self.summary_stale,
+            "summary_state": self.summary_state,
             "low_dim": self.low_dim,
             "low_score": self.low_score,
             "reader_open": self.reader_open,
@@ -171,15 +174,11 @@ def summarize_chapters(book_root: Path) -> list[ChapterRow]:
             # when present.
             if sm.get("story_time"):
                 row.story_time = sm["story_time"]
-            # Continuity check: a chapter modified since its
-            # `.summary.md` was written has drifted from its summary.
-            # The next chapter's drafter reads summaries for prior-
-            # chapter context, so a stale summary breaks continuity.
-            try:
-                if ch_path.stat().st_mtime > summary_path.stat().st_mtime:
-                    row.summary_stale = True
-            except OSError:  # pragma: no cover
-                pass
+        # Continuity check: a summary that no longer matches its
+        # chapter (the fingerprint `_stamp-summary` recorded) hands the
+        # next drafter a story that is no longer on the page.
+        row.summary_state = summary_state(ch_path).status
+        row.summary_stale = row.summary_state == "stale"
 
         row.score = eval_index.get(num)
         detail = details.get(num)

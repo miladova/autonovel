@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from .base import CommandDef, RuntimeAdapter
+from .base import CommandDef, RuntimeAdapter, summary_gate_note, summary_refresh_step
 
 
 CLAUDE_TOOL_MAP = {
@@ -50,6 +50,9 @@ class ClaudeCodeAdapter(RuntimeAdapter):
         for implicit in IMPLICIT_TOOLS:
             if implicit not in tools:
                 tools.append(implicit)
+        # The preamble's summary step fans the refresh out to subagents.
+        if cmd.refreshes_summaries and "Task" not in tools:
+            tools.append("Task")
 
         model = (model_map or DEFAULT_MODEL_MAP)[cmd.model_tier]
 
@@ -80,6 +83,7 @@ class ClaudeCodeAdapter(RuntimeAdapter):
 
 
 def _preamble(cmd: CommandDef) -> str:
+    summary_step = summary_refresh_step(cmd, shell="Bash", task="Task")
     writes_bullet = "\n".join(f"  - {p}" for p in cmd.writes) or "  (none)"
     return f"""<autonovel-preamble>
 Before following the <workflow> below, run the autonovel preamble. This is
@@ -112,13 +116,14 @@ every destructive change is reversible.
 
 3. Only proceed to the <workflow> below once `_begin` has succeeded
    and the active book is resolved.
-
+{summary_step}
 Writes this command will perform (for context):
 {writes_bullet}
 </autonovel-preamble>"""
 
 
 def _postamble(cmd: CommandDef) -> str:
+    summary_gate = summary_gate_note(shell="Bash")
     return f"""<autonovel-postamble>
 **Mandatory** — run this even if the workflow felt anticlimactic. The
 postamble releases the lock, records the next step, and prints the
@@ -172,7 +177,7 @@ stop after step 1:
    "what do I do next" signal. **Do not summarise; do not skip; do not
    end your turn before it.** If you reply "Done!" without the footer,
    the user cannot continue.
-
+{summary_gate}
 If the <workflow> fails partway through:
 - Run `autonovel _end --command {cmd.name} --args "$ARGUMENTS" --status error`
   (no `--wrote` paths). That leaves the lock marked `interrupted` so

@@ -68,6 +68,11 @@
       "type": "string",
       "enum": ["none", "book", "series"],
       "description": "How _begin should infer missing arguments. `none` = no inference; `book` = single-book inference allowed; `series` = series-wide inference."
+    },
+    "summaries": {
+      "type": "string",
+      "enum": ["refresh", "report"],
+      "description": "What a command that reads chapter summaries needs of them. `refresh` (the default when `reads:` names a `.summary.md`): _begin lists every summary that no longer matches its chapter and the preamble brings each up to date before the workflow reads one. `report`: the command only displays summaries and marks the out-of-date ones."
     }
   }
 }

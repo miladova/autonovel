@@ -29,7 +29,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from .base import CommandDef, RuntimeAdapter
+from .base import CommandDef, RuntimeAdapter, summary_gate_note, summary_refresh_step
 
 
 # Codex's built-in tool surface as of CLI 0.125. The keys are autonovel's
@@ -128,6 +128,7 @@ def _translate_tool_names(body: str) -> str:
 
 
 def _preamble(cmd: CommandDef) -> str:
+    summary_step = summary_refresh_step(cmd, shell="shell", task="spawn")
     writes_bullet = "\n".join(f"  - {p}" for p in cmd.writes) or "  (none)"
     return f"""<autonovel-preamble>
 Before following the <workflow> below, run the autonovel preamble. This is
@@ -145,13 +146,14 @@ every destructive change is reversible.
    surface the message verbatim.
 
 2. Only proceed to the <workflow> below once `_begin` has succeeded.
-
+{summary_step}
 Writes this command will perform (for context):
 {writes_bullet}
 </autonovel-preamble>"""
 
 
 def _postamble(cmd: CommandDef) -> str:
+    summary_gate = summary_gate_note(shell="shell")
     return f"""<autonovel-postamble>
 After the <workflow> succeeds, run the autonovel postamble:
 
@@ -165,7 +167,7 @@ After the <workflow> succeeds, run the autonovel postamble:
 2. Print the user-facing footer exactly as emitted by `_end` (it includes
    the next standard step and a few sidequest alternatives). That footer is
    the primary UX for "what do I do next"; always show it.
-
+{summary_gate}
 If the <workflow> fails partway through:
 - Run `autonovel _end --command {cmd.name} --args "$ARGUMENTS" --status error`
   (no `--wrote` paths). That leaves the lock marked `interrupted` so

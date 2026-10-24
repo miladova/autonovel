@@ -35,6 +35,7 @@ import re
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from ..summaries import state as summary_state
 from .frontmatter import strip_yaml_frontmatter
 
 # Reserved `## ` headings in an outline that are spine sections, not acts.
@@ -424,7 +425,7 @@ def build_dossier(book_root: Path) -> dict:
             entry.summary_present = True
             entry.summary = strip_yaml_frontmatter(
                 summary_path.read_text(encoding="utf-8")).strip()
-            entry.summary_stale = mtime > summary_path.stat().st_mtime
+            entry.summary_stale = summary_state(path).status == "stale"
         entries.append(entry)
     entries.sort(key=lambda e: e.chapter)
 
@@ -455,9 +456,10 @@ def build_dossier(book_root: Path) -> dict:
                         + ", ".join(map(str, missing_summaries))
                         + " — run /autonovel:summarize-chapter --all.")
     if stale_summaries:
-        warnings.append("summary older than its chapter for chapter(s) "
+        warnings.append("summary no longer matches its chapter for chapter(s) "
                         + ", ".join(map(str, stale_summaries))
-                        + " — the reviewer must trust the prose over these summaries.")
+                        + " — the chapter's text changed after the summary was written;"
+                        " trust the prose over these summaries.")
     drafted = {e.chapter for e in entries}
     outlined = {c.chapter for c in outline.chapters}
     if outlined and drafted and outlined != drafted:

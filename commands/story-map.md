@@ -21,6 +21,7 @@ writes:
   - books/{book}/edit_logs/story_map.html
   - books/{book}/edit_logs/story_map.json
 context_mode: book
+summaries: report
 ---
 
 <purpose>

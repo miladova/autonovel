@@ -237,7 +237,10 @@ the whole sweep on a single missing input.
       rewrite the chapter. Overwrite
       `books/{book}/chapters/ch_{N:02d}.md`. **Regenerate the
       summary** at `books/{book}/chapters/ch_{N:02d}.summary.md`
-      so chapter N+1's revise reads the updated version. A
+      so chapter N+1's revise reads the updated version, then use
+      `bash` to run `autonovel _stamp-summary --book {book} --chapter
+      {N}` (revise step 9). If a later step changes the prose again,
+      rewrite the summary where it no longer holds and stamp it again. A
       `kind: structural` brief lets the rewrite restructure chapter N
       from the inside (`/autonovel:revise` step 7a); it never edits
       another chapter and never runs a cross-chapter command — return
@@ -326,6 +329,14 @@ the whole sweep on a single missing input.
    end-of-sweep table. If a sub-step errors, log the failure and
    continue to the next chapter — do not abort the whole sweep on
    one chapter's hiccup.
+
+   After each chapter, use `bash` to run `autonovel mechanical
+   summary-check books/{book} --chapters N`. If chapter N is not
+   `fresh`, its summary describes older text: bring it up to date the
+   way the preamble's summary step does (one `task` subagent rewrites it
+   from the chapter and stamps it) before the next chapter starts, and
+   say so in the chapter's line. `_end` will not close the sweep while
+   any chapter it changed has a summary that doesn't match.
 
    After each chapter's per-chapter line, use `bash` to mark the
    chapter complete in the sweep-progress file:

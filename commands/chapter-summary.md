@@ -11,6 +11,7 @@ reads:
   - books/{book}/eval_logs/*.json
 writes: []
 context_mode: book
+summaries: report
 ---
 
 <purpose>

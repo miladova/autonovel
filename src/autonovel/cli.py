@@ -339,6 +339,12 @@ def _build_parser() -> argparse.ArgumentParser:
                      help="Number of trailing words to print (default 1000).")
     _tc.set_defaults(func=_cmd_tail_chapter)
 
+    _ss = sub.add_parser("_stamp-summary", help=argparse.SUPPRESS)
+    _ss.add_argument("--book", required=True)
+    _ss.add_argument("--chapter", type=int, action="append", required=True,
+                     help="Chapter whose summary was just written (repeatable).")
+    _ss.set_defaults(func=_cmd_stamp_summary)
+
     _begin = sub.add_parser("_begin", help=argparse.SUPPRESS)
     _begin.add_argument("--command", required=True)
     _begin.add_argument("--args", default="")
@@ -1132,6 +1138,33 @@ def _cmd_tail_chapter(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_stamp_summary(args: argparse.Namespace) -> int:
+    """Hidden subcommand: record in `ch_NN.summary.md` the fingerprint
+    of the chapter as it now stands. A command runs it right after it
+    writes a summary from the chapter (or re-reads one against the
+    chapter and finds it still true); `_begin`, `_end` and
+    `mechanical summary-check` compare the fingerprint with the chapter
+    to decide whether the summary is still current. No lock check: it
+    runs inside commands that hold the lock."""
+    from . import summaries
+    try:
+        series = load_series()
+    except SeriesNotFound as e:
+        print(f"error: {e}", file=sys.stderr)
+        return 2
+    rc = 0
+    for n in args.chapter:
+        chapter = series.books / args.book / "chapters" / f"ch_{n:02d}.md"
+        try:
+            fp = summaries.stamp(chapter)
+        except summaries.StampError as e:
+            print(f"error: chapter {n}: {e}", file=sys.stderr)
+            rc = 1
+            continue
+        print(f"stamped: chapter {n}'s summary matches the chapter as it now stands ({fp})")
+    return rc
+
+
 def _cmd_begin(args: argparse.Namespace) -> int:
     try:
         series = load_series()
@@ -1171,6 +1204,13 @@ def _cmd_begin(args: argparse.Namespace) -> int:
         suffix = " (inferred from last-action / single-book project)" if result.book_inferred else ""
         print(f"book: {result.resolved_book}{suffix}")
     _print_genre_line(series, result.resolved_book)
+    if result.summaries_to_refresh:
+        nums = ", ".join(str(st.chapter) for st in result.summaries_to_refresh)
+        print(f"summaries to refresh: {nums}")
+        for st in result.summaries_to_refresh:
+            print(f"  chapter {st.chapter}: {st.reason}")
+        print("  (this command reads chapter summaries: bring these up to date "
+              "before reading any; the preamble says how)")
     if result.abandoned_lock is not None:
         ab = result.abandoned_lock
         print(
@@ -1203,6 +1243,9 @@ def _cmd_end(args: argparse.Namespace) -> int:
         next_standard_step_override=args.next_standard_step_override,
         next_rationale_override=args.next_rationale_override,
     )
+    if result.summary_gate:
+        print(result.footer)
+        return 3
     if args.status == "ok" and result.footer:
         print(result.footer)
     else:

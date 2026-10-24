@@ -233,7 +233,7 @@ file blocked a full revision-pass.
 9. **Regenerate the chapter summary.** Use `file_write` to overwrite
    `books/{book}/chapters/ch_{chapter}.summary.md` with a fresh
    150–250 word continuity summary. **The shape and section list
-   are exactly those defined in `/autonovel:draft` step 12** — see
+   are exactly those defined in `/autonovel:draft` step 13** — see
    that file for the canonical seven labelled sections (Location,
    Plot, POV state, Cast on stage, Threads opened, Threads closed,
    Story time). Do NOT inline a different list here; defer to
@@ -247,6 +247,14 @@ file blocked a full revision-pass.
    the summary post-revise is that downstream readers (the next
    chapter's drafter, `/autonovel:chapter-summary`'s table) see
    the current state, not the pre-revision one.
+
+   Then use `bash` to run `autonovel _stamp-summary --book {book} --chapter {chapter}`,
+   which records that the summary matches the chapter as it now stands.
+   Write the summary after your last change to the chapter's prose: `_end`
+   will not close the command while the summary describes older text (the
+   summary gate). Frontmatter edits after it
+   (`status`, `word_count`, `title`) don't count; any later change to the
+   prose does, and needs the summary rewritten and stamped again.
 
 10. Use `file_write` to append any new candidate canon facts to
     `books/{book}/pending_canon.md` (or add a single `no new facts`
