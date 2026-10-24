@@ -199,3 +199,26 @@ def test_build_chapters_tex_without_manifest(tmp_path: Path, book_root: Path) ->
     content, _ = build_chapters_tex(chapters)
     assert "\\chapter" in content
     assert "\\includegraphics" not in content
+
+
+def test_import_keeps_keys_added_by_hand(tmp_path: Path, book_root: Path) -> None:
+    """kingmaker2, 2026-10-24: importing two maps rewrote the manifest and
+    dropped `layout: landscape` from the Venice view and Augsburg plates."""
+    import yaml
+    first = _src_image(tmp_path, "venice-view.png")
+    plates.import_image(book_root, first, chapter=2, kind="plate",
+                        placement="before-chapter", caption="Venice.")
+    manifest = book_root / "typeset" / "plates.yaml"
+    data = yaml.safe_load(manifest.read_text())
+    data["plates"][0]["layout"] = "landscape"
+    manifest.write_text(yaml.safe_dump(data, sort_keys=False))
+    plates.import_image(book_root, _src_image(tmp_path, "map.png"), chapter=1,
+                        kind="plate", placement="before-chapter")
+    by_slug = {p.slug: p for p in plates.read_manifest(manifest)}
+    assert by_slug["venice-view"].extra == {"layout": "landscape"}
+    assert "layout: landscape" in manifest.read_text()
+    # Re-importing the same slug keeps its hand-added keys too.
+    plates.import_image(book_root, first, chapter=2, kind="plate",
+                        placement="before-chapter", caption="Venice, 1500.", force=True)
+    again = {p.slug: p for p in plates.read_manifest(manifest)}["venice-view"]
+    assert again.extra == {"layout": "landscape"} and again.caption == "Venice, 1500."

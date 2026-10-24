@@ -50,6 +50,7 @@ KINDS: tuple[Kind, ...] = ("plate", "ornament")
 ACCEPTED_EXTS: tuple[str, ...] = (".png", ".jpg", ".jpeg", ".pdf", ".svg", ".tiff", ".tif")
 
 _SLUG_RE = re.compile(r"[^a-z0-9]+")
+_OWN_KEYS = ("slug", "file", "placement", "chapter", "caption", "attribution")
 
 
 @dataclass
@@ -60,6 +61,9 @@ class Plate:
     chapter: int  # 1-indexed
     caption: str = ""
     attribution: str = ""
+    # Keys the importer doesn't own (`layout: landscape`, added by hand),
+    # carried through every rewrite of the manifest unchanged.
+    extra: dict = field(default_factory=dict)
 
     def to_dict(self) -> dict:
         return {
@@ -69,6 +73,7 @@ class Plate:
             "chapter": self.chapter,
             "caption": self.caption,
             "attribution": self.attribution,
+            **self.extra,
         }
 
     @classmethod
@@ -80,6 +85,7 @@ class Plate:
             chapter=int(d["chapter"]),
             caption=str(d.get("caption", "") or ""),
             attribution=str(d.get("attribution", "") or ""),
+            extra={k: v for k, v in d.items() if k not in _OWN_KEYS},
         )
 
 
@@ -200,7 +206,11 @@ def _import_as_plate(
         caption=caption,
         attribution=attribution,
     )
-    # Replace any existing entry with the same slug (idempotent re-import).
+    # Replace any existing entry with the same slug (idempotent re-import),
+    # keeping the keys added to it by hand.
+    old = next((p for p in plates if p.slug == slug), None)
+    if old is not None:
+        plate.extra = dict(old.extra)
     plates = [p for p in plates if p.slug != slug] + [plate]
     plates.sort(key=lambda p: (p.chapter, _placement_order(p.placement), p.slug))
     write_manifest(manifest_path, plates)

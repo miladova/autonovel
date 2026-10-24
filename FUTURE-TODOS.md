@@ -11,6 +11,14 @@ to start.
 
 ## Near-term — pull into the next PR
 
+- **A PDF plate breaks the ePub (opened 2026-10-24).** `art-import`
+  accepts `.pdf` (good for a vector map in the PDF), but
+  `mechanical/epub.py` emits it as an `<img>`, which no reader shows.
+  Proposed: when a plate is a PDF or TIFF, the ePub build renders a PNG
+  beside it (`pdftoppm` / Pillow, with `doctor` checking for it) and uses
+  that; or art-import accepts a `--epub-file` companion. Kingmaker's maps
+  went in as PNG to avoid it.
+
 - **No cast or place budget anywhere in the pipeline (opened 2026-10-24,
   from the kingmaker2 author: "just too many" characters and locations).**
   kingmaker2 has about 81 named people (54 on stage, 32 on stage in two or

@@ -2621,7 +2621,17 @@ book's canon, because the parser skipped only a bare `no new facts` line.
 Now a bullet that says "no new facts" and doesn't open with a `[key]` is
 skipped; draft.md asks for the bare line. +1 test.
 
+### 2026-10-24 — art-import keeps the keys added to a plate by hand
+
+Importing the kingmaker2 maps rewrote `plates.yaml` from the importer's six
+known fields and dropped `layout: landscape` from the Venice view and the
+Augsburg woodcut, the two plates the author had turned sideways. `Plate` now
+carries every other key in `extra` and writes it back; a re-import of the same
+slug keeps them too. art-import.md says so, and that an ePub plate should be
+PNG, JPG or SVG (the ePub builder can't show a PDF; FUTURE-TODOS). +1 test.
+
 ## Tests last known green
+- Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (art-import keeps hand-added keys) — **2276 passing, 1 skipped** (+1).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (no-new-facts bullet) — **2275 passing, 1 skipped** (+1).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (rename reaches cast, design, briefs) — **2274 passing, 1 skipped** (+4).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (brief fingerprints) — **2270 passing, 1 skipped** (+3).

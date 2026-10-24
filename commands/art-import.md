@@ -57,7 +57,9 @@ A full-page plate (`before-chapter` / `after-chapter`) may carry
 `layout: landscape`: the PDF turns that page sideways so a wide
 picture — a city view, a map — fills the page's long side instead of
 shrinking to a strip, and the ePub shows it at full width. Add the
-line by hand under the plate's entry.
+line by hand under the plate's entry; later imports keep it, and so
+does a re-import of the same slug. A plate the ePub must show should
+be PNG, JPG or SVG: the ePub has no way to show a PDF.
 </purpose>
 
 <workflow>
