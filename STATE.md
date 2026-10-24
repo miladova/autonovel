@@ -2594,7 +2594,24 @@ and consumed once it is rewritten; briefs from before fingerprints keep the
 mtime test. next.md, docs/commands.md, the operating guide and the series
 template say "briefs not yet acted on". +3 tests.
 
+### 2026-10-24 — a rename reaches the cast, design and staged turns
+
+The author asked to rename an invented character (Zuan Negro in kingmaker2).
+`/autonovel:rename-character` rewrote chapters, summaries, outline, canon and
+shared files, but not `cast.md`, `design.md` or the queued briefs and staged
+turns in `briefs/`, all of which `/autonovel:revise` reads, so the next pass
+would have put the old name back. Its overlap rule also refused outright on
+`Negroponte`, a different word the word-boundary replace never touches. Now
+the targets include the cast and design files, the seed, `threads.md` and
+every `briefs/*.md` (and `shared/world.md` joins `writes:` so the checkpoint
+covers it); a longer word that is a different word is left and listed, and
+the rename refuses only on a form of the name word boundaries would miss (a
+plural, a compound). Research notes and edit logs keep the old name and the
+report lists where. docs/commands.md, the operating guide and the
+historical-series walkthrough say so. +3 contract tests.
+
 ## Tests last known green
+- Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (rename reaches cast, design, briefs) — **2273 passing, 1 skipped** (+3).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (brief fingerprints) — **2270 passing, 1 skipped** (+3).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (open_items) — **2267 passing, 1 skipped** (+1).
 - Tier 3 (draft smoke + revision smoke: evaluate, adversarial-edit, apply-cuts, brief, revise, shorten), with the summary gate and the refresh step: 2026-10-24 — **7/7 green (42m47s)**, subscription auth.

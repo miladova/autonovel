@@ -591,8 +591,13 @@ For a misspelled character name across the whole book:
 ```
 
 **Script-based**, not LLM rename. Word-boundary `sed` across every
-chapter, outline, and shared file. Refuses if the change would
-overlap a longer word (e.g. won't rename `Ana` if `Anatolia` exists).
+chapter and summary, the outline, the cast and design files, every
+queued brief and staged turn, and the shared files. A longer word
+that merely contains the name (`Anatolia` when renaming `Ana`) is left
+alone and listed; the rename refuses only when the name also appears
+in a form word boundaries would miss, such as a plural (`Anas`).
+Research notes and edit logs keep the old name, and the report lists
+where.
 
 #### What if `/autonovel:promote-canon` reports conflicts?
 

@@ -1,6 +1,6 @@
 ---
 name: autonovel:rename-character
-description: Globally rename a character across every chapter, outline, and shared file with word-boundary safety.
+description: Globally rename a character across every chapter, summary, outline, cast and design file, queued brief and shared file with word-boundary safety.
 argument-hint: "--old <old-name> --new <new-name> [--book <short-name>]"
 model_tier: standard
 allowed-tools:
@@ -18,15 +18,26 @@ reads:
   - books/{book}/voice.md
   - books/{book}/pending_canon.md
   - books/{book}/chapters/*.md
+  - books/{book}/cast.md
+  - books/{book}/design.md
+  - books/{book}/seed.txt
+  - books/{book}/threads.md
+  - books/{book}/briefs/*.md
 writes:
   - books/*/canon.md
   - shared/characters.md
   - shared/canon.md
   - shared/events.md
+  - shared/world.md
   - books/{book}/outline.md
   - books/{book}/voice.md
   - books/{book}/pending_canon.md
   - books/{book}/chapters/*.md
+  - books/{book}/cast.md
+  - books/{book}/design.md
+  - books/{book}/seed.txt
+  - books/{book}/threads.md
+  - books/{book}/briefs/*.md
 context_mode: series
 ---
 
@@ -68,7 +79,20 @@ replacement occurs.
      - `books/{book}/outline.md`
      - `books/{book}/voice.md`
      - `books/{book}/pending_canon.md`
-     - every `books/{book}/chapters/*.md`
+     - every `books/{book}/chapters/*.md` (chapters and their
+       summaries)
+     - `books/{book}/cast.md` and `books/{book}/design.md`, when they
+       exist: draft and revise read the cast dossiers and the design,
+       so a name left there comes back in the next rewrite
+     - `books/{book}/seed.txt` and `books/{book}/threads.md`, when
+       they exist
+     - every `books/{book}/briefs/*.md`, including
+       `briefs/conversation.md`: a queued brief or staged turn that
+       still uses the old name would hand it to the next revise
+   Leave the research notes (`shared/research/`) and the edit logs
+   (`books/{book}/edit_logs/`) alone: the notes are the record of the
+   sources, and the logs are a history of what was said at the time.
+   Step 7 lists any mention of the old name left in them.
 
 3a. Use `bash` to run `autonovel mechanical summary-check books/{book}`
    for each book in the sweep and note which chapters' summaries are
@@ -76,15 +100,21 @@ replacement occurs.
    those stay true after it; step 5a records that.
 
 4. Ambiguity scan. For every target, count word-boundary matches of
-   `<old-name>` (case-insensitive). If any file also contains a
-   substring that overlaps (e.g. renaming `Ana` when `Anatolia`
-   appears), surface the matching lines to the user and stop:
+   `<old-name>` (case-insensitive), and list every longer word that
+   contains it (e.g. `Anatolia` when renaming `Ana`), with file and
+   line. The word-boundary replacement never touches a longer word,
+   so decide for each one whether it is a different word or a form of
+   this character's name:
+   - A different word (a place such as `Negroponte` when renaming
+     `Negro`, an ordinary word such as `banana`) is left as it is.
+     Name it in the step 7 report and go on.
+   - A form of the name that word boundaries would miss (a plural
+     `Anas`, a compound `Ana-Maria`, a name run into another word)
+     stops the rename before any file is touched:
 
-       rename refuses: `<old>` overlaps with `<word>` in <file:line>.
-       Resolve by hand or pass `--force-overlap`.
-
-   `--force-overlap` is NOT supported in this version; the message
-   just flags the next manual step.
+         rename refuses: `<old>` also appears as `<word>` in
+         <file:line>, which the word-boundary replace would miss.
+         Resolve by hand, then re-run.
 
 5. Use `bash` to run the replacement. One invocation per file, so a
    failure mid-sweep leaves the earlier files already rewritten
@@ -108,7 +138,12 @@ replacement occurs.
 
        - Renamed `<old>` -> `<new>` across <N> files.
 
-7. Print a per-file report (files touched, replacement counts).
+7. Print a per-file report (files touched, replacement counts), the
+   longer words step 4 left untouched, and every file outside the
+   targets that still names `<old-name>` as a whole word (research
+   notes, edit logs; `grep -rlw` over `shared/research/` and
+   `books/{book}/edit_logs/`), so the author knows the old name
+   survives there on purpose.
 </workflow>
 
 <acceptance>
@@ -117,6 +152,8 @@ replacement occurs.
 - No file contains `<old-name>` as a whole word after the sweep
   (substring overlap intentionally preserved).
 - `shared/canon.md` gains a `## Renamed <date>` audit line.
-- If the ambiguity scan fired, no file was modified (the sweep
+- If the ambiguity scan refused, no file was modified (the sweep
   either happens fully or is refused).
+- `books/{book}/cast.md`, `books/{book}/design.md` and every queued
+  brief no longer name `<old-name>`.
 </acceptance>

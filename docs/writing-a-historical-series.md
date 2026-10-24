@@ -312,8 +312,12 @@ your real series uses.
 - **Chapter renumbering** after `/autonovel:merge-chapters` /
   `/autonovel:remove-chapter` runs by script (collision-safe `mv`),
   never by hand-edit. Same discipline applies to
-  `/autonovel:rename-character` (word-boundary `sed` with overlap
-  refusal — refuses `Ana` if `Anatolia` exists).
+  `/autonovel:rename-character` (word-boundary `sed`; it reaches the
+  cast and design files and the queued briefs too, so the next rewrite
+  can't bring the old name back, and it refuses only when the name
+  also appears in a form word boundaries would miss, such as a plural;
+  a different longer word, like `Negroponte` beside `Negro`, is left
+  alone and listed).
 - **The Stability Trap.** AI defaults to safe, round-edged endings;
   use `/autonovel:revise` with a brief that explicitly demands
   irreversible change, cost, and mystery.
