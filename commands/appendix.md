@@ -1,7 +1,7 @@
 ---
 name: autonovel:appendix
-description: Generate or scaffold a back-matter appendix (timeline of real events, real-character bios, places you can still see, sources, the historical note).
-argument-hint: "--book <short-name> [--sections timeline,bios,places,sources,notes] [--from auto|user|both] [--story-only|--include-context] [--force]"
+description: Generate or scaffold a back-matter appendix (the people in the book, real and invented; timeline of real events, real-character bios, places you can still see, sources, the historical note).
+argument-hint: "--book <short-name> [--sections cast,timeline,bios,places,sources,notes] [--from auto|user|both] [--story-only|--include-context] [--force]"
 model_tier: heavy
 allowed-tools:
   - file_read
@@ -15,8 +15,10 @@ reads:
   - shared/sources.bib
   - books/{book}/outline.md
   - books/{book}/design.md
+  - books/{book}/cast.md
   - books/{book}/appendix.md
   - books/{book}/chapters/ch_*.md
+  - books/{book}/chapters/ch_*.summary.md
   - shared/craft/genres/*.md
   - shared/genres/*.md
 writes:
@@ -29,6 +31,12 @@ Back-matter content typeset weaves in after the last chapter
 (post-`\backmatter`, before the colophon). For historical fiction
 the appendix typically holds:
 
+  - **The people in the book** — a cast list, real and invented,
+    grouped by household or side, one line each, with the chapter
+    where each first appears. Customary in historical novels with
+    large casts (*Wolf Hall*'s is grouped by place and time), and
+    what lets the narration introduce each person once (draft step
+    3c): the reader who forgets has somewhere to look.
   - **Timeline** — real-world dates the novel touches, in
     chronological order.
   - **Bios** — short paragraphs on the historical figures who
@@ -63,8 +71,8 @@ Three modes selected by `--from`, paralleling
 1. Parse `$ARGUMENTS`. Required: `--book <short-name>`. Optional:
    `--sections <comma-list>` (default `timeline,bios`, plus `places`
    and `notes` when the book's genre guide has a `## Back matter`
-   section that asks for them; allowed values `timeline / bios / places
-   / sources / notes`). Read that section of the book's genre guide: the
+   section that asks for them; allowed values `cast / timeline / bios /
+   places / sources / notes`). Read that section of the book's genre guide: the
    file `_begin`'s `genre:` line names (`autonovel genre show --book
    {book}` prints it when no preamble ran; it is
    `shared/craft/genres/<genre>.md`, or the series' own
@@ -92,10 +100,38 @@ Three modes selected by `--from`, paralleling
      should cover events the book references plus a margin).
    - The chapters themselves for which characters/events actually
      appear in the narrative.
+   - For `cast`: `books/{book}/cast.md` (who is real and who invented,
+     each person's household and relation to the protagonist) and every
+     `books/{book}/chapters/ch_*.summary.md` (the `**Cast on stage:**`
+     line of each; the preamble has brought every summary up to date,
+     so each lists the chapter as it now stands).
 
 4. **Section generation per `--sections` flag** (in this order
    regardless of how the user listed them — a stable rendering
    order is more reader-friendly than a custom one):
+
+   **(a0) The people in the book.** A cast list for the reader who
+   wants to check who someone is. Who goes in: every person on the page
+   in two or more chapters, every principal in `cast.md`, and anyone a
+   later chapter names as if the reader should remember them. A walk-on
+   in one scene stays out. Group them by household or side, in the
+   book's own terms (the protagonist's house, a city, a court, the other
+   side, another time the book visits), groups in order of first
+   appearance and people within a group the same way. One line each:
+
+   ```
+   - **<Name>** — <who they are, in a phrase, and what they are to the
+     protagonist>. *(ch N)* <(invented)>
+   ```
+
+   `*(ch N)*` is the chapter where the person first appears on the
+   page; take it from the summaries' cast lines and check it in the
+   chapter. Mark `(invented)` everyone `cast.md` or
+   `shared/characters.md` marks as invented; a real person's line may
+   give their dates. Say nothing that happens after the person's first
+   chapters: the list is read before and during the book, and a line
+   that says who betrays whom spoils it. Never list a person the
+   chapters don't contain.
 
    **(a) Timeline — three-source merge.** Walk three sources of
    timeline rows and merge them with distinct markers per source:
@@ -206,6 +242,10 @@ Three modes selected by `--from`, paralleling
    ```markdown
    # Appendix
 
+   ## The people in the book
+
+   <groups and entries>
+
    ## Timeline
 
    <entries>
@@ -264,8 +304,11 @@ Three modes selected by `--from`, paralleling
 - Each section requested via `--sections` appears as a `## Sub-
   heading` in the file.
 - Auto / both mode: at least 5 entries per requested data section
-  (timeline / bios / sources); the notes section is at least 150
+  (cast / timeline / bios / sources); the notes section is at least 150
   words.
+- The cast section gives every listed person a first-appearance
+  chapter that the chapter bears out, marks the invented ones, and
+  spoils nothing past the person's first chapters.
 - User mode: scaffold with HOW-TO-EDIT block + 1-2 example
   entries per section.
 - Refusal on overwrite without `--force` is the default; the

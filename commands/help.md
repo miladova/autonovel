@@ -550,8 +550,11 @@ Front matter (before chapter 1):
 Back matter (after the last chapter):
 
   /autonovel:appendix --book <name> \
-      --sections timeline,bios,sources,notes \
+      --sections cast,timeline,bios,sources,notes \
       --from auto|user|both
+
+  (`cast` is the people in the book, real and invented, grouped
+  by household or side, with the chapter each first appears in.)
 
 External tools required: tectonic (PDF), pandoc (ePub),
 fontconfig (cover fonts), potrace (vectorize). The user-facing
@@ -724,13 +727,14 @@ uses `\IfFileExists` guards to skip absent files.
       + canon; produces an alphabetised list. Appears right
       before chapter 1.
 
-  Appendix (timeline, bios, sources, notes):
+  Appendix (the people, timeline, bios, places, sources, notes):
 
       /autonovel:appendix --book <name> \
           --sections timeline,bios \
           --from auto
 
-      Default sections: timeline + bios. Add sources / notes as
+      Default sections: timeline + bios. Add cast (the people in
+      the book, real and invented), places, sources and notes as
       needed.
 
 The TUI's "Front + back matter" tab shows every surface with

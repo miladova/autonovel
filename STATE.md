@@ -2539,6 +2539,23 @@ counts a repeated introduction under REDUNDANT and never the first one;
 `newcomers --gap` defaults to 4; cast.md's return tag is for a long return.
 The mechanical re-introduction counter stays in FUTURE-TODOS.
 
+### 2026-10-24 — the people in the book (appendix `cast`)
+
+The author asked for the back matter "with people". `/autonovel:appendix`
+wrote short lives of the real figures only; nothing gave the reader a cast
+list with the invented people marked, which large historical novels carry
+(*Wolf Hall*) and which lets the narration introduce each person once (the
+entry above). New section `cast` ("The people in the book"): everyone on
+the page in two or more chapters, every principal and anyone a later
+chapter expects the reader to remember; grouped by household or side, in
+order of first appearance; one line each with the chapter of first
+appearance (from the summaries' cast lines, which the preamble now keeps
+current, checked in the chapter), `(invented)` from cast.md /
+characters.md, and nothing past the person's first chapters. The appendix
+now reads cast.md and the summaries. The historical genre guide's
+`## Back matter` names it; help and docs/commands.md (which had no appendix
+row at all) list it. Front-matter placement stays in FUTURE-TODOS.
+
 ## Tests last known green
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (introduce once) — **2266 passing, 1 skipped** (newcomers test rewritten for the new gap).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (summaries always match their chapters) — **2266 passing, 1 skipped** (+19).

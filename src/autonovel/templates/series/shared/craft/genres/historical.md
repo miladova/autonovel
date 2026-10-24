@@ -618,6 +618,10 @@ delivery, not removal.
   survives: its name then and now, what to look for, and the chapters it
   appears in; and the places that do not survive, said plainly. Cornwell's
   notes do this; readers travel to these places (The promise, above).
+- **The people in the book.** A large cast gets a cast list, real and
+  invented, grouped by household or side, one line each with the chapter
+  of first appearance (`/autonovel:appendix --sections cast`), as *Wolf
+  Hall* does. It lets the narration introduce each person once.
 - **The timeline, the people and the glossary** (`/autonovel:appendix
   --sections timeline,bios`, `/autonovel:glossary`) complete what the
   reader came to learn.

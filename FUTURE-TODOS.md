@@ -44,7 +44,9 @@ to start.
   from ch 1 to ch 6 is.
 
 - **A cast list for the reader, real and invented (opened 2026-10-24,
-  from the kingmaker2 letter).** `/autonovel:appendix --sections bios`
+  from the kingmaker2 letter).** **The appendix section shipped 2026-10-24**
+  (`--sections cast`); still open: typeset placing it in the front matter
+  (`typeset.cast_list: front`) and the fixture test. `/autonovel:appendix --sections bios`
   writes short lives of the real historical figures only; nothing makes a
   front- or back-matter list of the book's people with the invented ones
   (riders, clerks, a factor) marked as such, which historical novels with
