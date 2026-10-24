@@ -182,9 +182,10 @@ each of these and the workaround is in the codebase:
   set of commands feels opaque (the 10 art-* / cover-* commands
   in particular).
 - Run `/autonovel:next` to see the prioritised state-aware action
-  list (pending conflicts, regressions, briefs newer than their
-  chapters — the brief→revise pair, stale review reports, backup
-  status, plus the canonical pipeline next step). Past-end-of-book
+  list (pending conflicts, regressions, briefs not yet acted on —
+  the chapter unchanged since the brief was written, the
+  brief→revise pair — stale review reports, backup status, plus
+  the canonical pipeline next step). Past-end-of-book
   guard: when the canonical line points to a draft chapter beyond
   what exists by more than 1, it gets demoted to "book appears
   complete — try evaluate --full / typeset". You'll also see a

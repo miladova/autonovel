@@ -317,7 +317,9 @@ that stalled long sweeps around chapter 8-10.
          the brief leads with it.
          a. Brief from eval+anachronism: write
             books/{book}/briefs/ch{N:02d}.md with named-passage
-            prescriptions. When spine_ok is no, the brief is
+            prescriptions, stamped with `autonovel _stamp-brief --book
+            {book} --chapter {N}` before the revise (brief step 6).
+            When spine_ok is no, the brief is
             `kind: structural` (frontmatter; see /autonovel:brief
             step 5) and its `## Structural brief` names the missing
             link — which earlier event the opening must act on, which

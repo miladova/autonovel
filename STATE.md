@@ -2580,7 +2580,22 @@ items of the last report not yet gone, explained or clear) and `all_fixed`
 is true only when it is empty; the parser prefers it and falls back to the
 old count for older evals. The brief names it. +1 test.
 
+### 2026-10-24 — a brief is pending while its chapter is unchanged (not while it is newer)
+
+Right after the kingmaker2 pass, the footer offered to revise chapters 5, 9,
+11, 13 and 15 again "with fresh briefs": each parallel worker had touched its
+brief seconds after rewriting the chapter, and `/autonovel:next` judged a
+brief pending when its file was newer than its chapter. The same false-alarm
+class as the summaries. Now `/autonovel:brief` (and the sweeps' brief steps)
+run `autonovel _stamp-brief`, which records `brief_for:` (the chapter's
+fingerprint, `summaries.body_hash`) in the brief's frontmatter;
+`summaries.brief_pending` says pending while the chapter is unchanged since
+and consumed once it is rewritten; briefs from before fingerprints keep the
+mtime test. next.md, docs/commands.md, the operating guide and the series
+template say "briefs not yet acted on". +3 tests.
+
 ## Tests last known green
+- Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (brief fingerprints) — **2270 passing, 1 skipped** (+3).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (open_items) — **2267 passing, 1 skipped** (+1).
 - Tier 3 (draft smoke + revision smoke: evaluate, adversarial-edit, apply-cuts, brief, revise, shorten), with the summary gate and the refresh step: 2026-10-24 — **7/7 green (42m47s)**, subscription auth.
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (introduce once) — **2266 passing, 1 skipped** (newcomers test rewritten for the new gap).

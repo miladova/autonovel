@@ -309,7 +309,11 @@ the file `_begin`'s `genre:` line names (`autonovel genre show --book
 6. Use `file_write` to save to
    `books/{book}/briefs/ch{chapter:02d}.md`. Overwrite any prior brief
    for this chapter — briefs are disposable working documents, not
-   canonical artifacts.
+   canonical artifacts. Then use `bash` to run
+   `autonovel _stamp-brief --book {book} --chapter {chapter}`: it records
+   the fingerprint of the chapter the brief was written against, so
+   `/autonovel:next` knows the brief is waiting until the chapter is
+   revised, and done once it is.
 
 7. Print the brief's kind, the target length and the count of specific
    cuts / rewrites collected. For a structural brief also print the

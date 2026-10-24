@@ -261,3 +261,51 @@ def test_cli_end_exits_3_on_the_gate(demo_series: SeriesLayout) -> None:
     r = _run(demo_series.root, "_end", "--command", "autonovel:draft", "--args", "5 --book one",
              "--status", "ok", "--wrote", "books/one/chapters/ch_05.md")
     assert r.returncode == 0 and "**Done:**" in r.stdout
+
+
+# ------------------------------------------------------------ briefs
+
+
+def _brief(series: SeriesLayout, n: int, text: str = "---\nkind: prose\n---\n\n# Brief\n\nCut the tag.\n") -> Path:
+    briefs = series.books / "one" / "briefs"
+    briefs.mkdir(parents=True, exist_ok=True)
+    path = briefs / f"ch{n:02d}.md"
+    path.write_text(text, encoding="utf-8")
+    return path
+
+
+def test_brief_is_pending_until_the_chapter_is_rewritten(demo_series: SeriesLayout) -> None:
+    ch = _chapter(demo_series, 5, "Prose.")
+    b = _brief(demo_series, 5)
+    summaries.stamp_brief(ch)
+    assert "brief_for:" in b.read_text(encoding="utf-8")
+    assert "kind: prose" in b.read_text(encoding="utf-8")
+    assert summaries.brief_pending(ch) is True
+    ch.write_text(ch.read_text(encoding="utf-8").replace("Prose.", "Revised prose."), encoding="utf-8")
+    # A worker touching the brief after the rewrite doesn't make it pending again.
+    later = time.time() + 100
+    os.utime(b, (later, later))
+    assert summaries.brief_pending(ch) is False
+
+
+def test_legacy_brief_falls_back_to_mtime(demo_series: SeriesLayout) -> None:
+    ch = _chapter(demo_series, 5, "Prose.")
+    b = _brief(demo_series, 5)
+    old = time.time() - 1000
+    os.utime(ch, (old, old))
+    assert summaries.brief_pending(ch) is True
+    os.utime(b, (old - 10, old - 10))
+    assert summaries.brief_pending(ch) is False
+
+
+def test_next_does_not_offer_a_consumed_brief(demo_series: SeriesLayout) -> None:
+    from autonovel.housekeeping import next_actions
+    ch = _chapter(demo_series, 5, "Prose.")
+    b = _brief(demo_series, 5)
+    summaries.stamp_brief(ch)
+    ch.write_text(ch.read_text(encoding="utf-8") + "A new line.\n", encoding="utf-8")
+    summaries.stamp(ch)
+    later = time.time() + 100
+    os.utime(b, (later, later))
+    acts = next_actions.enumerate_actions(demo_series, book="one")
+    assert not any("fresh briefs" in a.title for a in acts)

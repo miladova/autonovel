@@ -397,10 +397,17 @@ def _chapter_regression_actions(book_root: Path, book: str) -> list[NextAction]:
 
 def _brief_newer_than_chapter_actions(book_root: Path, book: str) -> list[NextAction]:
     """Brief files are written by `/autonovel:brief` and consumed by
-    `/autonovel:revise`. When a brief's mtime is newer than the
-    chapter it targets, the obvious next step is to revise that
-    chapter — but the canonical pipeline default keeps marching
-    forward instead. Surface this as a HIGH situational action.
+    `/autonovel:revise`. When a brief is still waiting for its revise,
+    the obvious next step is to revise that chapter — but the
+    canonical pipeline default keeps marching forward instead. Surface
+    this as a HIGH situational action.
+
+    Pending is judged by content (`summaries.brief_pending`): the brief
+    records the fingerprint of the chapter it was written against, and
+    stays pending only while the chapter is unchanged. The old mtime
+    test flagged every chapter of a parallel sweep whose worker touched
+    the brief after the rewrite (kingmaker2, 2026-10-24); it remains the
+    fallback for briefs from before fingerprints.
 
     Brief files live at `books/<book>/briefs/ch{NN:02d}.md`. We skip
     `briefs/conversation.md` (a different shape — that's `talk`'s
@@ -422,7 +429,8 @@ def _brief_newer_than_chapter_actions(book_root: Path, book: str) -> list[NextAc
         chapter_path = chapters_dir / f"ch_{ch_num:02d}.md"
         if not chapter_path.is_file():
             continue
-        if path.stat().st_mtime > chapter_path.stat().st_mtime:
+        from .. import summaries
+        if summaries.brief_pending(chapter_path):
             pending.append(ch_num)
     if not pending:
         return []
@@ -438,7 +446,8 @@ def _brief_newer_than_chapter_actions(book_root: Path, book: str) -> list[NextAc
         command=command,
         rationale=(
             f"books/{book}/briefs/ has {len(pending)} brief file(s) "
-            f"newer than their chapters (ch {chapters_str}). The brief "
+            f"not yet acted on (ch {chapters_str}: the chapter is "
+            f"unchanged since the brief was written). The brief "
             f"is the input revise consumes — until revise runs, the "
             f"work the brief captures isn't applied to the prose. "
             f"For non-contiguous chapters, run `/autonovel:revise "

@@ -52,10 +52,11 @@ repeatedly.
      - `books/{book}/pending_canon.md` for `## Conflict N` blocks
      - `books/{book}/eval_logs/*.json` for chapter regressions
        (latest score below prior best by ≥0.3)
-     - `books/{book}/briefs/ch*.md` mtimes vs the corresponding
-       `books/{book}/chapters/ch_*.md` mtimes — a brief newer than
-       its chapter is the signal that the brief was written but
-       revise hasn't run yet (HIGH)
+     - `books/{book}/briefs/ch*.md` against the corresponding
+       `books/{book}/chapters/ch_*.md` — a brief whose recorded
+       fingerprint (`brief_for:`) still matches its chapter was
+       written but revise hasn't run yet (HIGH); a brief from before
+       fingerprints falls back to being newer than its chapter
      - `books/{book}/chapters/ch_NN.summary.md` against the chapter
        — a summary whose recorded fingerprint no longer matches the
        chapter's text describes prose that is no longer on the page

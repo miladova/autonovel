@@ -196,3 +196,60 @@ def stamp(chapter_path: Path) -> str:
         new = f"---\n{line}\n---\n\n{body}\n"
     spath.write_text(new, encoding="utf-8")
     return fp
+
+
+# ------------------------------------------------------------ briefs
+
+BRIEF_KEY = "brief_for"
+_BRIEF_RE = re.compile(rf"^{BRIEF_KEY}:\s*(\S+)\s*$", re.MULTILINE)
+
+
+def brief_path_for(chapter_path: Path) -> Path:
+    m = _CHAPTER_RE.match(chapter_path.name)
+    n = int(m.group(1)) if m else 0
+    return chapter_path.parent.parent / "briefs" / f"ch{n:02d}.md"
+
+
+def brief_pending(chapter_path: Path) -> bool | None:
+    """Is the chapter's revision brief still waiting for its revise?
+
+    A brief records the fingerprint of the chapter it was written
+    against (`brief_for:`, by `autonovel _stamp-brief`); it is pending
+    while the chapter's prose is unchanged since, and consumed once the
+    chapter has been rewritten. A brief from before fingerprints falls
+    back to the old test (brief file newer than the chapter file).
+    None when there is no brief."""
+    bpath = brief_path_for(chapter_path)
+    if not bpath.is_file() or not chapter_path.is_file():
+        return None
+    text = bpath.read_text(encoding="utf-8")
+    m = _BRIEF_RE.search(text[: len(text) - len(strip_yaml_frontmatter(text))]) if text.startswith("---") else None
+    if m:
+        return m.group(1) == body_hash(chapter_path.read_text(encoding="utf-8"))
+    return bpath.stat().st_mtime > chapter_path.stat().st_mtime
+
+
+def stamp_brief(chapter_path: Path) -> str:
+    """Record in the chapter's brief the fingerprint of the chapter as it
+    now stands, the text the brief was written against."""
+    bpath = brief_path_for(chapter_path)
+    if not chapter_path.is_file():
+        raise StampError(f"no chapter file at {chapter_path}")
+    if not bpath.is_file():
+        raise StampError(f"no brief at {bpath}; write the brief first")
+    text = bpath.read_text(encoding="utf-8")
+    fp = body_hash(chapter_path.read_text(encoding="utf-8"))
+    line = f"{BRIEF_KEY}: {fp}"
+    if text.startswith("---") and strip_yaml_frontmatter(text) != text:
+        head = text[: len(text) - len(strip_yaml_frontmatter(text))]
+        rest = text[len(head):]
+        if _BRIEF_RE.search(head):
+            head = _BRIEF_RE.sub(line, head, count=1)
+        else:
+            nl = head.index("\n") + 1
+            head = head[:nl] + line + "\n" + head[nl:]
+        new = head + rest
+    else:
+        new = f"---\n{line}\n---\n\n{text.lstrip()}"
+    bpath.write_text(new, encoding="utf-8")
+    return fp

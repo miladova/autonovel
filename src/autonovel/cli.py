@@ -345,6 +345,12 @@ def _build_parser() -> argparse.ArgumentParser:
                      help="Chapter whose summary was just written (repeatable).")
     _ss.set_defaults(func=_cmd_stamp_summary)
 
+    _sb = sub.add_parser("_stamp-brief", help=argparse.SUPPRESS)
+    _sb.add_argument("--book", required=True)
+    _sb.add_argument("--chapter", type=int, action="append", required=True,
+                     help="Chapter whose brief was just written (repeatable).")
+    _sb.set_defaults(func=_cmd_stamp_brief)
+
     _begin = sub.add_parser("_begin", help=argparse.SUPPRESS)
     _begin.add_argument("--command", required=True)
     _begin.add_argument("--args", default="")
@@ -1162,6 +1168,30 @@ def _cmd_stamp_summary(args: argparse.Namespace) -> int:
             rc = 1
             continue
         print(f"stamped: chapter {n}'s summary matches the chapter as it now stands ({fp})")
+    return rc
+
+
+def _cmd_stamp_brief(args: argparse.Namespace) -> int:
+    """Hidden subcommand: record in `briefs/chNN.md` the fingerprint of
+    the chapter the brief was written against. The brief is pending
+    while the chapter is unchanged and consumed once it is rewritten
+    (`/autonovel:next`), whatever the files' mtimes."""
+    from . import summaries
+    try:
+        series = load_series()
+    except SeriesNotFound as e:
+        print(f"error: {e}", file=sys.stderr)
+        return 2
+    rc = 0
+    for n in args.chapter:
+        chapter = series.books / args.book / "chapters" / f"ch_{n:02d}.md"
+        try:
+            fp = summaries.stamp_brief(chapter)
+        except summaries.StampError as e:
+            print(f"error: chapter {n}: {e}", file=sys.stderr)
+            rc = 1
+            continue
+        print(f"stamped: chapter {n}'s brief was written against the chapter as it now stands ({fp})")
     return rc
 
 

@@ -1284,7 +1284,7 @@ Or in Claude Code:
 ```
 
 `/autonovel:next` inspects the live filesystem — pending canon
-conflicts, chapter regressions, briefs newer than their chapters
+conflicts, chapter regressions, briefs not yet acted on (the chapter unchanged since the brief was written)
 (the brief→revise pair is the most common situational signal),
 **stale per-chapter summaries** (a `.summary.md` whose recorded
 fingerprint no longer matches its chapter's text — the load-bearing

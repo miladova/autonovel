@@ -206,7 +206,9 @@ the whole sweep on a single missing input.
       anachronism report from (a), `edit_logs/review.json` and
       `edit_logs/reader_panel.json` (if any), and
       `edit_logs/structure_review.json` (if any) — then synthesize a
-      revision brief at `books/{book}/briefs/ch{N:02d}.md`. The brief
+      revision brief at `books/{book}/briefs/ch{N:02d}.md`, and use
+      `bash` to run `autonovel _stamp-brief --book {book} --chapter {N}`
+      before the revise (brief step 6). The brief
       enumerates specific named passages to change, target word
       count, and prescriptions per anti-pattern. When a
       structure-review candidate names chapter N, the brief is
