@@ -92,6 +92,7 @@ class SummaryState:
     chapter_path: Path
     summary_path: Path
     status: str  # fresh | stale | unverified | missing
+    stamped: bool = True  # False for a summary from before fingerprints
 
     @property
     def needs_refresh(self) -> bool:
@@ -99,6 +100,9 @@ class SummaryState:
 
     @property
     def reason(self) -> str:
+        if self.status == "stale" and not self.stamped:
+            return ("the chapter file is newer than this summary, which was written "
+                    "before summaries carried a fingerprint")
         return REASONS[self.status]
 
     def to_dict(self, root: Path | None = None) -> dict:
@@ -136,7 +140,8 @@ def state(chapter_path: Path) -> SummaryState:
         newer = chapter_path.stat().st_mtime > spath.stat().st_mtime
     except OSError:  # pragma: no cover
         newer = False
-    return SummaryState(chapter, chapter_path, spath, "stale" if newer else "unverified")
+    return SummaryState(chapter, chapter_path, spath, "stale" if newer else "unverified",
+                        stamped=False)
 
 
 def chapter_files(book_root: Path) -> list[Path]:
