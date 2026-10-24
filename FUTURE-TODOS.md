@@ -11,6 +11,44 @@ to start.
 
 ## Near-term — pull into the next PR
 
+- **No cast or place budget anywhere in the pipeline (opened 2026-10-24,
+  from the kingmaker2 author: "just too many" characters and locations).**
+  kingmaker2 has about 81 named people (54 on stage, 32 on stage in two or
+  more chapters) and about 60 named towns, scenes in 17 of them, and some
+  30 named buildings, inns and streets. Nothing in DESIGN.md, CHARACTER.md,
+  `/autonovel:cast` or `/autonovel:design` asks how many names a reader can
+  hold. CHARACTER.md's "real people from the record" and the historical
+  guide's "the history is the payload" pushed toward naming everyone the
+  record names. The research behind the author's version-3 proposal:
+  - Anne Mini puts the risk of names merging at more than 26 named
+    characters.
+  - Mary Kole and Maryglenn McCombs name the early crowd of new names as
+    the commonest submission fault.
+  - The Baker/baker paradox (McWeeny et al. 1987) shows a role is
+    remembered better than a name.
+  - Zacks's lab (Bailey et al. 2017) shows every change of person or place
+    is an event boundary that slows reading.
+  - Wolf Hall's cast list holds 89, grouped by place, with a single point
+    of view.
+
+  Proposed:
+  1. DESIGN.md gains a cast and place budget (a D-test): the people the
+     reader must track, named, about 15 to 25; everyone else by role; at
+     most two or three new names in a chapter; scenes in as few towns as
+     the story allows; a place named only where a scene is set or the
+     plot sends the reader back to it.
+  2. CHARACTER.md gains the three tiers (followed, met once, mentioned).
+  3. `/autonovel:cast` and `/autonovel:design` apply both.
+  4. A mechanical census (`autonovel mechanical cast-census`), with names
+     from the cast registry and places from the design's `## Places` plus
+     a per-book gazetteer, never a hardcoded list, counts names per
+     chapter and new names per chapter against the budget.
+  5. story-map shows the counts.
+
+  The scratchpad prototype is `v3/places.py` plus the people census from
+  the third letter. Tests: a fixture book over budget is flagged, and one
+  within it is not.
+
 - **A long-lived series' CLAUDE.md goes stale, and nothing refreshes it
   (opened 2026-10-24).** `refresh-templates` refreshes `typeset/` and
   `shared/craft/` only, on purpose, because the user may hand-edit the
