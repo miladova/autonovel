@@ -321,7 +321,7 @@ full page in the PDF.
         <glossary-arg> \
         books/{book}/typeset/chapters_combined.md \
         <appendix-arg> \
-        books/{book}/typeset/epub_back_cover.md \
+        <back-cover-arg> \
         books/{book}/typeset/epub_colophon.md
       cp books/{book}/typeset/<timestamped> \
          books/{book}/typeset/<latest>
@@ -338,6 +338,17 @@ full page in the PDF.
       omitted when it doesn't. **Don't pass an empty path** to
       pandoc — it errors out. Test with `[ -f
       books/{book}/preface.md ]` etc.
+
+      `<back-cover-arg>` is `books/{book}/typeset/epub_back_cover.md`
+      only when `books/{book}/art/back_cover.png` exists (the same image
+      the PDF ends on); otherwise leave it out, or the ePub ends on a
+      broken image.
+
+      Run pandoc from `books/{book}/typeset/` (the metadata file's css
+      and cover paths are relative to it). The book's title comes from
+      `metadata.yaml`; no input file may carry its own YAML `title:`,
+      which would override it (the colophon template once had
+      `title: ""` and every ePub's title came out blank).
 
       File-to-pandoc-arg mapping:
         - `books/{book}/preface.md`       → `<preface-arg>`

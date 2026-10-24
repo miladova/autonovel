@@ -2652,7 +2652,18 @@ off the page; a one-letter word now leaves the box empty. The template also
 sets `\emergencystretch` to 2em: the kingmaker2 build went from 786 overfull
 lines (27pt at worst, a bold name in the people list) to one. +2 tests.
 
+### 2026-10-24 — the ePub keeps its title; the back cover only when there is one
+
+Every ePub since PR 7 had an empty `dc:title`: the colophon template carried a
+YAML block `title: ""`, and pandoc let the last file's metadata override
+`metadata.yaml`. The block is gone. The ePub back-cover template pointed at
+`epub_back_cover.png`, which nothing makes; it now uses `../art/back_cover.png`
+(the image the PDF ends on), and typeset.md passes it to pandoc only when
+that image exists, and says to run pandoc from the book's typeset folder.
++1 test.
+
 ## Tests last known green
+- Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (ePub title, back cover) — **2280 passing, 1 skipped** (+1).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (lists in the back matter; one-letter drop cap) — **2279 passing, 1 skipped** (+2).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (bold fallback, timeline markers) — **2277 passing, 1 skipped** (+1).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (art-import keeps hand-added keys) — **2276 passing, 1 skipped** (+1).

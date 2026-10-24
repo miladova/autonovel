@@ -193,3 +193,15 @@ def test_template_never_drops_letters_in_bold_or_the_timeline_markers() -> None:
     # Lines loosen rather than run into the margin (786 overfull lines
     # in the kingmaker2 build before, one after).
     assert "\\setlength{\\emergencystretch}{2em}" in tex
+
+
+def test_epub_templates_keep_the_title_and_find_the_back_cover() -> None:
+    """kingmaker2, 2026-10-24: the colophon's `title: ""` blanked every
+    ePub's title, and the back cover pointed at an image nobody makes."""
+    from pathlib import Path
+    root = Path(__file__).resolve().parents[2]
+    typeset = root / "src" / "autonovel" / "templates" / "series" / "typeset"
+    assert "title:" not in (typeset / "epub_colophon.md").read_text(encoding="utf-8")
+    assert "../art/back_cover.png" in (typeset / "epub_back_cover.md").read_text(encoding="utf-8")
+    body = (root / "commands" / "typeset.md").read_text(encoding="utf-8")
+    assert "<back-cover-arg>" in body and "art/back_cover.png` exists" in body
