@@ -11,6 +11,37 @@ to start.
 
 ## Near-term — pull into the next PR
 
+- **Every revised chapter's summary reads as stale (opened 2026-10-23).**
+  After the kingmaker2 revision pass, `_end` offered "regenerate stale
+  chapter summaries" for 13 of the 15 revised chapters, although revise had
+  regenerated each one. The summary is written at revise step 9, and the
+  chapter file is touched again a minute or a few minutes later (the
+  frontmatter's `status` and `word_count`, or a last fix), so the mtime
+  check in the dossier and the `_end` hint sees the summary as older than
+  its chapter. Proposed: compare the summary against the chapter's body
+  (a content hash recorded in the summary's frontmatter, or the mtime of
+  the body excluding frontmatter) rather than the file's mtime; or have
+  revise write the frontmatter before the summary. Test: revise a fixture
+  chapter, then touch only its frontmatter; the summary is not stale.
+
+- **A revision can't retire the canon entry it supersedes (opened
+  2026-10-23, found on the kingmaker2 revision pass).** When a revised
+  chapter changes a fact it had established (chapter 7 moved the Pope's
+  briefs from Thursday 24 March to Monday 21 March; chapter 15 moved the
+  French messenger's expulsion), revise writes a new pending entry whose
+  text says "supersedes [old title]", and `_promote-canon` promotes it into
+  `books/<book>/canon.md`. The old entry stays beside it, so the book's
+  canon holds both dates. `promote_canon.py` emits `## Superseded` blocks
+  only for research-tagged entries, and contradiction detection treats the
+  pair as a conflict at best. Proposed: when a chapter-derived pending entry
+  names `supersedes [title]` and both come from the same book's chapters,
+  move the old entry into a dated `## Superseded <date>` audit block in the
+  same canon file (the shape research supersedure already uses), and report
+  it in the promote summary. Until then the sweep's closer moves them by
+  hand. Test: a book canon with entry A from ch 7, a pending entry B from
+  ch 7 that says "supersedes [A]"; after promote, A sits under
+  `## Superseded`, B is live, and no conflict block is written.
+
 - ~~**The whole-book reviewers aren't routine, and the step chain after the
   last chapter loops (opened 2026-10-23, author).**~~ **Shipped the same
   day, all five items:** `housekeeping/whole_book.py` (state from the
