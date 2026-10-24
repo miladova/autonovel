@@ -2569,6 +2569,7 @@ The footer's numbered list no longer skips a number when the structure
 review item is left out.
 
 ## Tests last known green
+- Tier 3 (draft smoke + revision smoke: evaluate, adversarial-edit, apply-cuts, brief, revise, shorten), with the summary gate and the refresh step: 2026-10-24 — **7/7 green (42m47s)**, subscription auth.
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (introduce once) — **2266 passing, 1 skipped** (newcomers test rewritten for the new gap).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (summaries always match their chapters) — **2266 passing, 1 skipped** (+19).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-23 (whole-book order) — **2247 passing, 1 skipped** (+6).
