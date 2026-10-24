@@ -91,8 +91,11 @@ Every item under **Lost**, **Didn't know**, **Read twice**, **Too many
 at once** and **Forgot who** is a fault in the chapter, not in the
 reader: explain the term in plain words where it first appears,
 introduce the person properly, orient the scene, rewrite the sentence
-plainly, spread the newcomers out, re-anchor the returning person in a
-clause (who they are, what they want). **Couldn't picture** asks for the
+plainly, spread the newcomers out, re-anchor the person back after a
+long absence in a few words (who they are, what they want). A note that
+the chapter re-introduces someone or something the reader already knows
+("a roll call", "I know who he is by now") is a cut: remove the repeated
+introduction and keep the name. **Couldn't picture** asks for the
 place on the page: a major place's first appearance gets its set piece,
 seen through the viewpoint character's eyes (`draft` step 3c). **Who
 felt real** is the depth check: a person read as a type gets what

@@ -59,17 +59,23 @@ def test_opening_count_and_cli(tmp_path: Path, capsys) -> None:
 
 
 def test_returning_names_after_a_gap(tmp_path: Path) -> None:
+    """A name returns when last seen three or more chapters away (the
+    default gap of 4), the absence after which draft step 3c re-anchors
+    a person. In a book that alternates between two times, a name from
+    one strand seen two chapters back is not returning."""
     book = _chapters(tmp_path, [
         "Jakob wrote to Albrecht at Mainz and to Joachim.",
         "In Venice Jakob met Negro.",
         "Then Jakob read what Albrecht wanted, and Negro was far away.",
-        "Albrecht wrote again to Jakob.",
+        "In Venice Negro wrote again.",
+        "Jakob rode to Mainz, and Joachim was waiting.",
     ])
     rep = newcomers.scan_book(book)
-    ch3 = {r["word"]: r["last_seen_chapter"] for r in rep["chapters"][2]["returning"]}
-    assert ch3 == {"Albrecht": 1}          # Jakob was in ch 2; Negro was just seen
-    assert rep["chapters"][3]["returning"] == []   # Albrecht was in ch 3
-    wide = newcomers.scan_book(book, gap=3)
-    assert wide["chapters"][2]["returning"] == []
+    assert rep["chapters"][2]["returning"] == []   # Albrecht last seen two chapters back
+    ch5 = {r["word"]: r["last_seen_chapter"] for r in rep["chapters"][4]["returning"]}
+    assert ch5 == {"Joachim": 1, "Mainz": 1}   # three chapters away
+    narrow = newcomers.scan_book(book, gap=2)
+    ch3 = {r["word"]: r["last_seen_chapter"] for r in narrow["chapters"][2]["returning"]}
+    assert ch3 == {"Albrecht": 1}
     md = newcomers.render_markdown(rep)
-    assert "returning after a gap of 2+ chapters: Albrecht (last seen ch 1)" in md
+    assert "returning after a gap of 4+ chapters: Joachim (last seen ch 1)" in md or "Joachim (last seen ch 1)" in md

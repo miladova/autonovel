@@ -59,7 +59,11 @@ prioritised.
      `/autonovel:apply-cuts` can find it unambiguously
    - classify as one of `FAT | REDUNDANT | OVER-EXPLAIN | GENERIC | TELL | STRUCTURAL | MISPLACED`
      (`MISPLACED`: payload content from step 3a that is badly placed or
-     delivered: a lecture, a gloss stack, a guidebook paragraph)
+     delivered: a lecture, a gloss stack, a guidebook paragraph;
+     `REDUNDANT` includes re-introducing a person, place or term the
+     reader met in either of the last two chapters or already had
+     explained: cut the repeated tag and keep the name. The first
+     introduction in the book is never a cut)
    - give an action: `CUT`, `REWRITE` or `MOVE` (`MISPLACED` takes only
      `MOVE` or `REWRITE`, never `CUT`)
    - for REWRITE, supply a replacement; for MOVE, say where it goes (the

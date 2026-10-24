@@ -414,8 +414,11 @@ section. The other craft documents still apply (`DESIGN.md` §12 place and
    gate shuts at dusk *and the rider is late*. Michelle Barker: "Make the
    information something that causes problems for the characters"
    (*Writers Helping Writers*, 2022).
-3. **A clause at first use.** A term the story turns on is explained in
-   plain words where it first appears (`DESIGN.md` §13a).
+3. **A clause at first use, once.** A term the story turns on is
+   explained in plain words where it first appears in the book
+   (`DESIGN.md` §13a), and not again: back after a long absence it gets a
+   word of reminder at most. The explanation is the payload; the
+   repetition is not.
 4. **A sentence or two at a time.** Barker: "A sentence or two of
    information is enough." "Sprinkle it throughout a scene."
 5. **Plain telling is allowed.** A short plain paragraph at an arrival or

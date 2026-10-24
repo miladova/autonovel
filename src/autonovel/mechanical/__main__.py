@@ -2466,9 +2466,10 @@ def main(argv: list[str] | None = None) -> int:
     ncp.add_argument("book_root", help="Path to the book dir (parent of chapters/).")
     ncp.add_argument("--chapter", type=int, default=None)
     ncp.add_argument("--first-words", type=int, default=500)
-    ncp.add_argument("--gap", type=int, default=2,
+    ncp.add_argument("--gap", type=int, default=4,
                      help="A name counts as returning when last seen this many chapters "
-                          "earlier or more (default 2: absent from the previous chapter).")
+                          "earlier or more (default 4: three or more chapters away, the "
+                          "absence after which draft step 3c re-anchors a person).")
     ncp.add_argument("--format", choices=("json", "markdown"), default="json")
     ncp.set_defaults(func=_cmd_newcomers)
     dvl = sub.add_parser("design-validate",

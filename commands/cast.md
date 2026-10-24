@@ -121,6 +121,7 @@ command checks each principal against.
    where, age, what they want, their price or their fear, one concrete
    detail of face or manner (from the record where real), and a
    **return tag** — one clause that re-anchors them when they come back
+   after a long absence (three or more chapters away; draft step 3c)
    ("Albrecht, the young Archbishop of Mainz who spent faster than anyone
    Jakob knew, and wanted cash in his hand"). Give every principal a
    return tag too. Where what they want changes, give the tag per act.

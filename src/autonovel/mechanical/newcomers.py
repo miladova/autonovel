@@ -1,7 +1,7 @@
 """New and returning names per chapter — a candidate list for the reader's map.
 
 `autonovel mechanical newcomers <book_dir> [--chapter N] [--first-words 500]
-[--gap 2]` lists, for each chapter, the capitalised words (people, places,
+[--gap 4]` lists, for each chapter, the capitalised words (people, places,
 institutions, foreign terms) that appear for the first time in the book
 in that chapter, where each first appears, and how many land in the
 chapter's opening words; and the ones *returning* after an absence (last
@@ -122,7 +122,7 @@ def _capitalised_mid_sentence(text: str) -> dict[str, list[int]]:
 
 
 def scan_book(book_root: Path, *, chapter: int | None = None,
-              first_words: int = 500, gap: int = 2) -> dict:
+              first_words: int = 500, gap: int = 4) -> dict:
     last_seen: dict[str, int] = {}
     out: list[ChapterNewcomers] = []
     for path in iter_chapter_files(book_root / "chapters"):

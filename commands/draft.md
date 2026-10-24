@@ -181,16 +181,27 @@ required reads — surface the error and stop, don't retry.
       if need be; a minor place gets a few lines. When the design names
       a place's `set_piece:`, stage it there. When the place returns,
       give its signature in a line and what has changed.
-    - **Re-anchor whoever returns.** A person, place or term the reader
-      last met more than a chapter ago — and anyone from the other
-      strand, in a book that alternates — is re-anchored in a clause the
-      first time they come back: who they are and what they want, through
-      action where the scene allows (*Albrecht, the young Archbishop of
-      Mainz who spent faster than anyone Jakob knew, wanted cash in his
-      hand*). In an ensemble — a council, seven princes — re-anchor each
-      member every time the group comes on stage, until the book has
-      shown each of them often enough to stand alone. `books/{book}/cast.md`
-      `return tag:` lines give the facts; vary the wording.
+    - **Introduce once; remind only after a long absence.** Each person,
+      place and term is introduced once in the book, where it first
+      appears: who they are and what they want, in plain words. After
+      that the name stands alone. Re-anchor a person only when the reader
+      last saw them on the page three or more chapters ago, counting
+      every chapter in between whichever time or strand it belongs to
+      (or about 20,000 words ago), and then in a few words, not a
+      sentence: the tag, varied, and what they want today, through action
+      where the scene allows (*Albrecht, who wanted cash in his hand*).
+      Nobody on the page in either of the last two chapters is introduced
+      again. An ensemble (a council, seven princes) gets a tag for each
+      member on the group's first few appearances, until each has been
+      shown about three times; then they stand alone. A place or term is
+      explained once in the book; back after a long absence it gets a
+      word of reminder at most (*the Fondaco, the Germans' warehouse*),
+      never the explanation again. `books/{book}/cast.md` `return tag:`
+      lines give the facts. Repeated introductions are what cold readers
+      of a long book complain of most ("by halfway I was skipping the
+      first sentence of every paragraph"): the reader remembers more than
+      the drafter fears, and the cast list in the back matter is there
+      for the one who forgets.
     - **Plain over clever.** When `voice.md` asks for plain English,
       no figure of speech the reader has to decode ("rode as if the
       saddle owed him money"), no compressed witty construction whose
@@ -366,8 +377,10 @@ required reads — surface the error and stop, don't retry.
    a new person arrives with who they are, that an unfamiliar term or
    foreign word is explained in plain words where it first appears, and
    that the opening doesn't introduce more than about three new names;
-   and, under "returning", that each person or place back after an
-   absence is re-anchored (step 3c); fix the draft where it doesn't.
+   and, under "returning" (back after three or more chapters away),
+   that each is re-anchored in a few words (step 3c), and that nobody
+   the reader saw in the last two chapters is introduced again; fix the
+   draft where it doesn't.
 
    **First reader** (always, before the summary). Use `file_read` on
    `shared/craft/FIRST-READER.md` and on the genre guide's `## The first

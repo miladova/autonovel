@@ -48,8 +48,9 @@ page; the rest were read in the text itself.
 9. Scenes of secrets let the reader track who knows what, to about four
    layers and no deeper.
 10. A round character can surprise us convincingly.
-11. Whoever returns after an absence is re-anchored at once, and the tag
-    recurs at a moment that matters.
+11. Whoever returns after a long absence is re-anchored at once, in a
+    few words, and the tag recurs at a moment that matters; nobody the
+    reader remembers is introduced twice.
 12. Real people are invented only inside the record's silences, in the
     mind of their own time, and never shrunk to their reputation.
 
@@ -358,16 +359,25 @@ reaches the page.
   just as the little princess used to do" (*War and Peace*, Maude trans.).
   A tag identifies the person at once and, used well, comes back at a
   moment that matters. It is never their only behaviour.
-- **Re-anchor on return.** A person returning after an absence is
-  re-anchored within two sentences: the tag plus their relation to the
-  viewpoint and what they want. When an ensemble comes on stage, give
-  each member their line again until the book has shown each often enough
-  to stand alone; a reader who meets seven princes in the first chapter
-  will not remember them four chapters later without help.
+- **Re-anchor on a long return, never twice.** A person returning after
+  a long absence (three or more chapters away, counting every chapter in
+  between whatever its time or strand, or about 20,000 words) is
+  re-anchored within two sentences, in a few words: the tag plus their
+  relation to the viewpoint and what they want. Someone the reader saw a
+  chapter or two ago is not introduced again: repeated introductions read
+  as a roll call, and cold readers of a long book name them as the thing
+  that made them skim. When an ensemble comes on stage, give each member
+  their line on the group's first few appearances, until each has been
+  shown about three times; then they stand alone. A reader who meets
+  seven princes in the first chapter will not remember them four
+  chapters later without help, and will not need it by the fourth
+  meeting. A place or a term is explained once in the book.
 - **A cast list.** Customary in historical novels with large casts:
   *Wolf Hall*'s is grouped by place and time, one line each, often giving
   the person's relation to the protagonist. It helps a reader who wants
-  to check; it is not a substitute for re-anchoring on the page.
+  to check, and it is what lets the narration stop re-introducing
+  people; it is not a substitute for re-anchoring someone back after a
+  long absence. `/autonovel:appendix --sections cast` writes one.
 
 ## §7 How characters come out flat
 
@@ -429,8 +439,9 @@ draft; the first reader's "Who felt real" is the cold check.
   the book; none means flat, an unconvincing one means a flat pretending
   to be round.
 - **C11 Return.** Every principal and ensemble player has a return tag; a
-  cold reader can place anyone returning within two sentences; the tag
-  recurs at a moment of meaning.
+  cold reader can place anyone back after three or more chapters away
+  within two sentences; nobody seen in the last two chapters is
+  introduced again; the tag recurs at a moment of meaning.
 - **C12 From the record** (real people). The record and the gap are
   separated and the sources' biases named; invention sits only in the
   gap and is marked; the period mind drives their choices; no hindsight;

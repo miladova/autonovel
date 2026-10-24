@@ -13,6 +13,9 @@ to start.
 
 - **The re-anchor rule re-introduces everyone in every chapter of a braided
   book (opened 2026-10-24, from the kingmaker2 second editor's letter).**
+  **(1)–(4) shipped 2026-10-24** (STATE.md, "introduce once; remind only
+  after a long absence"); (5), the mechanical counter, and its tests are
+  still open.
   `commands/draft.md` 3c re-anchors any person, place or term "the reader
   last met more than a chapter ago", and in an ensemble "every time the
   group comes on stage"; `CHARACTER.md` C11 and its re-anchor rule say the

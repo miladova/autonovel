@@ -2513,7 +2513,34 @@ really doesn't match. `chapter_summary`, `structure_dossier`, `next` and
 the TUI use the fingerprint. Legacy unstamped summaries are refreshed once,
 the first time a summary-reading command runs. +19 tests (2 rewritten).
 
+### 2026-10-24 — introduce once; remind only after a long absence
+
+The kingmaker2 second letter counted the narration re-introducing its
+people in almost every chapter (one elector's want restated 10 times in 8
+chapters, the bookkeeper re-introduced in 8; the cold readers flagged it in
+5 chapters: "by halfway I was skipping the first sentence of every
+paragraph"). The cause was the pipeline's own rule: draft step 3c
+re-anchored anyone "last met more than a chapter ago — and anyone from the
+other strand", and in an ensemble "every time the group comes on stage";
+`CHARACTER.md` rule 11, its re-anchor paragraph and C11 said the same, and
+`mechanical newcomers` called a name "returning" when it missed one
+chapter. In a book that alternates between two times that fires for
+everyone on every return. The author approved the fix. Now: each person,
+place and term is introduced once in the book; a person is re-anchored, in
+a few words, only after three or more chapters away (every chapter in
+between counts, whatever its strand) or about 20,000 words; nobody on the
+page in either of the last two chapters is introduced again; an ensemble
+member is tagged on the group's first few appearances, until shown about
+three times; a place or term is explained once, with a word of reminder at
+most after a long absence (the genre guide's "a clause at first use" says
+"once"; the explanation is the payload, the repetition is not). The cold
+reader's "roll call" note is a cut (FIRST-READER.md); `adversarial-edit`
+counts a repeated introduction under REDUNDANT and never the first one;
+`newcomers --gap` defaults to 4; cast.md's return tag is for a long return.
+The mechanical re-introduction counter stays in FUTURE-TODOS.
+
 ## Tests last known green
+- Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (introduce once) — **2266 passing, 1 skipped** (newcomers test rewritten for the new gap).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (summaries always match their chapters) — **2266 passing, 1 skipped** (+19).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-23 (whole-book order) — **2247 passing, 1 skipped** (+6).
 - Tier 3 (revision smoke: evaluate, adversarial-edit, apply-cuts, brief, revise, shorten): 2026-10-23 — **6/6 green** (40 min, subscription auth).
