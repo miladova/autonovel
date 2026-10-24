@@ -55,6 +55,34 @@ _SUBHEADING_RE = re.compile(r"^##\s+(.+?)\s*$", re.MULTILINE)
 # Without this rule those `###` lines render literally in the PDF
 # / ePub (user 2026-04-30 reported markdown remnants in Sources).
 _SUBSUBHEADING_RE = re.compile(r"^###\s+(.+?)\s*$", re.MULTILINE)
+_LIST_ITEM_RE = re.compile(r"^[-*]\s+(.*\S)\s*$")
+
+
+def _lists_to_itemize(body: str) -> str:
+    """Turn markdown bullet lists into `itemize` blocks. Without this a
+    list's lines ran together into one paragraph in the PDF: the cast
+    list and the timeline of kingmaker2's appendix came out as a single
+    run of text (2026-10-24). An indented line continues the item above
+    it; a blank line or any other line ends the list."""
+    out: list[str] = []
+    in_list = False
+    for line in body.splitlines():
+        m = _LIST_ITEM_RE.match(line)
+        if m:
+            if not in_list:
+                out.append("\\begin{itemize}\\setlength{\\itemsep}{0.15em}")
+                in_list = True
+            out.append(f"\\item {m.group(1)}")
+        elif in_list and line.startswith((" ", "\t")) and line.strip():
+            out[-1] += " " + line.strip()
+        else:
+            if in_list:
+                out.append("\\end{itemize}")
+                in_list = False
+            out.append(line)
+    if in_list:
+        out.append("\\end{itemize}")
+    return "\n".join(out)
 
 
 def build_back_matter_tex(
@@ -101,6 +129,7 @@ def build_back_matter_tex(
             body,
         )
 
+        body = _lists_to_itemize(body)
         latex_body = md_to_latex(body)
         # `\markboth{}{<title>}` resets the running header on the
         # recto to "Appendix" — without it, the header inherits the

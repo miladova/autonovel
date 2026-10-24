@@ -115,7 +115,11 @@ def make_drop_cap(latex_body: str) -> str:
     first_letter = para_text[0]
     after_first = para_text[1:]
     space_idx = after_first.find(" ")
-    if space_idx > 0:
+    # `>= 0`: a one-letter first word ("A little before five…") leaves
+    # nothing after the capital. With `> 0` the whole paragraph went into
+    # lettrine's small-caps box, which can't break, and the first line ran
+    # off the page (kingmaker2 ch 1 and 3, 2026-10-24).
+    if space_idx >= 0:
         word_rest = after_first[:space_idx]
         para_rest = after_first[space_idx:]
     else:

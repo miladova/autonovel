@@ -34,6 +34,7 @@ from pathlib import Path
 
 from .frontmatter import strip_yaml_frontmatter
 from .latex import latex_escape, md_to_latex
+from .back_matter import _lists_to_itemize
 
 
 def build_front_matter_tex(
@@ -81,7 +82,8 @@ def build_front_matter_tex(
                 body_lines.pop(0)
         body = "\n".join(body_lines)
 
-        latex_body = md_to_latex(body)
+        # A glossary is usually a list; keep its lines apart (back_matter).
+        latex_body = md_to_latex(_lists_to_itemize(body))
         # `\markboth{}{<title>}` resets the running header on the
         # recto to the section's name (Preface / Introduction /
         # Glossary). Without this, the running header inherits the

@@ -431,3 +431,13 @@ class TestChapterTitlesToggle:
         )
         text = out.read_text(encoding="utf-8")
         assert "\\chapter{}" in text
+
+
+def test_drop_cap_with_a_one_letter_first_word() -> None:
+    """kingmaker2, 2026-10-24: 'A little before five…' put the whole first
+    paragraph in lettrine's small-caps box and the line ran off the page."""
+    from autonovel.mechanical.latex import make_drop_cap
+    out = make_drop_cap("A little before five in the morning, a rider came.\n\nNext.")
+    assert out.startswith("\\lettrine[lines=2, lhang=0.1, nindent=0.2em]{A}{} little before five")
+    out = make_drop_cap("On a hot night in July.\n")
+    assert "{O}{n} a hot night" in out

@@ -153,3 +153,20 @@ def test_cli_no_appendix_no_write(tmp_path: Path) -> None:
     assert data["sections"] == []
     assert data["wrote"] is False
     assert not output.is_file()
+
+
+def test_markdown_lists_become_itemize(tmp_path) -> None:
+    """kingmaker2, 2026-10-24: the appendix's cast list and timeline ran
+    together into one paragraph in the PDF."""
+    from autonovel.mechanical.back_matter import build_back_matter_tex
+    book = tmp_path / "book"
+    book.mkdir()
+    (book / "appendix.md").write_text(
+        "# Appendix\n\n## The people in the book\n\n"
+        "- **Jakob Fugger** — head of the house. *(ch 1)*\n"
+        "- **Konrad Mair** — the rider,\n  who sees what Jakob can't. *(ch 1)* *(invented)*\n\n"
+        "After the list.\n", encoding="utf-8")
+    tex, _ = build_back_matter_tex(book)
+    assert "\\begin{itemize}" in tex and tex.count("\\item ") == 2
+    assert "\\item \\textbf{Konrad Mair} --- the rider, who sees" in tex
+    assert tex.index("\\end{itemize}") < tex.index("After the list.")

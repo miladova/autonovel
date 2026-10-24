@@ -2640,7 +2640,18 @@ Regular and Italic (fontspec FakeBold) when no `EB Garamond SemiBold` (the
 current Google release) is installed, and maps ◆ ◇ ○ to amssymb's lozenges
 and \circ through newunicodechar. The operating guide says so. +1 test.
 
+### 2026-10-24 — the appendix's lists, and a drop cap that ran off the page
+
+Two typeset bugs found reading the kingmaker2 PDF. The back-matter (and
+front-matter) builder had no list support, so the appendix's people list and
+timeline ran together into one paragraph each; markdown bullets now become
+`itemize`, with an indented line continuing the item. And `make_drop_cap`
+put a whole first paragraph into lettrine's small-caps box when the first
+word was one letter ("A little before five…"), so chapter 1's first line ran
+off the page; a one-letter word now leaves the box empty. +2 tests.
+
 ## Tests last known green
+- Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (lists in the back matter; one-letter drop cap) — **2279 passing, 1 skipped** (+2).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (bold fallback, timeline markers) — **2277 passing, 1 skipped** (+1).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (art-import keeps hand-added keys) — **2276 passing, 1 skipped** (+1).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (no-new-facts bullet) — **2275 passing, 1 skipped** (+1).
