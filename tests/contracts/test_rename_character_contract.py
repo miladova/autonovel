@@ -40,3 +40,9 @@ def test_a_different_longer_word_does_not_block_the_rename() -> None:
     flat = " ".join(_cmd().body.split())
     assert "A different word" in flat and "is left as it is" in flat
     assert "which the word-boundary replace would miss" in flat
+
+
+def test_book_flag_limits_canon_and_briefs_keep_their_time() -> None:
+    flat = " ".join(_cmd().body.split())
+    assert "when `--book` is passed, only that book's" in flat
+    assert "keep its modification time" in flat

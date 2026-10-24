@@ -73,7 +73,9 @@ replacement occurs.
 3. Enumerate target files:
    - shared: `shared/characters.md`, `shared/canon.md`,
      `shared/events.md`, `shared/world.md`.
-   - every book's `books/<book>/canon.md` (book-scoped canon).
+   - every book's `books/<book>/canon.md` (book-scoped canon), or,
+     when `--book` is passed, only that book's: another book's canon
+     belongs with that book's chapters, which this sweep leaves alone.
    - per book (loop over all books in `project.yaml`, or just
      `--book` if passed):
      - `books/{book}/outline.md`
@@ -121,6 +123,12 @@ replacement occurs.
    (the checkpoint from the preamble captures them all):
 
        sed -E -i "s/\b<old>\b/<new>/g; s/\b<old-lower>\b/<new-lower>/g; s/\b<old-upper>\b/<new-upper>/g" <file>
+
+   For each file under `books/{book}/briefs/`, keep its modification
+   time (`touch -r` from the checkpoint copy, or `stat` before and
+   `touch -d` after): an old brief written before briefs carried a
+   fingerprint is judged pending by its time, and a rename doesn't
+   make it new.
 
    The three substitutions preserve the three common casings
    (Title, lower, UPPER). Do not attempt to match every possible
