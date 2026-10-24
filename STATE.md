@@ -2614,8 +2614,8 @@ report lists where. docs/commands.md, the operating guide and the
 historical-series walkthrough say so. +3 contract tests.
 
 ## Tests last known green
-- Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (rename reaches cast, design, briefs) — **2273 passing, 1 skipped** (+4).
-- Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (brief fingerprints) — **2270 passing, 1 skipped** (+4).
+- Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (rename reaches cast, design, briefs) — **2274 passing, 1 skipped** (+4).
+- Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (brief fingerprints) — **2270 passing, 1 skipped** (+3).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (open_items) — **2267 passing, 1 skipped** (+1).
 - Tier 3 (draft smoke + revision smoke: evaluate, adversarial-edit, apply-cuts, brief, revise, shorten), with the summary gate and the refresh step: 2026-10-24 — **7/7 green (42m47s)**, subscription auth.
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (introduce once) — **2266 passing, 1 skipped** (newcomers test rewritten for the new gap).
