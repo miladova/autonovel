@@ -582,7 +582,13 @@ def score_detail(chapter: int, data: dict) -> ScoreDetail:
         fixed = fr.get("all_fixed")
         d.reader_all_fixed = fixed if isinstance(fixed, bool) else None
         last = d.reader_second if d.reader_second is not None else d.reader_first
-        if last is not None:
+        open_items = _count_items(fr.get("open_items"))
+        if open_items is not None:
+            # The evaluator's own check of the chapter as it stands.
+            d.reader_open = 0 if d.reader_all_fixed else open_items
+        elif last is not None:
+            # Older evals carry no `open_items`: everything in the last
+            # report counts until the evaluator says all are fixed.
             d.reader_open = 0 if d.reader_all_fixed else last
     return d
 

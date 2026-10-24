@@ -66,6 +66,22 @@ def test_score_detail_all_fixed_clears_open_items() -> None:
     assert d.reader_open == 0
 
 
+def test_reader_open_counts_the_evaluators_open_items() -> None:
+    """A revised chapter can keep two of a report's twenty-seven items:
+    the evaluator's `open_items` is the count, not the report's length."""
+    from autonovel.mechanical.chapter_summary import score_detail
+    d = score_detail(3, {"overall_score": 7.6, "dimensions": {"engagement": 7.5},
+                         "first_reader": {"serious_items_first": 29,
+                                          "serious_items_second": 27,
+                                          "open_items": ["the committee", "the purse"],
+                                          "all_fixed": False}})
+    assert d.reader_second == 27 and d.reader_open == 2
+    d = score_detail(3, {"overall_score": 7.6, "dimensions": {"engagement": 7.5},
+                         "first_reader": {"serious_items_second": 27, "open_items": [],
+                                          "all_fixed": True}})
+    assert d.reader_open == 0
+
+
 def test_latest_log_wins(tmp_path: Path) -> None:
     book = _book(tmp_path, {1: _eval({"engagement": 6.0}, 6.5)})
     (book / "eval_logs" / "20990101_000000_ch01_eval.json").write_text(

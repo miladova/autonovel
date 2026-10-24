@@ -82,7 +82,9 @@ of the file:
      dimension's score, `weakest_moment` and `fix`, and its
      `first_reader` block. Read `defaults.dimension_floor` from
      `project.yaml` (the chapter threshold when unset). When the
-     `first_reader` block lists items not fixed, read the report it
+     `first_reader` block lists items not fixed (its `open_items`;
+     an older eval without them: every item of the last report
+     unless `all_fixed`), read the report it
      came from, `books/{book}/edit_logs/first_read_ch{chapter}_2.md`
      when it exists, else `first_read_ch{chapter}.md`.
    - `panel`: read `books/{book}/edit_logs/reader_panel.json` and

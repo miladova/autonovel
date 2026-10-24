@@ -282,10 +282,14 @@ or `.autonovel/eval_logs/<timestamp>_series.json` for `--phase series`.
    to the page turn (`shared/craft/FIRST-READER.md`). Record
    `first_reader: {serious_items_first: [one short line each],
    serious_items_second: [...] or null when no second reader ran,
-   all_fixed: true|false}`. `all_fixed` is your check of the chapter
-   as it stands: for each serious item of the last report, is the
-   quoted passage gone, explained or clear now? True only when every
-   one is. Omit the block when no report exists.
+   open_items: [...], all_fixed: true|false}`. `open_items` is your
+   check of the chapter as it stands: each serious item of the last
+   report whose quoted passage is not yet gone, explained or clear,
+   one short line each; `[]` when every one is. `all_fixed` is true
+   only when `open_items` is empty. Omit the block when no report
+   exists. (The dashboard, `/autonovel:next` and the brief count
+   `open_items`, not the last report's length: a revised chapter can
+   keep two of a report's twenty-seven items.)
 
    **The genre's dimensions.** When `_begin`'s `genre:` line lists
    extra evaluate dimensions (historical fiction: `history`), use

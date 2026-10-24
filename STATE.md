@@ -2568,7 +2568,20 @@ R5: …"` records the author's decisions on `author-decision` rows as
 The footer's numbered list no longer skips a number when the structure
 review item is left out.
 
+### 2026-10-24 — the cold reader's open items are the evaluator's count
+
+After the kingmaker2 pass the table said chapter 3 had 27 cold-reader items
+open, while its eval said 2: the eval format had no field for the items still
+open, so `chapter_summary.score_detail` counted the whole last report unless
+`all_fixed` was true, and a revised chapter that fixed 25 of 27 still showed
+27 (the dashboard, `/autonovel:next`'s "cold-reader items never re-read" hint
+and the brief all read it). `evaluate` now records `open_items` (the serious
+items of the last report not yet gone, explained or clear) and `all_fixed`
+is true only when it is empty; the parser prefers it and falls back to the
+old count for older evals. The brief names it. +1 test.
+
 ## Tests last known green
+- Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (open_items) — **2267 passing, 1 skipped** (+1).
 - Tier 3 (draft smoke + revision smoke: evaluate, adversarial-edit, apply-cuts, brief, revise, shorten), with the summary gate and the refresh step: 2026-10-24 — **7/7 green (42m47s)**, subscription auth.
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (introduce once) — **2266 passing, 1 skipped** (newcomers test rewritten for the new gap).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (summaries always match their chapters) — **2266 passing, 1 skipped** (+19).
