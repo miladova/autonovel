@@ -2630,7 +2630,18 @@ carries every other key in `extra` and writes it back; a re-import of the same
 slug keeps them too. art-import.md says so, and that an ePub plate should be
 PNG, JPG or SVG (the ePub builder can't show a PDF; FUTURE-TODOS). +1 test.
 
+### 2026-10-24 — bold never drops letters; the timeline's markers print
+
+Typesetting kingmaker2 with its new appendix logged 140 missing glyphs: the
+EB Garamond Debian ships (fonts-ebgaramond 0.016) has a "12 Bold" without
+ä ö ü ’ –, so bold names in the people list and the TOC lost letters, and the
+font has no ◆ ◇ ○ for the timeline's markers. The template now emboldens the
+Regular and Italic (fontspec FakeBold) when no `EB Garamond SemiBold` (the
+current Google release) is installed, and maps ◆ ◇ ○ to amssymb's lozenges
+and \circ through newunicodechar. The operating guide says so. +1 test.
+
 ## Tests last known green
+- Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (bold fallback, timeline markers) — **2277 passing, 1 skipped** (+1).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (art-import keeps hand-added keys) — **2276 passing, 1 skipped** (+1).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (no-new-facts bullet) — **2275 passing, 1 skipped** (+1).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (rename reaches cast, design, briefs) — **2274 passing, 1 skipped** (+4).

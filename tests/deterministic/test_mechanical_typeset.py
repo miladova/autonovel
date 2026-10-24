@@ -176,3 +176,17 @@ def test_filename_cli_emits_both_names() -> None:
     # specific timestamp.
     assert payload["timestamped"].startswith("the-inquisitor_")
     assert payload["timestamped"].endswith(".pdf")
+
+
+def test_template_never_drops_letters_in_bold_or_the_timeline_markers() -> None:
+    """kingmaker2, 2026-10-24: Debian's EB Garamond 12 Bold has no umlauts
+    or curly apostrophe, so bold names lost letters, and the font has no
+    ◆ ◇ ○ for the appendix timeline. The template emboldens the Regular when
+    no SemiBold is installed and maps the markers to maths symbols."""
+    from pathlib import Path
+    tex = (Path(__file__).resolve().parents[2] / "src" / "autonovel" / "templates"
+           / "series" / "typeset" / "novel.tex").read_text(encoding="utf-8")
+    assert "\\IfFontExistsTF{EB Garamond SemiBold}" in tex
+    assert "BoldFeatures={FakeBold=1.5}" in tex
+    for ch in ("◆", "◇", "○"):
+        assert f"\\newunicodechar{{{ch}}}" in tex

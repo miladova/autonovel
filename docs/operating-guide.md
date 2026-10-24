@@ -1614,7 +1614,12 @@ chain before failing mid-build — you see "install
 output. The typeset template ALSO has a runtime fallback
 (EB Garamond → system Garamond → TeX Gyre Pagella) so a missing
 font produces a still-readable PDF with a `*** WARNING:` line
-naming the install command rather than a build failure. Either
+naming the install command rather than a build failure. The Debian
+and Ubuntu package is an older EB Garamond whose bold has no umlauts,
+curly apostrophe or en dash; when no `EB Garamond SemiBold` is
+installed, the template emboldens the complete regular face instead,
+so bold names never lose letters. The current Google Fonts release
+has real bold weights and is used as it is. Either
 way: run `autonovel doctor` after installing fonts to confirm
 fontconfig sees them.
 

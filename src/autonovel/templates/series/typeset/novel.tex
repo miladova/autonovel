@@ -18,6 +18,13 @@
 
 % === FONTS ===
 \usepackage{fontspec}
+% The appendix timeline marks rows with ◆ ◇ ○ (/autonovel:appendix);
+% EB Garamond has no geometric shapes, so draw them from the maths fonts.
+\usepackage{amssymb}
+\usepackage{newunicodechar}
+\newunicodechar{◆}{\ensuremath{\blacklozenge}}
+\newunicodechar{◇}{\ensuremath{\lozenge}}
+\newunicodechar{○}{\ensuremath{\circ}}
 % Primary font: EB Garamond. If fontconfig can't find it (common on
 % Chromebook / WSL / fresh macOS), fontspec walks its fallback chain
 % trying many similar names — the user sees a "stepping through many
@@ -35,10 +42,26 @@
 %   macOS:     brew install --cask font-eb-garamond
 %   Or:        autonovel install-export-tools --apply  (handles both)
 \IfFontExistsTF{EB Garamond}{
-  \setmainfont{EB Garamond}[
-    Ligatures=TeX,
-    Numbers=OldStyle
-  ]
+  % The current EB Garamond (Google Fonts) has real bold weights. The
+  % older one Debian and Ubuntu ship as fonts-ebgaramond has a "12 Bold"
+  % with no umlauts, no curly apostrophe and no en dash, so a bold
+  % "Höchstetter" printed as "Hchstetter" (kingmaker2, 2026-10-24). When
+  % there is no SemiBold, embolden the complete Regular and Italic instead.
+  \IfFontExistsTF{EB Garamond SemiBold}{
+    \setmainfont{EB Garamond}[
+      Ligatures=TeX,
+      Numbers=OldStyle
+    ]
+  }{%
+    \setmainfont{EB Garamond}[
+      Ligatures=TeX,
+      Numbers=OldStyle,
+      BoldFont={EB Garamond},
+      BoldFeatures={FakeBold=1.5},
+      BoldItalicFont={EB Garamond 12 Italic},
+      BoldItalicFeatures={FakeBold=1.5}
+    ]
+  }
 }{%
   \IfFontExistsTF{Garamond}{
     \setmainfont{Garamond}[Ligatures=TeX]
