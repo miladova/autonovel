@@ -2556,6 +2556,18 @@ now reads cast.md and the summaries. The historical genre guide's
 `## Back matter` names it; help and docs/commands.md (which had no appendix
 row at all) list it. Front-matter placement stays in FUTURE-TODOS.
 
+### 2026-10-24 — staging a letter the author has read, without re-reading the book
+
+`developmental-edit --stage` ran the whole read again (archive the letter,
+read 19 chapters, write a new letter) only to queue the old letter's
+in-chapter fixes; the footer told the author to run it right after reading
+the letter. Now `--stage` without `--focus`, when the letter is newer than
+every chapter, goes straight to step 13 against it, and `--decide "R3: …;
+R5: …"` records the author's decisions on `author-decision` rows as
+`decided: …` (whole_book treats only `proposed` / `staged` rows as open).
+The footer's numbered list no longer skips a number when the structure
+review item is left out.
+
 ## Tests last known green
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (introduce once) — **2266 passing, 1 skipped** (newcomers test rewritten for the new gap).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (summaries always match their chapters) — **2266 passing, 1 skipped** (+19).

@@ -454,7 +454,10 @@ An editor's read (the judgement no score gives):
   /autonovel:developmental-edit --book <name> --stage
         also queues its in-chapter fixes in briefs/conversation.md
         for the next revision-pass; frames, cuts and merges stay
-        your decision.
+        your decision. After you've read a current letter, the same
+        command queues its fixes without reading the book again;
+        add --decide "R3: <decision>; R5: <decision>" to record
+        your decisions on the items it left to you.
 
 Before drafting (cheapest place to fix it):
 

@@ -1,7 +1,7 @@
 ---
 name: autonovel:developmental-edit
 description: A developmental editor's full read of a drafted book — one reader, every chapter in order, running notes, counted evidence — then a ranked editor's letter on the story (not the prose), compared against the pipeline's own reviewers. --stage queues the in-chapter fixes for revision-pass.
-argument-hint: "--book <short-name> [--focus \"<the author's concern, in their words>\"] [--stage]"
+argument-hint: "--book <short-name> [--focus \"<the author's concern, in their words>\"] [--stage] [--decide \"R3: <decision>; R5: <decision>\"]"
 model_tier: heavy
 allowed-tools:
   - file_read
@@ -141,6 +141,17 @@ Re-read these before writing the letter.
    letter must answer it. `--stage`: after the letter, queue the
    in-chapter recommendations (step 13). Read `project.yaml` for the
    book's title, genre and period.
+
+   **Staging a letter the author has already read.** When
+   `books/{book}/edit_logs/editor_letter.md` exists and is newer than
+   every chapter, `--stage` without `--focus` means the author has read
+   that letter and agreed to its fixes: skip steps 2–12 (do not archive
+   the letter, do not read the book) and go straight to step 13 against
+   it. `--decide "<id>: <decision>; …"` records the author's decisions on
+   `author-decision` rows first: set each named row's status to
+   `decided: <decision>`, and when a decision asks for a change in a
+   chapter, add it to that chapter's staged turn. A letter older than any
+   chapter describes a book that has since changed: do the full read.
 
 2. **Study before you read.** Use `file_read` on
    `shared/craft/EDITING.md` in full: how professional editors read a
@@ -352,6 +363,10 @@ Re-read these before writing the letter.
        (then the reader panel and the dual-persona review, once the
        structure gate passes and the letter has nothing open)
     ```
+
+    Number the items in order: when item 4 doesn't apply, the items
+    after it move up. A staging run on a letter the author has read
+    (step 1) passes only the items from "Staged: …" on.
 </workflow>
 
 <acceptance>
@@ -369,5 +384,8 @@ Re-read these before writing the letter.
   and `editor_read_notes_<stamp>.md` before the new ones were written.
 - With `--stage`, every `in-chapter` ledger row has a queued turn per
   target chapter in `briefs/conversation.md` and its status is
-  `staged`; no other row is staged.
+  `staged`; no other row is staged. A staging run on a current letter
+  changes only the ledger's statuses (`staged`, `decided: …`) and
+  `briefs/conversation.md`; it archives nothing and leaves the letter's
+  prose and the notes as they were.
 </acceptance>
