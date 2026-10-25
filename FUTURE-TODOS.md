@@ -121,6 +121,41 @@ to start.
   person appears in ch 1, 3, 5 is not re-anchored in 3 or 5; one absent
   from ch 1 to ch 6 is.
 
+- **The same explanation, said again and again (opened 2026-10-25, from
+  the kingmaker2 author two-thirds into version 3's chapter 1: "repetition
+  about the electors … the chapter feels long and a bit slow").** Chapter 1
+  explains that seven princes choose the Emperor four times, states the
+  pay-after-the-vote rule five times and recites the vote count four times
+  in twelve lines. A sweep of all 19 chapters found the same in nearly
+  every one: every 1519 chapter opens on a "story so far" paragraph; the
+  full roll-call of the electors returns in ch 5, 7, 9, 11, 15, 16 and 18
+  (in 18, mid-vote); one rule is stated about twelve times in ch 11, eight
+  in ch 7, nine in ch 8; stock glosses recur word for word across chapters
+  ("the Count, the Elector Palatine's younger brother" four times); and
+  past-strand scenes are retold in later chapters (the Frankfurt seal
+  story six or more times in ch 9–19, Bruges five). Causes: (1) evaluate's
+  "nothing introduced twice" checks terms, not ideas (ch 1 scored 9/10 on
+  it); (2) revise answers a cold reader's confusion by adding an
+  explanation where they got lost and never removes the earlier one (some
+  v3 repeats are such fixes, e.g. ch 5's "as they'd been on Jakob's slate
+  since January"); (3) the re-anchor fix above covered people, not the
+  situation, the rules or earlier scenes; (4) in a braided book every
+  present chapter follows a flashback, and the drafter re-sets the board.
+  Proposed: (a) evaluate gains a `repetition` item listing every point,
+  explanation or fact made two or more times in the chapter, with lines,
+  and any "story so far" paragraph; a point made three or more times holds
+  the chapter under the dimension floor; (b) first-read reports "told me
+  this already" as its own category; (c) revise's rule is replace, don't
+  add: a clarification folds in or removes the earlier statement of the
+  same point; draft and revise never open a chapter on a "story so far"
+  paragraph; (d) `autonovel mechanical repeats`, a candidate generator
+  only: sentence pairs with high word-shingle overlap inside a chapter and
+  across the book, and the same appositive after the same name in two or
+  more chapters (no word lists; the judge decides); (e) developmental-edit
+  counts repeated explanations book-wide as evidence. Tests: a fixture
+  chapter stating one rule three times is flagged; a callback line used
+  once as a payoff is not.
+
 - **A cast list for the reader, real and invented (opened 2026-10-24,
   from the kingmaker2 letter).** **The appendix section shipped 2026-10-24**
   (`--sections cast`); still open: typeset placing it in the front matter
