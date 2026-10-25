@@ -84,6 +84,26 @@ def test_parse_research_tag_and_shortname() -> None:
     assert "1478" in e.fact_text
 
 
+def test_render_keeps_brackets_in_place_and_every_citation() -> None:
+    """A one-word bracket inside a fact was taken for a citation, cut out
+    and re-appended at the end; a second citation was dropped
+    (kingmaker2, 2026-10-24)."""
+    entries = pc._parse_pending(
+        "- [Bandini] The Florentine [Bandini] came from Lyon (invented) "
+        "(from kingmaker2 ch_05)\n"
+        "- [Schwarz's father] He died on 28 November 1519 [reichard-1786] "
+        "[haum-62994] [research:people-of-1519]\n"
+    )
+    first = pc._render_canon_line(entries[0], "kingmaker2")
+    assert first == ("- [Bandini] The Florentine [Bandini] came from Lyon "
+                     "(invented) (from kingmaker2 ch_05)")
+    second = pc._render_canon_line(entries[1], "kingmaker2")
+    assert "[reichard-1786] [haum-62994]" in second
+    assert second.endswith("(from research note people-of-1519)")
+    # Classification still compares the text without its citations.
+    assert "[" not in entries[0].fact_text
+
+
 def test_parse_provenance() -> None:
     entries = pc._parse_pending(
         "- Tommaso speaks Latin (from one ch_03)\n"

@@ -2662,7 +2662,21 @@ YAML block `title: ""`, and pandoc let the last file's metadata override
 that image exists, and says to run pandoc from the book's typeset folder.
 +1 test.
 
+### 2026-10-24 — promote-canon keeps a fact's brackets where the writer put them
+
+A one-word bracket in a pending fact (`[Bandini]`, `[Els]`) matches the
+citation-shortname pattern, so the promoter cut it out of the line and
+re-appended only the first "shortname" at the end: a fact keyed `[Els]`
+landed in canon with its key moved to the tail, a mention of `[Bandini]`
+moved out of its sentence, and a research fact citing two sources kept only
+one. `PendingEntry` now carries `display_text` (the bullet minus the research
+tag and the provenance, every bracket in place), and the canon line is
+rendered from it; `fact_text`, with citations stripped, is still what
+classification compares. Found by a kingmaker2 version-3 revision worker.
++1 test.
+
 ## Tests last known green
+- Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (promote-canon keeps brackets in place) — **2281 passing, 1 skipped** (+1).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (ePub title, back cover) — **2280 passing, 1 skipped** (+1).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (lists in the back matter; one-letter drop cap) — **2279 passing, 1 skipped** (+2).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (bold fallback, timeline markers) — **2277 passing, 1 skipped** (+1).

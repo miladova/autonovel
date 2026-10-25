@@ -165,11 +165,13 @@ files, so `autonovel rollback` undoes the whole promotion.
    - <fact> [shortname] (from research note <slug>)
    ```
 
-   so the citation makes it into the canonical entry. The
-   `(from …)` provenance lets future audits trace every canon
-   fact back to the chapter or research note that established it.
-   If the pending entry already carries a provenance tail, keep it
-   verbatim.
+   so the citation makes it into the canonical entry. Every bracket
+   in the fact stays where the writer put it: the `[key]`, a
+   one-word mention such as `[Bandini]`, and every citation when
+   there are several. The `(from …)` provenance lets future audits
+   trace every canon fact back to the chapter or research note that
+   established it. If the pending entry already carries a provenance
+   tail, keep it verbatim.
 
 6. If `--dry-run`, print a per-book report and stop — do NOT write
    anything. Format:

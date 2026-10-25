@@ -94,6 +94,10 @@ class PendingEntry:
     research_slug: str | None # `[research:<slug>]` if present
     shortnames: list[str]     # `[shortname]` citation(s)
     provenance: str | None    # `(from ...)` tail
+    # The bullet as it lands in canon: the research tag and the provenance
+    # tail removed, every `[key]` and `[shortname]` left where the writer
+    # put it. Empty for entries built by hand (tests, callers).
+    display_text: str = ""
 
 
 @dataclass
@@ -404,6 +408,16 @@ def _parse_pending(text: str) -> list[PendingEntry]:
         ]
         provenance_match = _PROVENANCE_RE.search(body)
         provenance = provenance_match.group(1).strip() if provenance_match else None
+        # The line as it will land in canon keeps every bracket in place:
+        # a one-word `[Bandini]` key or mention looks like a citation to
+        # the shortname pattern, and lifting it out moved it to the end
+        # of the line, or dropped it (kingmaker2, 2026-10-24).
+        display_text = body
+        for m in _RESEARCH_TAG_RE.finditer(body):
+            display_text = display_text.replace(m.group(0), "")
+        if provenance_match:
+            display_text = display_text.replace(provenance_match.group(0), "")
+        display_text = re.sub(r"\s{2,}", " ", display_text).strip().rstrip(".").strip()
         # Strip metadata from the fact text for classification purposes.
         fact_text = body
         for m in _RESEARCH_TAG_RE.finditer(body):
@@ -419,6 +433,7 @@ def _parse_pending(text: str) -> list[PendingEntry]:
             research_slug=research_slug,
             shortnames=shortnames,
             provenance=provenance,
+            display_text=display_text,
         ))
     # De-dup within one pending file by fact_text (case-insensitive).
     seen: set[str] = set()
@@ -688,9 +703,12 @@ def _contradiction_rationale(a: str, b: str) -> str:
 def _render_canon_line(entry: PendingEntry, book_name: str) -> str:
     """The canonical line shape that lands in a canon file per
     `commands/promote-canon.md` step 5."""
-    base = entry.fact_text
-    if entry.shortnames:
-        base = f"{base} [{entry.shortnames[0]}]"
+    if entry.display_text:
+        base = entry.display_text
+    else:
+        base = entry.fact_text
+        if entry.shortnames:
+            base = f"{base} " + " ".join(f"[{s}]" for s in entry.shortnames)
     if entry.research_slug:
         return f"- {base} (from research note {entry.research_slug})"
     if entry.provenance:
