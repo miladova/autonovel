@@ -2675,7 +2675,16 @@ rendered from it; `fact_text`, with citations stripped, is still what
 classification compares. Found by a kingmaker2 version-3 revision worker.
 +1 test.
 
+### 2026-10-24 — the table of contents fits Roman chapter numbers
+
+The book class gives a chapter's number 1.5em in the table of contents, and
+the template numbers chapters in Roman numerals, so from VIII on every entry
+ran into the page-number column (XVIII by 10pt; twelve overfull lines in the
+kingmaker2 build). `novel.tex` patches `\l@chapter` through etoolbox to give
+the number 2.8em. The existing template test asserts the patch.
+
 ## Tests last known green
+- Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (table of contents fits Roman numerals) — **2281 passing, 1 skipped** (+0; one assertion added).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (promote-canon keeps brackets in place) — **2281 passing, 1 skipped** (+1).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (ePub title, back cover) — **2280 passing, 1 skipped** (+1).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (lists in the back matter; one-letter drop cap) — **2279 passing, 1 skipped** (+2).

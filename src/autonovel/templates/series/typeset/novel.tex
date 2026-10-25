@@ -194,6 +194,13 @@
 }
 
 \renewcommand{\thechapter}{\Roman{chapter}}
+% The book class leaves 1.5em for a chapter's number in the table of
+% contents, which Roman numerals from VIII on overrun (XVIII by 10pt:
+% the kingmaker2 build, 2026-10-24). Widen it.
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd{\l@chapter}{\setlength\@tempdima{1.5em}}{\setlength\@tempdima{2.8em}}{}{}
+\makeatother
 \titleformat{\chapter}[display]
   {\normalfont\centering}
   {\vspace*{1.5in}\footnotesize\textsc{chapter \thechapter}}

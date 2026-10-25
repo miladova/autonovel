@@ -193,6 +193,8 @@ def test_template_never_drops_letters_in_bold_or_the_timeline_markers() -> None:
     # Lines loosen rather than run into the margin (786 overfull lines
     # in the kingmaker2 build before, one after).
     assert "\\setlength{\\emergencystretch}{2em}" in tex
+    # Roman chapter numbers (XVIII) fit their box in the table of contents.
+    assert "\\patchcmd{\\l@chapter}{\\setlength\\@tempdima{1.5em}}" in tex
 
 
 def test_epub_templates_keep_the_title_and_find_the_back_cover() -> None:
