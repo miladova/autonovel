@@ -88,6 +88,28 @@ def test_historical_guide_cuts_a_second_telling_not_the_first() -> None:
     assert "**`repetition`** marks down a period fact" in guide
 
 
+def test_said_once_writes_the_ledger_from_a_read_in_order() -> None:
+    cmd = _read("commands/said-once.md")
+    flat = _flat(cmd)
+    assert "books/{book}/edit_logs/said_once_ledger.md" in cmd
+    assert "autonovel mechanical repeats books/{book} --format json" in flat
+    assert "one act at a time, in order" in flat          # never in parallel
+    assert "## Points" in cmd and "## By chapter" in cmd and "## Openings" in cmd
+    assert "Never judge a chapter from its summary" in flat
+    assert "`--stage`" in cmd and "**Status:** queued" in cmd
+
+
+def test_every_chapter_reader_checks_against_the_ledger() -> None:
+    for rel in ("commands/draft.md", "commands/brief.md", "commands/revise.md",
+                "commands/evaluate.md", "commands/developmental-edit.md"):
+        text = _read(rel)
+        front = text.split("---")[1]
+        assert "books/{book}/edit_logs/said_once_ledger.md" in front, rel   # declared read
+        assert "said_once_ledger.md" in text.split("---", 2)[2], rel        # used in the body
+    assert "/autonovel:said-once" in _read("commands/help.md")
+    assert "/autonovel:said-once" in _read("docs/commands.md")
+
+
 def test_score_tables_label_and_group_the_dimension() -> None:
     from autonovel.mechanical.chapter_summary import dimension_label
     from autonovel.mechanical.dashboard import DIMENSION_GROUPS

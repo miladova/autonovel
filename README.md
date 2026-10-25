@@ -566,6 +566,10 @@ Three categories. Full reference: [`docs/commands.md`](docs/commands.md).
   type, and whether they'd turn the page; `draft` runs it on
   every new chapter and fixes what it finds, so the author is never the
   first to find an unexplained term.
+  `said-once` reads the whole book for what it tells more than once —
+  the same point in any words, across chapters — and writes the ledger
+  of where each point is told, which drafting, revising and the chapter
+  evaluation then check against.
   `developmental-edit` is the editor's read: one reader reads the
   whole book in order, cold, keeps notes per chapter, counts what the
   diagnosis rests on, and writes you a ranked letter on the story —

@@ -34,6 +34,7 @@ sees (`/autonovel:evaluate`'s `repetition` dimension).
 
 from __future__ import annotations
 
+import math
 import re
 from bisect import bisect_right
 from collections import Counter, defaultdict
@@ -143,8 +144,31 @@ def _names(toks: list[_Tok]) -> set[str]:
     return {w for w, n in seen.items() if caps[w] >= 0.8 * n}
 
 
+def _sentence_words(toks: list[_Tok], common: set[str]) -> dict[int, set[str]]:
+    words_of: dict[int, set[str]] = defaultdict(set)
+    for t in toks:
+        if t.base not in common and len(t.base) > 1:
+            words_of[t.sent].add(t.base)
+    return words_of
+
+
+def _idf(words_of: dict[int, set[str]], n_sentences: int) -> dict[str, float]:
+    """How rare each word is in the book, by the sentences it appears in."""
+    df: Counter[str] = Counter()
+    for words in words_of.values():
+        df.update(words)
+    n = max(n_sentences, 1)
+    return {w: math.log(n / c) for w, c in df.items()}
+
+
+def _in_italics(raw: str, start: int) -> bool:
+    """Inside *…* on its line: a letter, a ledger entry or a note quoted."""
+    line_start = raw.rfind("\n", 0, start) + 1
+    return raw.count("*", line_start, start) % 2 == 1
+
+
 def _echoes(toks: list[_Tok], chapters: list[_Chapter], common: set[str],
-            min_words: int, max_places: int = 12) -> list[dict]:
+            idf: dict[str, float], min_words: int, max_places: int = 12) -> list[dict]:
     n = min_words
     index: dict[tuple, list[int]] = defaultdict(list)
     for i in range(len(toks) - n + 1):
@@ -187,6 +211,9 @@ def _echoes(toks: list[_Tok], chapters: list[_Chapter], common: set[str],
         places = [{"chapter": chapters[toks[s].chapter].num, "line": toks[s].line}
                   for s in starts]
         chs = sorted({p["chapter"] for p in places})
+        # Rarer words make a repeat more noticeable: "the gilded cockerel on
+        # a post" outranks "at the bottom of the stairs".
+        weight = sum(idf.get(b, 0.0) for b in {t.base for t in words if t.base not in common})
         out.append({
             "words": length,
             "text": " ".join(text.split()),
@@ -194,8 +221,16 @@ def _echoes(toks: list[_Tok], chapters: list[_Chapter], common: set[str],
             "chapters": chs,
             "same_chapter": len(chs) < len(places),
             "across_chapters": len(chs) > 1,
+            "weight": round(weight, 1),
+            # Quoted from a letter, a ledger or a note each time: often
+            # meant, as when a letter is read again.
+            "quoted": all(_in_italics(chapters[toks[s].chapter].raw, toks[s].start)
+                          for s in starts),
+            # A short phrase in four or more chapters: a label the book
+            # uses as a name ("the river gate on the quay") or a habit.
+            "recurring": len(chs) >= 4 and length <= 8,
         })
-    out.sort(key=lambda e: (-(len(e["places"]) - 1) * e["words"], e["places"][0]["chapter"],
+    out.sort(key=lambda e: (-(len(e["places"]) - 1) * e["weight"], e["places"][0]["chapter"],
                             e["places"][0]["line"]))
     return out
 
@@ -301,6 +336,73 @@ def _similar(toks: list[_Tok], sentences: list[tuple[int, str]], chapters: list[
     return out
 
 
+def _told_before(toks: list[_Tok], sentences: list[tuple[int, str]],
+                 chapters: list[_Chapter], words_of: dict[int, set[str]],
+                 idf: dict[str, float], names: set[str], top: int,
+                 threshold: float = 0.5, max_df: int = 25) -> dict[int, list[dict]]:
+    """Sentences that say again what an earlier chapter said: a sentence in a
+    later chapter close to one in an earlier chapter (cosine over rare-word
+    weights), with a word or two changed or the order shuffled."""
+    line_of: dict[int, int] = {}
+    start_of: dict[int, int] = {}
+    for t in toks:
+        if t.sent not in line_of:
+            line_of[t.sent] = t.line
+            start_of[t.sent] = t.start
+    norm = {sid: math.sqrt(sum(idf[w] ** 2 for w in ws)) for sid, ws in words_of.items() if ws}
+    inverted: dict[str, list[int]] = defaultdict(list)
+    for sid, ws in words_of.items():
+        if len(ws) >= 3:
+            for w in ws:
+                inverted[w].append(sid)
+    acc: dict[tuple[int, int], float] = defaultdict(float)
+    for w, members in inverted.items():
+        if not 2 <= len(members) <= max_df:
+            continue
+        weight = idf[w] ** 2
+        for i, a in enumerate(members):
+            ca = sentences[a][0]
+            for b in members[i + 1:]:
+                if sentences[b][0] != ca:
+                    acc[(a, b)] += weight
+    best: dict[int, dict] = {}
+    for (a, b), rare in acc.items():
+        if rare / (norm[a] * norm[b]) < threshold / 2:
+            continue                      # too little shared even to check
+        shared = words_of[a] & words_of[b]
+        plain = [w for w in shared if w not in names]
+        if len(shared) < 3 or len(plain) < 2:
+            continue
+        score = sum(idf[w] ** 2 for w in shared) / (norm[a] * norm[b])
+        if score < threshold:
+            continue
+        early, late = (a, b) if (sentences[a][0], a) < (sentences[b][0], b) else (b, a)
+        kind = "narration"
+        ch_e, ch_l = chapters[sentences[early][0]], chapters[sentences[late][0]]
+        if _in_italics(ch_e.raw, start_of[early]) and _in_italics(ch_l.raw, start_of[late]):
+            kind = "quoted"
+        elif any(q in sentences[early][1] for q in '"“') and any(q in sentences[late][1] for q in '"“'):
+            kind = "speech"
+        item = {
+            "line": line_of[late],
+            "text": _clip(sentences[late][1]),
+            "earlier": {"chapter": ch_e.num, "line": line_of[early],
+                        "text": _clip(sentences[early][1])},
+            "score": round(score, 2),
+            "shared": sorted(shared),
+            "kind": kind,
+        }
+        if late not in best or best[late]["score"] < item["score"]:
+            best[late] = item
+    out: dict[int, list[dict]] = defaultdict(list)
+    for late, item in best.items():
+        out[chapters[sentences[late][0]].num].append(item)
+    for num in out:
+        out[num].sort(key=lambda f: (-f["score"], f["line"]))
+        out[num] = out[num][:top]
+    return out
+
+
 def _clip(text: str, limit: int = 180) -> str:
     text = " ".join(text.split())
     return text if len(text) <= limit else text[:limit - 1].rstrip() + "…"
@@ -320,7 +422,10 @@ def scan_book(book_root: Path, *, chapter: int | None = None, min_words: int = 6
     toks, sentences = _tokenise(chapters)
     common = _common_words(toks, 0.0015)
     names = _names(toks)
-    echoes = _echoes(toks, chapters, common, min_words)
+    words_of = _sentence_words(toks, common)
+    idf = _idf(words_of, len(sentences))
+    echoes = _echoes(toks, chapters, common, idf, min_words)
+    told_before = _told_before(toks, sentences, chapters, words_of, idf, names, top)
     phrases = _phrases(toks, chapters, common, names, phrase_min)
     # Sentences are short, so the similar-sentence test sets aside fewer of
     # the book's common words, and asks for a longer word in common.
@@ -340,6 +445,7 @@ def scan_book(book_root: Path, *, chapter: int | None = None, min_words: int = 6
             "echoes_across": sum(1 for e in mine if e["across_chapters"]),
             "phrases": phrases.get(ch.num, []),
             "similar_sentences": similar.get(ch.num, []),
+            "told_before": told_before.get(ch.num, []),
         })
     if chapter is not None:
         echoes = [e for e in echoes if chapter in e["chapters"]]
@@ -350,7 +456,7 @@ def scan_book(book_root: Path, *, chapter: int | None = None, min_words: int = 6
         "phrase_min": phrase_min,
         "common_words": len(common),
         "line_numbers": "lines in the chapter file, frontmatter included (as file_read shows them)",
-        "echoes": echoes[:max(top * 4, 100)] if chapter is None else echoes,
+        "echoes": echoes,
         "chapters": rows,
         "note": ("Candidates only. An echo is the same wording at two or more places; a "
                  "phrase is a short phrase a chapter leans on; a similar pair is two "
@@ -369,9 +475,15 @@ def render_markdown(report: dict) -> str:
     lines.append(f"## Echoes: the same {report['min_words']}+ words at two or more places "
                  f"({len(echoes)})")
     lines.append("")
-    for e in echoes:
+    shown = echoes[:80]
+    for e in shown:
         where = ", ".join(f"ch {p['chapter']}:{p['line']}" for p in e["places"])
-        lines.append(f"- “{e['text']}” — {where}")
+        flags = [f for f in ("quoted", "recurring") if e.get(f)]
+        mark = f" [{', '.join(flags)}]" if flags else ""
+        lines.append(f"- “{e['text']}” — {where}{mark}")
+    if len(echoes) > len(shown):
+        lines.append(f"- … {len(echoes) - len(shown)} more in the JSON (`--format json`), "
+                     "ranked lower: shorter, fewer places or commoner words")
     lines.append("")
     for ch in report["chapters"]:
         lines.append(f"## Chapter {ch['chapter']} ({ch['words']:,} words) — "
@@ -384,5 +496,9 @@ def render_markdown(report: dict) -> str:
         for s in ch["similar_sentences"]:
             lines.append(f"- lines {s['lines'][0]} and {s['lines'][1]} share "
                          f"{', '.join(s['shared'])}: “{s['first']}” / “{s['second']}”")
+        for t in ch.get("told_before", []):
+            e = t["earlier"]
+            lines.append(f"- told before ({t['kind']}, {t['score']}): line {t['line']} “{t['text']}” "
+                         f"— ch {e['chapter']}:{e['line']} “{e['text']}”")
         lines.append("")
     return "\n".join(lines).rstrip() + "\n"

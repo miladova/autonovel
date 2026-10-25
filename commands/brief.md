@@ -18,6 +18,7 @@ reads:
   - books/{book}/eval_logs/*.json
   - books/{book}/edit_logs/first_read_ch{chapter}.md
   - books/{book}/edit_logs/first_read_ch{chapter}_2.md
+  - books/{book}/edit_logs/said_once_ledger.md
   - shared/research/notes/*.md
   - shared/craft/genres/*.md
   - shared/genres/*.md
@@ -127,9 +128,14 @@ of the file:
      mechanical repeats books/{book} --chapter {chapter} --format json`
      (wording the chapter repeats, inside itself or from earlier
      chapters; phrases it leans on; sentence pairs making one point),
-     and take the eval log's `repetition` dimension (its `repeats` list)
-     and any **Told again** items in the first-reader report when they
-     exist. They feed `## Said already`.
+     and take the eval log's `repetition` dimension (its `repeats` list),
+     any **Told again** items in the first-reader report, and this
+     chapter's entries under `### Chapter {chapter}` in
+     `books/{book}/edit_logs/said_once_ledger.md` (the whole-book ledger
+     `/autonovel:said-once` writes; it sees points told again in new
+     words across chapters, which the scanner cannot) when they exist.
+     They feed `## Said already`; a ledger entry's verdict (cut, a
+     clause, keep) stands unless the chapter has changed since.
 
 4a. **The genre's payload.** Use `file_read` on the book's genre guide:
 the file `_begin`'s `genre:` line names (`autonovel genre show --book

@@ -21,6 +21,7 @@ reads:
   - books/{book}/chapters/ch_{chapter}.md
   - books/{book}/chapters/ch_{prev}.md
   - books/{book}/edit_logs/last_read.json
+  - books/{book}/edit_logs/said_once_ledger.md
   - shared/craft/genres/*.md
   - shared/genres/*.md
 writes:
@@ -199,8 +200,12 @@ file blocked a full revision-pass.
    read its candidates (wording this chapter repeats, inside itself or
    from an earlier chapter; phrases it leans on; sentence pairs making one
    point): fix every one the rewrite created or left, keeping only a
-   deliberate echo the reader is meant to hear. This is what
-   `/autonovel:evaluate` scores as `repetition`.
+   deliberate echo the reader is meant to hear. When
+   `books/{book}/edit_logs/said_once_ledger.md` exists, read it too: don't
+   tell again a point it places in an earlier chapter, and carry out this
+   chapter's entries under `### Chapter {chapter}` that the brief has not
+   already listed. This is what `/autonovel:evaluate` scores as
+   `repetition`.
    Preserve the chapter's YAML frontmatter (`book`, `chapter`, `pov`,
    `story_time`, `events`) verbatim; update `status` to `revised` and
    recompute `word_count`.

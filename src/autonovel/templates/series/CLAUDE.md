@@ -174,6 +174,10 @@ each of these and the workaround is in the codebase:
   the first statement and never sits beside it (`shared/craft/PROSE.md`
   §7 rule 9). `evaluate` scores it as `repetition`, `autonovel mechanical
   repeats` lists candidates, and the cold reader reports "Told again".
+  Across chapters, where a point comes back in new words, only a reader of
+  the whole book sees it: `/autonovel:said-once --book <name>` writes
+  `edit_logs/said_once_ledger.md` (where each point is told), which draft,
+  brief, revise and evaluate read; `--stage` queues the cuts.
   One book's first chapter explained the same thing four times after
   every check had passed it.
 

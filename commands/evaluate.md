@@ -30,6 +30,7 @@ reads:
   - books/{book}/edit_logs/structure_review.json
   - books/{book}/edit_logs/first_read_ch{chapter}.md
   - books/{book}/edit_logs/first_read_ch{chapter}_2.md
+  - books/{book}/edit_logs/said_once_ledger.md
   - shared/craft/genres/*.md
   - shared/genres/*.md
 writes:
@@ -506,6 +507,14 @@ or `.autonovel/eval_logs/<timestamp>_series.json` for `--phase series`.
    Not repetition: a deliberate echo the reader is meant to hear (a
    payoff line, a letter read again, a refrain the book sets up), and a
    clause of reminder after a long absence (`/autonovel:draft` step 3c).
+   When `books/{book}/edit_logs/said_once_ledger.md` exists
+   (`/autonovel:said-once` writes it from a read of the whole book), read
+   it: a telling of a point the ledger places in an earlier chapter is an
+   `earlier-chapter` repeat whatever its words, and an entry under
+   `### Chapter {N}` marked cut or a clause that still stands in full in
+   the chapter counts against the score. Without the ledger you can see
+   only what the scanner's `echoes` and `told_before` show from earlier
+   chapters; say so in the note.
    Emit `repeats`: an array of `{point, lines: [line numbers in the
    file], keep_line, kind: "same-chapter"|"earlier-chapter"|"story-so-far",
    fix}`, where `keep_line` is the statement that should stay (the first,

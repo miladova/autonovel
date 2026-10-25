@@ -65,6 +65,8 @@ workflow. Topics:
                  gate review's stop-revising verdict waits on.
                  developmental-edit: an editor's full read of the
                  whole book and a ranked letter on the story.
+                 said-once: what the book tells more than once,
+                 across chapters, and where each point stays.
   reading      — see the book's shape without re-reading it:
                  story-map (one HTML page: synopsis, plot-thread
                  grid + score/tension curve, characters, timeline,
@@ -451,6 +453,14 @@ An editor's read (the judgement no score gives):
         cost the reader, what in the pipeline caused them, what to
         do in order of effect for cost, and where it disagrees with
         the reviewers. The notes behind it: editor_read_notes.md.
+  /autonovel:said-once --book <name> [--stage]
+        reads the whole book in order for what it says more than once
+        (a fact, a rule, a count, an explanation, who someone is, an
+        earlier scene, the story so far at a chapter's start), in any
+        words; writes edit_logs/said_once_ledger.md (where each point is
+        told, and cut / a clause / keep for every other telling), which
+        draft, brief, revise and evaluate then check each chapter
+        against; --stage queues each chapter's cuts for revision-pass
   /autonovel:developmental-edit --book <name> --stage
         also queues its in-chapter fixes in briefs/conversation.md
         for the next revision-pass; frames, cuts and merges stay

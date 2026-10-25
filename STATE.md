@@ -2736,7 +2736,47 @@ people, not the situation, rules or scenes.
 
 +13 tests (`test_mechanical_repeats.py`, `test_say_it_once_contract.py`).
 
+### 2026-10-25 — repeats across chapters: told-before, ranking, `/autonovel:said-once`
+
+The author asked whether the tool does a good job on repeats across
+chapters. Measured on kingmaker2's version 3 against the 37 points a
+whole-book read had found told again (115 places): `repeats` found 53 of
+69 places repeated in nearly the same words and 18 of 46 places where a
+point came back in new words, and its book-wide list held 681 echoes, of
+which about a third of the top thirty were worth acting on (the rest
+labels the book uses on purpose, quoted letters, planted figures, stock
+phrases).
+
+- `repeats` gains `told_before` per chapter: a sentence close to one in an
+  earlier chapter (cosine over the rarer words, weighted by how rare they
+  are in the book's sentences; threshold 0.5; only words in at most 25
+  sentences propose a pair), with a word or two changed or the order
+  shuffled, marked `narration`, `speech` or `quoted`. Echoes are ranked by
+  places × the summed rarity of their words, carry `weight`, `quoted`
+  (inside *…* in every place) and `recurring` (six to eight words in four
+  or more chapters), and the book-wide JSON is no longer cut at 100 (the
+  markdown shows the top 80). Remeasured: 59 of 69 and 22 of 46 places;
+  the top of the list is now mostly real repeats, with the deliberate ones
+  marked.
+- The rest of the gap is a reader's job, so it is now a command:
+  `/autonovel:said-once --book <name> [--stage]` reads every chapter in
+  order (act by act, one act after another, when the book is too long)
+  and writes `edit_logs/said_once_ledger.md`: each point, where it is
+  told, every other telling with cut / a clause / keep, deliberate, the
+  story-so-far openings and the entries by chapter. `--stage` queues the
+  cuts as `briefs/conversation.md` turns. Draft (step 3c), brief (`## Said
+  already`), revise and evaluate (`repetition`: a telling of a point the
+  ledger places earlier is an `earlier-chapter` repeat whatever its words)
+  read it; developmental-edit compares it with its own notes and
+  recommends the command when the book repeats itself and the ledger is
+  missing or old.
+- Docs: commands.md, help (overview and structure topic), operating
+  guide, README, the series CLAUDE.md template.
+
++4 tests.
+
 ## Tests last known green
+- Tier 1 + Tier 2 (deterministic + contracts): 2026-10-25 (repeats across chapters; said-once) — **2304 passing, 1 skipped** (+10, of which 6 are the generic per-command contract checks picking up the new command).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-25 (say each thing once) — **2294 passing, 1 skipped** (+13).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (table of contents fits Roman numerals) — **2281 passing, 1 skipped** (+0; one assertion added).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (promote-canon keeps brackets in place) — **2281 passing, 1 skipped** (+1).

@@ -25,6 +25,7 @@ reads:
   - books/{book}/chapters/ch_{prev}.md
   - books/{book}/chapters/ch_*.summary.md
   - books/{book}/edit_logs/last_read.json
+  - books/{book}/edit_logs/said_once_ledger.md
   - shared/craft/genres/*.md
   - shared/genres/*.md
 writes:
@@ -215,7 +216,11 @@ required reads — surface the error and stop, don't retry.
       it. An earlier scene is pointed back to, not retold; a person's
       description is not repeated word for word on each return. Two
       people who both know a thing do not tell it to each other for the
-      reader (PROSE.md §6.4).
+      reader (PROSE.md §6.4). When `books/{book}/edit_logs/said_once_ledger.md`
+      exists (`/autonovel:said-once` writes it from a read of the whole
+      book), read it: a point it says an earlier chapter tells is not
+      told again here, at most a clause after a long absence; a point it
+      places in this chapter is told here, once.
     - **Plain over clever.** When `voice.md` asks for plain English,
       no figure of speech the reader has to decode ("rode as if the
       saddle owed him money"), no compressed witty construction whose

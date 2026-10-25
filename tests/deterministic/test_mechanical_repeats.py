@@ -116,3 +116,47 @@ def test_cli_chapter_filter_markdown_and_missing_book(tmp_path: Path, capsys) ->
     assert "# Things said more than once" in md
     assert "ch 1:" in md and "ch 2:" in md
     assert mech_main(["repeats", str(tmp_path / "nope")]) == 2
+
+
+def test_a_sentence_told_again_with_words_changed_is_told_before(tmp_path: Path) -> None:
+    """Across chapters, a near-copy with a few words changed shares no
+    six-word run but is still the same sentence: `told_before` finds it,
+    in the later chapter, pointing at the earlier one."""
+    book = _book(tmp_path, [
+        f"{_filler(1)}\n\nFrance paid the councillors first, at a table where its friends "
+        f"could watch the gold counted out.\n\n{_filler(2)}",
+        _filler(3),
+        f"{_filler(4)}\n\nFrance had paid those councillors first, where all its friends "
+        f"could watch the gold being counted.\n\n{_filler(5)}",
+    ])
+    rep = repeats.scan_book(book)
+    told = rep["chapters"][2]["told_before"]
+    assert told, "the near-copy in chapter 3 should be found"
+    assert told[0]["earlier"]["chapter"] == 1
+    assert {"councillors", "france", "gold", "watch"} <= set(told[0]["shared"])
+    assert rep["chapters"][0]["told_before"] == []     # the first telling is not "before"
+    assert rep["chapters"][1]["told_before"] == []
+
+
+def test_echo_flags_quoted_and_recurring_and_rarer_words_rank_first(tmp_path: Path) -> None:
+    letter = "*Pay them after the vote. You were right. Finish it.*"
+    openers = ["Konrad came up from", "They met at", "Bastian waited by",
+               "The carts stood at", "Nobody slept near"]
+    closers = ["before noon.", "in the rain.", "with the boats.", "all evening.",
+               "after the bell."]
+    book = _book(tmp_path, [
+        f"{_filler(i + 1)}\n\n"
+        + (f"{letter}\n\n" if i < 2 else "")
+        + f"{openers[i]} the river gate on the quay {closers[i]}\n\n"
+        f"Then he stood at the bottom of the stairs."
+        for i in range(5)
+    ])
+    rep = repeats.scan_book(book)
+    by_text = {e["text"]: e for e in rep["echoes"]}
+    quoted = next(e for t, e in by_text.items() if "Pay them after the vote" in t)
+    assert quoted["quoted"] and not quoted["recurring"]
+    gate = next(e for t, e in by_text.items() if "river gate on the quay" in t)
+    assert gate["recurring"] and not gate["quoted"]
+    # Ranked by places × the rarity of the words (a weight on every echo).
+    weights = [(len(e["places"]) - 1) * e["weight"] for e in rep["echoes"]]
+    assert all(w > 0 for w in weights) and weights == sorted(weights, reverse=True)

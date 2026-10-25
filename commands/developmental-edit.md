@@ -20,6 +20,7 @@ reads:
   - books/{book}/edit_logs/structure_review.md
   - books/{book}/edit_logs/review.md
   - books/{book}/edit_logs/reader_panel.json
+  - books/{book}/edit_logs/said_once_ledger.md
   - shared/craft/genres/*.md
   - shared/genres/*.md
 writes:
@@ -238,8 +239,13 @@ Re-read these before writing the letter.
      paragraph and keep the real ones);
    - `autonovel mechanical repeats books/{book} --format markdown`
      (wording repeated inside a chapter or across chapters, phrases a
-     chapter leans on, sentence pairs making one point; candidates for
-     what the book says more than once).
+     chapter leans on, sentence pairs making one point, sentences an
+     earlier chapter already said; candidates for what the book says more
+     than once). Your own notes are the better evidence for a point told
+     again in new words; when `books/{book}/edit_logs/said_once_ledger.md`
+     exists, compare it with them, and when it is missing or older than
+     the chapters and the book repeats itself, the letter recommends
+     `/autonovel:said-once --book {book} --stage`.
    From your notes and these, tabulate the facts your diagnoses rest on:
    chapter joints that cross a year or more; chapters with a
    flash-forward; chapters that open on a paragraph restating the story
