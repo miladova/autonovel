@@ -3233,6 +3233,28 @@ prose ≈ 8 / 10, with investigation-heavy plots).
   27" (the head is the change's identity; consider showing both). When
   only some changes of a chapter are annotated, the chapter's big list
   mixes note-flagged and size-flagged changes under one heading.
+- **Cuts nobody asked for (kingmaker2 version 3, 2026-10-24).** A
+  whole-book revision pass applied a names-and-places plan, and the
+  `--annotate` pass on its diff (650 changes) found five cuts that no brief
+  or talk turn asked for. They were: a period line (ch 8, the mountains
+  holding more silver than anywhere in Europe), a plot hint (ch 11, someone
+  had coached Joachim), a character's thought (ch 13), and a voice and aside
+  that chapter 15's own brief had said to keep (Spalatin's "Doctor Martin").
+  One new line was cryptic (ch 7, "those two can keep their hats"). All were
+  found only because every change had to be given a `why`, and the
+  reviewer marked these "not traced". Two changes would catch this
+  earlier. (a) In `revise`, a mechanical post-check that lists every
+  sentence the rewrite deleted, against the brief's `## Specific cuts` and
+  the turns folded in; any untraced deletion is restored or named in the
+  hand-back. (b) In the diff page, a "Changes nobody asked for" list at the
+  top, built from the `why` notes that say "not traced", so the author and
+  the editor see them first.
+- **A stale last-read bookmark (2026-10-24).** `--from last-read` resolved
+  to a bookmark recorded before the book's chapters existed under their
+  current paths, so every chapter showed as "added". When the bookmark's
+  version has none of the chapters being compared, `diff-chapters` should
+  say so and fall back to the last tag, as it does when there is no
+  bookmark.
 
 ## Story-map follow-ups (story-map shipped 2026-10-17)
 
