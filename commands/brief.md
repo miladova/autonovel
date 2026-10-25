@@ -123,6 +123,14 @@ of the file:
      this chapter, the brief carries it even if the chapter's own eval
      score is high.
 
+   - **Always, whatever `--from` says:** use `bash` to run `autonovel
+     mechanical repeats books/{book} --chapter {chapter} --format json`
+     (wording the chapter repeats, inside itself or from earlier
+     chapters; phrases it leans on; sentence pairs making one point),
+     and take the eval log's `repetition` dimension (its `repeats` list)
+     and any **Told again** items in the first-reader report when they
+     exist. They feed `## Said already`.
+
 4a. **The genre's payload.** Use `file_read` on the book's genre guide:
 the file `_begin`'s `genre:` line names (`autonovel genre show --book
 {book}` prints it when no preamble ran; it is
@@ -209,6 +217,21 @@ the file `_begin`'s `genre:` line names (`autonovel genre show --book
    - `## What drags` (concrete, quote-level, ordered by impact)
    - `## Specific cuts` (quoted passages to remove, carried over from
      the cuts JSON if present; never the genre's payload, step 4a)
+   - `## Said already` *(whenever the repetition sources of step 4 find
+     anything you confirm by reading the chapter)* — one entry per point
+     the chapter says more than once (`shared/craft/PROSE.md` §7 rule 9):
+     the point in a few words; every place it is said, by line, quoted;
+     the one that **stays** (the first, or the one in the scene where it
+     matters, whichever is stronger; for something an earlier chapter
+     already told, the earlier chapter's); and what happens to each of
+     the others (cut, folded into the one that stays, or cut to a clause
+     after a long absence). A paragraph near the chapter's start that
+     restates the story so far gets its own entry: cut it, and name the
+     one fact in it the chapter needs and the line where it goes as a
+     clause. A deliberate echo the reader is meant to hear (a payoff
+     line, a letter read again) is listed as "keep, deliberate". These
+     are not cuts of the genre's payload: the fact or gloss stays in the
+     book, once, so step 4a does not move them to `## Move, don't cut`.
    - `## Move, don't cut` *(when any source flags payload content that
      is badly placed or delivered: `MISPLACED` / `MOVE` cuts, a first
      reader's "skimmed: it stopped the story", a review's "lecture")* —

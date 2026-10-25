@@ -23,7 +23,12 @@ fiction, the period is part of the payload. A history passage that a
 reader skims is a delivery problem: move it to where it is at stake, give
 it to a person who needs it, make it a scene or a clause. It is never
 fixed by cutting the history. (Recaps of the story's own plot are not
-history, and are still fair to cut.)
+history, and are still fair to cut. Nor is a second telling: a gloss, a
+rule of the period or a historical fact is given once in the book, where
+it first matters, and its repeats are cut like any other repetition,
+`PROSE.md` §7 rule 9. The payload is the history, not the number of times
+it is said; on one book the same explanation of who chose the Emperor
+came four times in its first chapter, and the reader found it slow.)
 
 ## Contents
 
@@ -474,6 +479,9 @@ and adds to what they report.
   is moved, given to a person, turned into a scene or a clause. It is
   never simply cut. An empty "What I learned" is as serious as a "no" to
   the page turn: the chapter has not delivered what this reader came for.
+  A period fact under **Told again** is the exception that proves the
+  rule: the reader already has it, so the repeat is cut and the first
+  telling stays.
 
 ---
 
@@ -521,6 +529,10 @@ Score how well the chapter delivers the period, 0–10, with
 - **`sense_of_place`** and **`history`** overlap on purpose: place
   pictured scores there; place taught (its name, who ran it, what
   survives) scores here.
+- **`repetition`** marks down a period fact, gloss or rule told a second
+  time, never one told once; its fix keeps the best-placed telling. A
+  history passage is not "repetition" because the period is everywhere
+  in the book; the same explanation given again is.
 
 ### Whole-book judges
 

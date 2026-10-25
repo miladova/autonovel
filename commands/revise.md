@@ -163,6 +163,17 @@ file blocked a full revision-pass.
    - No "the way [X] did [Y]" more than twice
    - No "not X, but Y" formula in narration
    - No over-explaining after showing
+   - Say each thing once (`shared/craft/PROSE.md` §7 rule 9,
+     `/autonovel:draft` step 3c): no paragraph restating the story so far
+     at the chapter's start, no point made by the narrator and again by a
+     character, no count or list the reader has seen recited again, no
+     earlier scene retold where a clause would point back to it
+   - **Replace, don't add.** When a brief item asks for something to be
+     clearer (a first reader was lost, didn't know a word, read a
+     sentence twice), rewrite the place where it is first said, or fold
+     the new words into it; never leave the old statement and add a
+     second one beside it. A clarification added beside the original is
+     how a chapter comes to explain one thing four times.
    - At most two section breaks
    - At least one moment that genuinely surprises
    - 70%+ in-scene (dialogue and action, not summary)
@@ -179,6 +190,17 @@ file blocked a full revision-pass.
    explains to its listener what the listener can see. This is the
    same check `/autonovel:evaluate` scores as `register`; catching
    it here saves an eval-brief-revise cycle.
+   When the brief has a `## Said already` section, carry out every entry:
+   the statement it names as the one to keep stays (improved if the entry
+   says so), and each repeat it lists is cut or folded into it. These are
+   not cuts of the genre's payload: the fact, gloss or period detail is
+   still in the book, once. Then run `autonovel mechanical repeats
+   books/{book} --chapter {chapter} --format markdown` with `bash` and
+   read its candidates (wording this chapter repeats, inside itself or
+   from an earlier chapter; phrases it leans on; sentence pairs making one
+   point): fix every one the rewrite created or left, keeping only a
+   deliberate echo the reader is meant to hear. This is what
+   `/autonovel:evaluate` scores as `repetition`.
    Preserve the chapter's YAML frontmatter (`book`, `chapter`, `pov`,
    `story_time`, `events`) verbatim; update `status` to `revised` and
    recompute `word_count`.

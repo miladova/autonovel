@@ -168,6 +168,14 @@ each of these and the workaround is in the codebase:
   Stop after two rotations of "weakest chapter".
 - **OVER-EXPLAIN (~32%) and REDUNDANT (~26%)** dominate adversarial
   cuts. Prioritise these in `/autonovel:apply-cuts`.
+- **Say each thing once.** A fact, a rule, a count, an explanation or an
+  earlier scene is told once in the book, where it first matters; no
+  chapter opens on a story-so-far paragraph; a clarification replaces
+  the first statement and never sits beside it (`shared/craft/PROSE.md`
+  §7 rule 9). `evaluate` scores it as `repetition`, `autonovel mechanical
+  repeats` lists candidates, and the cold reader reports "Told again".
+  One book's first chapter explained the same thing four times after
+  every check had passed it.
 
 ## When in doubt
 

@@ -6,6 +6,7 @@ model_tier: heavy
 allowed-tools:
   - file_read
   - file_write
+  - bash
 reads:
   - project.yaml
   - books/{book}/voice.md
@@ -51,6 +52,13 @@ prioritised.
 4. Use `file_read` on `books/{book}/chapters/ch_{chapter}.md`. If the
    file is missing or empty, stop and surface the gap.
 
+4a. Use `bash` to run `autonovel mechanical repeats books/{book}
+   --chapter {chapter} --format json`: wording the chapter repeats
+   (inside itself or from earlier chapters), phrases it leans on, and
+   sentence pairs that make one point. Give its candidates to the pass
+   below as `REDUNDANT` candidates to confirm or reject (a deliberate
+   echo the reader is meant to hear is rejected).
+
 5. Run the adversarial-edit LLM pass with a ruthless-editor system
    prompt ("you quote exactly from the text; you never paraphrase; you
    respond with valid JSON"). Ask for 10-20 specific passages to cut or
@@ -63,7 +71,12 @@ prioritised.
      `REDUNDANT` includes re-introducing a person, place or term the
      reader met in either of the last two chapters or already had
      explained: cut the repeated tag and keep the name. The first
-     introduction in the book is never a cut)
+     introduction in the book is never a cut. `REDUNDANT` also covers
+     the same point made twice in the chapter, in any words (the
+     narrator then a character, a count recited again, a rule
+     restated), and a paragraph near the start restating the story so
+     far: cut the weaker telling and keep the stronger
+     (`shared/craft/PROSE.md` §7 rule 9))
    - give an action: `CUT`, `REWRITE` or `MOVE` (`MISPLACED` takes only
      `MOVE` or `REWRITE`, never `CUT`)
    - for REWRITE, supply a replacement; for MOVE, say where it goes (the

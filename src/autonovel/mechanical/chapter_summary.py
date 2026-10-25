@@ -479,6 +479,7 @@ DIMENSION_LABELS: dict[str, str] = {
     "register": "register",
     "show_dont_tell_ratio": "show",
     "concreteness": "concrete",
+    "repetition": "repeats",
 }
 
 

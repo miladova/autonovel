@@ -16,6 +16,7 @@ Subcommands:
   structure-validate <book|json>   Validate structure_review.json + compute the book-level stop-revising gate.
   design-validate <book> [--outline] Check design.md's shape (DESIGN.md Part II); --outline also checks outline.md carries it.
   newcomers <book> [--chapter N]   New names/terms first seen in each chapter, how many land in its opening, and names returning after a gap.
+  repeats <book> [--chapter N]     Things said more than once: the same wording at two or more places, phrases a chapter leans on, sentence pairs making one point.
   prolepsis <book>                 Candidate narrator flash-forwards per chapter (for developmental-edit).
   story-map --book <name> [--out P]  One-page HTML story map (synopsis/threads/characters/timeline).
   impact-of <book> [--source N]    Grep chapters for tokens unique to superseded canon facts.
@@ -747,6 +748,22 @@ def _cmd_newcomers(args: argparse.Namespace) -> int:
                        gap=args.gap)
     if args.format == "markdown":
         sys.stdout.write(nc.render_markdown(rep))
+    else:
+        json.dump(rep, sys.stdout, indent=2, ensure_ascii=False)
+        sys.stdout.write("\n")
+    return 0
+
+
+def _cmd_repeats(args: argparse.Namespace) -> int:
+    from . import repeats as rp
+    book_root = Path(args.book_root)
+    if not (book_root / "chapters").is_dir():
+        print(f"repeats: no chapters/ under {book_root}", file=sys.stderr)
+        return 2
+    rep = rp.scan_book(book_root, chapter=args.chapter, min_words=args.min_words,
+                       phrase_min=args.phrase_min, top=args.top)
+    if args.format == "markdown":
+        sys.stdout.write(rp.render_markdown(rep))
     else:
         json.dump(rep, sys.stdout, indent=2, ensure_ascii=False)
         sys.stdout.write("\n")
@@ -2472,6 +2489,24 @@ def main(argv: list[str] | None = None) -> int:
                           "absence after which draft step 3c re-anchors a person).")
     ncp.add_argument("--format", choices=("json", "markdown"), default="json")
     ncp.set_defaults(func=_cmd_newcomers)
+    rpp = sub.add_parser("repeats",
+                         help="Things said more than once: the same wording at two or more "
+                              "places (in a chapter or across chapters), short phrases a "
+                              "chapter leans on, and sentence pairs that make one point "
+                              "(candidates for evaluate's repetition dimension).")
+    rpp.add_argument("book_root", help="Path to the book dir (parent of chapters/).")
+    rpp.add_argument("--chapter", type=int, default=None,
+                     help="Report this chapter only (the whole book is still read, so "
+                          "echoes of other chapters are found).")
+    rpp.add_argument("--min-words", type=int, default=6,
+                     help="Shortest repeated run of words reported as an echo (default 6).")
+    rpp.add_argument("--phrase-min", type=int, default=4,
+                     help="Times a short phrase must appear in one chapter to be listed "
+                          "(default 4).")
+    rpp.add_argument("--top", type=int, default=25,
+                     help="Most similar-sentence pairs listed per chapter (default 25).")
+    rpp.add_argument("--format", choices=("json", "markdown"), default="json")
+    rpp.set_defaults(func=_cmd_repeats)
     dvl = sub.add_parser("design-validate",
                          help="Check books/<book>/design.md against DESIGN.md Part II "
                               "(question in the first quarter, climax spends ≥3 plants, "

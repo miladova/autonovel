@@ -561,9 +561,9 @@ Three categories. Full reference: [`docs/commands.md`](docs/commands.md).
   `revision-pass --chapters structural` acts on its candidates.
   `first-read` is a cold reader for one chapter — someone who knows
   nothing about the subject reports every word, name and sentence they
-  couldn't follow, anyone they'd forgotten when they came back, places
-  they couldn't picture, who felt like a type, and whether they'd turn
-  the page; `draft` runs it on
+  couldn't follow, anyone they'd forgotten when they came back, what
+  they were told again, places they couldn't picture, who felt like a
+  type, and whether they'd turn the page; `draft` runs it on
   every new chapter and fixes what it finds, so the author is never the
   first to find an unexplained term.
   `developmental-edit` is the editor's read: one reader reads the

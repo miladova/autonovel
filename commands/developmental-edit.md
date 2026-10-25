@@ -235,10 +235,20 @@ Re-read these before writing the letter.
      book, word counts, the summaries with their cast lines, eval scores);
    - `autonovel mechanical prolepsis books/{book} --format markdown`
      (candidate narrator flash-forwards per chapter; read each in its
-     paragraph and keep the real ones).
+     paragraph and keep the real ones);
+   - `autonovel mechanical repeats books/{book} --format markdown`
+     (wording repeated inside a chapter or across chapters, phrases a
+     chapter leans on, sentence pairs making one point; candidates for
+     what the book says more than once).
    From your notes and these, tabulate the facts your diagnoses rest on:
    chapter joints that cross a year or more; chapters with a
-   flash-forward; chapters where the protagonist is wrong and pays;
+   flash-forward; chapters that open on a paragraph restating the story
+   so far; the points the book explains again in three or more chapters
+   (a rule, a count, a person's description, an earlier scene retold),
+   with the chapters, and the chapters that make one point three or more
+   times (`shared/craft/PROSE.md` §7 rule 9: a reader feels these as a
+   slow book, and no per-chapter score did until 2026-10-25); chapters
+   where the protagonist is wrong and pays;
    the chapter and percentage where each principal and each opposing
    force first appears, and the chapters they are on stage; where the
    book's central question is first posed and where it is answered;

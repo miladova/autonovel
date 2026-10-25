@@ -709,7 +709,7 @@ DIMENSION_GROUPS: list[tuple[str, list[str]]] = [
     ("People and place", ["character_depth", "character_voice",
                           "sense_of_place", "lore_integration"]),
     ("Writing", ["voice_adherence", "prose_quality", "register",
-                 "show_dont_tell_ratio", "concreteness"]),
+                 "show_dont_tell_ratio", "concreteness", "repetition"]),
 ]
 
 

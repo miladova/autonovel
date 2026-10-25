@@ -39,7 +39,8 @@ and saw the world, places that still stand), so every command treats the
 period as payload. The cold first reader is a reader of historical
 fiction and reports "What I learned"; `evaluate` scores a `history`
 dimension; the cut list marks badly placed history `MISPLACED` (moved,
-never cut); the design lists what the reader comes to learn, chapter by
+never cut), while a fact told a second time is a repeat, cut so it is
+told once (`evaluate`'s `repetition`); the design lists what the reader comes to learn, chapter by
 chapter; the appendix can list the places a reader can still visit.
 
 ## 2. Scaffold the series

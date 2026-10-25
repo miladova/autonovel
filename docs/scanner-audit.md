@@ -92,6 +92,8 @@ LLM judge dimension. The judge:
 | `period-register` literal hits | `canon_compliance` | `--chapter`, `--full` |
 | `period-register` syntax-drift | `voice_adherence` | `--chapter`, `--full` |
 | `dialogue` candidates | `prose_quality` | `--chapter` |
+| `repeats` echoes, phrases, similar sentences | `repetition` (and `repeats`, which the brief turns into `## Said already`) | `--chapter` |
+| `repeats` echoes (book-wide) | `overall_engagement` (`repeated_across_book`) | `--full` |
 
 This file is the canonical "where to look when behaviour drifts"
 reference. Update it when adding a new scanner.

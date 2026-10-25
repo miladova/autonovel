@@ -66,19 +66,25 @@ quoting the text for every item, in exactly these sections:
 5. **Forgot who** — anyone or anywhere from an earlier chapter that you
    had forgotten or mixed up when they came back. Quote where they
    return.
-6. **Couldn't picture** — every place you couldn't see in your mind, or
+6. **Told again** — everything the book told you again that you already
+   knew: a fact, a rule, a sum or a count, who someone is, what happened
+   in an earlier scene, or the whole situation summed up again at the
+   start of a chapter. Quote the repeat and say where you were first
+   told (this chapter or an earlier one). A short reminder of someone
+   you had genuinely forgotten belongs under Forgot who, not here.
+7. **Couldn't picture** — every place you couldn't see in your mind, or
    wanted to see more of: what it looked like, how big it was, who lived
    there, what it was like in its own time. Say so even if you'd skim a
    long description; say what you wanted to see.
-7. **Who felt real** — for each person who matters in the chapter: did
+8. **Who felt real** — for each person who matters in the chapter: did
    they feel like a real person, or like a type (one trait and a habit)?
    What did they want in their scenes, apart from what the main
    character wanted? Did any of them surprise you? Whom do you want to
    know more about, and what?
-8. **Skimmed or bored** — where your attention went, and why.
-9. **Would you turn the page?** Yes or no, and why. What do you want to
+9. **Skimmed or bored** — where your attention went, and why.
+10. **Would you turn the page?** Yes or no, and why. What do you want to
    know next? If you would stop reading, say exactly where.
-10. **What worked** — two or three lines, no more.
+11. **What worked** — two or three lines, no more.
 
 Be blunt. Don't be polite, don't praise to soften, don't explain the
 book to yourself. A short report with real items is worth more than a
@@ -95,7 +101,14 @@ plainly, spread the newcomers out, re-anchor the person back after a
 long absence in a few words (who they are, what they want). A note that
 the chapter re-introduces someone or something the reader already knows
 ("a roll call", "I know who he is by now") is a cut: remove the repeated
-introduction and keep the name. **Couldn't picture** asks for the
+introduction and keep the name. Every item under **Told again** is a cut
+of the repeat: the first telling stays (improved if it was the one the
+reader missed), and the later one goes, or shrinks to a clause when the
+reader has been away from it for several chapters (`PROSE.md` §7 rule 9).
+When fixing an item under Lost, Didn't know or Read twice, rewrite the
+place where the thing is first said; never add a second explanation
+beside the first, which is how a chapter comes to explain one thing four
+times. **Couldn't picture** asks for the
 place on the page: a major place's first appearance gets its set piece,
 seen through the viewpoint character's eyes (`draft` step 3c). **Who
 felt real** is the depth check: a person read as a type gets what
@@ -109,7 +122,7 @@ came for (the guide's `## The promise`): in historical fiction a skimmed
 history passage is moved to where it is at stake, given to a person, or
 made a scene or a clause, never simply cut. **Skimmed or bored** and a "no" under **Would
 you turn the page?** are a scene problem to fix before anything else.
-Fix them all, then — when anything in the first five sections or the
-page-turn answer was serious — have a fresh reader read the fixed
-chapter. Keep the report beside the chapter at
+Fix them all, then — when anything under Lost, Didn't know, Read twice,
+Too many at once, Forgot who or Told again, or the page-turn answer, was
+serious — have a fresh reader read the fixed chapter. Keep the report beside the chapter at
 `books/<book>/edit_logs/first_read_chNN.md`.

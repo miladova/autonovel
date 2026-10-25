@@ -385,7 +385,8 @@ Fiction" and her Historia column on information "without it being
 clunkingly obvious"; Robert Harris (Walter Scott Prize interview;
 Goodreads Q&A); Chuck Palahniuk, "Nuts and Bolts: 'Thought' Verbs"
 (LitReactor, 2013); the Turkey City Lexicon; Hemingway, *Death in the
-Afternoon* (1932).
+Afternoon* (1932); Renni Browne and Dave King, *Self-Editing for Fiction
+Writers*, "Once Is Usually Enough".
 
 Darwin: "Good technique is the key to good writing, whereas good
 research is merely necessary, not sufficient." Information is filtered
@@ -474,6 +475,35 @@ swift, straightforward fashion."
    truth" because it is "better, stranger, stronger") is a
    foundation-stage rule; at the sentence level the only question is
    who needs this now.
+9. **Say it once.** Browne and King's editing checklist ("Once Is
+   Usually Enough"): find the places where the writing does the same
+   thing twice, keep the stronger and cut the weaker phrase, sentence or
+   scene; their chapter holds that repeating an effect weakens a page as
+   surely as repeating a word. A fact, a rule, an explanation, who a
+   person is, or what happened in an earlier scene is given once in the
+   book, where it first matters. Afterwards it gets at most a clause,
+   and only when the reader has been away from it for several chapters
+   (CHARACTER.md's re-anchor rule). The common forms: the narrator makes
+   a point and a character makes it again, or the reverse (a character
+   telling another what both know is §6.4); an explanation given again a
+   few pages on because a reader got lost the first time (fix the first
+   one); a paragraph near a chapter's start restating the book's
+   situation, the "story so far"; the same description attached to a
+   person every time they come back; an earlier scene retold where a
+   clause would point back to it; a sum, a vote count or a rule recited
+   in full each time it matters. A revision that clarifies something
+   replaces the first statement or folds into it; it never adds a second
+   statement beside the first. In historical fiction this cuts no
+   period: the gloss stays, once. [pipeline heuristic: a point made
+   three times in one chapter, or a story-so-far opening, holds the
+   chapter under the dimension floor; `autonovel mechanical repeats`
+   lists repeated wording as candidates, and the judge reads for the
+   same point in new words, which no scanner sees.] *Decision of
+   2026-10-25:* on one book an author two-thirds into chapter 1 found it
+   "long and a bit slow" with "repetition"; the chapter explained four
+   times who chooses the Emperor and stated one rule five times, nearly
+   every chapter did the same, and every check had passed it because
+   each looked for a term explained twice, never an idea.
 
 ---
 
@@ -584,6 +614,13 @@ pipeline heuristics the book's voice file may override.
   candidates).
 - §7.4 Unglossed proper nouns: places, fortresses, coins, battles or
   offices named before the sentence says what they are. Quote each.
+- §7.9 Said more than once: every point (a fact, a rule, a count, an
+  explanation, who someone is, an earlier scene) made twice or more in
+  the chapter, in any words, with its lines and the one that should
+  stay; a story-so-far paragraph at the chapter's start; a description
+  repeated word for word from an earlier chapter (candidates:
+  `autonovel mechanical repeats`). [flag a point made three times, or a
+  story-so-far opening]
 - §7.3 / CRAFT §1 Spine: can the reader say, from this chapter alone,
   what the book is about and which step this chapter is? [flag a
   chapter that names no step of the book's question on a book whose

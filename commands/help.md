@@ -481,6 +481,9 @@ Free data views (no LLM):
   autonovel mechanical structure-validate books/<name> --format markdown
   autonovel mechanical prolepsis books/<name> --format markdown
         candidate narrator flash-forwards per chapter
+  autonovel mechanical repeats books/<name> [--chapter N] --format markdown
+        things said more than once: repeated wording, phrases a chapter
+        leans on, sentence pairs making one point
 ```
 
 ============================== TOPIC: reading =====================

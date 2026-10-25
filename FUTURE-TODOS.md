@@ -93,7 +93,9 @@ to start.
   book (opened 2026-10-24, from the kingmaker2 second editor's letter).**
   **(1)–(4) shipped 2026-10-24** (STATE.md, "introduce once; remind only
   after a long absence"); (5), the mechanical counter, and its tests are
-  still open.
+  still open (`autonovel mechanical repeats`, shipped 2026-10-25, lists a
+  description repeated word for word after the same name; a re-gloss in
+  new words is still the judge's).
   `commands/draft.md` 3c re-anchors any person, place or term "the reader
   last met more than a chapter ago", and in an ensemble "every time the
   group comes on stage"; `CHARACTER.md` C11 and its re-anchor rule say the
@@ -121,9 +123,18 @@ to start.
   person appears in ch 1, 3, 5 is not re-anchored in 3 or 5; one absent
   from ch 1 to ch 6 is.
 
-- **The same explanation, said again and again (opened 2026-10-25, from
+- ~~**The same explanation, said again and again (opened 2026-10-25, from
   the kingmaker2 author two-thirds into version 3's chapter 1: "repetition
-  about the electors … the chapter feels long and a bit slow").** Chapter 1
+  about the electors … the chapter feels long and a bit slow").**~~
+  **(a)–(e) shipped 2026-10-25** (STATE.md, "say each thing once"): the
+  `repetition` dimension, the cold reader's "Told again", revise's
+  "Replace, don't add" and the brief's `## Said already`, `autonovel
+  mechanical repeats` (echoes, leaned-on phrases, similar sentence pairs;
+  its echoes also catch the same description after the same name across
+  chapters, much of the re-anchor item's (5)), and developmental-edit's
+  counts. Still open: the scanner finds repeated *wording* only; a point
+  restated in new words is left to the judge, and no fixture yet measures
+  how often the judge catches one. Chapter 1
   explains that seven princes choose the Emperor four times, states the
   pay-after-the-vote rule five times and recites the vote count four times
   in twelve lines. A sweep of all 19 chapters found the same in nearly

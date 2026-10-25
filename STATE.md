@@ -2683,7 +2683,61 @@ ran into the page-number column (XVIII by 10pt; twelve overfull lines in the
 kingmaker2 build). `novel.tex` patches `\l@chapter` through etoolbox to give
 the number 2.8em. The existing template test asserts the patch.
 
+### 2026-10-25 — say each thing once
+
+The kingmaker2 author, two-thirds into version 3's chapter 1, found it
+"long and a bit slow" with "repetition about the electors". It explained
+four times that seven princes choose the Emperor, stated the
+pay-after-the-vote rule five times and recited the vote count four times in
+twelve lines. A sweep of all nineteen chapters found the same nearly
+everywhere: a story-so-far paragraph opening every 1519 chapter, the full
+roll-call of the electors in seven chapters, one rule stated about twelve
+times in one chapter, descriptions repeated word for word across chapters,
+earlier scenes retold. Every check had passed it. Evaluate's
+"nothing introduced twice" looked at terms, not ideas (chapter 1 scored 9
+on it); the cold reader had no category for being told again; revise fixed
+a lost reader by adding a second explanation beside the first; the brief
+had nowhere to put a repeat; the re-anchor fix of 2026-10-24 covered
+people, not the situation, rules or scenes.
+
+- PROSE.md §7 rule 9 "Say it once" (Browne and King, "Once Is Usually
+  Enough"): a fact, rule, count, explanation, person or earlier scene is
+  told once in the book; a clause after a long absence; no story-so-far
+  opening; a clarification replaces the first statement, never sits beside
+  it. §10 checklist line §7.9. The historical guide: a second telling of a
+  period fact is a repeat, cut; the first stays.
+- `autonovel mechanical repeats` (new): echoes (a run of six or more words,
+  two uncommon, at two or more places, inside a chapter or across
+  chapters), phrases a chapter leans on (three or four words, four or more
+  times, at least twice the book's rate) and similar sentence pairs.
+  "Uncommon" is measured on the book (the words making up 0.15% or more of
+  it, at most 100), so no word list. A candidate generator: the judge reads
+  for the same point in new words.
+- Evaluate scores a new chapter dimension, `repetition`, with a `repeats`
+  list (point, lines, the line that stays, kind same-chapter /
+  earlier-chapter / story-so-far, fix); a point made three times caps it at
+  6. `--full` records `repeated_across_book` under `overall_engagement`.
+  The dashboard puts it in the Writing group; chapter-summary labels it
+  "repeats".
+- FIRST-READER.md gains section 6, **Told again** (eleven sections; the
+  count line gains `told again N`); it is a serious item, and the fix is
+  to cut the repeat and keep the first telling. Fixing a Lost / Didn't know
+  / Read twice item means rewriting the first statement, not adding one.
+- The brief gains `## Said already` (each point, every place, the one that
+  stays, what happens to the rest), always fed by the scanner; revise
+  gains "Replace, don't add", carries out `## Said already` and runs the
+  scanner after rewriting; draft gains "Say each thing once" in step 3c
+  and a said-once self-check; adversarial-edit (now with `bash`) feeds the
+  scanner into `REDUNDANT`; developmental-edit counts repeated points and
+  story-so-far openings in its measurement pass.
+- Docs: commands.md (evaluate, first-read, brief, the mechanical table),
+  help (free data views), operating guide, README, the historical
+  walkthrough, scanner-audit, the series CLAUDE.md template.
+
++13 tests (`test_mechanical_repeats.py`, `test_say_it_once_contract.py`).
+
 ## Tests last known green
+- Tier 1 + Tier 2 (deterministic + contracts): 2026-10-25 (say each thing once) — **2294 passing, 1 skipped** (+13).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (table of contents fits Roman numerals) — **2281 passing, 1 skipped** (+0; one assertion added).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (promote-canon keeps brackets in place) — **2281 passing, 1 skipped** (+1).
 - Tier 1 + Tier 2 (deterministic + contracts): 2026-10-24 (ePub title, back cover) — **2280 passing, 1 skipped** (+1).

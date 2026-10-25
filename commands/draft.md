@@ -202,6 +202,20 @@ required reads — surface the error and stop, don't retry.
       first sentence of every paragraph"): the reader remembers more than
       the drafter fears, and the cast list in the back matter is there
       for the one who forgets.
+    - **Say each thing once** (`shared/craft/PROSE.md` §7 rule 9). A fact,
+      a rule, a sum, a vote count, an explanation or an earlier scene is
+      told once in the book, where it first matters; a later mention is
+      at most a clause, after a long absence. The chapter does not open
+      on a paragraph restating the book's situation (the story so far):
+      it opens in the scene, and what the reader needs from earlier
+      chapters arrives as a clause at the moment it matters. Inside the
+      chapter each point is made once: when a character argues it, the
+      narrator does not say it again, and the reverse; a count or a list
+      the reader has seen is not recited again, only what has changed in
+      it. An earlier scene is pointed back to, not retold; a person's
+      description is not repeated word for word on each return. Two
+      people who both know a thing do not tell it to each other for the
+      reader (PROSE.md §6.4).
     - **Plain over clever.** When `voice.md` asks for plain English,
       no figure of speech the reader has to decode ("rode as if the
       saddle owed him money"), no compressed witty construction whose
@@ -382,6 +396,18 @@ required reads — surface the error and stop, don't retry.
    the reader saw in the last two chapters is introduced again; fix the
    draft where it doesn't.
 
+   **Said-once self-check** (step 3c). Run `autonovel mechanical repeats
+   books/{book} --chapter {chapter} --format markdown`: it lists wording
+   this chapter repeats (inside itself or from an earlier chapter: a
+   description of a person, a sentence, a stated fact), short phrases the
+   chapter leans on ("after the vote" eight times), and pairs of
+   sentences that make one point. For each, keep the first or the
+   stronger statement and cut or fold the other; keep a repetition only
+   when it is a deliberate echo the reader is meant to hear (a payoff
+   line, a letter read again). Then read the chapter once more for what
+   the scan cannot see, the same point made again in new words, and for
+   an opening paragraph that restates the story so far.
+
    **First reader** (always, before the summary). Use `file_read` on
    `shared/craft/FIRST-READER.md` and on the genre guide's `## The first
    reader` section (step 3e), and spawn, with `task`, one fresh
@@ -391,10 +417,12 @@ required reads — surface the error and stop, don't retry.
    chapter and the earlier chapters (the last three in full and the
    rest as summaries when the book is long) — never the outline,
    design, research, voice file or your notes — and it reports in the
-   brief's ten sections, quoting the text. Save its report at
+   brief's eleven sections, quoting the text. Save its report at
    `books/{book}/edit_logs/first_read_ch{chapter}.md`. Then fix every
    item under Lost, Didn't know, Read twice, Too many at once and Forgot
-   who; give each place under Couldn't picture its picture (step 3c's
+   who, fixing an explanation where it first appears rather than adding a
+   second one; cut every repeat under Told again (keep the first
+   telling); give each place under Couldn't picture its picture (step 3c's
    set piece); deepen each person under Who felt real who read as a
    type (step 3d); and treat a Skimmed-or-bored stall or a "no" to the
    page turn as a scene to rework before anything else. When the report

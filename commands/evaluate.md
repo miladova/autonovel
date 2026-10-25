@@ -256,7 +256,7 @@ or `.autonovel/eval_logs/<timestamp>_series.json` for `--phase series`.
    `character_voice`, `plants_seeded`, `prose_quality`, `continuity`,
    `canon_compliance`, `lore_integration`, `engagement`,
    `irreversible_change`, `show_dont_tell_ratio`, `concreteness`,
-   `register`, `character_depth`, `sense_of_place`. Each emits
+   `register`, `character_depth`, `sense_of_place`, `repetition`. Each emits
    `{score, weakest_moment, fix, note}`. Include
    `three_weakest_sentences`, `three_strongest_sentences`,
    `ai_patterns_detected`, `overall_score`, `weakest_dimension`,
@@ -278,8 +278,9 @@ or `.autonovel/eval_logs/<timestamp>_series.json` for `--phase series`.
    first cold reader's report) and, when it exists,
    `books/{book}/edit_logs/first_read_ch{chapter}_2.md` (the second
    reader's, on the fixed chapter). A serious item is one under Lost,
-   Didn't know, Read twice, Too many at once or Forgot who, or a "no"
-   to the page turn (`shared/craft/FIRST-READER.md`). Record
+   Didn't know, Read twice, Too many at once, Forgot who or Told again,
+   or a "no" to the page turn (`shared/craft/FIRST-READER.md`); a Told
+   again item also counts toward `repetition`. Record
    `first_reader: {serious_items_first: [one short line each],
    serious_items_second: [...] or null when no second reader ran,
    open_items: [...], all_fixed: true|false}`. `open_items` is your
@@ -302,8 +303,9 @@ or `.autonovel/eval_logs/<timestamp>_series.json` for `--phase series`.
    to its rubric there. They count toward `weakest_dimension`, the
    floor and `dimension_mean` like any other. Read the section's list
    of what the other dimensions must not mark down before scoring
-   `prose_quality`, `register` and `concreteness`: in historical fiction
-   a gloss is not weak prose for being a gloss, and a period passage is
+   `prose_quality`, `register`, `concreteness` and `repetition`: in
+   historical fiction a gloss is not weak prose for being a gloss (only
+   for being given twice), and a period passage is
    quoted in `three_weakest_sentences` only when it is badly delivered,
    with a fix that moves or rewrites it, never one that removes it.
 
@@ -475,6 +477,51 @@ or `.autonovel/eval_logs/<timestamp>_series.json` for `--phase series`.
    number, the sensory detail). When the scanner returned no
    candidates, score 9.0 and note `"no vague candidates flagged"`.
 
+   **`repetition` (say each thing once; the LLM-judge upgrade to the
+   repeats scanner).** Run the mechanical scanner first via the `Bash`
+   tool:
+
+   ```
+   autonovel mechanical repeats books/{book} --chapter {N} --format json
+   ```
+
+   It lists wording this chapter repeats, inside itself or from an
+   earlier chapter (`echoes`, with every place by chapter and line),
+   short phrases it leans on (`phrases`), and pairs of sentences that
+   share most of their uncommon words (`similar_sentences`). Then read
+   the chapter for what the scanner cannot see: the same point made
+   again in new words. A point is a fact, a rule, a sum or a count, an
+   explanation, who a person is, or what happened in an earlier scene
+   (`shared/craft/PROSE.md` §7 rule 9). Count as repetition:
+     - the same point made twice or more in this chapter, in any words
+       (the narrator then a character, or the reverse, counts);
+     - a paragraph near the chapter's start restating the book's
+       situation, the story so far (`story-so-far`);
+     - a point from an earlier chapter told again in full, not recalled
+       in a clause, or re-explained when the reader met it in either of
+       the last two chapters (`earlier-chapter`);
+     - the same description of a person, word for word, on another
+       return;
+     - a count or list recited again when only one line of it changed.
+   Not repetition: a deliberate echo the reader is meant to hear (a
+   payoff line, a letter read again, a refrain the book sets up), and a
+   clause of reminder after a long absence (`/autonovel:draft` step 3c).
+   Emit `repeats`: an array of `{point, lines: [line numbers in the
+   file], keep_line, kind: "same-chapter"|"earlier-chapter"|"story-so-far",
+   fix}`, where `keep_line` is the statement that should stay (the first,
+   or the one in the scene where it matters; for `earlier-chapter`, null:
+   the earlier chapter keeps it) and `fix` says what happens to the
+   others. Score `repetition` 0–10: 9–10 when every point is made once
+   and the chapter opens in its scene; 7–8 with one or two points made
+   twice; 5–6 with any point made three or more times, a story-so-far
+   opening, or four or more points made twice; under 5 with several
+   points made three or more times. A point made three or more times
+   caps the score at 6. `weakest_moment` = the most repeated point with
+   its lines; `fix` = which statement stays and what happens to the rest.
+   `/autonovel:brief` turns `repeats` into its `## Said already` section.
+   In historical fiction this marks down a gloss given twice, never a
+   gloss given once (the guide's `## Judging`).
+
    **`character_depth`.** Use `file_read` on
    `shared/craft/CHARACTER.md` and, when present, `books/{book}/cast.md`.
    For each person who matters in the chapter, ask the questions of
@@ -622,6 +669,18 @@ or `.autonovel/eval_logs/<timestamp>_series.json` for `--phase series`.
    numbers for the brief / revise loop. Score as the foundation
    dimension of the same name. This is the one structural fault a
    per-chapter eval cannot see and a reader panel always does.
+
+   **Repetition across the book** (recorded under
+   `overall_engagement`): run `autonovel mechanical repeats
+   books/{book} --format json` once. From its echoes and from your read,
+   record `repeated_across_book`: each point the book tells again in
+   three or more chapters (the premise restated at chapter openings, a
+   rule or count recited, a person's description repeated word for
+   word, an earlier scene retold), with the chapters. A book that
+   re-explains its situation chapter after chapter reads slow however
+   good each chapter is; take a point off `overall_engagement` for
+   three or more such points, and two for six or more, and name the
+   worst in its `fix`.
 
    **`show_dont_tell_arc` (whole-book show-vs-tell)**: run the
    mechanical scanner once (`autonovel mechanical show-dont-tell
@@ -929,6 +988,8 @@ or `.autonovel/eval_logs/<timestamp>_series.json` for `--phase series`.
 - A JSON eval log is written under `books/{book}/eval_logs/`.
 - The log contains a numeric top-line score
   (`overall_score` / `novel_score` / `winner`).
+- For chapter mode the log's `dimensions` include `repetition` with its
+  `repeats` array (empty when every point is made once).
 - For chapter mode the log contains `weakest_dimension` and
   `weakest_score`, equal to the lowest score in `dimensions`, and a
   `first_reader` block whenever `first_read_ch{chapter}.md` exists.
