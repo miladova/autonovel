@@ -132,9 +132,14 @@ to start.
   mechanical repeats` (echoes, leaned-on phrases, similar sentence pairs;
   its echoes also catch the same description after the same name across
   chapters, much of the re-anchor item's (5)), and developmental-edit's
-  counts. Still open: the scanner finds repeated *wording* only; a point
-  restated in new words is left to the judge, and no fixture yet measures
-  how often the judge catches one. Chapter 1
+  counts. **Across chapters, shipped the same day** (STATE.md, "repeats
+  across chapters"): the scanner's `told_before` near-copies and rarity
+  ranking, and `/autonovel:said-once`, a whole-book read that writes the
+  ledger draft, brief, revise and evaluate check against. Still open: no
+  fixture measures how often a reader (said-once or the judge) catches a
+  point told again in new words; kingmaker2's 37-point list is the only
+  measure so far (the scanner alone: 59/69 places in near-identical
+  words, 22/46 in new words). Chapter 1
   explains that seven princes choose the Emperor four times, states the
   pay-after-the-vote rule five times and recites the vote count four times
   in twelve lines. A sweep of all 19 chapters found the same in nearly
