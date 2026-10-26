@@ -33,7 +33,7 @@ from reportlab.platypus import (
 ROOT = Path(__file__).resolve().parent.parent
 FONTS = ROOT / "assets" / "fonts"
 CHAPTERS = ROOT / "chapters"
-OUT = ROOT / "out"
+OUT = ROOT / "book"   # "out" is dropped from workspace snapshots; "book" persists
 
 TITLE = "THE GILDED DOOR"
 SUBTITLE = "A Novel of Rome"
