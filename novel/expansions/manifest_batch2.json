@@ -1,0 +1,11 @@
+[
+ {"chapter": 4, "after_para": 0, "file": "ch04_a.txt"},
+ {"chapter": 4, "after_para": 16, "file": "ch04_c.txt"},
+ {"chapter": 4, "after_para": 22, "file": "ch04_b.txt"},
+ {"chapter": 5, "after_para": 2, "file": "ch05_a.txt"},
+ {"chapter": 5, "after_para": 5, "file": "ch05_b.txt"},
+ {"chapter": 5, "after_para": 12, "file": "ch05_c.txt"},
+ {"chapter": 6, "after_para": 1, "file": "ch06_a.txt"},
+ {"chapter": 6, "after_para": 7, "file": "ch06_c.txt"},
+ {"chapter": 6, "after_para": 19, "file": "ch06_b.txt"}
+]
