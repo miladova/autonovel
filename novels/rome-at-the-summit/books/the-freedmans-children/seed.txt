@@ -1,0 +1,202 @@
+# Seed — Book One: THE FREEDMAN'S CHILDREN
+#
+# Series: Rome at the Summit (working title). Book one of three.
+# Read shared/premise.md first — it holds the spoiler-free foundations
+# (theme, period, place, the two leads, the families, register).
+# This seed is the book-one specific layer on top of it.
+#
+# READER NOTE: sections 1–3, 5 and 6 are safe. Section 4 ("What changes
+# by the end") is fenced at the very bottom of this file under a
+# SPOILERS banner. Do not scroll past it.
+
+
+## 1. The pitch
+
+Puteoli, AD 98. Trajan has just become emperor. Two freedmen's children —
+Fausta, the sailors'-lodging-house girl, and Celer, the shipping-fortune
+boy — have been each other's only equal since they were six. Within the
+year, the obligations their parents owe to the same declining senatorial
+house pull them out of the bay and apart: him north to the Dacian war as
+a patron's client, her to Rome into a great household whose rules she
+does not know. Book one follows the ten years from Trajan's accession to
+his Dacian triumph (98–107): the war that makes the Empire's fortune, the
+city that rebuilds itself out of it, and two people who learn, in
+opposite schools, what Rome does to the people it owns.
+
+
+## 2. The POV characters (dual close third, alternating)
+
+Laecania Fausta, 10 at the open, 19 at the close. Freeborn daughter of
+a freedwoman; bilingual, literate by accident, quick by necessity. Wants,
+at the start, nothing more than for the two houses she stands between to
+stop reminding her which one she belongs to. Afraid of becoming her
+mother: clever, owned, and still waiting for a man to die.
+By the close she has learned that the great households are a harbour
+like any other — everything has a price and a tide — and that the one
+thing she cannot price is what she is willing to become.
+
+Gaius Laecanius Celer, 11 at the open, 20 at the close. Son of the
+Augustalis; the family's redemption, and told so daily. Wants to be the
+first man of his blood whom no one calls a freedman's son. Afraid, under
+the arrogance, that his father is right about everything — including
+Fausta.
+By the close he has seen a kingdom destroyed in detail and has found that
+he is very, very good at the kind of work that destroys kingdoms on paper.
+
+The chapters alternate but need not be even. Neither POV knows what the
+other knows. The reader is the only person in the book who has both.
+
+
+## 3. What stands in the way
+
+- Lucius Laecanius Bassus, their parents' patron: an ageing senator with
+  a villa at Baiae, debts, a son who needs a praetorship, and a legal
+  claim on the services (operae) and deference (obsequium) of every
+  freedman of his house and, in practice, their children. He is not
+  cruel. He is behind on his own obligations and collects on theirs.
+- Hermes, Celer's father: the plan for the family does not include a
+  freedwoman's daughter of uncertain fathering, and he has the money to
+  enforce it.
+- Hilara, Fausta's mother: freed only in a draft will of a man who has
+  not died; everything she has is provisional, including her daughter's
+  freeborn status should anyone with money choose to question the
+  manumission.
+- The Dacian war itself, 101–106: two campaigns, a Danube winter, a
+  kingdom erased. Italian boys who go north as clients come back as
+  something else or not at all.
+- Rome's great houses, where a provincial freedwoman's girl does not
+  know the morning salutatio from the evening cena, cannot read a
+  senator's wife's silence, and will be allowed exactly one mistake.
+- The thirty-mile gap between what the two of them believe about each
+  other and what is true, widening with every letter that does not
+  arrive.
+
+
+## 5. Period and place
+
+Rome and the Bay of Naples, 98–107. Nerva dies January 98; Trajan,
+in Germania, does not come to Rome until 99. Puteoli is still the great
+port (Portus not yet rebuilt). The First Dacian War 101–102, the Second
+105–106; Apollodorus's bridge over the Danube; Decebalus dead by his own
+hand 106; the spoils (famously ~165 tons of gold) funding the Forum of
+Trajan (begun 107) and the triumph of 107 with 123 days of games. Plotina
+and Matidia hold a quiet, decisive women's court on the Palatine; the
+young Hadrian is a Spaniard with a mocked accent whom Plotina favours.
+Licinius Sura is the kingmaker. Pliny is consul in 100 and gives the
+Panegyric. The freedman secretariat (ab epistulis, a libellis, a
+rationibus) is being professionalised — the posts are passing from
+imperial freedmen to equestrians, which is exactly the door a freedman's
+son could be the last to slip through.
+
+Sensory anchors: sulphur on the wind at Puteoli; the Alexandrian fleet's
+arrival as a civic holiday; Baiae's villas seen from a fishing boat;
+the Danube in February; the Esquiline houses at dawn with the clients
+queueing; the Palatine's back corridors; the hill being cut away for the
+Forum, dust over the whole Subura for years.
+
+Period-register notes: no minutes/seconds, no "okay", no Christian idiom
+(God, hell, pray in the Christian sense), no paper (papyrus, tablets,
+parchment), no glass mirrors (bronze), no stirrups, no "sir". Greek is
+the language of intimacy and education; Latin of law and power. Slaves
+are furniture to the people who own them and the books should notice
+that without comment.
+
+
+## 6. Anything else
+
+- Mature / 18+. Explicit sex on the page where it carries meaning —
+  which in Rome it almost always does, because it is almost always
+  about who owns whom. Written frankly, from inside the POV, never as
+  decoration. Violence with weight and aftermath; the Dacian war should
+  be unglamorous and specific.
+- This is book one of a slow burn that runs three books. The
+  friendship must be real and particular before it breaks. Do not rush
+  the break. Do not hint at reconciliation. Do not let either of them
+  pine on the page; let the reader do that.
+- Both POVs must be intelligent. Fausta's ignorance of Rome is of
+  customs, not of people. Celer's mastery of systems must have a cost
+  the reader can see before he can.
+- Register: literary, dry, physical. Comparables in shared/premise.md.
+- No prologue. No epigraphs from Marcus Aurelius. No chapter that opens
+  with weather. No character who explains the Empire to another
+  character who already lives in it.
+- Historical people are historical people: Trajan, Plotina, Matidia,
+  Sura, Hadrian, Pliny, Apollodorus, Decebalus. They act within the
+  record.
+- The reader is also the commissioning editor and does not want
+  spoilers. Keep all outcome-revealing material in the generated
+  outline/canon files, not in shared/world.md or shared/premise.md.
+
+
+# =====================================================================
+# =====================================================================
+#
+#                SPOILERS BELOW — READER, STOP HERE
+#
+#   Section 4 ("What changes by the end") is required by the pipeline
+#   and describes the end of book one. Do not read past this line.
+#
+# =====================================================================
+# =====================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## 4. What changes by the end
+
+At the open: two children, one street apart, each other's only equal,
+both still inside the bay and inside the friendship. Fausta is nobody's;
+Celer is his father's.
+
+By the close (107, the Dacian triumph):
+
+- Fausta is inside the Palatine's women's orbit — not yet of it, but
+  seen by it. She got there by surviving a great house that broke her
+  once, by learning that a freedwoman's daughter who cannot be a wife can
+  still be indispensable, and by one choice that cost her the person she
+  had been protecting. She has chosen, knowingly, the first piece of
+  herself she will trade. The lodging house in Puteoli is closed; her
+  mother's manumission has been confirmed — at a price Fausta paid and
+  her mother does not know about.
+- Celer has come back from Dacia with a reputation, a wound that does
+  not show, a patron's debt converted into a patron's gratitude, and a
+  place in the secretariat — the last freedman's son through that door.
+  He learned in the north that he is better at the paperwork of
+  destruction than at destruction, and that he does not mind. He has
+  written one document that ended lives he never saw, and it is the
+  thing he is proudest of and tells no one about.
+- The friendship is broken, and broken by both of them: he by a betrayal
+  of omission, when he could have spoken for her and his father's plan
+  and chose the plan; she by an act of commission, when something she
+  did to secure her own footing in Rome — honestly, under pressure,
+  without full knowledge — landed on his house and cost it badly. Each
+  knows what the other did. Neither knows why. Each believes the other
+  acted from contempt. That misreading is the engine of book two.
+- Irreversible: they have each become the kind of Roman the other was
+  raised to despise — she a creature of the households and favour, he a
+  creature of the archive and the state. They meet, once, at the end,
+  across the triumph, and it is already too late to be friends and far
+  too early to be anything else.
+- Rome's change: the Forum of Trajan has begun; Puteoli's decline has
+  begun; the secretariat has passed to equestrians behind him; Plotina
+  has noticed the Spaniard. The summit is visible from here.

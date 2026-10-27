@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@TITLE@ — @AUTHOR@</title>
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="book">
+    <meta property="og:title" content="@TITLE@">
+    <meta property="og:description" content="@TAGLINE@">
+    <meta property="og:image" content="@COVER_PATH@">
+    <meta property="og:url" content="@URL@">
+    <meta property="book:author" content="@AUTHOR@">
+
+    <!-- Twitter card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="@TITLE@">
+    <meta name="twitter:description" content="@TAGLINE@">
+    <meta name="twitter:image" content="@COVER_PATH@">
+
+    <!-- Structured data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Book",
+      "name": "@TITLE@",
+      "author": {"@type": "Person", "name": "@AUTHOR@"},
+      "publisher": "@SERIES_NAME@",
+      "description": "@TAGLINE@",
+      "image": "@COVER_PATH@"
+    }
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=EB+Garamond:ital,wght@0,400;0,700;1,400&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #0a0a08; color: #e8e4db;
+            font-family: 'EB Garamond', Georgia, serif;
+            min-height: 100vh; overflow-x: hidden;
+        }
+        .bg-art {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: url('@BACKGROUND_PATH@') center center / cover no-repeat;
+            opacity: 0.15; z-index: 0;
+        }
+        .main-layout { position: relative; z-index: 1; min-height: 100vh;
+                       display: flex; align-items: center; justify-content: center; }
+        .main-inner { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr auto;
+                       align-items: end; width: 100%; max-width: 1400px; }
+        .hero { grid-column: 1; grid-row: 1; display: flex; flex-direction: column;
+                 justify-content: flex-end; padding: 0 4rem 0 6rem; gap: 2rem; }
+        .hero-title { max-width: 420px; }
+        .hero-title .title-main {
+            font-family: 'Bebas Neue', sans-serif; font-size: 4.5rem; line-height: 1.0;
+            color: #daa548; text-transform: uppercase; margin: 0.1em 0;
+        }
+        .hero-title .author {
+            font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; color: #daa548;
+            letter-spacing: 0.2em; margin-top: 2rem; text-transform: uppercase;
+        }
+        .hero-title .divider { width: 80px; height: 2px; background: #daa548; margin: 1.5rem 0; }
+        .hero-content { flex: 1; max-width: 520px; }
+        .hero-content .tagline { font-size: 1.3rem; font-style: italic; color: #c8c0b0;
+                                  line-height: 1.6; margin-bottom: 2rem; }
+        .explainer { grid-column: 2; grid-row: 1; display: flex; flex-direction: column;
+                      justify-content: flex-end; padding: 0 6rem 0 4rem; border-left: 1px solid #2a2820; }
+        .explainer h2 { font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem; color: #daa548;
+                         letter-spacing: 0.1em; margin-bottom: 1.5rem; }
+        .explainer p { font-size: 1.15rem; line-height: 1.8; color: #b0a898; margin-bottom: 1.5rem; }
+        .explainer-inner { max-width: 520px; }
+        .button-row { grid-column: 1 / -1; grid-row: 2; display: grid;
+                       grid-template-columns: 1fr 1fr; padding: 2.5rem 0 0 0; }
+        .button-row .left-buttons { padding-left: 6rem; }
+        .button-row .right-buttons { padding-left: 4rem; }
+        .btn { display: inline-block; padding: 0.8rem 1.8rem; font-family: 'Bebas Neue', sans-serif;
+               font-size: 1.1rem; letter-spacing: 0.15em; text-decoration: none; text-transform: uppercase;
+               border: 2px solid #daa548; color: #daa548; background: transparent; transition: all 0.2s ease; }
+        .btn:hover { background: #daa548; color: #0a0a08; }
+        .btn-primary { background: #daa548; color: #0a0a08; }
+        .btn-primary:hover { background: #c8941e; border-color: #c8941e; }
+        @media (max-width: 1100px) {
+            .main-layout { align-items: flex-start; }
+            .main-inner { display: flex; flex-direction: column; }
+            .hero, .explainer, .button-row { padding: 3rem 2rem; text-align: center; }
+            .hero-title { max-width: 100%; }
+            .hero-title .title-main { font-size: 3rem; }
+            .hero-title .divider { margin: 1.5rem auto; }
+            .hero-content { max-width: 100%; }
+            .explainer { border-left: none; border-top: 1px solid #2a2820; }
+            .explainer-inner { max-width: 100%; }
+            .button-row { display: flex; flex-direction: column; gap: 2rem; }
+            .button-row .left-buttons, .button-row .right-buttons { padding-left: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="bg-art"></div>
+
+<div class="main-layout"><div class="main-inner">
+
+<section class="hero">
+    <div class="hero-title">
+        <div class="title-main">@TITLE@</div>
+        <div class="divider"></div>
+        <div class="author">@AUTHOR@</div>
+    </div>
+    <div class="hero-content">
+        <p class="tagline">@TAGLINE@</p>
+    </div>
+</section>
+
+<section class="explainer">
+    <div class="explainer-inner">
+        <h2>About the Book</h2>
+        <p>@BLURB@</p>
+    </div>
+</section>
+
+<div class="button-row">
+    <div class="left-buttons">
+        <a href="@PDF_URL@" class="btn btn-primary">Download PDF</a>
+        <a href="@EPUB_URL@" class="btn">ePub</a>
+        <a href="@AUDIOBOOK_URL@" class="btn">Audiobook</a>
+    </div>
+    <div class="right-buttons">
+        @SERIES_NAV@
+    </div>
+</div>
+
+</div></div>
+
+</body>
+</html>

@@ -1,0 +1,29 @@
+series_name: rome-at-the-summit
+genre: historical
+subgenres:
+- literary
+- romance
+- political-thriller
+period:
+  start: 98
+  end: 138
+  region: italy
+llm:
+  heavy: claude-opus-4-7
+  standard: claude-sonnet-4-6
+  light: claude-haiku-4-5-20251001
+  thinking:
+    heavy: true
+    standard: false
+books:
+- name: the-freedmans-children
+  pov: dual
+  story_time_range:
+  - 98
+  - 107
+  status: seed
+defaults:
+  chapter_target_words: 3200
+  foundation_threshold: 7.5
+  chapter_threshold: 7.0
+  dimension_floor: 7.0

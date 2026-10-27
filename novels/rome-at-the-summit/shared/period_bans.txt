@@ -1,0 +1,137 @@
+# One banned word per line (case-insensitive). Comments and blank lines
+# are ignored. Used by /autonovel:evaluate and /autonovel:check-anachronism.
+#
+# This default is seeded for historical / alt-historical / period-fantasy
+# series set in 1400-1600 Europe. Remove anything that does not apply to
+# your series, add your own. The list is conservative: it targets
+# vocabulary the writer is most likely to reach for under time pressure,
+# not every last anachronism a period scholar would catch.
+
+# --- Modern conversational register ---------------------------------
+okay
+ok
+yeah
+yep
+yup
+hey
+cool
+awesome
+weird
+creepy
+crazy
+amazing
+massive
+huge
+tiny
+tons
+lots
+
+# --- Modern qualifiers / hedges -------------------------------------
+definitely
+obviously
+basically
+literally
+actually
+seriously
+totally
+honestly
+probably
+kinda
+sorta
+
+# --- 19th-20th century technology / metaphors -----------------------
+radar
+laser
+camera
+photograph
+photo
+snapshot
+film
+video
+telephone
+phone
+telegram
+telegraph
+email
+text
+app
+computer
+internet
+online
+offline
+website
+download
+upload
+scan
+click
+screen
+keyboard
+monitor
+battery
+electric
+electrical
+electricity
+motor
+engine
+automobile
+car
+truck
+train
+railway
+airplane
+airport
+radio
+television
+broadcast
+
+# --- Modern institutional / social concepts -------------------------
+teenager
+teenagers
+weekend
+vacation
+holiday
+tourist
+tourism
+schedule
+appointment
+timeline
+deadline
+meeting
+interview
+therapy
+therapist
+trauma
+stressed
+stressful
+depression
+anxiety
+boyfriend
+girlfriend
+partner
+relationship
+
+# --- Forensics / detection (post-1800) -----------------------------
+fingerprint
+fingerprints
+DNA
+evidence-based
+profiling
+surveillance
+database
+
+# --- 20th-century idioms + managerial register --------------------
+awesome
+zero
+twenty-four-seven
+24/7
+game-changer
+game-changing
+proactive
+reactive
+feedback
+workflow
+bandwidth
+leverage
+scalable
+robust
+seamless

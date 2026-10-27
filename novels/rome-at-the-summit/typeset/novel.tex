@@ -1,0 +1,368 @@
+% Shared typesetting template. `/autonovel:typeset` copies this file
+% into `books/<name>/typeset/novel.tex` and substitutes the three
+% placeholders @TITLE@, @AUTHOR@, @SERIES_NAME@ at build time. Hand-
+% edit the copy, never this template, for per-book tweaks.
+
+\documentclass[11pt, openany]{book}
+
+% === GEOMETRY: Trade paperback (5.5 x 8.5 inches) ===
+\usepackage[
+  paperwidth=5.5in,
+  paperheight=8.5in,
+  inner=0.85in,
+  outer=0.65in,
+  top=0.75in,
+  bottom=0.85in,
+  headheight=14pt
+]{geometry}
+
+% === FONTS ===
+\usepackage{fontspec}
+% The appendix timeline marks rows with ◆ ◇ ○ (/autonovel:appendix);
+% EB Garamond has no geometric shapes, so draw them from the maths fonts.
+\usepackage{amssymb}
+\usepackage{newunicodechar}
+\newunicodechar{◆}{\ensuremath{\blacklozenge}}
+\newunicodechar{◇}{\ensuremath{\lozenge}}
+\newunicodechar{○}{\ensuremath{\circ}}
+% Primary font: EB Garamond. If fontconfig can't find it (common on
+% Chromebook / WSL / fresh macOS), fontspec walks its fallback chain
+% trying many similar names — the user sees a "stepping through many
+% fonts by name" failure with no clear root cause. We catch the
+% missing-font case explicitly via \IfFontExistsTF and fall back to a
+% widely-available serif so typeset still produces a readable PDF.
+% Tier of preference:
+%   1. EB Garamond     (the design choice; Google Fonts free)
+%   2. Garamond        (system Garamond if present — macOS ships one)
+%   3. TeX Gyre Pagella (always present in tectonic's bundled set;
+%                        Palatino-shaped, similar feel to EB Garamond)
+%
+% To install EB Garamond:
+%   Linux/WSL: sudo apt-get install -y fonts-ebgaramond && fc-cache -fv
+%   macOS:     brew install --cask font-eb-garamond
+%   Or:        autonovel install-export-tools --apply  (handles both)
+\IfFontExistsTF{EB Garamond}{
+  % The current EB Garamond (Google Fonts) has real bold weights. The
+  % older one Debian and Ubuntu ship as fonts-ebgaramond has a "12 Bold"
+  % with no umlauts, no curly apostrophe and no en dash, so a bold
+  % "Höchstetter" printed as "Hchstetter" (kingmaker2, 2026-10-24). When
+  % there is no SemiBold, embolden the complete Regular and Italic instead.
+  \IfFontExistsTF{EB Garamond SemiBold}{
+    \setmainfont{EB Garamond}[
+      Ligatures=TeX,
+      Numbers=OldStyle
+    ]
+  }{%
+    \setmainfont{EB Garamond}[
+      Ligatures=TeX,
+      Numbers=OldStyle,
+      BoldFont={EB Garamond},
+      BoldFeatures={FakeBold=1.5},
+      BoldItalicFont={EB Garamond 12 Italic},
+      BoldItalicFeatures={FakeBold=1.5}
+    ]
+  }
+}{%
+  \IfFontExistsTF{Garamond}{
+    \setmainfont{Garamond}[Ligatures=TeX]
+  }{%
+    % TeX Gyre Pagella is bundled with tectonic and always available.
+    % Slightly different metrics than EB Garamond (wider em; less
+    % calligraphic italic) but type-page-perfect and free.
+    \setmainfont{TeX Gyre Pagella}[Ligatures=TeX]
+    \typeout{*** WARNING: EB Garamond not installed; using TeX Gyre Pagella fallback.}
+    \typeout{*** Install EB Garamond for the design-intended look:}
+    \typeout{***   sudo apt-get install -y fonts-ebgaramond  (Linux/WSL)}
+    \typeout{***   brew install --cask font-eb-garamond       (macOS)}
+    \typeout{***   autonovel install-export-tools --apply}
+  }
+}
+
+% === TYPOGRAPHY ===
+\usepackage{microtype}
+% Let TeX loosen a line a little rather than push it into the margin.
+% Without it a long bold name in the appendix's people list ran 27pt past
+% the edge, and chapter text had hundreds of lines a few points over.
+\setlength{\emergencystretch}{2em}
+\usepackage{setspace}
+\setstretch{1.12}
+\usepackage{parskip}
+\setlength{\parindent}{1.5em}
+\setlength{\parskip}{0pt}
+
+% === WIDOW / ORPHAN / HYPHEN PENALTIES ===
+% User 2026-04-30 reported "words get split across pages, perhaps
+% headings on the last lines of a page". LaTeX's defaults are
+% permissive about widows (a single line of a paragraph at the top
+% of a page) and orphans (last line of a paragraph alone at the
+% bottom). Cranking the penalties forces TeX to push widow/orphan
+% lines to the next page — costs a few half-empty pages but
+% drastically improves the perceived quality. 10000 is "infinitely
+% bad" in TeX's penalty units; the convention for novel typesetting
+% is to use 10000 for both.
+\widowpenalty=10000
+\clubpenalty=10000
+% Don't break a hyphenated word across pages (very ugly).
+\brokenpenalty=10000
+% Discourage starting a page with a hyphenation continuation.
+\interlinepenalty=100
+% Allow a slight bottom-rag (lines NOT forced to flush against the
+% bottom of every page) so widow/orphan adjustments don't produce
+% large rubber-spaced text. \raggedbottom is the convention for
+% novel pages where consistent leading is more important than
+% aligned bottom margins.
+\raggedbottom
+
+% === HEADING-ON-LAST-LINE PROTECTION ===
+% titlesec's \chapter / \section etc. don't always respect needspace
+% — a section heading can land at the bottom of a page with its
+% first prose paragraph on the next page. \needspace below each
+% heading forces a minimum of 4 lines of room; if not available,
+% TeX advances to the next page first.
+\usepackage{needspace}
+
+% === GRAPHICS ===
+\usepackage{graphicx}
+% Wide plates (plates.yaml `layout: landscape`) turn a full page sideways.
+\usepackage{pdflscape}
+
+% \cleartoverso advances to the next even (verso) page, adding a
+% blank page if needed. Used by mechanical/latex.py's plate
+% renderer to put before-chapter plates on the verso so the
+% chapter heading lands on the facing recto — the published-book
+% convention for full-page chapter-opening images.
+\newcommand{\cleartoverso}{%
+  \clearpage%
+  \ifodd\value{page}%
+    \hbox{}%
+    \thispagestyle{empty}%
+    \clearpage%
+  \fi%
+}
+
+% === DROP CAPS ===
+\usepackage{lettrine}
+\setcounter{DefaultLines}{2}
+
+% === HEADERS AND FOOTERS ===
+% Classic novel typography: book title on the verso (left-even), the
+% chapter mark on the recto (right-odd). The recto deliberately uses
+% `Chapter <Roman>` rather than `\leftmark` (chapter title) — chapter
+% titles vary in length, can carry italics or special characters, and
+% in author-testing 2026-04-25 the previous `\textit{\leftmark}` setup
+% bled italic chapter-title fragments into the running header in
+% surprising ways. The Roman chapter number is short, stable, and
+% always renders cleanly.
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+% Running header: book title on verso, chapter mark on recto. The
+% recto reads `\rightmark` (set by `\chaptermark` for numbered
+% chapters and by manual `\markboth` for unnumbered chapters like
+% Preface / Introduction / Glossary / Appendix). Without the
+% `\rightmark` indirection, the appendix's running header would
+% show "Chapter 24" — the last \thechapter value — because
+% `\chapter*` doesn't auto-update the header. User 2026-04-30 hit
+% exactly that bug.
+\fancyhead[LE]{\small\textsc{@TITLE@}}
+\fancyhead[RO]{\small\textsc{\rightmark}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0pt}
+
+\fancypagestyle{plain}{
+  \fancyhf{}
+  \fancyfoot[C]{\thepage}
+  \renewcommand{\headrulewidth}{0pt}
+}
+
+% === CHAPTER STYLE ===
+\usepackage{titlesec}
+
+\newcommand{\scenebreak}{%
+  \par\vspace{0.6\baselineskip}%
+  \noindent\hfil%
+  \IfFileExists{../art/pdf/scene_break.pdf}{%
+    \includegraphics[width=1.2in]{../art/pdf/scene_break.pdf}%
+  }{%
+  \IfFileExists{../art/scene_break.png}{%
+    \includegraphics[width=1.2in]{../art/scene_break.png}%
+  }{%
+    {\small\symbol{"2022}\quad\symbol{"2022}\quad\symbol{"2022}}%
+  }}%
+  \hfil%
+  \par\vspace{0.6\baselineskip}%
+}
+
+\renewcommand{\thechapter}{\Roman{chapter}}
+% The book class leaves 1.5em for a chapter's number in the table of
+% contents, which Roman numerals from VIII on overrun (XVIII by 10pt:
+% the kingmaker2 build, 2026-10-24). Widen it.
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd{\l@chapter}{\setlength\@tempdima{1.5em}}{\setlength\@tempdima{2.8em}}{}{}
+\makeatother
+\titleformat{\chapter}[display]
+  {\normalfont\centering}
+  {\vspace*{1.5in}\footnotesize\textsc{chapter \thechapter}}
+  {4pt}
+  {\Large\itshape}
+  [\vspace{8pt}{\small--- $\diamond$ ---}\vspace{0.5in}]
+
+\titlespacing*{\chapter}{0pt}{0pt}{0pt}
+
+% Lowercase chapter name in header
+% \chaptermark fires for numbered \chapter; we set the right mark
+% to "Chapter <Roman>" so the recto running header reads
+% "Chapter VII" via \rightmark in the fancyhead config above.
+% Unnumbered chapter*'s manually call \markboth with their name
+% (see back_matter.py / front_matter.py).
+\renewcommand{\chaptermark}[1]{\markboth{}{Chapter \thechapter}}
+
+% === TITLE PAGE DESIGN ===
+\newcommand{\makenoveltitle}{%
+  \thispagestyle{empty}
+  \begin{center}
+  \vspace*{2in}
+
+  {\Huge\textsc{@TITLE@}}\\[0.4in]
+
+  {\small------\quad$\diamond$\quad------}\\[0.5in]
+
+  {\large\textit{A Novel}}\\[1in]
+
+  {\Large\textsc{@AUTHOR@}}\\[1.5in]
+
+  \end{center}
+  \clearpage
+}
+
+% === HALF TITLE ===
+\newcommand{\makehalftitle}{%
+  \thispagestyle{empty}
+  \vspace*{3in}
+  \begin{center}
+  {\large\textsc{@TITLE@}}
+  \end{center}
+  \clearpage
+}
+
+% === PDF METADATA ===
+\usepackage{hyperref}
+\hypersetup{
+  pdftitle={@TITLE@},
+  pdfauthor={@AUTHOR@},
+  pdfsubject={@SERIES_NAME@},
+  hidelinks
+}
+
+% === BEGIN DOCUMENT ===
+\begin{document}
+
+\frontmatter
+
+% Full-bleed cover image (if exists). Prefers `cover_titled.png`
+% (title + author overlaid by `/autonovel:cover-composite`) over the
+% bare `cover.png` — the user 2026-04-30 hit "PDF missing the title
+% overlay on the front cover image" because the template was reading
+% the unoverlaid file. Both checks are guarded so a missing cover
+% silently skips this section (the half-title still renders the
+% title in clean type).
+\IfFileExists{../art/cover_titled.png}{%
+  \thispagestyle{empty}
+  \newgeometry{margin=0pt}
+  \noindent\includegraphics[width=\paperwidth, height=\paperheight, keepaspectratio]{../art/cover_titled.png}
+  \restoregeometry
+  \clearpage
+}{%
+  \IfFileExists{../art/cover.png}{%
+    \thispagestyle{empty}
+    \newgeometry{margin=0pt}
+    \noindent\includegraphics[width=\paperwidth, height=\paperheight, keepaspectratio]{../art/cover.png}
+    \restoregeometry
+    \clearpage
+    \typeout{*** WARNING: cover.png exists but cover_titled.png does not.}
+    \typeout{*** Run /autonovel:cover-composite --book <name> to overlay}
+    \typeout{*** title + author. The bare cover.png is used as a fallback}
+    \typeout{*** but readers won't see the book title on the cover.}
+  }{}%
+}
+
+% Half title
+\makehalftitle
+
+% Blank verso
+\thispagestyle{empty}
+\mbox{}
+\clearpage
+
+% Title page
+\makenoveltitle
+
+% Copyright / colophon
+\thispagestyle{empty}
+\vspace*{\fill}
+\begin{center}
+
+{\small This is a work of fiction.}\\[18pt]
+
+{\small Typeset by autonovel.}
+
+\end{center}
+\vspace*{\fill}
+\clearpage
+
+% === FRONT MATTER (preface + introduction, optional) ===
+% typeset writes `front_matter.tex` from `preface.md` +
+% `introduction.md` if either exists in the book's root. Preface goes
+% first (author voice), then introduction (typically more about the
+% work itself). Both render as `\chapter*` so they're unnumbered and
+% kept out of the chapter sequence, but added to the TOC.
+\IfFileExists{front_matter.tex}{\input{front_matter.tex}}{}
+
+% === TABLE OF CONTENTS ===
+% User 2026-04-30 reported "the chapter names still don't show in
+% toc". Real root cause: there was no \tableofcontents call AT ALL
+% in the template — the document had no TOC. \chapter{<title>}
+% auto-emits an \addcontentsline entry, but without
+% \tableofcontents nothing renders it. Sits in \frontmatter zone
+% so it's unnumbered and uses Roman page numbering.
+\tableofcontents
+\clearpage
+
+\mainmatter
+
+% === CHAPTERS ===
+\input{chapters_content.tex}
+
+% === END MATTER ===
+\backmatter
+
+% Optional appendix (real-world events, bios, sources, etc.). Written
+% by `autonovel mechanical build-back-matter-tex` from `appendix.md`
+% if the file exists in the book's root. The `\IfFileExists` guard
+% silently skips inclusion when no appendix has been authored.
+\IfFileExists{back_matter.tex}{\input{back_matter.tex}}{}
+
+\thispagestyle{empty}
+\vspace*{3in}
+\begin{center}
+{\small------\quad$\diamond$\quad------}
+\end{center}
+
+% === BACK COVER IMAGE (optional) ===
+% Full-bleed back-cover image, parallel to the front-cover block in
+% \frontmatter. User 2026-04-30: "there is a place for a back page
+% image that we are not generating, need a way to do that." Drop a
+% PNG at books/<book>/art/back_cover.png (compose via
+% /autonovel:cover-back when shipped, or hand-author) and it
+% renders here.
+\IfFileExists{../art/back_cover.png}{%
+  \clearpage
+  \thispagestyle{empty}
+  \newgeometry{margin=0pt}
+  \noindent\includegraphics[width=\paperwidth, height=\paperheight, keepaspectratio]{../art/back_cover.png}
+  \restoregeometry
+  \clearpage
+}{}
+
+\end{document}

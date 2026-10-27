@@ -1,0 +1,11 @@
+---
+title: "@TITLE@"
+author: "@AUTHOR@"
+lang: en
+rights: This is a work of fiction.
+publisher: "@SERIES_NAME@"
+date: "@YEAR@"
+cover-image: ../art/cover_titled.png
+css: ../../../typeset/epub_style.css
+titlepage: false
+...

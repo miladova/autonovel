@@ -1,0 +1,66 @@
+# autonovel runtime state
+.autonovel/in-progress.lock
+.autonovel/checkpoints/
+.autonovel/last-action.json
+# .autonovel/command-log.jsonl is append-only history; commit it
+# unless you'd rather keep your trail private.
+
+# Python tooling
+*.pyc
+__pycache__/
+.env
+.venv/
+
+# Typeset artefacts — most regenerable from chapter prose
+# (run /autonovel:typeset to rebuild). The timestamped builds
+# (`<book>_YYYYMMDD_HHMM.pdf`) are excluded — committing one per
+# rebuild would balloon the repo. The convenience pointer
+# (`<book>_latest.pdf` / `_latest.epub`) IS kept: always the most
+# recent successful build, so a fresh `git clone` of your backup
+# carries a usable PDF and ePub immediately. If you'd rather not
+# commit any binary outputs at all, delete the two `!` lines below.
+books/*/typeset/*.pdf
+!books/*/typeset/*_latest.pdf
+books/*/typeset/*.epub
+!books/*/typeset/*_latest.epub
+books/*/typeset/novel.tex
+books/*/typeset/chapters_content.tex
+books/*/typeset/chapters_combined.md
+books/*/typeset/front_matter.tex
+books/*/typeset/metadata.yaml
+# LaTeX intermediates (when tectonic leaves any behind)
+books/*/typeset/*.aux
+books/*/typeset/*.log
+books/*/typeset/*.out
+books/*/typeset/*.toc
+
+# Audiobook output — large MP3 / WAV / M4B files. Scripts and
+# voices.yaml ARE committed; audio files are regenerable via
+# /autonovel:audiobook-generate.
+books/*/audiobook/*.mp3
+books/*/audiobook/*.wav
+books/*/audiobook/*.m4b
+books/*/audiobook/chunks/
+
+# Generated art derivatives — rasterised PNGs, vectorised SVGs.
+# The source `cover.png` and `ornament_chNN.png` ARE committed
+# (regenerating them costs API credit). The derivatives below are
+# rebuilt by /autonovel:art-vectorize / /autonovel:cover-print.
+books/*/art/svg/cache/
+books/*/art/pdf/
+
+# Landing-page output (regenerated via /autonovel:landing).
+books/*/landing/dist/
+
+# Version diffs (regenerated from git / checkpoints by /autonovel:diff;
+# ~1 MB each). The `.why.json` annotations are LLM output and the
+# `last_read.json` bookmark is yours, so both stay tracked.
+books/*/edit_logs/diff_*.html
+books/*/edit_logs/diff_*.json
+!books/*/edit_logs/diff_*.why.json
+
+# Editor / OS junk
+.DS_Store
+Thumbs.db
+*.swp
+*~
