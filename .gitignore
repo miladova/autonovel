@@ -10,3 +10,6 @@ typeset/*.pdf
 typeset/chapters_content.tex
 *.pdf
 .claude/
+
+# book deliverables: the PDF is built, not tracked (see books/*/typeset/typeset.py)
+books/*/*.pdf
