@@ -15,7 +15,34 @@ from reportlab.lib.styles import ParagraphStyle
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import (BaseDocTemplate, Frame, NextPageTemplate,
-                                PageBreak, PageTemplate, Paragraph, Spacer)
+                                PageBreak, PageTemplate, Paragraph, Spacer,
+                                Flowable)
+
+
+class SceneOrnament(Flowable):
+    """Centred ornament for scene breaks: thin rule, small diamond, thin rule."""
+    def __init__(self, width=90, height=28):
+        Flowable.__init__(self)
+        self.width, self.height = width, height
+
+    def wrap(self, aw, ah):
+        self._aw = aw
+        return aw, self.height
+
+    def draw(self):
+        c = self.canv
+        cx, cy = self._aw / 2.0, self.height / 2.0
+        half = self.width / 2.0
+        gap, d = 9, 3.2
+        c.saveState()
+        c.setStrokeColor("#444444"); c.setFillColor("#444444")
+        c.setLineWidth(0.5)
+        c.line(cx - half, cy, cx - gap, cy)
+        c.line(cx + gap, cy, cx + half, cy)
+        p = c.beginPath()
+        p.moveTo(cx, cy + d); p.lineTo(cx + d, cy); p.lineTo(cx, cy - d); p.lineTo(cx - d, cy); p.close()
+        c.drawPath(p, stroke=0, fill=1)
+        c.restoreState()
 from reportlab.lib.fonts import addMapping
 
 HERE = Path(__file__).resolve().parent
@@ -110,7 +137,7 @@ def chapter_flow(num, fm, title, paras):
     first = True
     for p in paras:
         if p == "\x00BREAK":
-            out.append(Paragraph("\u2042", scene_break))
+            out.append(SceneOrnament())
             first = True
             continue
         out.append(Paragraph(inline(p), body_first if first else body))
