@@ -1,0 +1,7 @@
+[
+ {"chapter": 25, "after_para": 1, "file": "ch25_a.txt"},
+ {"chapter": 25, "after_para": 2, "file": "ch25_c.txt"},
+ {"chapter": 25, "after_para": 2, "file": "ch25_b.txt"},
+ {"chapter": 25, "after_para": 3, "file": "ch25_d.txt"},
+ {"chapter": 25, "after_para": 5, "file": "ch25_e.txt"}
+]
