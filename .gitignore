@@ -13,3 +13,5 @@ typeset/chapters_content.tex
 
 # book deliverables: the PDF is built, not tracked (see books/*/typeset/typeset.py)
 books/*/*.pdf
+# ...except the finished book, which is the deliverable
+!books/gilded-myrtle/the-gilded-myrtle.pdf
