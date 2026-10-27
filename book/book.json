@@ -1,0 +1,51 @@
+{
+  "title": "The Gilded Door",
+  "author": "Ken Follett",
+  "parts": [
+    {
+      "name": "PART I — THE HOUSE",
+      "chapters": [
+        {"file": "chapter-01.md", "num": "CHAPTER ONE", "title": "The House That Money Built"},
+        {"file": "chapter-02.md", "num": "CHAPTER TWO", "title": "Fifteen Years"},
+        {"file": "chapter-03.md", "num": "CHAPTER THREE", "title": "The Price of Paper"},
+        {"file": "chapter-04.md", "num": "CHAPTER FOUR", "title": "The Tiber Keeps Its Own"},
+        {"file": "chapter-05.md", "num": "CHAPTER FIVE", "title": "Contracts and Silence"},
+        {"file": "chapter-06.md", "num": "CHAPTER SIX", "title": "The Soft Voice"}
+      ]
+    },
+    {
+      "name": "PART II — DEBTS",
+      "chapters": [
+        {"file": "chapter-07.md", "num": "CHAPTER SEVEN", "title": "The Circus"},
+        {"file": "chapter-08.md", "num": "CHAPTER EIGHT", "title": "A Father at the Door"},
+        {"file": "chapter-09.md", "num": "CHAPTER NINE", "title": "The Baths"},
+        {"file": "chapter-10.md", "num": "CHAPTER TEN", "title": "Hilarus's Table"},
+        {"file": "chapter-11.md", "num": "CHAPTER ELEVEN", "title": "Borrowed Money"},
+        {"file": "chapter-12.md", "num": "CHAPTER TWELVE", "title": "The Raid"}
+      ]
+    },
+    {
+      "name": "PART III — WHISPERS",
+      "chapters": [
+        {"file": "chapter-13.md", "num": "CHAPTER THIRTEEN", "title": "Terms"},
+        {"file": "chapter-14.md", "num": "CHAPTER FOURTEEN", "title": "Blood on the Sand"},
+        {"file": "chapter-15.md", "num": "CHAPTER FIFTEEN", "title": "The Wife's Bargain"},
+        {"file": "chapter-16.md", "num": "CHAPTER SIXTEEN", "title": "Ostia"},
+        {"file": "chapter-17.md", "num": "CHAPTER SEVENTEEN", "title": "The Witnesses"},
+        {"file": "chapter-18.md", "num": "CHAPTER EIGHTEEN", "title": "The Citation"},
+        {"file": "chapter-19.md", "num": "CHAPTER NINETEEN", "title": "A Wedding in Rome"}
+      ]
+    },
+    {
+      "name": "PART IV — PAYMENT",
+      "chapters": [
+        {"file": "chapter-20.md", "num": "CHAPTER TWENTY", "title": "Custody"},
+        {"file": "chapter-21.md", "num": "CHAPTER TWENTY-ONE", "title": "Fire"},
+        {"file": "chapter-22.md", "num": "CHAPTER TWENTY-TWO", "title": "The Forum, First Day"},
+        {"file": "chapter-23.md", "num": "CHAPTER TWENTY-THREE", "title": "The Forum, Second Day"},
+        {"file": "chapter-24.md", "num": "CHAPTER TWENTY-FOUR", "title": "The Consul's Choice"},
+        {"file": "chapter-25.md", "num": "CHAPTER TWENTY-FIVE", "title": "The Gilded Door"}
+      ]
+    }
+  ]
+}
