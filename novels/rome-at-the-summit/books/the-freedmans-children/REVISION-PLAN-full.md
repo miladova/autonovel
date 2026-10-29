@@ -15,7 +15,7 @@ No explicit sexual content involving characters under 18. Mole kiss stays a kiss
 
 ## Instalment plan (in order; tick when done)
 1. [x] ch_10 killing made physical. ch_16 Chrestê scene written in full. Register pass chs 1–3 (Hilara, Antiope, Scorpus, Thallus, sailors). ch_22 Antiope payoff scene (+ Nicias fate, + Isis shrine). 
-2. [ ] chs 4–8: register (Hermes's warehouse men, Rufus's household, Bassus's villa), sensory, Rufus/Paulla alive on page; slipped tile payoff check.
+2. [x] chs 4–8: register (Hermes's warehouse men, Rufus's household, Bassus's villa), sensory, Rufus/Paulla alive on page; slipped tile payoff check.
 3. [ ] chs 9–12: Crescens voice (soldier's mouth), Dacia body-horror on page (pen, ice march, wounded), Antiope abortion already strong — keep.
 4. [ ] chs 13–16: Priscus scenes (13: brutal, non-graphic; keep), Sura's household raw, Chrestê purchase (Subura market: raw), ch_16 battle aftermath.
 5. [ ] chs 17–20: ch_19 night (18): raw, unflinching, her body, aftermath; ch_18 head/surrender bodies; ch_20 Chrestê/Celer domestic sex, explicit, with the slate.
