@@ -9,4 +9,6 @@ __pycache__/
 typeset/*.pdf
 typeset/chapters_content.tex
 *.pdf
+!By_Second_Intention.pdf
+novel/internal_notes/
 .claude/
