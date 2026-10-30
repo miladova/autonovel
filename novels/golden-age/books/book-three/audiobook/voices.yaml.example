@@ -1,0 +1,88 @@
+# Example voice map — what a populated `voices.yaml` looks like.
+#
+# Reference shape from the Bells production. Two roles:
+#
+#   1. /autonovel:audiobook-voices --set NARRATOR=abc123 …
+#      atomically updates the live `voices.yaml` next to this file.
+#      If `voices.yaml` is missing on first --set, the command
+#      seeds it from `shared/characters.md` so every named character
+#      gets an entry with `voice_id: REPLACE_WITH_VOICE_ID`.
+#
+#   2. /autonovel:audiobook-voices --list prints every voice the
+#      user's ElevenLabs account exposes; you copy the chosen
+#      `voice_id` into this file.
+#
+# Speaker keys are uppercase character names from
+# `shared/characters.md` (NARRATOR is the implicit narrator entry).
+# `description` and `why` are optional metadata — they don't reach
+# ElevenLabs, but they help the human keep voice choices auditable.
+
+NARRATOR:
+  voice_id: REPLACE_WITH_VOICE_ID
+  description: "George — Warm, Captivating Storyteller. British, middle-aged. Perfect for literary narration."
+  why: "narrative_story use case, warm and measured, the novel's register"
+
+CASS:
+  voice_id: REPLACE_WITH_VOICE_ID
+  description: "Liam — young male. Energetic but can be restrained."
+  why: "youngest male voice available. 14-year-old protagonist."
+
+EDDAN:
+  voice_id: REPLACE_WITH_VOICE_ID
+  description: "Brian — Deep, Resonant and Comforting. Middle-aged."
+  why: "deep and resonant matches the bellwright patriarch. The comfort is right for workshop scenes."
+
+PERIN:
+  voice_id: REPLACE_WITH_VOICE_ID
+  description: "Daniel — Steady Broadcaster. British, middle-aged."
+  why: "steady and measured. Perin is precise, dry, controlled after 10 years of Corda service."
+
+LENNE:
+  voice_id: REPLACE_WITH_VOICE_ID
+  description: "Jessica — Playful, Bright, Warm. Young female."
+  why: "bright and quick matches Lenne's intellectual energy. Young voice."
+
+TORVALD:
+  voice_id: REPLACE_WITH_VOICE_ID
+  description: "Bill — Wise, Mature, Balanced. Old male."
+  why: "old, wise — the 63-year-old dye merchant. Gravelly warmth."
+
+MARET:
+  voice_id: REPLACE_WITH_VOICE_ID
+  description: "Lily — Velvety Actress. British, middle-aged female."
+  why: "controlled, precise, powerful presence. Maret's stillness."
+
+DAV_SORN:
+  voice_id: REPLACE_WITH_VOICE_ID
+  description: "Eric — Smooth, Trustworthy. Middle-aged male."
+  why: "formal trained voice for the Court Singer. Smooth but can be clipped."
+
+PROCTOR_FEN:
+  voice_id: REPLACE_WITH_VOICE_ID
+  description: "Roger — Laid-Back, Casual, Resonant. Middle-aged male."
+  why: "dry, archly amused pedagogue. The casual resonance fits."
+
+FERREN:
+  voice_id: REPLACE_WITH_VOICE_ID
+  description: "Chris — Charming, Down-to-Earth. Middle-aged male."
+  why: "clinical, professional acoustician. Down-to-earth delivery."
+
+MIRA_FEN:
+  voice_id: REPLACE_WITH_VOICE_ID
+  description: "Alice — Clear, Engaging Educator. British, middle-aged female."
+  why: "Academy scholar, 60s, precise. Educational voice matches."
+
+VELLA:
+  voice_id: REPLACE_WITH_VOICE_ID
+  description: "Matilda — Knowledgeable, Professional. Middle-aged female."
+  why: "Court Singer, formal, weighted. Professional matches."
+
+OSSIAN:
+  voice_id: REPLACE_WITH_VOICE_ID
+  description: "Will — Relaxed Optimist. Young male."
+  why: "nervous, eager student. Young voice, can be less confident."
+
+MINOR:
+  voice_id: REPLACE_WITH_VOICE_ID
+  description: "Roger — utility voice for unnamed characters."
+  why: "neutral enough for merchants, clerks, minor parts."

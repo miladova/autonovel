@@ -1,0 +1,52 @@
+series_name: golden-age
+title: The Ash and the Porphyry
+author: M. A. Severn
+genre: historical
+subgenres:
+- political-thriller
+- saga
+- literary
+period:
+  era: Antonine Rome (High Roman Empire)
+  years: 156-171 CE
+  geography: Rome, Ostia, Portus, Lorium, Tibur, Campania
+llm:
+  heavy: claude-opus-4-7
+  standard: claude-sonnet-4-6
+  light: claude-haiku-4-5-20251001
+  thinking:
+    heavy: true
+    standard: false
+books:
+- name: book-one
+  title: By Bronze and Balance
+  subtitle: Book One of The Ash and the Porphyry
+  author: M. A. Severn
+  pov: Lucius Cassius Corvus & Lucida
+  story_time_range:
+  - 156
+  - 161
+  status: drafting
+- name: book-two
+  title: Two Suns in the West
+  subtitle: Book Two of The Ash and the Porphyry
+  author: M. A. Severn
+  pov: Lucius Cassius Corvus & Lucida
+  story_time_range:
+  - 161
+  - 166
+  status: seed
+- name: book-three
+  title: The Auction of Trajan
+  subtitle: Book Three of The Ash and the Porphyry
+  author: M. A. Severn
+  pov: Lucius Cassius Corvus & Lucida
+  story_time_range:
+  - 166
+  - 171
+  status: seed
+defaults:
+  chapter_target_words: 6000
+  foundation_threshold: 8.0
+  chapter_threshold: 8.0
+  dimension_floor: 7.5

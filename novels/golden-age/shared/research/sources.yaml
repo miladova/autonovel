@@ -1,0 +1,3 @@
+# URLs the /autonovel:research command must consult.
+# Each entry: url, optional title, optional weight (primary | secondary).
+sources: []
