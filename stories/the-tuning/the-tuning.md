@@ -14,7 +14,13 @@ Zosia went through first, the way they had arranged, so that if anything happene
 
 She had brought her because the school had closed in March, when they took two of the teachers out of the corridor in front of the children, and because a girl of fourteen alone behind a door in that city was not a thing she was prepared to leave.
 
-The courtyard had a chestnut tree in it, and a bicycle leaning against the chestnut, and gravel that had been raked. At the far end the villa stood with its shutters open, which no Polish house in that city had done since 1939. The steps had been scrubbed. Beside the door hung a brass plate with her uncle's name on it, polished almost through.
+Krysia Malanowska, who lived one floor down with her mother and a canary, cleaned at that villa three mornings a week, and it was Krysia who had come up on Sunday, out of breath, to say that there was a grand in the house on Bagatela that had not been tuned since the winter, and that the major wanted it done before the end of the week.
+
+There was nobody else to do it. The two men who had tuned in that quarter were gone, one of them east in 1940 and the other off a pavement on Wolska in a roundup the winter after, and the men who were left did not walk into German houses any more, because a man who went in to tune a piano could come out of it onto a lorry. You played, Krysia said. She had heard Marianna play through the floor.
+
+Four hundred złoty, and a slip with an office stamp on it, good for one afternoon. Marianna had said yes before Krysia had finished the sentence, and that was the part of the week she was least proud of, and it was only Wednesday.
+
+Beyond the gate the courtyard had a chestnut tree in it, and a bicycle leaning against the chestnut, and gravel that had been raked. At the far end the villa stood with its shutters open, which no Polish house in that city had done since 1939. The steps had been scrubbed. Beside the door hung a brass plate with her uncle's name on it, polished almost through.
 
 "Sit on the step," Marianna said. "Don't talk to the sentry. Don't look at him either."
 
@@ -114,7 +120,7 @@ The clock on the mantel was stopped and the ash was coming down outside the wind
 
 He took longer than four seconds. Then he looked away, and he said, "Es ist eine gute Zeit, vierzehn zu sein."[[Fourteen is a good age to be.]] It was not a joke and was not meant to be one. Zosia’s eyes came round to her mother and stayed there.
 
-That was the moment, Marianna thought afterwards, when she should have taken her by the elbow and gone. The papers were signed, the slip was in her pocket, the piano was in tune except for the F. There was a door, and a sentry, and an hour of daylight. She could have gone. What she did was stand there with a tuning hammer in her hand and let the room go on happening, and she has never been able to say, since, which of them she was waiting for.
+That was the moment, Marianna thought afterwards, when she should have taken her by the elbow and gone. Her papers were in order, the slip was in her pocket, and the piano was in tune except for the F. There was a door, and a sentry, and an hour of daylight. She could have gone. What she did was stand there with a tuning hammer in her hand and let the room go on happening, and she has never been able to say, since, which of them she was waiting for.
 
 "Ich habe dir geschrieben," she said.[[I wrote to you.]] In German. Using the other word, the one for people who are close.
 
@@ -324,4 +330,4 @@ The humming went on, four notes and then the same four notes, and outside the bl
 
 She did not tell her to stop.
 
-On Thursday she would go back, and sit on her aunt's stool, and finish the tuning, and the F in the fourth octave would stick again, and she would take a hairpin out of her hair and lift the wire with it, the way he had done it once with a sliver of hatband felt and a lamp held steady by her hand, and go on.
+On Tuesday she would go back, and sit on her aunt's stool, and finish the tuning, and the F in the fourth octave would stick again, and she would take a hairpin out of her hair and lift the wire with it, the way he had done it once with a sliver of hatband felt and a lamp held steady by her hand, and go on.

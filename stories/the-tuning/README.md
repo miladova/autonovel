@@ -6,7 +6,7 @@ A short story. Warsaw, May 1943.
 > requisitioned villa to tune a piano. The officer billeted there turns out
 > to be the man she has not seen in nineteen years.
 
-5,176 words. Delivered as a typeset PDF (`the-tuning.pdf`, 19 pages, 6 × 9 in),
+5,368 words. Delivered as a typeset PDF (`the-tuning.pdf`, 20 pages, 6 × 9 in),
 with the German and Polish carried line by line in English underneath.
 
 ## Files
@@ -29,7 +29,7 @@ python build_pdf.py -o out.pdf # elsewhere
 
 Requires `reportlab` and `pyphen` (`pip install reportlab pyphen`). Pyphen is
 optional: without it the pages simply set looser, since justified text then
-has no hyphenation.
+has no hyphenation at all.
 
 ## Reading the German
 
@@ -63,6 +63,11 @@ Two things worth knowing if you edit the builder:
   zero advance for it. Letterspacing built from thin spaces collapses —
   "THE TUNING" sets as "THETUNING", or over itself. `draw_tracked` measures
   and draws character by character instead.
+- **`rl_config.hyphenationMinWordLength` is a decoy.** ReportLab reads it at
+  import, so setting it at build time changes nothing and two-letter
+  fragments ("Pi-ano", "be-fore") survive. The minimums have to be baked into
+  a Pyphen callable and handed to the style as `hyphenationLang`, which is
+  where ReportLab looks first.
 - **No inline display initials.** An inline `<font size="30">` makes ReportLab
   advance the first line by more than the style's leading while still
   reporting the old paragraph height, so the next paragraph rides up into the

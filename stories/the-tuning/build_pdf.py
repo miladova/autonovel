@@ -3,9 +3,9 @@
 
 Design notes
 ------------
-* Trim 6 x 9 in, symmetric 0.80 in margins, justified text with pyphen
-  hyphenation for long words only (>5 letters, so "piano" is never broken
-  as "Pi-ano").
+* Trim 6 x 9 in, symmetric 0.80 in margins, justified text hyphenated by
+  pyphen with three characters minimum on each side of a break, so the page
+  never shows "Pi-ano" or "be-fore".
 * Crimson Text (SIL OFL, vendored in ./fonts) for every text role: an
   old-style serif that holds the Polish and German diacritics and reads
   well at 11.4 / 16.1.
@@ -29,7 +29,6 @@ import argparse
 import pathlib
 import re
 
-from reportlab import rl_config
 from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY, TA_LEFT
 from reportlab.lib.pagesizes import inch
 from reportlab.lib.styles import ParagraphStyle
@@ -56,6 +55,20 @@ HAIRLINE = (0.79, 0.77, 0.73)
 
 BODY_SIZE, BODY_LEAD = 11.4, 16.1
 HYPH = "en_GB"
+
+# ReportLab hyphenates through a callable. `rl_config.hyphenationMinWordLength`
+# does nothing (it is read at import time, before we can set it), so the
+# minimums have to be baked into the Pyphen object: three characters on each
+# side of a break kills "Pi-ano", "be-fore", "mo-ment" and the rest of the
+# two-letter fragments that make justified prose look chewed.
+try:
+    import pyphen
+
+    HYPHENATOR = pyphen.Pyphen(lang=HYPH, left=3, right=3).iterate
+    HYPH_MIN_WORD = 7
+except ImportError:                                   # hyphenation is optional
+    HYPHENATOR = None
+    HYPH_MIN_WORD = 7
 
 
 # --------------------------------------------------------------------------
@@ -263,7 +276,8 @@ def _narrow_style() -> ParagraphStyle:
     return ParagraphStyle(
         "narrow", fontName="Crimson", fontSize=BODY_SIZE, leading=BODY_LEAD,
         textColor=INK, alignment=TA_JUSTIFY, firstLineIndent=0,
-        hyphenationLang=HYPH, embeddedHyphenation=1,
+        hyphenationLang=HYPHENATOR, embeddedHyphenation=1,
+        hyphenationMinWordLength=HYPH_MIN_WORD,
     )
 
 
@@ -354,7 +368,8 @@ def on_body(canv, doc) -> None:
 # --------------------------------------------------------------------------
 def styles() -> dict[str, ParagraphStyle]:
     base = dict(fontName="Crimson", fontSize=BODY_SIZE, leading=BODY_LEAD,
-                textColor=INK, hyphenationLang=HYPH, embeddedHyphenation=1)
+                textColor=INK, hyphenationLang=HYPHENATOR,
+                embeddedHyphenation=1, hyphenationMinWordLength=HYPH_MIN_WORD)
     return {
         "body": ParagraphStyle("body", alignment=TA_JUSTIFY, firstLineIndent=13,
                                allowWidows=0, allowOrphans=0, **base),
@@ -462,9 +477,6 @@ HISTORICAL = (
 # build
 # --------------------------------------------------------------------------
 def build(out: pathlib.Path) -> None:
-    rl_config.hyphenationLang = HYPH
-    rl_config.embeddedHyphenation = 1
-    rl_config.hyphenationMinWordLength = 6
     register_fonts()
     st = styles()
     title, blocks = load_blocks()
