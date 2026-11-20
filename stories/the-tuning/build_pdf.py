@@ -35,9 +35,9 @@ from reportlab.lib.pagesizes import inch
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.platypus import (BaseDocTemplate, Flowable, Frame, NextPageTemplate,
-                                PageBreak, PageTemplate, Paragraph, Spacer, Table,
-                                TableStyle)
+from reportlab.platypus import (BaseDocTemplate, Flowable, Frame, KeepTogether,
+                                NextPageTemplate, PageBreak, PageTemplate,
+                                Paragraph, Spacer, Table, TableStyle)
 
 HERE = pathlib.Path(__file__).resolve().parent
 FONTS = HERE / "fonts"
@@ -102,9 +102,25 @@ def escape(s: str) -> str:
     return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
 
+GLOSS_SIZE = 8.9
+GLOSS_HEX = "#%02x%02x%02x" % tuple(round(c * 255) for c in INK_SOFT)
+
+
 def body_html(raw: str) -> str:
-    """Escape, curl the quotes, then turn *emphasis* into italics."""
-    return re.sub(r"\*([^*]+)\*", r"<i>\1</i>", escape(smart_quotes(raw)))
+    """Escape, curl the quotes, italics from *emphasis*, and `[[English]]` into
+    a bracketed translation in the same small grey italic the gloss lines use."""
+    s = re.sub(r"\*([^*]+)\*", r"<i>\1</i>", escape(smart_quotes(raw)))
+
+    def bracket(m: re.Match) -> str:
+        english = m.group(1)
+        # A short translation is set unbreakable, so it hangs together and
+        # moves as a unit rather than splitting after "(How" and finishing on
+        # the next line. A long one has to be allowed to break.
+        body = english.replace(" ", "\u00a0") if len(english) <= 34 else english
+        return (f' (<i><font size="{GLOSS_SIZE}" color="{GLOSS_HEX}">'
+                f"{body}</font></i>)")
+
+    return re.sub(r"\[\[(.+?)\]\]", bracket, s)
 
 
 def tracked_width(text: str, font: str, size: float, tracking: float,
@@ -359,6 +375,10 @@ def styles() -> dict[str, ParagraphStyle]:
         "colo_i": ParagraphStyle("colo_i", fontName="Crimson-Italic", fontSize=9.3,
                                  leading=14.6, alignment=TA_CENTER,
                                  textColor=INK_SOFT),
+        "gloss": ParagraphStyle("gloss", fontName="Crimson-Italic", fontSize=8.9,
+                               leading=12.3, textColor=INK_SOFT, alignment=TA_LEFT,
+                               leftIndent=13, firstLineIndent=0, spaceBefore=2.6,
+                               spaceAfter=0.6),
         "note_h": ParagraphStyle("note_h", fontName="Crimson-Semi", fontSize=12.5,
                                  leading=16, alignment=TA_LEFT, textColor=INK,
                                  spaceAfter=2),
@@ -375,6 +395,19 @@ def styles() -> dict[str, ParagraphStyle]:
 # --------------------------------------------------------------------------
 # manuscript
 # --------------------------------------------------------------------------
+GLOSS_RE = re.compile(r"^(?P<main>.*?)\s*\{\{(?P<gloss>.+?)\}\}\s*$", re.S)
+
+
+def split_gloss(block: str) -> tuple[str, str | None]:
+    """A block may carry its translation as `{{English}}`. The manuscript keeps
+    one block per typeset paragraph; the builder hangs the translation under
+    the line it belongs to."""
+    m = GLOSS_RE.match(block)
+    if not m:
+        return block, None
+    return m.group("main").strip(), m.group("gloss").strip()
+
+
 def load_blocks() -> tuple[str, list[str]]:
     """Title plus a flat block list, `* * *` kept as the scene-break marker."""
     lines = SOURCE.read_text(encoding="utf-8").strip().split("\n")
@@ -401,50 +434,19 @@ def load_blocks() -> tuple[str, list[str]]:
 
 
 NOTES: list[str] = [
-    "<b>Beruf?</b> \u2014 Occupation?",
-    "<b>Klavierstimmerin</b> \u2014 piano tuner (feminine form).",
-    "<b>Sie sind sp\u00e4t.</b> \u2014 You are late.",
-    "<b>Der Fl\u00fcgel ist im Salon. Nicht anfassen, was Sie nicht stimmen "
-    "m\u00fcssen.</b> \u2014 The grand is in the drawing room. Do not touch what you "
-    "do not have to tune.",
-    "<b>Das ist ein guter Fl\u00fcgel. \u2014 Er ist sehr gut.</b> \u2014 That is a good "
-    "grand. \u2014 It is very good.",
-    "<b>Frau Frontczak. Es ist lange her.</b> \u2014 Mrs Frontczak. It has been a "
-    "long time.",
-    "<b>Bleiben Sie.</b> \u2014 Stay.",
-    "<b>Sie sind also Klavierstimmerin. \u2014 Meine Tante hatte einen Stimmer.</b> "
-    "\u2014 So you are a piano tuner. \u2014 My aunt had a tuner.",
-    "<b>Ihr Mann? \u2014 Er lebt. \u2014 Was macht er? \u2014 Er arbeitet.</b> \u2014 "
-    "Your husband? \u2014 He is alive. \u2014 What does he do? \u2014 He works.",
-    "<b>Wie alt bist du? \u2014 Vierzehn. \u2014 Seit neun Tagen.</b> \u2014 How old "
-    "are you? \u2014 Fourteen. \u2014 For nine days now.",
-    "<b>Es ist eine gute Zeit, vierzehn zu sein.</b> \u2014 Fourteen is a good age "
-    "to be.",
-    "<b>Ich habe dir geschrieben.</b> \u2014 I wrote to you. The <i>du</i> form is "
-    "the intimate one, and she uses it in front of the housekeeper.",
-    "<b>Ich habe keinen Brief bekommen. \u2014 Keinen einzigen.</b> \u2014 I never "
-    "received a letter. \u2014 Not one.",
-    "<b>Was war das andere?</b> \u2014 What was the other thing?",
-    "<b>Es wird aufger\u00e4umt.</b> \u2014 It is being tidied up.",
-    "<b>Dort sind Partisanen. Bewaffnete M\u00e4nner.</b> \u2014 There are partisans "
-    "there. Armed men.",
-    "<b>Spielen Sie etwas. Bitte.</b> \u2014 Play something. Please.",
-    "<b>Sie spielen es langsamer. \u2014 Fr\u00fcher hast du es schneller "
-    "gespielt.</b> \u2014 You play it slower. \u2014 You used to play it faster.",
-    "<b>Geburtsname.</b> \u2014 Maiden name. <b>Ich wei\u00df, wie man das "
-    "schreibt.</b> \u2014 I know how to spell it.",
-    "<b>Sie kommen zweimal in der Woche. Dienstag und Freitag.</b> \u2014 You will "
-    "come twice a week. Tuesday and Friday.",
-    "<b>Hast du noch das Metronom? \u2014 Es hat nie richtig getickt.</b> \u2014 Do "
-    "you still have the metronome? \u2014 It never kept proper time.",
-    "<b>Nat\u00fcrlich.</b> \u2014 Of course.",
-    "<b>Ihre Tochter spricht sehr gut Deutsch.</b> \u2014 Your daughter speaks very "
-    "good German.",
-    "<b>Mamo, czy to prawda, \u017ce oni ich pal\u0105?</b> \u2014 Mama, is it true "
-    "that they are burning them?",
-    "<b>Nur f\u00fcr Deutsche.</b> \u2014 Germans only.",
-    "<b>Ausweis</b> \u2014 a permit, as distinct from the <b>Kennkarte</b>, the "
-    "identity card every Pole in the Generalgouvernement had to carry.",
+    "The German and the Polish are left as spoken. Beneath each line that "
+    "needs it, in the smaller italic, is the plain English; where a German "
+    "word falls inside a sentence of narration, the English follows it in "
+    "brackets. Nothing is translated inside the quotation marks.",
+
+    "<b>Ausweis</b> is a permit, as distinct from the <b>Kennkarte</b>, the "
+    "identity card every Pole in the Generalgouvernement had to carry. The "
+    "paper the Major writes is worth more than the piano: it keeps a household "
+    "out of a street roundup, and it ties that household to his desk.",
+
+    "The <i>du</i> the two of them use is the intimate form, and it is spoken "
+    "in front of a housekeeper with a brother in the police. That is the risk "
+    "she takes, and she takes it on purpose.",
 ]
 
 HISTORICAL = (
@@ -531,18 +533,28 @@ def build(out: pathlib.Path) -> None:
             after_break = True
             continue
         if first:
-            story.extend(dropcap(block, cap_lines=3))
+            main, gloss = split_gloss(block)
+            story.extend(dropcap(main, cap_lines=3))
+            if gloss:
+                story.append(Paragraph(body_html(gloss), st["gloss"]))
             first = False
             after_break = False
             continue
-        story.append(Paragraph(body_html(block),
-                               st["body_first"] if after_break else st["body"]))
+        main, gloss = split_gloss(block)
+        para = Paragraph(body_html(main),
+                         st["body_first"] if after_break else st["body"])
+        if gloss:
+            # never let a line and its translation land on facing pages
+            story.append(KeepTogether([para, Paragraph(body_html(gloss),
+                                                       st["gloss"])]))
+        else:
+            story.append(para)
         after_break = False
 
     # notes ----------------------------------------------------------------
     story.append(PageBreak())
-    story.append(Bookmark("Notes on the German and Polish", "notes"))
-    story.append(Paragraph("Notes on the German and Polish", st["note_h"]))
+    story.append(Bookmark("A note on the German and Polish", "notes"))
+    story.append(Paragraph("A note on the German and Polish", st["note_h"]))
     story.append(Rule(width=TEXT_W, thickness=0.4, space_after=14))
     story.append(Spacer(1, 4))
     for entry in NOTES:

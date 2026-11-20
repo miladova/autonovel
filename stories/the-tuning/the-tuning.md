@@ -4,7 +4,7 @@ THE GERMAN at the gate on Bagatela read their papers longer than the papers dese
 
 It fell the way snow falls, without hurry and without choosing where, and it lay on the leaves in grey flakes and did not melt. The lilacs had come out on the third of May, the day Zosia turned fourteen, which was also the day of the Constitution, which nobody in that city had been allowed to say out loud for four years. On the sunny side of the courtyard they were the ordinary pale violet. Where the wind had been, they were grey.
 
-"Beruf?"
+"Beruf?" {{Occupation?}}
 
 "Klavierstimmerin." She had practised the word in the stairwell. Piano tuner. It was not true. It was the only word on the slip that would get her through the gate.
 
@@ -28,11 +28,11 @@ The courtyard had a chestnut tree in it, and a bicycle leaning against the chest
 
 Zosia sat on the step with her knees together and her hands flat on her skirt and her chin lifted slightly, the way she did when she intended to disobey a small part of an instruction, and Marianna went in alone, because the slip had only one name on it.
 
-Frau Kalisch was fifty, from Łódź, and had been in the house since 1940, and had opinions about the curtains. She took the slip, read it, and said, "Sie sind spät."
+Frau Kalisch was fifty, from Łódź, and had been in the house since 1940, and had opinions about the curtains. She took the slip, read it, and said, "Sie sind spät."[[You are late.]]
 
 "The gate."
 
-"Ja." She handed the slip back and turned and went up the stairs without checking that Marianna followed, which was itself a judgment, and at the turn she said, over her shoulder, that she had a brother in the police in Łódź, as though it were part of the directions. "Der Flügel ist im Salon. Nicht anfassen, was Sie nicht stimmen müssen."
+"Ja." She handed the slip back and turned and went up the stairs without checking that Marianna followed, which was itself a judgment, and at the turn she said, over her shoulder, that she had a brother in the police in Łódź, as though it were part of the directions. "Der Flügel ist im Salon. Nicht anfassen, was Sie nicht stimmen müssen."[[The grand is in the drawing room. Don't touch anything you don't have to tune.]]
 
 The salon had been her aunt's morning room. The furniture had been moved into new arrangements that favoured the windows and left the middle of the floor empty, and where the sideboard had stood there was a lighter rectangle on the wallpaper, the shape of a picture that had hung there since 1911. The picture had been of her aunt and uncle at Zakopane, her uncle with his hat in his hands. The wallpaper had kept the shape of them.
 
@@ -52,15 +52,15 @@ Then she struck A, and the piano answered a hair flat, and something in her ches
 
 She worked for a little under an hour. It was slow work, and it was work she liked, and she had not been near a piano since the winter the Conservatory's instruments were carried out through the front doors on other people's shoulders. The work did not need her. The wrist did the turning, and the ear did the judging, and the two of them got on with it while she thought about nothing at all, which was the first rest she had had in a month.
 
-Frau Kalisch sat in the hall with the door open, knitting. Not to watch, exactly. It was not required that a housekeeper watch a Pole tune a piano. She sat where she could see, and her needles went, and once she said, without lifting her head, "Das ist ein guter Flügel."
+Frau Kalisch sat in the hall with the door open, knitting. Not to watch, exactly. It was not required that a housekeeper watch a Pole tune a piano. She sat where she could see, and her needles went, and once she said, without lifting her head, "Das ist ein guter Flügel."[[That is a good grand.]]
 
-"Ja," Marianna said. "Er ist sehr gut."
+"Ja," Marianna said. "Er ist sehr gut." {{Yes. It is very good.}}
 
 At ten past three, a car stopped in the courtyard, and a door, and boots on the gravel, and then a voice in the hall, quick, asking something about the car at four, and the housekeeper answering him.
 
 The voice.
 
-Marianna's hand was on the hammer. She heard the voice say the word *Wagen* and then say that the driver was to wait and that the other thing could be dealt with in the morning, and she heard the stairs, and she heard the floor of the hall above them take his weight, and she heard him stop in the doorway of the room.
+Marianna's hand was on the hammer. She heard the voice say the word *Wagen*[[car]] and then say that the driver was to wait and that the other thing could be dealt with in the morning, and she heard the stairs, and she heard the floor of the hall above them take his weight, and she heard him stop in the doorway of the room.
 
 She did not turn round. She kept her hand on the pin. It was in the fourth octave, the F, the one with the damper.
 
@@ -76,67 +76,67 @@ He had come into the room. He was in the uniform and it fitted him, and there wa
 
 She had spent nineteen years making a story out of this man, and the story had a shape she could carry. He stood in the door of her aunt's morning room and did not fit it.
 
-He looked at the housekeeper, then, and something went across his face quickly, like a hand over a table, and when he spoke he spoke loudly and in his officer's voice, and he spoke to the room. "Frau Frontczak. Es ist lange her."
+He looked at the housekeeper, then, and something went across his face quickly, like a hand over a table, and when he spoke he spoke loudly and in his officer's voice, and he spoke to the room. "Frau Frontczak. Es ist lange her."[[Mrs Frontczak. It has been a long time.]]
 
-Then, to Frau Kalisch, without turning: "Bleiben Sie."
+Then, to Frau Kalisch, without turning: "Bleiben Sie." {{Stay.}}
 
 The knitting did not stop. The needles went on, and the woman's eyes came up over them and stayed there, and Marianna understood that she was going to be in this room for whatever happened next, and that she was going to remember it precisely, and that she had a brother in the police in Łódź, because she had mentioned him on the stairs.
 
-"Sie sind also Klavierstimmerin," he said.
+"Sie sind also Klavierstimmerin," he said. {{So you are a piano tuner.}}
 
-"Meine Tante hatte einen Stimmer. Ich habe von ihm gelernt."
+"Meine Tante hatte einen Stimmer. Ich habe von ihm gelernt." {{My aunt had a tuner. I learned from him.}}
 
-"Ich erinnere mich." He said it flatly. He was standing with his weight on his heels, rocked back a little, which was a habit he had had at twenty-two because he had been proud of a new pair of shoes, and the habit was still there, in the boots, and it was the second thing that undid her.
+"Ich erinnere mich."[[I remember.]] He said it flatly. He was standing with his weight on his heels, rocked back a little, which was a habit he had had at twenty-two because he had been proud of a new pair of shoes, and the habit was still there, in the boots, and it was the second thing that undid her.
 
-He went to the window. He put his hands behind his back. "Ihr Mann?"
+He went to the window. He put his hands behind his back. "Ihr Mann?" {{Your husband?}}
 
-"Er lebt."
+"Er lebt." {{He is alive.}}
 
-"Was macht er?"
+"Was macht er?" {{What does he do?}}
 
-"Er arbeitet." She did not say where. He did not ask again, and she understood that he had decided not to ask again, and that the deciding cost him something.
+"Er arbeitet."[[He works.]] She did not say where. He did not ask again, and she understood that he had decided not to ask again, and that the deciding cost him something.
 
 The girl was in the doorway.
 
 Marianna had not heard her come up. She was standing just inside the room with her hands at her sides, and she was looking at the Major with an expression Marianna could not read, which was new, because she had always been able to read her daughter.
 
-"Und das ist Ihre Tochter," he said.
+"Und das ist Ihre Tochter," he said. {{And this is your daughter.}}
 
 "Zofia."
 
-"Zofia." He said it correctly, with the stress on the right syllable, and it was more intimate than if he had touched her. "Wie alt bist du?"
+"Zofia." He said it correctly, with the stress on the right syllable, and it was more intimate than if he had touched her. "Wie alt bist du?"[[How old are you?]]
 
-"Vierzehn," Zosia said. Her German was good. Her mother had taught her, in the evenings, out of a book with a broken spine.
+"Vierzehn," Zosia said. Her German was good. Her mother had taught her, in the evenings, out of a book with a broken spine. {{Fourteen.}}
 
-"Seit neun Tagen," Marianna said, and then heard herself, and stopped.
+"Seit neun Tagen," Marianna said, and then heard herself, and stopped. {{For nine days.}}
 
 The clock on the mantel was stopped and the ash was coming down outside the window, and the Major stood looking at her daughter, and Marianna watched him do the arithmetic. There was nothing wrong with the arithmetic. The girl had come nine days ago, in a hospital on Mokotowska, nineteen years after the last time this man had put his hands on her mother. Any man in the room could do the sum in four seconds.
 
-He took longer than four seconds. Then he looked away, and he said, "Es ist eine gute Zeit, vierzehn zu sein," which was not a joke and was not meant to be one, and Zosia's eyes came round to her mother and stayed there.
+He took longer than four seconds. Then he looked away, and he said, "Es ist eine gute Zeit, vierzehn zu sein."[[Fourteen is a good age to be.]] It was not a joke and was not meant to be one. Zosia’s eyes came round to her mother and stayed there.
 
 That was the moment, Marianna thought afterwards, when she should have taken her by the elbow and gone. The papers were signed, the slip was in her pocket, the piano was in tune except for the F. There was a door, and a sentry, and an hour of daylight. She could have gone. What she did was stand there with a tuning hammer in her hand and let the room go on happening, and she has never been able to say, since, which of them she was waiting for.
 
-"Ich habe dir geschrieben," she said. In German. Using the other word, the one for people who are close.
+"Ich habe dir geschrieben," she said.[[I wrote to you.]] In German. Using the other word, the one for people who are close.
 
 The knitting stopped.
 
 Marianna felt it stop, the way you feel a door close in another room, and she knew what she had just done, and she did not take it back, because the thing she had just done was the only true thing she had said in nineteen years.
 
-The Major looked at the housekeeper. Then at the floor. Then at Marianna. "Wann?"
+The Major looked at the housekeeper. Then at the floor. Then at Marianna. "Wann?" {{When?}}
 
 "Three times. In the spring and twice in the summer."
 
-He was quiet. His hand went up and touched the shaving cut on his jaw and came away with the paper on it, and he looked at the paper as if it had said something. "Ich habe keinen Brief bekommen," he said.
+He was quiet. His hand went up and touched the shaving cut on his jaw and came away with the paper on it, and he looked at the paper as if it had said something. "Ich habe keinen Brief bekommen," he said.[[I never received a letter.]]
 
 "Nein."
 
-"Keinen einzigen."
+"Keinen einzigen." {{Not one.}}
 
 He turned his hand over and looked at the palm. Then he began to speak slowly, in German, in the way of a man translating himself out of an older language, and the sentences came to her one at a time and had to be held.
 
 His father's workshop had been finished by then, he said. Nineteen twenty-four, and the mark was worth nothing, and the pianos had gone for flour. His mother had kept the post in that house; she had a cousin in Posen who had married a Jew, and she had begun to be afraid of the post, and she had taken what came for him and put it in a drawer and told him that the girl in Warsaw had stopped writing. And he had believed her, he said. He had believed her because it was easier than the other thing.
 
-"Was war das andere?" Marianna said.
+"Was war das andere?" Marianna said. {{What was the other thing?}}
 
 The needles had begun again. Three stitches. Four.
 
@@ -146,11 +146,11 @@ The telephone rang in the hall.
 
 He went out to it, and Marianna stood in her aunt's morning room with her daughter and a knitting German, and put her hand flat on the lid of the piano, on the cigarette burn, and pressed down until the bones of her fingers hurt.
 
-He talked for perhaps two minutes. The door was open. The words came through in pieces: *Donnerstag*, and a number, and *mit den anderen*, and *nein, die gleiche Liste*, and then something about a truck that had not arrived, and a laugh, short and real, at something the other man said. Then the receiver went down and he came back into the room and stood at the window again with his hands behind his back, looking northwest, where the smoke was.
+He talked for perhaps two minutes. The door was open. The words came through in pieces: *Donnerstag*[[Thursday]], and a number, and *mit den anderen*[[with the others]], and *nein, die gleiche Liste*[[no, the same list]], and then something about a truck that had not arrived, and a laugh, short and real, at something the other man said. Then the receiver went down and he came back into the room and stood at the window again with his hands behind his back, looking northwest, where the smoke was.
 
 From the window, in that house, you could see it. You could see the colour of it if the day was clear, and the day was clear, and the ash had been falling on that windowsill since April.
 
-"Mamo," Zosia said, in Polish, quietly. "Czy to prawda, że oni ich palą?"
+"Mamo," Zosia said, in Polish, quietly. "Czy to prawda, że oni ich palą?" {{Mama, is it true they are burning them?}}
 
 He understood. He must have learned some Polish that year, or learned it since and kept it quiet, because he answered her in German before Marianna could get a hand on her arm.
 
@@ -158,13 +158,13 @@ He understood. He must have learned some Polish that year, or learned it since a
 
 Nobody spoke.
 
-"Dort sind Partisanen," he said. "Bewaffnete Männer. Es ist eine militärische Angelegenheit, und sie ist fast zu Ende." He said it evenly, in the voice he used for the car at four and the truck that had not arrived, and then he turned round and said, "Der Flügel ist noch nicht fertig," and looked at the tuning hammer in Marianna's hand.
+"Dort sind Partisanen," he said. "Bewaffnete Männer. Es ist eine militärische Angelegenheit, und sie ist fast zu Ende."[[There are partisans there. Armed men. It is a military matter, and it is nearly over.]] He said it evenly, in the voice he used for the car at four and the truck that had not arrived, and then he turned round and said, "Der Flügel ist noch nicht fertig,"[[The grand is not finished yet.]] and looked at the tuning hammer in Marianna's hand.
 
 "They are not partisans," Zosia said. In Polish. To her mother. "The ones who are burning are not—"
 
 "Zosia." Marianna's voice came out of her at a volume she had not intended, and the room got smaller, and the needles went on, and the Major looked at the two of them with an expression of mild, tired patience. It was worse than anger. She had never seen it on his face before, and she would see it there every night for the rest of her life.
 
-"Spielen Sie etwas," he said. "Bitte."
+"Spielen Sie etwas," he said. "Bitte." {{Play something. Please.}}
 
 She could have said that the instrument was not finished. She could have said that she had to be home before the curfew, which was nine that month, which everyone in the city knew to the minute. She could have picked up her bag and her daughter and her papers and her slip and gone.
 
@@ -178,13 +178,13 @@ Nobody moved. The housekeeper's needles had stopped. The Major stood at the wind
 
 When it ended, the room held it for a moment, the way a room does, and then the ash came down and the clock did not strike four, because it had stopped.
 
-"Sie spielen es langsamer," he said.
+"Sie spielen es langsamer," he said. {{You play it slower.}}
 
-"Ja."
+"Ja." {{Yes.}}
 
-"Früher hast du es schneller gespielt."
+"Früher hast du es schneller gespielt." {{You used to play it faster.}}
 
-"Ich war jünger." She took her hands off the keys. "Everyone is slower now."
+"Ich war jünger."[[I was younger.]] She took her hands off the keys. "Everyone is slower now."
 
 He did not answer that. He went to the desk, and sat down at it, and took a printed form out of a drawer, and unscrewed the cap of his pen.
 
@@ -192,23 +192,23 @@ He did not answer that. He went to the desk, and sat down at it, and took a prin
 
 "Frontczak."
 
-"Vorname."
+"Vorname." {{First name.}}
 
 "Marianna."
 
-"Geburtsname."
+"Geburtsname." {{Maiden name.}}
 
 She looked at him. He had the pen over the line, and his hand was the same hand, with the flat ridged nail on the right thumb that came from a boyhood of pushing tuning pins, and he did not look up.
 
 "Tarnowska," she said.
 
-"Ich weiß, wie man das schreibt," he said.
+"Ich weiß, wie man das schreibt," he said. {{I know how to spell it.}}
 
 The pen stopped. It stopped for the length of one breath, and then it wrote, in small upright letters, the way a tuner writes, and Marianna watched her own name come out of his hand onto a German form in her aunt's morning room.
 
 He wrote for a while. He filled in the office of the household, and the hours, and he stamped it with a stamp he took out of the drawer, and blotted it, and blew on it, and held it up.
 
-"Sie sind bei dem Haushalt des Stabes beschäftigt," he said. "Bis zum einunddreißigsten Dezember. Ihre Tochter ist Angehörige, sie steht mit darauf." He put it on the desk and turned it round to face her. "Sie kommen zweimal in der Woche. Dienstag und Freitag. Sie stimmen den Flügel, und was sonst im Haus an Arbeit ist."
+"Sie sind bei dem Haushalt des Stabes beschäftigt," he said. "Bis zum einunddreißigsten Dezember. Ihre Tochter ist Angehörige, sie steht mit darauf."[[You are employed by the staff household. Until the thirty-first of December. Your daughter is a dependent; she is covered on it.]] He put it on the desk and turned it round to face her. "Sie kommen zweimal in der Woche. Dienstag und Freitag. Sie stimmen den Flügel, und was sonst im Haus an Arbeit ist."[[You will come twice a week. Tuesday and Friday. You tune the grand, and whatever else there is to do in the house.]]
 
 She looked at the paper. Her name on it, and her daughter's, and a stamp with an eagle on it, and a line at the bottom for a signature that was already there, small and upright, and the date: 12. V. 1943.
 
@@ -220,21 +220,21 @@ She heard herself say it. That was the thing she would keep: not the room, not t
 
 She folded the paper and put it in the inside pocket of her coat, and picked up her bag, and took her daughter's wrist.
 
-At the door he said, "Hast du noch das Metronom?"
+At the door he said, "Hast du noch das Metronom?" {{Do you still have the metronome?}}
 
 "The walnut one?"
 
-"Ja."
+"Ja." {{Yes.}}
 
 "I sold it," she said. "In 1940. For coal."
 
-"Natürlich," he said. Of course. And then, as if it were the same sentence, "Es hat nie richtig getickt."
+"Natürlich," he said. Of course. And then, as if it were the same sentence, "Es hat nie richtig getickt."[[It never kept proper time.]]
 
-And she went out through the hall and down the scrubbed steps into the courtyard, where the ash was coming down into the lilacs, and Frau Kalisch held the door open for her with an expression of great politeness, and said, "Ihre Tochter spricht sehr gut Deutsch."
+And she went out through the hall and down the scrubbed steps into the courtyard, where the ash was coming down into the lilacs, and Frau Kalisch held the door open for her with an expression of great politeness, and said, "Ihre Tochter spricht sehr gut Deutsch."[[Your daughter speaks very good German.]]
 
 * * *
 
-They walked the length of Bagatela without speaking, and turned up through the streets behind the Aleje, where the Germans had the pavements and the Poles had the gutters, and where a tram went by with a board on the front of it that said NUR FÜR DEUTSCHE, and a soldier on the platform eating something out of a paper with his gloves off. At the corner of the square a boy of eleven was selling cigarettes out of a wooden box. The lilacs had been cut back here by a gardener who had gone away, and they were coming out anyway, out of the ruins of the hedge, and they were grey.
+They walked the length of Bagatela without speaking, and turned up through the streets behind the Aleje, where the Germans had the pavements and the Poles had the gutters, and where a tram went by with a board on the front of it that said NUR FÜR DEUTSCHE[[Germans only]], and a soldier on the platform eating something out of a paper with his gloves off. At the corner of the square a boy of eleven was selling cigarettes out of a wooden box. The lilacs had been cut back here by a gardener who had gone away, and they were coming out anyway, out of the ruins of the hedge, and they were grey.
 
 Zosia stopped.
 
@@ -318,7 +318,7 @@ When she had finished she sat for a while with the coat in her lap, and then she
 
 From the other room, through the wall, in her sleep, her daughter was humming.
 
-It was the lullaby. It was the one Marianna had sung to her before she could talk, and then in the bad winters, and then for no reason at all. Guten Abend, gut' Nacht. She had never told her where it came from. She had told her, once, that it came from a violinist, and had not said which one.
+It was the lullaby. It was the one Marianna had sung to her before she could talk, and then in the bad winters, and then for no reason at all. Guten Abend, gut' Nacht. She had never told her where it came from. She had told her, once, that it came from a violinist, and had not said which one. {{Good evening, good night.}}
 
 The humming went on, four notes and then the same four notes, and outside the blackout paper the sky over the north-west was orange behind the roofs, and the ash was still coming down, and the lilacs in the courtyard below could not be seen and were, she knew, grey.
 

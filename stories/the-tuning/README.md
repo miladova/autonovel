@@ -6,7 +6,8 @@ A short story. Warsaw, May 1943.
 > requisitioned villa to tune a piano. The officer billeted there turns out
 > to be the man she has not seen in nineteen years.
 
-5,176 words. Delivered as a typeset PDF (`the-tuning.pdf`, 19 pages, 6 × 9 in).
+5,176 words. Delivered as a typeset PDF (`the-tuning.pdf`, 19 pages, 6 × 9 in),
+with the German and Polish carried line by line in English underneath.
 
 ## Files
 
@@ -15,6 +16,7 @@ A short story. Warsaw, May 1943.
 | `the-tuning.md` | The manuscript. Plain Markdown: `#` title, blank-line paragraphs, `* * *` for scene breaks, `*emphasis*` for italics. |
 | `the-tuning.pdf` | The formatted booklet: title page, colophon, running heads, drop cap, scene ornaments, notes. |
 | `build_pdf.py` | Typesetter. Reads the Markdown, writes the PDF with ReportLab. |
+| `add_glosses.py` | Inserts the translations into the manuscript (idempotent; run once). |
 | `fetch_fonts.py` | Pulls Crimson Text (SIL OFL) from `google/fonts` through the GitHub API. |
 | `fonts/` | Vendored Crimson Text faces plus `OFL.txt`. |
 
@@ -28,6 +30,24 @@ python build_pdf.py -o out.pdf # elsewhere
 Requires `reportlab` and `pyphen` (`pip install reportlab pyphen`). Pyphen is
 optional: without it the pages simply set looser, since justified text then
 has no hyphenation.
+
+## Reading the German
+
+Readers should not have to turn to the back for a line of dialogue, so every
+German and Polish run carries its plain English immediately beside it, in the
+same small grey italic:
+
+- **A speech** (or a speech with a said-tag) gets the translation on its own
+  line, tucked under it: `"Bleiben Sie."` then *Stay*.
+- **German inside narration** gets the English in brackets right where it
+  falls: `the word Wagen (car)`, `"Ich habe dir geschrieben," she said. (I
+  wrote to you.)` The gloss goes behind the said-tag, never between the
+  quotation and its attribution.
+
+In the Markdown that is `{{English}}` at the end of a paragraph for the first
+case and `[[English]]` inline for the second; `add_glosses.py` writes both.
+Short brackets are set unbreakable so a translation never splits across two
+lines, while the long ones are allowed to break.
 
 ## Typography
 
