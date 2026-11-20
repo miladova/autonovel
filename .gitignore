@@ -9,4 +9,7 @@ __pycache__/
 typeset/*.pdf
 typeset/chapters_content.tex
 *.pdf
+# ...except the finished short-story deliverable, which is the artefact
+# itself rather than a rebuild of one. Its source is the .md beside it.
+!stories/the-tuning/the-tuning.pdf
 .claude/
