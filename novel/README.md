@@ -10,7 +10,7 @@ for a bishopric. The state requires an opinion. The Security Service requires a 
 
 ## Files
 
-- `THE-DIVIDED-HARVEST.pdf` — typeset 6 × 9 in edition, 122 pages (read this one)
+- `THE-DIVIDED-HARVEST.pdf` — typeset 6 × 9 in edition, 123 pages (read this one)
 - `THE-DIVIDED-HARVEST.md` — the complete manuscript in markdown
 - `chapters/` — the ten chapters as separate files
 - `01-bible.md` — story bible: characters, timeline, motifs, narrative rules
@@ -22,18 +22,18 @@ for a bishopric. The state requires an opinion. The Security Service requires a 
 
 | # | Chapter | Words |
 |---|---------|-------|
-| 1 | The Meeting | 4,927 |
-| 2 | The Village | 4,196 |
-| 3 | The Occupation | 4,210 |
-| 4 | The Fire | 4,437 |
-| 5 | The Building | 3,610 |
-| 6 | The Thaw | 4,149 |
-| 7 | The File | 3,723 |
-| 8 | The Confession | 3,755 |
-| 9 | The Choice | 4,138 |
-| 10 | What Remains | 5,532 |
+| 1 | The Meeting | 4,998 |
+| 2 | The Village | 4,203 |
+| 3 | The Occupation | 4,216 |
+| 4 | The Fire | 4,443 |
+| 5 | The Building | 3,612 |
+| 6 | The Thaw | 4,153 |
+| 7 | The File | 3,729 |
+| 8 | The Confession | 3,757 |
+| 9 | The Choice | 4,143 |
+| 10 | What Remains | 5,537 |
 
-Total: approx. 42,677 words.
+Total: approx. 42,791 words.
 
 ## Note
 
