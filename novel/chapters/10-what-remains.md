@@ -118,7 +118,11 @@ Zofia picked up her handbag. At the door she said, "If you ever want—"
 
 Zofia went out into the snow.
 
+***
+
 She walked to Brzozówka. It was nine kilometres and there was a bus at two but she did not wait for it. The road went out of the town past the sugar factory and the new housing and then between fields, and the snow had stopped and the sky had cleared and the light was the hard white light of a Polish December. She walked for two hours and met no one but a man with a horse and a cart of wood, who nodded.
+
+***
 
 The village had been rebuilt, and it had not.
 
@@ -142,6 +146,8 @@ She thought about the boy who had pulled her out of the water and shouted at her
 
 At two o'clock she turned round and went out and closed the gate behind her.
 
+***
+
 The parish priest was called Father Kulesza and he was fifty and had been at Brzozówka since 1949, and he was in the sacristy when she knocked, and he was expecting, that week, a great many things, but not her.
 
 "Pani Krawiec? From the Office?"
@@ -155,6 +161,8 @@ The parish priest was called Father Kulesza and he was fifty and had been at Brz
 "He is coming to say his first Mass in the parish. It is a great honour for us. We have no bell, unfortunately, so we cannot ring it, but the children will sing." He looked at her. "Did you know him? You are from here."
 
 "Yes," she said. "I knew him."
+
+***
 
 On the eighth of December the consecration was held at Lublin.
 
@@ -171,6 +179,8 @@ She heard the Litany of the Saints, which she remembered from the Forty Hours in
 She did not cry. She stood against the pillar with her hat in her hands and her coat over her arm, and she watched a man she had known since he was twelve be made a bishop in the cathedral of Lublin, and she thought: I have signed a great many papers, and one of them was this.
 
 Afterwards she waited until the church was empty. The sacristan came and looked at her and she said, "A moment," and he went away and came back ten minutes later and said, "Pani, we are closing," and she said, "Yes," and went out.
+
+***
 
 The tenth of December was a Wednesday and cold, and the Mass at Brzozówka was at eleven.
 

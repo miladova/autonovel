@@ -16,6 +16,8 @@ It was dangerous. The penalty for clandestine teaching was not always death, but
 
 Zofia went to those lessons for three years. She learned the history of her country in a kitchen, by lamplight, in a house that smelled of wood shavings and cabbage, sitting on a bench beside Tomasz Wierzbicki, who had already read the book twice and who corrected Pan Wróbel when he got a date wrong, which Pan Wróbel permitted, because the boy was right.
 
+***
+
 In the autumn of 1942 the Germans took the Frydmans away.
 
 There had been a ghetto in Krasnystaw since the winter of 1940, and the Jews of the district had been moved into it, and the shop in Brzozówka had been closed and its windows broken and its stock taken by the Kreishauptmann's office and sold, and Icek Frydman had been seen in the market at Krasnystaw that winter with a yellow star on his coat, selling cigarettes from a tray. Then in October 1942 the lorries came to the ghetto at night, and in the morning there were no Jews in Krasnystaw, or very few, and the ones who remained were in the camp at Trawniki, and the ones who remained after that were nowhere.
@@ -30,11 +32,15 @@ The war came into the village in other ways. In November 1942 the Germans began 
 
 Some of them did not go on. They stopped in Brzozówka, in the barns and the school storeroom and the church porch, and the village fed them, which it could not afford, and hid some of them, which it could not afford at all. There were children among them who had been separated from their parents, and there was a great deal of talk about the children, because the Germans were taking the children too, not for labour but for something else, and no one knew what, and everyone knew.
 
+***
+
 Zofia was fifteen in the winter of 1942. She was tall for her age and strong from the yoke and the water and the hay, and she had begun to be looked at by men, which she disliked and used. She had stopped going to the secret lessons in the autumn, because Pan Wróbel had been arrested in September and sent to Majdanek, and had died there in January, and there was no one to teach. She could read now, well, and she read everything in the priest's study that he would lend her, which was not much, and everything in the Wierzbickis' house, which was more. She had a notebook in which she wrote, in a careful hand, the things she did not say: the dates from Pan Wróbel's history, the poems, the names of the dead.
 
 Tomasz was eighteen in the winter of 1942 and was no longer in the village most nights.
 
 She did not know at first. He was there in the daytime, in the carpenter's shop, planing boards, or in the church, pumping the organ, or at the forge, helping her father with a hinge. And then he would be gone, and his father would say he had gone to Krasnystaw for an order, and Zofia would see the old man's hands, and the way he did not look at her.
+
+***
 
 In March she found out. She had gone up to the church to sweep the aisle — Father Zaremba paid her four złoty a month and a loaf — and Tomasz was in the organ loft with the little door open, and he had taken off his shirt, and there was a bandage around his ribs, badly done, and blood coming through it in a line the width of a finger.
 
@@ -101,6 +107,8 @@ It was Tomasz's doing, and she never knew whether to be grateful. A unit in the 
 Her first message was a folded paper in the false bottom of a basket of eggs, from the mill to a farm beyond the birch wood. Her second was spoken: eleven words, which she repeated to herself all the way there and all the way back, and which she could still recite in 1958, though she had long since forgotten what they meant. Her third was a warning.
 
 She was not brave, she said afterward, when people asked, and people did ask, in the years when it was still possible to ask. She was frightened the whole time. She was frightened in a way that made her hands cold and her hearing unnaturally good, and she went on doing it because doing nothing was worse, and because there was a boy in the forest who would know.
+
+***
 
 The summer of 1943 was the last good summer of her life, and she knew it while it was happening, which is a rare and terrible thing.
 
@@ -174,6 +182,8 @@ She looked at him for a long moment. The heron had gone. Somewhere up at the mil
 
 "Then I'll wait," she said.
 
+***
+
 He made her the ring in October. It was a bicycle spoke, cut and filed and bent round a mandrel in his father's shop, and it was not beautiful, and it left a green mark on her finger, and she wore it on a string around her neck because a ring on the hand would be seen. He gave it to her behind the church after the rosary, in the dark, with the smell of the cold coming off the fields.
 
 "It's not gold," he said.
@@ -185,6 +195,8 @@ He made her the ring in October. It was a bicycle spoke, cut and filed and bent 
 "That's how it works for me," she said, and put it in her blouse, against her skin, and felt it cold and then warm.
 
 The winter of 1943 was hard. The Germans took the potatoes and then took the pigs and then took the men for labour, thirty-one from the gmina in January, and one of them was the miller's son, who was twenty and had been at the wedding. The partisans in the forest were being hunted; there were sweeps in December and January, and twice Tomasz did not come home for three weeks, and his father played the organ at Mass with his face like a wall. The front was coming. Everyone said so. The Reds were at the Dnieper, and then the Bug, and it was said they would be in Lublin by the summer, and what would happen then no one knew, though everyone had an opinion.
+
+***
 
 In April 1944 the Germans put up a poster in the market square at Krasnystaw. It was printed in Polish and German, and it announced that the population of the district was to be resettled for reasons of military necessity, and that anyone who sheltered partisans or Jews would be punished with death, and that the punishment would be carried out on the whole village.
 

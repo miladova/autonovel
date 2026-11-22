@@ -53,6 +53,8 @@ She took both documents to the office at eight in the morning, and typed the fai
 
 Then she put on her coat and went to the clinic on Skaryszewska.
 
+***
+
 Brzozowski was much worse. He had been moved to a side room and there was a screen around the bed and a smell in the room that she recognized from 1944 and did not name. His face had gone the colour of the wall. But his eyes were the same, and when she came in he said, "Ah. The acting director. You have the look of a woman who has done something irrevocable."
 
 "I have."
@@ -88,6 +90,8 @@ She gave him the opinion. He read it slowly, holding it up at an angle, and when
 She sent it at eleven, by messenger, with a receipt; and a copy to the minister's secretary, personally; and a third copy she folded into her handbag, next to the letter that had never been sent.
 
 Brzozowski died on the twenty-fourth, at about four in the morning, of the thing that had been eating him since April. There were nine people at the funeral, and Zofia was one of them, and the priest who said the Mass was old and had known him before the war and said in the sermon that Mieczysław Brzozowski had been a just man, which was true, and a patriot, which was also true, and that he had served the state according to his conscience, which was the most that could be said for anyone in that cemetery, and which was said in a tone that made Zofia look up.
+
+***
 
 Wrona came on the twenty-fifth.
 
@@ -132,6 +136,8 @@ He stopped.
 He looked at her for a moment.
 
 "No," he said. "It was prepared on the twenty-third, at nine in the morning, by a clerk in the personnel section, on my instruction, in one hour, because I was angry." He opened the door. "But you believed it, and that is the whole art of the thing, and I am sorry for it."
+
+***
 
 The commission met on Friday the twenty-eighth in a room on the third floor with a table and four chairs and a portrait of Gomułka and a window that gave on the yard.
 
@@ -181,6 +187,8 @@ She turned.
 
 She went out and down the stairs and out of the building into the yard, where it had begun to snow again, and she stood by the wall with her hand against it and laughed, once, out loud, and a clerk coming out of the side door looked at her and went away quickly.
 
+***
+
 Jerzy was at the table when she got home, and there was a bottle of vodka on it, which had not happened in years, and two glasses.
 
 "You heard," she said.
@@ -208,6 +216,8 @@ She looked at him. He was a good man, and she had married him in 1953 in a regis
 "No," she said. "It is something else. I don't know what it's called." She reached across the table and took his hand. "I'll take it."
 
 They sat there until midnight, and drank the whole bottle, and he told her about the cement dispute in more detail than she had ever heard, and she laughed until her ribs hurt, and at some point she began to cry, and he pretended not to notice, which was the kindest thing he had ever done for her.
+
+***
 
 On the sixth of December the announcement appeared in *Trybuna Ludu*, in four lines, between a report on the steel target and a notice about the price of coal:
 

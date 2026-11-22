@@ -10,10 +10,13 @@ for a bishopric. The state requires an opinion. The Security Service requires a 
 
 ## Files
 
-- `THE-DIVIDED-HARVEST.md` — the complete manuscript (read this one)
+- `THE-DIVIDED-HARVEST.pdf` — typeset 6 × 9 in edition, 122 pages (read this one)
+- `THE-DIVIDED-HARVEST.md` — the complete manuscript in markdown
 - `chapters/` — the ten chapters as separate files
 - `01-bible.md` — story bible: characters, timeline, motifs, narrative rules
 - `00-front-matter.md` — title page and contents
+- `tools/build_pdf.py` — the typesetter (reportlab); `python3 tools/build_pdf.py` rebuilds the PDF
+- `fonts/` — Crimson Text, used for the typesetting (SIL Open Font License)
 
 ## Chapters
 

@@ -128,6 +128,8 @@ They stood there. The plane tree moved in the wind, and one of the three leaves 
 
 He went. She stood at the window for a long time, and then she sat down at the table and wrote, in her small careful hand, on the back of the summary: *Declines third condition. Quotes: I have signed one paper in my life and I will not sign another. Advises opinion will end nomination. — 4:20 p.m.* And then she sat looking at it, and then she tore it into four pieces and put them in her handbag, because Hanna would type it and Hanna would file it and Wrona would read it before the ink was dry.
 
+***
+
 She left the office at seven. She did not take the car. She walked up Bagatela to the corner and then, without deciding to, turned into the park.
 
 Łazienki in November is a place for people who have nowhere to be. The trees were bare and the water was the colour of lead, and there were three old men on a bench with a newspaper between them, and a woman with a pram, and a boy throwing stones at the ducks, and a couple standing close together under the monument to Chopin with their backs to the path.
@@ -209,6 +211,8 @@ They had come to the gate on Agrykola. The street beyond was full of people goin
 She looked at him. In the lamplight he was a thin man in a black coat with his hat in his hand again and a cut on his lip, and she was thirty-one years old and the deputy director of an office of the Polish state, and she had not been this frightened since she was seventeen.
 
 "Yes," she said. "I'll come."
+
+***
 
 She walked home. It was three kilometres and she did it in forty minutes and she did not feel the cold. At the flat in the MDM the light was on in the kitchen and Jerzy was at the table with his papers and a glass of tea, and he looked up and said, "You're late. There's cabbage."
 

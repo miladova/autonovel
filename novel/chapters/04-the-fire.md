@@ -30,6 +30,8 @@ They kept him four days. The fragment came out on the first night, and her fathe
 
 On the twelfth the Frydmans moved from the barn to the new hole under the orchard, because her father did not want them in the same building as a Russian who might shout in his sleep. It took an hour, in the dark. Rywka Frydman had to be carried. Sara walked between Zofia and her father with the doll held against her chest, and she was ten now, and thin as a stick, and she had not been out of doors in daylight since 1942. When they got to the orchard she stopped and looked up at the sky, which was full of stars, and she said, "Oh," very quietly, and stood there, and Zofia had to make her move.
 
+***
+
 On the morning of the fourteenth Zofia was sent with a message to the mill.
 
 It was a stupid errand and she knew it was stupid. The message was in a loaf, and the loaf was in a basket, and the basket had eggs on top of it, and she went by the field path because the road had a checkpoint. The message was from the unit to Pani Zaleska, and it was about flour, and it was written in pencil on a piece of paper the size of a hand, and it was in Tomasz's writing, which she did not know until she was already in the meadow and had stopped to check that the bread was not broken, and saw the shape of his letters, and smiled.
@@ -104,6 +106,8 @@ She walked for half a kilometre. Then she heard the shooting, a long way off, in
 
 The first thing she saw was the smoke, and it was not the colour she expected. She had expected black. It was white and grey, a great slow column going up and bending east, and under it, as she came over the rise by the birch wood, the village was burning in a line, from the mill end, house by house, in the still air, and she could hear the fire, which was a sound like canvas tearing, and men shouting, and a horse screaming, and she could not see any people at all.
 
+***
+
 She came down the hill into the smoke.
 
 The mill was gone. The Frydmans' shop was gone. The school was burning. The church was not burning; they had not fired the church, and the wooden spire stood up out of the smoke with the bell gone, and the door was open, and there was a man on the steps with his hands over his head.
@@ -131,6 +135,8 @@ She stood at the edge of the hole and looked down at it for a long time. Then sh
 They had taken her father. They had taken him alive, with his hands tied, and put him in the lorry with four other men and the young man from the mill, and driven away. Her mother and Piotrek had been in the house. The neighbours had got them out, or had got out what there was. The Frydmans had been taken out of the orchard and shot at the edge of the birch wood with the Russian, and they were lying there in a row, four of them, and someone had put a coat over Rywka's face, and Sara was between her mother and her father with her hand out, and Zofia, when she saw it, made a sound that she had not known she could make, and Antoni Szeliga took her by the shoulders and turned her round and held her against his chest while she screamed into his coat.
 
 Thirty-one people died at Brzozówka on the fourteenth of June 1944. Eleven houses burned, and the mill, and the school, and the shop, and the forge, and the barns with the winter grain in them. The church stood. It stood for another year, and then in 1945 a shell from the front took the roof, and in 1957 the parish rebuilt it in brick, with the money of the parish and a grant from the Office for Religious Affairs which was signed, in the end, on a Tuesday, by a deputy director who had never been to Brzozówka and who did not know, when she signed it, that she had.
+
+***
 
 Tomasz came at dawn.
 
@@ -174,6 +180,8 @@ She looked at him. The sun was up over the birch wood and the smoke had thinned 
 
 She meant, at that moment, to tell him everything. She had it in her mouth. She had the exact words. But the words were: *I told them where he was. Kliemann asked me and I told him and they burned the village anyway,* and every time she got to the end of that sentence, in her mind, there was nothing on the other side of it — no face that she could bear to see, no life after it — and so she said what she said, and then it was too late, and then it was years too late, and then it was 1958.
 
+***
+
 They buried them on the sixteenth, in the churchyard, in one grave for the ones who had no family, and separate graves for the Frydmans, because Father Zaremba said that they were of the old covenant and should be buried by their own law, and there was no one to do it, so he did it himself, with his own hands, in his vestments, reading the Hebrew he did not know from a book he borrowed from a doctor in Krasnystaw, and he was sick afterwards, and he did it anyway.
 
 The village looked for someone to blame. It looked, first, at the partisans, because the partisans had brought the Russian to the forge, and the men in the forest were not popular that summer; then it looked at the miller, because the miller was a Protestant and had a cousin in the Gestapo, which was not true; then it looked at Antoni Szeliga, who had been seen on the road at Krasnystaw on the twelfth talking to the gendarmes about a permit for the mill.
@@ -181,6 +189,8 @@ The village looked for someone to blame. It looked, first, at the partisans, bec
 Szeliga had been talking to the gendarmes about a permit for the mill. He said so, at the meeting in the church porch, in front of eighty people, and he said it again, and nobody believed him, and a man called Bednarek hit him in the face and he did not hit back, and after that no one in Brzozówka spoke to Antoni Szeliga again for nine years, and his wife would not sit beside him in church, and in March 1953 he hanged himself in his barn.
 
 Zofia was in the church porch at that meeting. She was seventeen. She stood at the back with her hands folded and let a man be condemned for what she had done, and she did not say a word, and afterwards she went home to the house that was not there any more and lay down on the floor of the neighbour's kitchen and slept for fourteen hours.
+
+***
 
 On the twenty-second of July the radio said that a Polish Committee of National Liberation had been established at Chełm, and that the Red Army had crossed the Bug. On the twenty-fourth it said that Lublin was free. On the twenty-third the Soviet tanks came through Brzozówka on the Krasnystaw road, and the village stood at the edge of the road and watched them, and this time nobody waved.
 
@@ -213,6 +223,8 @@ She looked at him. "And if it was partly my fault?"
 "Then it was partly your fault," Sroka said, "and you will do something anyway, and in twenty years you will look back and see that the something you did was worth more than the fault. Or you will not. But you will not know until you have done it." He put the matchbox in his pocket. "There is a school at Krasnystaw. We need someone to teach the children to read, because the Germans did not, and the nuns are too frightened, and the peasants are too busy. You can read. Pan Wróbel taught you. Go and teach."
 
 She went.
+
+***
 
 In August, on the ninth, Tomasz was arrested at Krasnystaw.
 

@@ -54,6 +54,8 @@ Zofia looked at her for a moment. "Then go home tonight and tell him to learn to
 
 Hanna's face did not change, but something behind it did, and she said, "No, Pani Dyrektor," and went out.
 
+***
+
 Brzozowski collapsed on the tenth, in his office, at about eleven in the morning, and it was Hanna who found him, and it was Zofia who rode with him in the ambulance, holding his hand, which was the first time she had touched him in four years.
 
 He was operated on that night at the clinic on Skaryszewska and he came out of it alive and full of tubes and very angry, and on the third day he sent for her.
@@ -83,6 +85,8 @@ The nurse came in with a tray and Brzozowski waved her away.
 "To tell me not to do it."
 
 "No," said Brzozowski. "To tell you that you will do it, or you will not, and that whichever you do you will be a person who did it, and that this is not a matter of a clean conscience at the end. There is no clean conscience. There are only the things you can live inside." He closed his eyes. "I have lived inside mine for nine years and it has been a small house. I would not recommend it. But I have lived."
+
+***
 
 On the eleventh there was a meeting at the Central Committee, in a room on the fourth floor with a long table and green baize and a portrait of Gomułka at one end, and eleven men and two women, and Zofia was one of the two.
 
@@ -121,6 +125,8 @@ Tkaczuk looked at her for a long moment. Then he said, "The fourth department's 
 "Colonel Wrona's view, which has the confidence of the appropriate comrades." Tkaczuk's voice was perfectly even. "You will work with him. The opinion is due on the fifteenth. I would like the matter resolved before the episcopate meets, and I would like the resolution to be one that we do not have to explain in six months." He closed his folder. "One more thing, comrade. You are acting director of the Office now. That is a considerable responsibility. There are comrades who have said that the Office has been too soft for too long, and that its leadership has confused the art of the possible with the habit of the comfortable." He looked up. "I do not agree with them. But they exist. I mention it because you should know it."
 
 "I know it," Zofia said.
+
+***
 
 Wrona came on the fourteenth with a folder and a box of chocolates, which was a thing he did, and put the chocolates on the desk and said they were for Hanna.
 
@@ -179,6 +185,8 @@ Wrona was at the door. He turned.
 She sat for a long time after he had gone.
 
 Then she got up and went to the window and stood there with her arms folded, looking at the Palace of Culture, which was grey and enormous against a grey sky, and she thought about 1946, when she was nineteen and believed that she was building something, and about the particular day in June of that year when she had stood in the market square at Krasnystaw with a ballot box in her hands.
+
+***
 
 They had given her a school at Krasnystaw in the autumn of 1944 and she had taught thirty-one children in a room with a stove and no glass in one window, and she had been happy in a way that she had not expected ever to be happy again. The children were wild and hungry and quick, and half of them had lost someone, and they learned to read in eight months, and one of them, a boy called Adam, had copied out the whole of the alphabet on the back of a German poster, and she had kept it for years.
 

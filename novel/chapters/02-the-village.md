@@ -74,6 +74,8 @@ The bend of the river became theirs. It was a quarter of an hour's walk below th
 
 She hit him with the paper bag. He fell off the willow into the water, entirely on purpose, and came up blowing, and said, "Now the plan is ruined," and she laughed until she had to hold her side.
 
+***
+
 In August of that year she nearly drowned. It was the fault of a boy from the hamlet called Stach, who was fifteen and stupid, and who thought it would be funny to push her off the bank where the water was over her head. She went down and came up and went down again, and the river, which she had thought of all her life as a friendly thing, was in fact heavy and cold and completely indifferent, and she had time to think one clear thought, which was that she had been wrong about the river, and that this was an important discovery, and that it was a pity she was going to die.
 
 Then a hand got her by the collar of her dress. Tomasz had been up at the bend cutting switches, and he dragged her to the shallows and got her onto the grass, and she was sick, and he sat there white to the lips and shouted at her for ten minutes — that it was her own fault, that she was too old to be pushed, that she had no business in the deep part with those idiots, that she had frightened him — and then he stopped, and put his face in his hands, and said, "I'm sorry."
@@ -88,11 +90,19 @@ Then a hand got her by the collar of her dress. Tomasz had been up at the bend c
 
 After that he taught her to swim, in the shallows, in four lessons, with immense seriousness and no patience whatsoever, and by the end of September she could cross the pool and back, and he said, "There. Now you can be pushed in whenever you like."
 
+***
+
 The years before the war had a shape to them, and the shape was the church's year. Advent, with the rorate Masses at six in the dark and the candles and the cold; Christmas, with the wafer and the straw under the cloth; Lent, with the Stations and her mother's fasting and the smell of vinegar in the house on Good Friday; Easter, with the fire blessed in front of the church and the procession round it three times, and the bells, and the boys with the clappers who were allowed to make a noise for once; Corpus Christi in June, which was the great day, when the whole village walked the four altars in the square, and the girls in white threw flowers, and Zofia was a flower girl from the age of seven and took it as seriously as a vocation. The priest carried the monstrance under a canopy, and the canopy was carried by four men, and her father was one of them, and Tomasz walked behind with the boys' sodality, and the choir sang "Serdeczna Matko" and her mother sang louder than anyone and off the note, and the dust came up off the road in the heat, and the whole thing was, for those years, the most beautiful thing in the world.
+
+***
 
 She made her First Communion in May 1936. Her dress was white and had belonged to a girl from the mill and had been altered; her shoes were borrowed; she wore a wreath of artificial flowers and a medal of the Virgin that had been her mother's. She had been prepared for a year by Father Zaremba, who was severe with the girls about the sin of vanity and had a habit of asking them questions they could not answer, and she was frightened of him in the way that one is frightened of a large tame animal. On the morning, coming down the aisle with her hands joined, she was so conscious of the eyes and the heat and the tightness of the borrowed shoes that she could not feel anything at all, and it was only afterwards, kneeling back in the pew with the taste still in her mouth, that she was suddenly, unaccountably happy, and cried, and her mother gave her a handkerchief and pretended not to notice.
 
+***
+
 The summer of 1939 was hot and dry and the rye came in early. There was talk in the market of the Germans, and of Gdańsk, and of the English, and it was the kind of talk that men have in a market and forget by the evening, because the rye was in and the winter had to be got ready and there was a wedding at the mill. In July there was a mission in the parish, two Redemptorists from Lublin, and the church was full every night, and a great many people went to confession who had not been in fifteen years, and her mother went twice. In August the flies were terrible. The well at the crossroads was low.
+
+***
 
 On the first of September the miller's boy came through the village on a bicycle at four in the afternoon, shouting, and by six there were thirty men outside the gmina office listening to the radio through the window. The Germans had crossed the border at dawn. The radio kept saying it. The Germans had crossed the border at dawn and the Polish Army was resisting and the Allies had been informed.
 
@@ -118,9 +128,13 @@ On the fourteenth the Germans came through. First, in the morning, two motorcycl
 
 That night the village did not light its lamps. They sat in the kitchen with the shutters closed and the fire banked, and her father read the newspaper from the previous Sunday as though it were a letter from a dead man. Her mother said the rosary. Tomasz came to the door at nine and said his father wanted to know whether they had heard anything, and her father said, no, nothing, come in, boy, and he came in and stood by the stove and drank a cup of milk, and Zofia sat on the bench across the room and looked at him, and he looked back once, and then at the floor.
 
+***
+
 The school did not open in October. The Germans had made the schoolroom a store for grain. Father Zaremba said Mass every morning and the church was fuller than it had ever been, and in November he preached a sermon in which he said that God had permitted this for the sins of Poland, and that the nation must repent, and that the nation would be restored. He said it in the same voice in which he said everything, and afterward the men stood outside in the cold and did not look at one another.
 
 At Christmas there was no wafer from the shop, because the shop had been closed since October, and Icek Frydman had been made to paint a sign over his own door, and Rywka had been seen crying at the well, and Sara had not been out of the house for two months.
+
+***
 
 In February the Germans took the bell.
 

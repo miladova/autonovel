@@ -10,6 +10,8 @@ Jerzy was out. There was a note on the kitchen table in his big slanted hand: *C
 
 She made tea and did not eat the soup. She put the folder on the table under the lamp and untied the tape.
 
+***
+
 The first document she had seen before: the German deposition, two pages, translated in 1949 by someone whose Polish was stiff. She read it once, quickly, and put it aside.
 
 The second she had not seen. It was in German, with a translation, and it was headed *Sonderaktion Brzozówka, 14.6.1944, Bericht*, and it was two and a half pages and it was the most terrible thing she had ever read, because it was dull.
@@ -82,6 +84,8 @@ She put the page down. Then she picked it up again and read the last paragraph t
 
 He had not given her name. In a room in Mokotów at four in the morning, with nine days behind him, he had sat and said "I don't know" four times, and they had written it down, and it had gone into the file, and the file had come to her in a sealed envelope fourteen years later, and she was reading the only act of love anyone had ever performed for her that she had not known about.
 
+***
+
 The declaration was the next document, and she had read it before, but she read it again with attention.
 
 > I, Tomasz Wierzbicki, son of Franciszek, born 6 January 1924 at Brzozówka, priest of the diocese of Lublin, declare as follows. In the years 1942 to 1944 I was a member of an armed organization described as the Home Army, and I did not inform the authorities of the Polish People's Republic of this fact. In the years 1948 to 1951, in the course of my studies and afterwards, I took part in conversations in which the policy of the state towards the Church was criticized, and I did not report these conversations. Among the persons who took part in them were Henryk Zaleski, then a student of the seminary at Lublin, and Michał Bortnowski, then a curate at Zamość. I make this declaration freely, without duress, and I regret my conduct.
@@ -132,11 +136,15 @@ The hand was the same upright hand, but smaller, and pressed hard into the paper
 >
 > T.
 
+***
+
 She sat with it in her hands for a long time.
 
 Then she folded it along its folds, and put it back in the envelope, and put the envelope in her handbag, and cleared the table, and washed the cup, and turned off the lamp in the kitchen, and stood in the dark of the hall with her hand on the wall.
 
 She did not cry. She had not cried since the sixteenth of June 1944, at the graveside, when Antoni Szeliga had held her against his coat; she had stopped then, and it had closed over, and there had been nothing since but a pressure, like water behind a dam, and she had built her life on the far side of it and had never once looked over.
+
+***
 
 At half past eleven Jerzy came home. He came in quietly, as he always did, and put his coat on the hook, and she heard him in the kitchen, and then he came into the front room and found her sitting in the armchair with her shoes off and the light off.
 
@@ -180,7 +188,11 @@ He went out. At the door he stopped.
 
 "For what it's worth," he said, "I think you should see him. Not for the Office. For the other reason." And then he went in and closed the door, and she heard him washing, and then the bed creaking, and then nothing.
 
+***
+
 She sat up until four.
+
+***
 
 At half past four she got up and put on her coat and her hat and her good gloves, and took the letter out of her handbag and put it in the inside pocket of her coat, and went out.
 

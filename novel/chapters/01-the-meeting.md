@@ -46,6 +46,8 @@ Zofia took off her coat and hung it on the hook behind the door, and put her hat
 
 Hanna went out. Zofia lit a cigarette and stood at the window with her arms crossed, watching the fog lift off the rooftops, and thought about nothing in particular, which was a skill she had acquired and valued. A pigeon walked along the gutter with the fussy, important air of a man who has been given a small responsibility.
 
+***
+
 Brzozowski's office smelled of tea and sickness. He had a samovar, which was ostentatious, and a rug from before the war, and a photograph of a woman in a hat on the desk, his wife, dead since 1949. He was sixty-three and looked seventy-five, and in the last six months he had begun to hold his cup with both hands, like a child.
 
 "Sit down, Zofia. Not there, the chair is broken. There."
@@ -98,6 +100,8 @@ She finished her tea. "I'll read the file properly before eleven."
 
 "Read it properly," Brzozowski said. "And Zofia — when you meet the priest. Do not condescend to him. He will be expecting it and he is cleverer than you."
 
+***
+
 The file was in a cardboard folder tied with tape, and it was thicker than the summary had suggested. Zofia took it to her office, closed the door, and sat down with it under the lamp, although it was by then fully light and she could have opened the curtains.
 
 Inside, in the order in which the registry kept such things, were: a biographical note of four pages, typed; a photograph, taken at a provincial occasion, of a thin man in a black suit standing beside a bishop, not smiling; a list of publications; a clipping from *Tygodnik Powszechny*; a report from the Lublin voivodeship office; and, in a sealed envelope stamped with the fourth department's stamp and Wrona's initials, the security material.
@@ -133,6 +137,8 @@ The document was a deposition taken on 15 June 1944, at the gendarmerie post at 
 It was two pages. Her signature was at the bottom, in ink, and below it the signature of a gendarme, and it was a good signature, a girl's signature, carefully made, with a round loop on the Z.
 
 Zofia looked at it for a long moment. Then she got up, and went to the window, and stood there with her arms folded, and watched the street, which had filled with people going to work. A woman was carrying a goose by the neck. Two boys were kicking a tin along the gutter. A man in a good coat came out of the building opposite and stood on the step lighting a cigarette, and the match flame was invisible in the daylight, and he shook it out and went off towards the tram.
+
+***
 
 At eleven, Wrona came.
 
@@ -185,6 +191,8 @@ He went to the door and then turned.
 "One more thing. He does not know that you are in Warsaw. I have not told him and he has not asked. It is possible that he does not know you are alive." Wrona's face did something that was almost kind. "That will be the difficult part, comrade director. Not the paper. The face."
 
 When he had gone she sat for a while, and then she took the German deposition out of the folder, folded it once, and put it in her handbag. She did not know why. She was a careful officer; she had never in her life removed a document from a registry. She put it in her handbag, and closed the clasp, and heard Hanna in the corridor, and said, in a voice that was perfectly level, "Hanna. The car. I am going to Miodowa."
+
+***
 
 The Curia was in a building that had been rebuilt after the war with the same façade and a different inside, and the inside smelled of floor polish, wet wool, and old paper. There was a nun with a bucket on the landing, and a queue of four women and one old man on a bench, and a corridor with a red runner worn to the webbing in the middle. Zofia gave her name to a young priest in a black suit too big for him, and was told to wait, and waited twenty minutes on a chair that had been designed for a person of a different shape.
 

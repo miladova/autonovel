@@ -94,6 +94,8 @@ He came back to the desk. He stood there looking at the paper, and then he picke
 
 She sat for a long time after he had gone. Then she rang for Hanna and told her to cancel the afternoon, and went home, and slept for two hours in the middle of the day, which she had not done since 1952.
 
+***
+
 She went at half past five.
 
 The queue for confessions at St Anne's was eight people long and mostly women, and it moved slowly, and she stood at the end of it in her grey coat with her hands folded, and the church was cold and smelled of wet stone and candle wax, and the candles on the stand by the pillar burned with small steady flames that leaned when the door opened.
@@ -195,6 +197,8 @@ She got up. Her knees hurt. She pushed the curtain aside and stood in the aisle,
 He came out of the confessional a moment later and stood beside her, and he had taken off the stole and folded it over his arm, and he was a thin man in a black cassock with a bad shave, and he looked tired and about ten years older than he had at eleven that morning.
 
 "Walk with me to the sacristy," he said. "I have to lock up."
+
+***
 
 They went down the side aisle together. The sacristy was a small room with a cupboard and a sink and a table with a clean cloth, and a smell of starch and old incense, and a window with a bar.
 

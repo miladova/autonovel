@@ -73,6 +73,8 @@ Zofia took off her coat and hung it on the hook behind the door, and put her hat
 
 Hanna went out. Zofia lit a cigarette and stood at the window with her arms crossed, watching the fog lift off the rooftops, and thought about nothing in particular, which was a skill she had acquired and valued. A pigeon walked along the gutter with the fussy, important air of a man who has been given a small responsibility.
 
+***
+
 Brzozowski's office smelled of tea and sickness. He had a samovar, which was ostentatious, and a rug from before the war, and a photograph of a woman in a hat on the desk, his wife, dead since 1949. He was sixty-three and looked seventy-five, and in the last six months he had begun to hold his cup with both hands, like a child.
 
 "Sit down, Zofia. Not there, the chair is broken. There."
@@ -125,6 +127,8 @@ She finished her tea. "I'll read the file properly before eleven."
 
 "Read it properly," Brzozowski said. "And Zofia — when you meet the priest. Do not condescend to him. He will be expecting it and he is cleverer than you."
 
+***
+
 The file was in a cardboard folder tied with tape, and it was thicker than the summary had suggested. Zofia took it to her office, closed the door, and sat down with it under the lamp, although it was by then fully light and she could have opened the curtains.
 
 Inside, in the order in which the registry kept such things, were: a biographical note of four pages, typed; a photograph, taken at a provincial occasion, of a thin man in a black suit standing beside a bishop, not smiling; a list of publications; a clipping from *Tygodnik Powszechny*; a report from the Lublin voivodeship office; and, in a sealed envelope stamped with the fourth department's stamp and Wrona's initials, the security material.
@@ -160,6 +164,8 @@ The document was a deposition taken on 15 June 1944, at the gendarmerie post at 
 It was two pages. Her signature was at the bottom, in ink, and below it the signature of a gendarme, and it was a good signature, a girl's signature, carefully made, with a round loop on the Z.
 
 Zofia looked at it for a long moment. Then she got up, and went to the window, and stood there with her arms folded, and watched the street, which had filled with people going to work. A woman was carrying a goose by the neck. Two boys were kicking a tin along the gutter. A man in a good coat came out of the building opposite and stood on the step lighting a cigarette, and the match flame was invisible in the daylight, and he shook it out and went off towards the tram.
+
+***
 
 At eleven, Wrona came.
 
@@ -212,6 +218,8 @@ He went to the door and then turned.
 "One more thing. He does not know that you are in Warsaw. I have not told him and he has not asked. It is possible that he does not know you are alive." Wrona's face did something that was almost kind. "That will be the difficult part, comrade director. Not the paper. The face."
 
 When he had gone she sat for a while, and then she took the German deposition out of the folder, folded it once, and put it in her handbag. She did not know why. She was a careful officer; she had never in her life removed a document from a registry. She put it in her handbag, and closed the clasp, and heard Hanna in the corridor, and said, in a voice that was perfectly level, "Hanna. The car. I am going to Miodowa."
+
+***
 
 The Curia was in a building that had been rebuilt after the war with the same façade and a different inside, and the inside smelled of floor polish, wet wool, and old paper. There was a nun with a bucket on the landing, and a queue of four women and one old man on a bench, and a corridor with a red runner worn to the webbing in the middle. Zofia gave her name to a young priest in a black suit too big for him, and was told to wait, and waited twenty minutes on a chair that had been designed for a person of a different shape.
 
@@ -311,6 +319,8 @@ The bend of the river became theirs. It was a quarter of an hour's walk below th
 
 She hit him with the paper bag. He fell off the willow into the water, entirely on purpose, and came up blowing, and said, "Now the plan is ruined," and she laughed until she had to hold her side.
 
+***
+
 In August of that year she nearly drowned. It was the fault of a boy from the hamlet called Stach, who was fifteen and stupid, and who thought it would be funny to push her off the bank where the water was over her head. She went down and came up and went down again, and the river, which she had thought of all her life as a friendly thing, was in fact heavy and cold and completely indifferent, and she had time to think one clear thought, which was that she had been wrong about the river, and that this was an important discovery, and that it was a pity she was going to die.
 
 Then a hand got her by the collar of her dress. Tomasz had been up at the bend cutting switches, and he dragged her to the shallows and got her onto the grass, and she was sick, and he sat there white to the lips and shouted at her for ten minutes — that it was her own fault, that she was too old to be pushed, that she had no business in the deep part with those idiots, that she had frightened him — and then he stopped, and put his face in his hands, and said, "I'm sorry."
@@ -325,11 +335,19 @@ Then a hand got her by the collar of her dress. Tomasz had been up at the bend c
 
 After that he taught her to swim, in the shallows, in four lessons, with immense seriousness and no patience whatsoever, and by the end of September she could cross the pool and back, and he said, "There. Now you can be pushed in whenever you like."
 
+***
+
 The years before the war had a shape to them, and the shape was the church's year. Advent, with the rorate Masses at six in the dark and the candles and the cold; Christmas, with the wafer and the straw under the cloth; Lent, with the Stations and her mother's fasting and the smell of vinegar in the house on Good Friday; Easter, with the fire blessed in front of the church and the procession round it three times, and the bells, and the boys with the clappers who were allowed to make a noise for once; Corpus Christi in June, which was the great day, when the whole village walked the four altars in the square, and the girls in white threw flowers, and Zofia was a flower girl from the age of seven and took it as seriously as a vocation. The priest carried the monstrance under a canopy, and the canopy was carried by four men, and her father was one of them, and Tomasz walked behind with the boys' sodality, and the choir sang "Serdeczna Matko" and her mother sang louder than anyone and off the note, and the dust came up off the road in the heat, and the whole thing was, for those years, the most beautiful thing in the world.
+
+***
 
 She made her First Communion in May 1936. Her dress was white and had belonged to a girl from the mill and had been altered; her shoes were borrowed; she wore a wreath of artificial flowers and a medal of the Virgin that had been her mother's. She had been prepared for a year by Father Zaremba, who was severe with the girls about the sin of vanity and had a habit of asking them questions they could not answer, and she was frightened of him in the way that one is frightened of a large tame animal. On the morning, coming down the aisle with her hands joined, she was so conscious of the eyes and the heat and the tightness of the borrowed shoes that she could not feel anything at all, and it was only afterwards, kneeling back in the pew with the taste still in her mouth, that she was suddenly, unaccountably happy, and cried, and her mother gave her a handkerchief and pretended not to notice.
 
+***
+
 The summer of 1939 was hot and dry and the rye came in early. There was talk in the market of the Germans, and of Gdańsk, and of the English, and it was the kind of talk that men have in a market and forget by the evening, because the rye was in and the winter had to be got ready and there was a wedding at the mill. In July there was a mission in the parish, two Redemptorists from Lublin, and the church was full every night, and a great many people went to confession who had not been in fifteen years, and her mother went twice. In August the flies were terrible. The well at the crossroads was low.
+
+***
 
 On the first of September the miller's boy came through the village on a bicycle at four in the afternoon, shouting, and by six there were thirty men outside the gmina office listening to the radio through the window. The Germans had crossed the border at dawn. The radio kept saying it. The Germans had crossed the border at dawn and the Polish Army was resisting and the Allies had been informed.
 
@@ -355,9 +373,13 @@ On the fourteenth the Germans came through. First, in the morning, two motorcycl
 
 That night the village did not light its lamps. They sat in the kitchen with the shutters closed and the fire banked, and her father read the newspaper from the previous Sunday as though it were a letter from a dead man. Her mother said the rosary. Tomasz came to the door at nine and said his father wanted to know whether they had heard anything, and her father said, no, nothing, come in, boy, and he came in and stood by the stove and drank a cup of milk, and Zofia sat on the bench across the room and looked at him, and he looked back once, and then at the floor.
 
+***
+
 The school did not open in October. The Germans had made the schoolroom a store for grain. Father Zaremba said Mass every morning and the church was fuller than it had ever been, and in November he preached a sermon in which he said that God had permitted this for the sins of Poland, and that the nation must repent, and that the nation would be restored. He said it in the same voice in which he said everything, and afterward the men stood outside in the cold and did not look at one another.
 
 At Christmas there was no wafer from the shop, because the shop had been closed since October, and Icek Frydman had been made to paint a sign over his own door, and Rywka had been seen crying at the well, and Sara had not been out of the house for two months.
+
+***
 
 In February the Germans took the bell.
 
@@ -385,6 +407,8 @@ It was dangerous. The penalty for clandestine teaching was not always death, but
 
 Zofia went to those lessons for three years. She learned the history of her country in a kitchen, by lamplight, in a house that smelled of wood shavings and cabbage, sitting on a bench beside Tomasz Wierzbicki, who had already read the book twice and who corrected Pan Wróbel when he got a date wrong, which Pan Wróbel permitted, because the boy was right.
 
+***
+
 In the autumn of 1942 the Germans took the Frydmans away.
 
 There had been a ghetto in Krasnystaw since the winter of 1940, and the Jews of the district had been moved into it, and the shop in Brzozówka had been closed and its windows broken and its stock taken by the Kreishauptmann's office and sold, and Icek Frydman had been seen in the market at Krasnystaw that winter with a yellow star on his coat, selling cigarettes from a tray. Then in October 1942 the lorries came to the ghetto at night, and in the morning there were no Jews in Krasnystaw, or very few, and the ones who remained were in the camp at Trawniki, and the ones who remained after that were nowhere.
@@ -399,11 +423,15 @@ The war came into the village in other ways. In November 1942 the Germans began 
 
 Some of them did not go on. They stopped in Brzozówka, in the barns and the school storeroom and the church porch, and the village fed them, which it could not afford, and hid some of them, which it could not afford at all. There were children among them who had been separated from their parents, and there was a great deal of talk about the children, because the Germans were taking the children too, not for labour but for something else, and no one knew what, and everyone knew.
 
+***
+
 Zofia was fifteen in the winter of 1942. She was tall for her age and strong from the yoke and the water and the hay, and she had begun to be looked at by men, which she disliked and used. She had stopped going to the secret lessons in the autumn, because Pan Wróbel had been arrested in September and sent to Majdanek, and had died there in January, and there was no one to teach. She could read now, well, and she read everything in the priest's study that he would lend her, which was not much, and everything in the Wierzbickis' house, which was more. She had a notebook in which she wrote, in a careful hand, the things she did not say: the dates from Pan Wróbel's history, the poems, the names of the dead.
 
 Tomasz was eighteen in the winter of 1942 and was no longer in the village most nights.
 
 She did not know at first. He was there in the daytime, in the carpenter's shop, planing boards, or in the church, pumping the organ, or at the forge, helping her father with a hinge. And then he would be gone, and his father would say he had gone to Krasnystaw for an order, and Zofia would see the old man's hands, and the way he did not look at her.
+
+***
 
 In March she found out. She had gone up to the church to sweep the aisle — Father Zaremba paid her four złoty a month and a loaf — and Tomasz was in the organ loft with the little door open, and he had taken off his shirt, and there was a bandage around his ribs, badly done, and blood coming through it in a line the width of a finger.
 
@@ -470,6 +498,8 @@ It was Tomasz's doing, and she never knew whether to be grateful. A unit in the 
 Her first message was a folded paper in the false bottom of a basket of eggs, from the mill to a farm beyond the birch wood. Her second was spoken: eleven words, which she repeated to herself all the way there and all the way back, and which she could still recite in 1958, though she had long since forgotten what they meant. Her third was a warning.
 
 She was not brave, she said afterward, when people asked, and people did ask, in the years when it was still possible to ask. She was frightened the whole time. She was frightened in a way that made her hands cold and her hearing unnaturally good, and she went on doing it because doing nothing was worse, and because there was a boy in the forest who would know.
+
+***
 
 The summer of 1943 was the last good summer of her life, and she knew it while it was happening, which is a rare and terrible thing.
 
@@ -543,6 +573,8 @@ She looked at him for a long moment. The heron had gone. Somewhere up at the mil
 
 "Then I'll wait," she said.
 
+***
+
 He made her the ring in October. It was a bicycle spoke, cut and filed and bent round a mandrel in his father's shop, and it was not beautiful, and it left a green mark on her finger, and she wore it on a string around her neck because a ring on the hand would be seen. He gave it to her behind the church after the rosary, in the dark, with the smell of the cold coming off the fields.
 
 "It's not gold," he said.
@@ -554,6 +586,8 @@ He made her the ring in October. It was a bicycle spoke, cut and filed and bent 
 "That's how it works for me," she said, and put it in her blouse, against her skin, and felt it cold and then warm.
 
 The winter of 1943 was hard. The Germans took the potatoes and then took the pigs and then took the men for labour, thirty-one from the gmina in January, and one of them was the miller's son, who was twenty and had been at the wedding. The partisans in the forest were being hunted; there were sweeps in December and January, and twice Tomasz did not come home for three weeks, and his father played the organ at Mass with his face like a wall. The front was coming. Everyone said so. The Reds were at the Dnieper, and then the Bug, and it was said they would be in Lublin by the summer, and what would happen then no one knew, though everyone had an opinion.
+
+***
 
 In April 1944 the Germans put up a poster in the market square at Krasnystaw. It was printed in Polish and German, and it announced that the population of the district was to be resettled for reasons of military necessity, and that anyone who sheltered partisans or Jews would be punished with death, and that the punishment would be carried out on the whole village.
 
@@ -639,6 +673,8 @@ They kept him four days. The fragment came out on the first night, and her fathe
 
 On the twelfth the Frydmans moved from the barn to the new hole under the orchard, because her father did not want them in the same building as a Russian who might shout in his sleep. It took an hour, in the dark. Rywka Frydman had to be carried. Sara walked between Zofia and her father with the doll held against her chest, and she was ten now, and thin as a stick, and she had not been out of doors in daylight since 1942. When they got to the orchard she stopped and looked up at the sky, which was full of stars, and she said, "Oh," very quietly, and stood there, and Zofia had to make her move.
 
+***
+
 On the morning of the fourteenth Zofia was sent with a message to the mill.
 
 It was a stupid errand and she knew it was stupid. The message was in a loaf, and the loaf was in a basket, and the basket had eggs on top of it, and she went by the field path because the road had a checkpoint. The message was from the unit to Pani Zaleska, and it was about flour, and it was written in pencil on a piece of paper the size of a hand, and it was in Tomasz's writing, which she did not know until she was already in the meadow and had stopped to check that the bread was not broken, and saw the shape of his letters, and smiled.
@@ -713,6 +749,8 @@ She walked for half a kilometre. Then she heard the shooting, a long way off, in
 
 The first thing she saw was the smoke, and it was not the colour she expected. She had expected black. It was white and grey, a great slow column going up and bending east, and under it, as she came over the rise by the birch wood, the village was burning in a line, from the mill end, house by house, in the still air, and she could hear the fire, which was a sound like canvas tearing, and men shouting, and a horse screaming, and she could not see any people at all.
 
+***
+
 She came down the hill into the smoke.
 
 The mill was gone. The Frydmans' shop was gone. The school was burning. The church was not burning; they had not fired the church, and the wooden spire stood up out of the smoke with the bell gone, and the door was open, and there was a man on the steps with his hands over his head.
@@ -740,6 +778,8 @@ She stood at the edge of the hole and looked down at it for a long time. Then sh
 They had taken her father. They had taken him alive, with his hands tied, and put him in the lorry with four other men and the young man from the mill, and driven away. Her mother and Piotrek had been in the house. The neighbours had got them out, or had got out what there was. The Frydmans had been taken out of the orchard and shot at the edge of the birch wood with the Russian, and they were lying there in a row, four of them, and someone had put a coat over Rywka's face, and Sara was between her mother and her father with her hand out, and Zofia, when she saw it, made a sound that she had not known she could make, and Antoni Szeliga took her by the shoulders and turned her round and held her against his chest while she screamed into his coat.
 
 Thirty-one people died at Brzozówka on the fourteenth of June 1944. Eleven houses burned, and the mill, and the school, and the shop, and the forge, and the barns with the winter grain in them. The church stood. It stood for another year, and then in 1945 a shell from the front took the roof, and in 1957 the parish rebuilt it in brick, with the money of the parish and a grant from the Office for Religious Affairs which was signed, in the end, on a Tuesday, by a deputy director who had never been to Brzozówka and who did not know, when she signed it, that she had.
+
+***
 
 Tomasz came at dawn.
 
@@ -783,6 +823,8 @@ She looked at him. The sun was up over the birch wood and the smoke had thinned 
 
 She meant, at that moment, to tell him everything. She had it in her mouth. She had the exact words. But the words were: *I told them where he was. Kliemann asked me and I told him and they burned the village anyway,* and every time she got to the end of that sentence, in her mind, there was nothing on the other side of it — no face that she could bear to see, no life after it — and so she said what she said, and then it was too late, and then it was years too late, and then it was 1958.
 
+***
+
 They buried them on the sixteenth, in the churchyard, in one grave for the ones who had no family, and separate graves for the Frydmans, because Father Zaremba said that they were of the old covenant and should be buried by their own law, and there was no one to do it, so he did it himself, with his own hands, in his vestments, reading the Hebrew he did not know from a book he borrowed from a doctor in Krasnystaw, and he was sick afterwards, and he did it anyway.
 
 The village looked for someone to blame. It looked, first, at the partisans, because the partisans had brought the Russian to the forge, and the men in the forest were not popular that summer; then it looked at the miller, because the miller was a Protestant and had a cousin in the Gestapo, which was not true; then it looked at Antoni Szeliga, who had been seen on the road at Krasnystaw on the twelfth talking to the gendarmes about a permit for the mill.
@@ -790,6 +832,8 @@ The village looked for someone to blame. It looked, first, at the partisans, bec
 Szeliga had been talking to the gendarmes about a permit for the mill. He said so, at the meeting in the church porch, in front of eighty people, and he said it again, and nobody believed him, and a man called Bednarek hit him in the face and he did not hit back, and after that no one in Brzozówka spoke to Antoni Szeliga again for nine years, and his wife would not sit beside him in church, and in March 1953 he hanged himself in his barn.
 
 Zofia was in the church porch at that meeting. She was seventeen. She stood at the back with her hands folded and let a man be condemned for what she had done, and she did not say a word, and afterwards she went home to the house that was not there any more and lay down on the floor of the neighbour's kitchen and slept for fourteen hours.
+
+***
 
 On the twenty-second of July the radio said that a Polish Committee of National Liberation had been established at Chełm, and that the Red Army had crossed the Bug. On the twenty-fourth it said that Lublin was free. On the twenty-third the Soviet tanks came through Brzozówka on the Krasnystaw road, and the village stood at the edge of the road and watched them, and this time nobody waved.
 
@@ -822,6 +866,8 @@ She looked at him. "And if it was partly my fault?"
 "Then it was partly your fault," Sroka said, "and you will do something anyway, and in twenty years you will look back and see that the something you did was worth more than the fault. Or you will not. But you will not know until you have done it." He put the matchbox in his pocket. "There is a school at Krasnystaw. We need someone to teach the children to read, because the Germans did not, and the nuns are too frightened, and the peasants are too busy. You can read. Pan Wróbel taught you. Go and teach."
 
 She went.
+
+***
 
 In August, on the ninth, Tomasz was arrested at Krasnystaw.
 
@@ -975,6 +1021,8 @@ They stood there. The plane tree moved in the wind, and one of the three leaves 
 
 He went. She stood at the window for a long time, and then she sat down at the table and wrote, in her small careful hand, on the back of the summary: *Declines third condition. Quotes: I have signed one paper in my life and I will not sign another. Advises opinion will end nomination. — 4:20 p.m.* And then she sat looking at it, and then she tore it into four pieces and put them in her handbag, because Hanna would type it and Hanna would file it and Wrona would read it before the ink was dry.
 
+***
+
 She left the office at seven. She did not take the car. She walked up Bagatela to the corner and then, without deciding to, turned into the park.
 
 Łazienki in November is a place for people who have nowhere to be. The trees were bare and the water was the colour of lead, and there were three old men on a bench with a newspaper between them, and a woman with a pram, and a boy throwing stones at the ducks, and a couple standing close together under the monument to Chopin with their backs to the path.
@@ -1057,6 +1105,8 @@ She looked at him. In the lamplight he was a thin man in a black coat with his h
 
 "Yes," she said. "I'll come."
 
+***
+
 She walked home. It was three kilometres and she did it in forty minutes and she did not feel the cold. At the flat in the MDM the light was on in the kitchen and Jerzy was at the table with his papers and a glass of tea, and he looked up and said, "You're late. There's cabbage."
 
 "I'm not hungry."
@@ -1137,6 +1187,8 @@ Zofia looked at her for a moment. "Then go home tonight and tell him to learn to
 
 Hanna's face did not change, but something behind it did, and she said, "No, Pani Dyrektor," and went out.
 
+***
+
 Brzozowski collapsed on the tenth, in his office, at about eleven in the morning, and it was Hanna who found him, and it was Zofia who rode with him in the ambulance, holding his hand, which was the first time she had touched him in four years.
 
 He was operated on that night at the clinic on Skaryszewska and he came out of it alive and full of tubes and very angry, and on the third day he sent for her.
@@ -1166,6 +1218,8 @@ The nurse came in with a tray and Brzozowski waved her away.
 "To tell me not to do it."
 
 "No," said Brzozowski. "To tell you that you will do it, or you will not, and that whichever you do you will be a person who did it, and that this is not a matter of a clean conscience at the end. There is no clean conscience. There are only the things you can live inside." He closed his eyes. "I have lived inside mine for nine years and it has been a small house. I would not recommend it. But I have lived."
+
+***
 
 On the eleventh there was a meeting at the Central Committee, in a room on the fourth floor with a long table and green baize and a portrait of Gomułka at one end, and eleven men and two women, and Zofia was one of the two.
 
@@ -1204,6 +1258,8 @@ Tkaczuk looked at her for a long moment. Then he said, "The fourth department's 
 "Colonel Wrona's view, which has the confidence of the appropriate comrades." Tkaczuk's voice was perfectly even. "You will work with him. The opinion is due on the fifteenth. I would like the matter resolved before the episcopate meets, and I would like the resolution to be one that we do not have to explain in six months." He closed his folder. "One more thing, comrade. You are acting director of the Office now. That is a considerable responsibility. There are comrades who have said that the Office has been too soft for too long, and that its leadership has confused the art of the possible with the habit of the comfortable." He looked up. "I do not agree with them. But they exist. I mention it because you should know it."
 
 "I know it," Zofia said.
+
+***
 
 Wrona came on the fourteenth with a folder and a box of chocolates, which was a thing he did, and put the chocolates on the desk and said they were for Hanna.
 
@@ -1263,6 +1319,8 @@ She sat for a long time after he had gone.
 
 Then she got up and went to the window and stood there with her arms folded, looking at the Palace of Culture, which was grey and enormous against a grey sky, and she thought about 1946, when she was nineteen and believed that she was building something, and about the particular day in June of that year when she had stood in the market square at Krasnystaw with a ballot box in her hands.
 
+***
+
 They had given her a school at Krasnystaw in the autumn of 1944 and she had taught thirty-one children in a room with a stove and no glass in one window, and she had been happy in a way that she had not expected ever to be happy again. The children were wild and hungry and quick, and half of them had lost someone, and they learned to read in eight months, and one of them, a boy called Adam, had copied out the whole of the alphabet on the back of a German poster, and she had kept it for years.
 
 In 1945 Sroka had asked her to join the Union of Polish Youth and she had joined, and in 1947 the Party, and she had done it for reasons that had seemed to her at the time to be entirely practical. The village had been burned. The old world had been a world in which a girl could be taken out of a meadow and put in a room with a wasp and a man with a bottle of beer, and it had ended, and the people who had ended it were the ones with the lorries. She had seen the Red Army come through, and she had seen the Polish Committee of National Liberation hand out land to peasants who had never owned any, including eleven families in her own district, and she had seen her father, who had come back from Majdanek in August 1944 weighing forty-nine kilograms, stand at the window of the cooperative office and say, "They are giving away the mills," in a voice of complete bewilderment.
@@ -1294,6 +1352,8 @@ She signed for it. The corporal saluted and went. Hanna had gone home at five; t
 Jerzy was out. There was a note on the kitchen table in his big slanted hand: *Commission until late. There is barley soup. Do not wait. J.*
 
 She made tea and did not eat the soup. She put the folder on the table under the lamp and untied the tape.
+
+***
 
 The first document she had seen before: the German deposition, two pages, translated in 1949 by someone whose Polish was stiff. She read it once, quickly, and put it aside.
 
@@ -1367,6 +1427,8 @@ She put the page down. Then she picked it up again and read the last paragraph t
 
 He had not given her name. In a room in Mokotów at four in the morning, with nine days behind him, he had sat and said "I don't know" four times, and they had written it down, and it had gone into the file, and the file had come to her in a sealed envelope fourteen years later, and she was reading the only act of love anyone had ever performed for her that she had not known about.
 
+***
+
 The declaration was the next document, and she had read it before, but she read it again with attention.
 
 > I, Tomasz Wierzbicki, son of Franciszek, born 6 January 1924 at Brzozówka, priest of the diocese of Lublin, declare as follows. In the years 1942 to 1944 I was a member of an armed organization described as the Home Army, and I did not inform the authorities of the Polish People's Republic of this fact. In the years 1948 to 1951, in the course of my studies and afterwards, I took part in conversations in which the policy of the state towards the Church was criticized, and I did not report these conversations. Among the persons who took part in them were Henryk Zaleski, then a student of the seminary at Lublin, and Michał Bortnowski, then a curate at Zamość. I make this declaration freely, without duress, and I regret my conduct.
@@ -1417,11 +1479,15 @@ The hand was the same upright hand, but smaller, and pressed hard into the paper
 >
 > T.
 
+***
+
 She sat with it in her hands for a long time.
 
 Then she folded it along its folds, and put it back in the envelope, and put the envelope in her handbag, and cleared the table, and washed the cup, and turned off the lamp in the kitchen, and stood in the dark of the hall with her hand on the wall.
 
 She did not cry. She had not cried since the sixteenth of June 1944, at the graveside, when Antoni Szeliga had held her against his coat; she had stopped then, and it had closed over, and there had been nothing since but a pressure, like water behind a dam, and she had built her life on the far side of it and had never once looked over.
+
+***
 
 At half past eleven Jerzy came home. He came in quietly, as he always did, and put his coat on the hook, and she heard him in the kitchen, and then he came into the front room and found her sitting in the armchair with her shoes off and the light off.
 
@@ -1465,7 +1531,11 @@ He went out. At the door he stopped.
 
 "For what it's worth," he said, "I think you should see him. Not for the Office. For the other reason." And then he went in and closed the door, and she heard him washing, and then the bed creaking, and then nothing.
 
+***
+
 She sat up until four.
+
+***
 
 At half past four she got up and put on her coat and her hat and her good gloves, and took the letter out of her handbag and put it in the inside pocket of her coat, and went out.
 
@@ -1581,6 +1651,8 @@ He came back to the desk. He stood there looking at the paper, and then he picke
 
 She sat for a long time after he had gone. Then she rang for Hanna and told her to cancel the afternoon, and went home, and slept for two hours in the middle of the day, which she had not done since 1952.
 
+***
+
 She went at half past five.
 
 The queue for confessions at St Anne's was eight people long and mostly women, and it moved slowly, and she stood at the end of it in her grey coat with her hands folded, and the church was cold and smelled of wet stone and candle wax, and the candles on the stand by the pillar burned with small steady flames that leaned when the door opened.
@@ -1682,6 +1754,8 @@ She got up. Her knees hurt. She pushed the curtain aside and stood in the aisle,
 He came out of the confessional a moment later and stood beside her, and he had taken off the stole and folded it over his arm, and he was a thin man in a black cassock with a bad shave, and he looked tired and about ten years older than he had at eleven that morning.
 
 "Walk with me to the sacristy," he said. "I have to lock up."
+
+***
 
 They went down the side aisle together. The sacristy was a small room with a cupboard and a sink and a table with a clean cloth, and a smell of starch and old incense, and a window with a bar.
 
@@ -1794,6 +1868,8 @@ She took both documents to the office at eight in the morning, and typed the fai
 
 Then she put on her coat and went to the clinic on Skaryszewska.
 
+***
+
 Brzozowski was much worse. He had been moved to a side room and there was a screen around the bed and a smell in the room that she recognized from 1944 and did not name. His face had gone the colour of the wall. But his eyes were the same, and when she came in he said, "Ah. The acting director. You have the look of a woman who has done something irrevocable."
 
 "I have."
@@ -1829,6 +1905,8 @@ She gave him the opinion. He read it slowly, holding it up at an angle, and when
 She sent it at eleven, by messenger, with a receipt; and a copy to the minister's secretary, personally; and a third copy she folded into her handbag, next to the letter that had never been sent.
 
 Brzozowski died on the twenty-fourth, at about four in the morning, of the thing that had been eating him since April. There were nine people at the funeral, and Zofia was one of them, and the priest who said the Mass was old and had known him before the war and said in the sermon that Mieczysław Brzozowski had been a just man, which was true, and a patriot, which was also true, and that he had served the state according to his conscience, which was the most that could be said for anyone in that cemetery, and which was said in a tone that made Zofia look up.
+
+***
 
 Wrona came on the twenty-fifth.
 
@@ -1873,6 +1951,8 @@ He stopped.
 He looked at her for a moment.
 
 "No," he said. "It was prepared on the twenty-third, at nine in the morning, by a clerk in the personnel section, on my instruction, in one hour, because I was angry." He opened the door. "But you believed it, and that is the whole art of the thing, and I am sorry for it."
+
+***
 
 The commission met on Friday the twenty-eighth in a room on the third floor with a table and four chairs and a portrait of Gomułka and a window that gave on the yard.
 
@@ -1922,6 +2002,8 @@ She turned.
 
 She went out and down the stairs and out of the building into the yard, where it had begun to snow again, and she stood by the wall with her hand against it and laughed, once, out loud, and a clerk coming out of the side door looked at her and went away quickly.
 
+***
+
 Jerzy was at the table when she got home, and there was a bottle of vodka on it, which had not happened in years, and two glasses.
 
 "You heard," she said.
@@ -1949,6 +2031,8 @@ She looked at him. He was a good man, and she had married him in 1953 in a regis
 "No," she said. "It is something else. I don't know what it's called." She reached across the table and took his hand. "I'll take it."
 
 They sat there until midnight, and drank the whole bottle, and he told her about the cement dispute in more detail than she had ever heard, and she laughed until her ribs hurt, and at some point she began to cry, and he pretended not to notice, which was the kindest thing he had ever done for her.
+
+***
 
 On the sixth of December the announcement appeared in *Trybuna Ludu*, in four lines, between a report on the steel target and a notice about the price of coal:
 
@@ -2078,7 +2162,11 @@ Zofia picked up her handbag. At the door she said, "If you ever want—"
 
 Zofia went out into the snow.
 
+***
+
 She walked to Brzozówka. It was nine kilometres and there was a bus at two but she did not wait for it. The road went out of the town past the sugar factory and the new housing and then between fields, and the snow had stopped and the sky had cleared and the light was the hard white light of a Polish December. She walked for two hours and met no one but a man with a horse and a cart of wood, who nodded.
+
+***
 
 The village had been rebuilt, and it had not.
 
@@ -2102,6 +2190,8 @@ She thought about the boy who had pulled her out of the water and shouted at her
 
 At two o'clock she turned round and went out and closed the gate behind her.
 
+***
+
 The parish priest was called Father Kulesza and he was fifty and had been at Brzozówka since 1949, and he was in the sacristy when she knocked, and he was expecting, that week, a great many things, but not her.
 
 "Pani Krawiec? From the Office?"
@@ -2115,6 +2205,8 @@ The parish priest was called Father Kulesza and he was fifty and had been at Brz
 "He is coming to say his first Mass in the parish. It is a great honour for us. We have no bell, unfortunately, so we cannot ring it, but the children will sing." He looked at her. "Did you know him? You are from here."
 
 "Yes," she said. "I knew him."
+
+***
 
 On the eighth of December the consecration was held at Lublin.
 
@@ -2131,6 +2223,8 @@ She heard the Litany of the Saints, which she remembered from the Forty Hours in
 She did not cry. She stood against the pillar with her hat in her hands and her coat over her arm, and she watched a man she had known since he was twelve be made a bishop in the cathedral of Lublin, and she thought: I have signed a great many papers, and one of them was this.
 
 Afterwards she waited until the church was empty. The sacristan came and looked at her and she said, "A moment," and he went away and came back ten minutes later and said, "Pani, we are closing," and she said, "Yes," and went out.
+
+***
 
 The tenth of December was a Wednesday and cold, and the Mass at Brzozówka was at eleven.
 
